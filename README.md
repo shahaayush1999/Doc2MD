@@ -32,6 +32,10 @@ npm run summary -- vertex-gemini-3.1-flash-lite
 Run the weak visual baseline after the suite is not saturated by Gemini:
 
 ```bash
+npm run run -- --model vertex-gemini-3.5-flash
+npm run score -- vertex-gemini-3.5-flash
+npm run summary -- vertex-gemini-3.5-flash
+
 npm run run -- --model openai-gpt-5.4-nano
 npm run score -- openai-gpt-5.4-nano
 npm run summary -- openai-gpt-5.4-nano

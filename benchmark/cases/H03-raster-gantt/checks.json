@@ -14,7 +14,7 @@
       "weight": 3,
       "description": "Dock intake row with exact inferred span",
       "all": [
-        "Dock intake[\\s\\S]{0,260}Noor[\\s\\S]{0,260}08:00[\\s\\S]{0,80}11:00[\\s\\S]{0,260}Load A-17"
+        "Dock intake(?=[^\\n]{0,260}Noor)(?=[^\\n]{0,260}08:00)(?=[^\\n]{0,260}11:00)(?=[^\\n]{0,260}Load A-17)"
       ]
     },
     {
@@ -23,7 +23,7 @@
       "weight": 3,
       "description": "Release gate row with exact inferred span",
       "all": [
-        "Release gate[\\s\\S]{0,260}Ken[\\s\\S]{0,260}10:00[\\s\\S]{0,80}16:30[\\s\\S]{0,260}REL-82"
+        "Release gate(?=[^\\n]{0,260}Ken)(?=[^\\n]{0,260}10:00)(?=[^\\n]{0,260}16:30)(?=[^\\n]{0,260}REL-82)"
       ]
     },
     {
@@ -32,7 +32,7 @@
       "weight": 3,
       "description": "QA bench row with exact inferred span",
       "all": [
-        "QA bench[\\s\\S]{0,260}Priya[\\s\\S]{0,260}12:00[\\s\\S]{0,80}15:00[\\s\\S]{0,260}Lot Q4"
+        "QA bench(?=[^\\n]{0,260}Priya)(?=[^\\n]{0,260}12:00)(?=[^\\n]{0,260}15:00)(?=[^\\n]{0,260}Lot Q4)"
       ]
     },
     {
@@ -41,7 +41,7 @@
       "weight": 3,
       "description": "Rollback watch row with exact inferred span",
       "all": [
-        "Rollback watch[\\s\\S]{0,260}Mira[\\s\\S]{0,260}16:00[\\s\\S]{0,80}18:00[\\s\\S]{0,260}RB-9"
+        "Rollback watch(?=[^\\n]{0,260}Mira)(?=[^\\n]{0,260}16:00)(?=[^\\n]{0,260}18:00)(?=[^\\n]{0,260}RB-9)"
       ]
     }
   ]

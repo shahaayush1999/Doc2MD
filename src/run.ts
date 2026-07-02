@@ -35,6 +35,14 @@ const models: Record<string, ModelSpec> = {
     inputPerMillion: 0.25,
     outputPerMillion: 1.5,
   },
+  "vertex-gemini-3.5-flash": {
+    id: "vertex-gemini-3.5-flash",
+    modelName: "gemini-3.5-flash",
+    provider: "google-vertex",
+    reasoning: "minimal",
+    inputPerMillion: 1.5,
+    outputPerMillion: 9,
+  },
   "openai-gpt-5.4-nano": {
     id: "openai-gpt-5.4-nano",
     modelName: "gpt-5.4-nano",

@@ -53,9 +53,9 @@ The scorer is intentionally simple for now. It should stay simple until the suit
 
 ## Calibration Rule
 
-The first bar is: **Gemini 3.1 Flash Lite must not score 100/100**.
+The first bar is: **calibration must preserve known capability ordering**.
 
-If the cheapest strong reconstruction model saturates the suite, the suite is not yet useful enough. Once Gemini fails at least one meaningful case, run additional models and compare score, cost, latency, and tokens to identify the Pareto frontier.
+For the current model set, Gemini 3.5 Flash should score clearly above Gemini 3.1 Flash Lite on visual-to-structure cases, and Gemini 3.1 Flash Lite should not be judged mainly against GPT-5.4 Nano because GPT Nano is a weaker visual reasoner. If the best public model saturates the suite, that is acceptable only if cheaper models still separate cleanly and the benchmark reports score, cost, latency, and tokens as a Pareto frontier.
 
 ## Expansion Policy
 

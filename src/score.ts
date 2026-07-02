@@ -42,6 +42,10 @@ function regex(pattern: string): RegExp {
   return new RegExp(pattern, "imu");
 }
 
+function regexGlobal(pattern: string): RegExp {
+  return new RegExp(pattern, "gimu");
+}
+
 function allMatch(patterns: string[] | undefined, text: string): boolean {
   return patterns?.every((pattern) => regex(pattern).test(text)) ?? true;
 }
@@ -63,14 +67,19 @@ function orderedMatch(patterns: string[] | undefined, text: string): boolean {
 
 function nearMatch(near: Check["near"], text: string): boolean {
   if (!near) return true;
-  const ranges = near.terms.map((term) => {
-    const match = regex(term).exec(text);
-    return match ? { start: match.index, end: match.index + match[0].length } : null;
+  const rangesByTerm = near.terms.map((term) =>
+    [...text.matchAll(regexGlobal(term))].map((match) => ({
+      start: match.index,
+      end: match.index + match[0].length,
+    })),
+  );
+  if (rangesByTerm.some((ranges) => ranges.length === 0)) return false;
+
+  const candidateStarts = rangesByTerm.flatMap((ranges) => ranges.flatMap((range) => [range.start, range.end - near.window]));
+  return candidateStarts.some((start) => {
+    const end = start + near.window;
+    return rangesByTerm.every((ranges) => ranges.some((range) => range.start >= start && range.end <= end));
   });
-  if (ranges.some((range) => range === null)) return false;
-  const starts = ranges.map((range) => range!.start);
-  const ends = ranges.map((range) => range!.end);
-  return Math.max(...ends) - Math.min(...starts) <= near.window;
 }
 
 async function scoreCase(modelId: string, testCase: ManifestCase) {
