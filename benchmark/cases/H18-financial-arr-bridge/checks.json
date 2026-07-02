@@ -1,0 +1,111 @@
+{
+  "id": "H18-financial-arr-bridge",
+  "title": "Financial ARR Bridge Board Pack",
+  "family": "tables",
+  "tags": [
+    "raster-only",
+    "finance",
+    "hierarchical-table",
+    "waterfall-chart",
+    "footnotes"
+  ],
+  "checks": [
+    {
+      "id": "na-row",
+      "category": "tables",
+      "weight": 3,
+      "description": "na-row",
+      "near": {
+        "terms": [
+          "North America",
+          "84\\.0",
+          "\\+18\\.5",
+          "\\+6\\.0",
+          "4\\.2",
+          "\\+0\\.7",
+          "105\\.0"
+        ],
+        "window": 520
+      }
+    },
+    {
+      "id": "emea-row",
+      "category": "tables",
+      "weight": 3,
+      "description": "emea-row",
+      "near": {
+        "terms": [
+          "EMEA",
+          "56\\.0",
+          "\\+9\\.4",
+          "\\+5\\.1",
+          "6\\.8",
+          "1\\.2",
+          "62\\.5"
+        ],
+        "window": 520
+      }
+    },
+    {
+      "id": "total-row",
+      "category": "tables",
+      "weight": 3,
+      "description": "total-row",
+      "near": {
+        "terms": [
+          "Total",
+          "164\\.5",
+          "\\+35\\.5",
+          "\\+13\\.5",
+          "12\\.5",
+          "0\\.5",
+          "200\\.5"
+        ],
+        "window": 560
+      }
+    },
+    {
+      "id": "footnotes",
+      "category": "text",
+      "weight": 2.5,
+      "description": "footnotes",
+      "near": {
+        "terms": [
+          "Churn",
+          "negative",
+          "EMEA",
+          "Israel",
+          "South Africa"
+        ],
+        "window": 420
+      }
+    },
+    {
+      "id": "waterfall",
+      "category": "visual",
+      "weight": 2.5,
+      "description": "waterfall",
+      "near": {
+        "terms": [
+          "Waterfall",
+          "FY2025",
+          "164\\.5",
+          "FY2026",
+          "200\\.5"
+        ],
+        "window": 520
+      }
+    },
+    {
+      "id": "no-positive-churn",
+      "category": "hallucination",
+      "weight": 3,
+      "description": "no-positive-churn",
+      "none": [
+        "Churn[\\s\\S]{0,80}\\+12\\.5",
+        "EMEA[\\s\\S]{0,160}\\+6\\.8",
+        "FX[\\s\\S]{0,80}\\+0\\.5"
+      ]
+    }
+  ]
+}

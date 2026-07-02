@@ -1,0 +1,40 @@
+{
+  "id": "H03-raster-gantt",
+  "title": "Raster Gantt Shift Schedule",
+  "family": "spatial",
+  "tags": [
+    "raster-only",
+    "gantt",
+    "schedule"
+  ],
+  "facts": [
+    {
+      "id": "dock-row",
+      "category": "spatial",
+      "weight": 3,
+      "expectation": "Dock intake row with exact inferred span",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "release-row",
+      "category": "spatial",
+      "weight": 3,
+      "expectation": "Release gate row with exact inferred span",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "qa-row",
+      "category": "spatial",
+      "weight": 3,
+      "expectation": "QA bench row with exact inferred span",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "rollback-row",
+      "category": "spatial",
+      "weight": 3,
+      "expectation": "Rollback watch row with exact inferred span",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    }
+  ]
+}

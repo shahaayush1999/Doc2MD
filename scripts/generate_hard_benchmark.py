@@ -72,6 +72,7 @@ class Case:
     gold: str
     checks: list[dict]
     pages: list[Image.Image]
+    facts: list[dict] | None = None
     hidden_text: list[str] | None = None
     covered_text: list[str] | None = None
 
@@ -166,6 +167,29 @@ def near_check(id_: str, category: str, terms: list[str], weight: float = 2, win
 
 def ordered_check(id_: str, category: str, terms: list[str], weight: float = 2, description: str | None = None) -> dict:
     return {"id": id_, "category": category, "weight": weight, "description": description or id_, "ordered": [literal(t) for t in terms]}
+
+
+def fact(id_: str, category: str, weight: float, expectation: str, guidance: str = "") -> dict:
+    return {
+        "id": id_,
+        "category": category,
+        "weight": weight,
+        "expectation": expectation,
+        "guidance": guidance,
+    }
+
+
+def facts_from_checks(case: Case) -> list[dict]:
+    return [
+        fact(
+            check["id"],
+            check.get("category", "accuracy"),
+            check.get("weight", 1),
+            check.get("description", check["id"]),
+            "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs.",
+        )
+        for check in case.checks
+    ]
 
 
 def h01() -> Case:
@@ -1001,7 +1025,242 @@ def h17() -> Case:
     )
 
 
-CASES = [h01(), h02(), h03(), h07(), h11(), h12(), h13(), h14(), h15(), h16(), h17()]
+def h18() -> Case:
+    img = base_page("Solara Robotics Q4 Board Pack")
+    d = ImageDraw.Draw(img)
+    d.text((100, 155), "Note 3: ARR Bridge (USD millions)", fill="#111827", font=F["h1"])
+    d.text((100, 215), "Parentheses indicate negative movement. EMEA includes Israel and South Africa.", fill="#7f1d1d", font=F["small"])
+    rows = [
+        ["Region", "FY2025", "New", "Expansion", "Churn", "FX", "FY2026"],
+        ["North America", "84.0", "+18.5", "+6.0", "(4.2)", "+0.7", "105.0"],
+        ["EMEA", "56.0", "+9.4", "+5.1", "(6.8)", "(1.2)", "62.5"],
+        ["APAC", "24.5", "+7.6", "+2.4", "(1.5)", "+0.0", "33.0"],
+        ["Total", "164.5", "+35.5", "+13.5", "(12.5)", "(0.5)", "200.5"],
+    ]
+    draw_table(d, 70, 320, [285, 170, 170, 205, 165, 150, 170], rows, 78)
+
+    d.text((110, 790), "Waterfall summary", fill="#111827", font=F["h2"])
+    steps = [("FY2025", 164.5, "#64748b"), ("New", 35.5, "#16a34a"), ("Expansion", 13.5, "#16a34a"), ("Churn", -12.5, "#dc2626"), ("FX", -0.5, "#dc2626"), ("FY2026", 200.5, "#64748b")]
+    x, base_y = 150, 1390
+    scale = 1.45
+    running = 164.5
+    for i, (label, value, color) in enumerate(steps):
+        bx = x + i * 230
+        if i == 0 or i == len(steps) - 1:
+            height = int(value * scale)
+            d.rectangle((bx, base_y - height, bx + 110, base_y), fill=color, outline="#111827", width=2)
+            d.text((bx, base_y - height - 35), f"{value:.1f}", fill="#111827", font=F["tiny"])
+        else:
+            prev = running
+            running += value
+            y1 = base_y - int(max(prev, running) * scale)
+            y2 = base_y - int(min(prev, running) * scale)
+            d.rectangle((bx, y1, bx + 110, y2), fill=color, outline="#111827", width=2)
+            d.text((bx, y1 - 35), f"{value:+.1f}", fill="#111827", font=F["tiny"])
+        d.text((bx - 10, base_y + 20), label, fill="#111827", font=F["tiny"])
+    d.text((100, 1545), "Footnotes: Churn shown as negative. EMEA includes Israel and South Africa.", fill="#111827", font=F["small"])
+    return Case(
+        "H18-financial-arr-bridge",
+        "Financial ARR Bridge Board Pack",
+        "tables",
+        ["raster-only", "finance", "hierarchical-table", "waterfall-chart", "footnotes"],
+        "Recover a financial bridge table with sign conventions, footnotes, totals, and a supporting waterfall chart.",
+        "Raster-only board-pack page with financial table and chart.",
+        ["ARR bridge table", "negative sign convention", "footnotes", "waterfall description"],
+        ["Preserve all row/column bindings.", "Treat parentheses as negative.", "Attach footnotes to the correct table.", "Describe the waterfall chart inline."],
+        "# Solara Robotics Q4 Board Pack - Note 3: ARR Bridge (USD millions)\n\nParentheses indicate negative movement.\n\n| Region | FY2025 | New | Expansion | Churn | FX | FY2026 |\n| --- | ---: | ---: | ---: | ---: | ---: | ---: |\n| North America | 84.0 | +18.5 | +6.0 | -4.2 | +0.7 | 105.0 |\n| EMEA | 56.0 | +9.4 | +5.1 | -6.8 | -1.2 | 62.5 |\n| APAC | 24.5 | +7.6 | +2.4 | -1.5 | +0.0 | 33.0 |\n| Total | 164.5 | +35.5 | +13.5 | -12.5 | -0.5 | 200.5 |\n\nWaterfall chart: FY2025 starts at 164.5, New and Expansion are positive green steps, Churn and FX are negative red steps, and FY2026 ends at 200.5.\n\nFootnotes: Churn shown as negative. EMEA includes Israel and South Africa.\n",
+        [
+            near_check("na-row", "tables", ["North America", "84.0", "+18.5", "+6.0", "4.2", "+0.7", "105.0"], 3, 520),
+            near_check("emea-row", "tables", ["EMEA", "56.0", "+9.4", "+5.1", "6.8", "1.2", "62.5"], 3, 520),
+            near_check("total-row", "tables", ["Total", "164.5", "+35.5", "+13.5", "12.5", "0.5", "200.5"], 3, 560),
+            near_check("footnotes", "text", ["Churn", "negative", "EMEA", "Israel", "South Africa"], 2.5, 420),
+            near_check("waterfall", "visual", ["Waterfall", "FY2025", "164.5", "FY2026", "200.5"], 2.5, 520),
+            none_regex_check("no-positive-churn", [r"Churn[\s\S]{0,80}\+12\.5", r"EMEA[\s\S]{0,160}\+6\.8", r"FX[\s\S]{0,80}\+0\.5"], 3),
+        ],
+        [img],
+        facts=[
+            fact("arr.na.row", "tables", 4, "North America row has FY2025 84.0, New +18.5, Expansion +6.0, Churn -4.2, FX +0.7, FY2026 105.0."),
+            fact("arr.emea.row", "tables", 4, "EMEA row has FY2025 56.0, New +9.4, Expansion +5.1, Churn -6.8, FX -1.2, FY2026 62.5."),
+            fact("arr.total.row", "tables", 5, "Total row has FY2025 164.5, New +35.5, Expansion +13.5, Churn -12.5, FX -0.5, FY2026 200.5."),
+            fact("arr.signs", "accuracy", 4, "Parentheses in Churn and FX are represented as negative values, not positive values."),
+            fact("arr.footnotes", "text", 3, "Includes both footnotes: Churn shown as negative; EMEA includes Israel and South Africa."),
+            fact("arr.waterfall", "visual", 3, "Describes the waterfall chart as starting at 164.5, adding New/Expansion, subtracting Churn/FX, and ending at 200.5."),
+        ],
+    )
+
+
+def h19() -> Case:
+    img = base_page("Explanation of Benefits")
+    d = ImageDraw.Draw(img)
+    d.text((100, 150), "Patient: Ana Rivera    Claim: 5821", fill="#111827", font=F["h2"])
+    d.rounded_rectangle((1110, 200, 1580, 430), radius=16, fill="#fff7ed", outline="#c2410c", width=4)
+    d.text((1150, 245), "This is not a bill", fill="#c2410c", font=F["h2"])
+    d.text((1150, 315), "You may owe", fill="#111827", font=F["small"])
+    d.text((1150, 350), "$48.32", fill="#111827", font=F["h1"])
+    checkbox(d, 120, 255, "In-network", True, F["small"])
+    checkbox(d, 120, 310, "Out-of-network", False, F["small"])
+    rows = [
+        ["Service", "Code", "Charged", "Allowed", "Deductible", "Plan paid", "Patient may owe"],
+        ["Office visit", "99213", "$215.00", "$143.20", "$20.00", "$98.56", "$44.64"],
+        ["Comprehensive metabolic panel", "80053", "$72.00", "$18.40", "$0.00", "$14.72", "$3.68"],
+        ["Total", "", "$287.00", "$161.60", "$20.00", "$113.28", "$48.32"],
+    ]
+    draw_table(d, 65, 520, [360, 130, 170, 170, 185, 180, 225], rows, 92)
+    d.text((100, 960), "Appeal by 2026-08-31.", fill="#7f1d1d", font=F["h2"])
+    return Case(
+        "H19-insurance-eob",
+        "Insurance Explanation of Benefits",
+        "forms",
+        ["raster-only", "insurance", "checkbox", "summary-card", "financial-table"],
+        "Recover an EOB table, summary card, deadline, and selected network state.",
+        "Raster-only explanation-of-benefits page.",
+        ["claim identity", "network checkbox state", "claim table", "summary card", "appeal deadline"],
+        ["Preserve row-level money values.", "Do not treat the document as a bill.", "Preserve selected and unselected network states."],
+        "# Explanation of Benefits\n\nPatient: Ana Rivera. Claim: 5821. This is not a bill.\n\nIn-network is selected; Out-of-network is unselected.\n\n| Service | Code | Charged | Allowed | Deductible | Plan paid | Patient may owe |\n| --- | --- | ---: | ---: | ---: | ---: | ---: |\n| Office visit | 99213 | $215.00 | $143.20 | $20.00 | $98.56 | $44.64 |\n| Comprehensive metabolic panel | 80053 | $72.00 | $18.40 | $0.00 | $14.72 | $3.68 |\n| Total | | $287.00 | $161.60 | $20.00 | $113.28 | $48.32 |\n\nSummary card: You may owe $48.32. Appeal by 2026-08-31.\n",
+        [
+            all_check("identity", "text", ["Ana Rivera", "5821", "not a bill"], 2),
+            near_check("network-state", "forms", ["In-network", "selected", "Out-of-network", "unselected"], 3, 320),
+            near_check("office-row", "tables", ["Office visit", "99213", "$215.00", "$143.20", "$20.00", "$98.56", "$44.64"], 3, 580),
+            near_check("cmp-row", "tables", ["Comprehensive metabolic panel", "80053", "$72.00", "$18.40", "$0.00", "$14.72", "$3.68"], 3, 640),
+            near_check("total-row", "tables", ["Total", "$287.00", "$161.60", "$113.28", "$48.32"], 3, 520),
+            all_check("deadline", "text", ["2026-08-31"], 1.5),
+        ],
+        [img],
+        facts=[
+            fact("eob.identity", "text", 2, "Patient Ana Rivera, claim 5821, and 'This is not a bill' are present."),
+            fact("eob.network", "forms", 4, "In-network is selected and Out-of-network is unselected."),
+            fact("eob.office", "tables", 4, "Office visit row code 99213 has charged $215.00, allowed $143.20, deductible $20.00, plan paid $98.56, patient may owe $44.64."),
+            fact("eob.cmp", "tables", 4, "Comprehensive metabolic panel row code 80053 has charged $72.00, allowed $18.40, deductible $0.00, plan paid $14.72, patient may owe $3.68."),
+            fact("eob.total", "tables", 4, "Total row has charged $287.00, allowed $161.60, deductible $20.00, plan paid $113.28, patient may owe $48.32."),
+            fact("eob.summary", "forms", 3, "Right-side summary card says You may owe $48.32 and appeal deadline is 2026-08-31."),
+        ],
+    )
+
+
+def h20() -> Case:
+    img = base_page("Cedar Clinic Punch List - Floor 1")
+    d = ImageDraw.Draw(img)
+    # Floor plan
+    d.rectangle((110, 270, 760, 970), outline="#111827", width=5)
+    d.line((110, 520, 760, 520), fill="#111827", width=4)
+    d.line((420, 270, 420, 970), fill="#111827", width=4)
+    d.text((160, 350), "A101 Lobby", fill="#111827", font=F["small"])
+    d.text((480, 350), "A102 Exam 1", fill="#111827", font=F["small"])
+    d.text((480, 690), "A103 Storage", fill="#111827", font=F["small"])
+    d.text((160, 690), "Corridor", fill="#475569", font=F["small"])
+    d.ellipse((565, 440, 605, 480), fill="#fee2e2", outline="#991b1b", width=4)
+    d.text((612, 445), "P1", fill="#991b1b", font=F["small"])
+    pts = [(250, 410), (225, 455), (275, 455)]
+    d.polygon(pts, fill="#fef3c7", outline="#a16207")
+    d.text((282, 430), "E2", fill="#a16207", font=F["small"])
+    d.rectangle((555, 825, 595, 865), fill="#dbeafe", outline="#1d4ed8", width=4)
+    d.text((605, 827), "F3", fill="#1d4ed8", font=F["small"])
+
+    rows = [
+        ["Callout", "Symbol", "Location", "Issue", "Owner", "Due", "Priority", "Status"],
+        ["P1", "red circle", "A102 under sink", "Active leak", "Mei", "2026-07-09", "P0", "Open"],
+        ["E2", "yellow triangle", "A101 west wall", "GFCI outlet mislabeled", "Omar", "2026-07-12", "P2", "Blocked by permit"],
+        ["F3", "blue square", "A103 south door", "Cracked floor tile", "Lina", "2026-07-15", "P3", "Done"],
+    ]
+    draw_table(d, 80, 1110, [125, 160, 220, 285, 110, 160, 110, 230], rows, 80)
+    return Case(
+        "H20-clinic-floorplan-punchlist",
+        "Clinic Floor-Plan Punch List",
+        "visual",
+        ["raster-only", "floor-plan", "callouts", "diagram", "table"],
+        "Map visual callout symbols to rooms and punch-list table facts.",
+        "Raster-only facilities page with floor plan and callout table.",
+        ["floor plan description", "callout symbol mapping", "room/issue binding", "owner/due/status table"],
+        ["Do not just transcribe the table; preserve the semantic mapping between symbols, rooms, and issues."],
+        "# Cedar Clinic Punch List - Floor 1\n\nFloor plan: A101 Lobby is on the left upper room, A102 Exam 1 is the upper right room, A103 Storage is the lower right room, and a corridor is on the lower left. P1 is a red circle in A102 under the sink. E2 is a yellow triangle on the A101 west wall. F3 is a blue square near the A103 south door.\n\n| Callout | Symbol | Location | Issue | Owner | Due | Priority | Status |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| P1 | red circle | A102 under sink | Active leak | Mei | 2026-07-09 | P0 | Open |\n| E2 | yellow triangle | A101 west wall | GFCI outlet mislabeled | Omar | 2026-07-12 | P2 | Blocked by permit |\n| F3 | blue square | A103 south door | Cracked floor tile | Lina | 2026-07-15 | P3 | Done |\n",
+        [
+            near_check("p1-mapping", "visual", ["P1", "red circle", "A102", "under sink", "Active leak", "Mei", "P0", "Open"], 4, 620),
+            near_check("e2-mapping", "visual", ["E2", "yellow triangle", "A101", "west wall", "GFCI", "Omar", "Blocked by permit"], 4, 660),
+            near_check("f3-mapping", "visual", ["F3", "blue square", "A103", "south door", "Cracked floor tile", "Lina", "Done"], 4, 660),
+            all_check("floorplan-description", "visual", ["A101", "A102", "A103", "corridor"], 2),
+        ],
+        [img],
+        facts=[
+            fact("floorplan.rooms", "visual", 3, "Describes the floor plan rooms A101 Lobby, A102 Exam 1, A103 Storage, and corridor."),
+            fact("floorplan.p1", "visual", 5, "P1 is a red circle in A102 under the sink for Active leak, owner Mei, due 2026-07-09, priority P0, status Open."),
+            fact("floorplan.e2", "visual", 5, "E2 is a yellow triangle on the A101 west wall for GFCI outlet mislabeled, owner Omar, due 2026-07-12, priority P2, status Blocked by permit."),
+            fact("floorplan.f3", "visual", 5, "F3 is a blue square near the A103 south door for Cracked floor tile, owner Lina, due 2026-07-15, priority P3, status Done."),
+        ],
+    )
+
+
+def h21() -> Case:
+    img = base_page("OpsConf 2026 - Day 2 Program")
+    d = ImageDraw.Draw(img)
+    d.text((100, 155), "Merged cells show sessions that span rooms. Legend: star = preregistration required; dot = hybrid session.", fill="#7f1d1d", font=F["small"])
+    x0, y0 = 110, 300
+    widths = [210, 390, 390, 390]
+    row_h = 120
+    headers = ["Time", "Hall A", "Lab 1", "Lab 2"]
+    times = ["08:30-09:00", "09:00-09:45", "10:00-10:45", "11:00-12:00", "12:00-13:00", "13:15-14:00"]
+    for c, h in enumerate(headers):
+        x = x0 + sum(widths[:c])
+        d.rectangle((x, y0, x + widths[c], y0 + 80), fill="#e5e7eb", outline="#111827", width=3)
+        d.text((x + 12, y0 + 24), h, fill="#111827", font=F["small"])
+    y = y0 + 80
+    for r, time in enumerate(times):
+        d.rectangle((x0, y, x0 + widths[0], y + row_h), fill="#ffffff", outline="#111827", width=3)
+        d.text((x0 + 10, y + 42), time, fill="#111827", font=F["tiny"])
+        for c in range(1, 4):
+            x = x0 + sum(widths[:c])
+            d.rectangle((x, y, x + widths[c], y + row_h), fill="#ffffff", outline="#111827", width=3)
+        y += row_h
+    # Spanning/all-room rows by visual overlays
+    d.rectangle((x0 + widths[0], y0 + 80, x0 + sum(widths), y0 + 80 + row_h), fill="#f8fafc", outline="#111827", width=3)
+    d.text((x0 + widths[0] + 18, y0 + 125), "Registration, Atrium (spans all rooms)", fill="#111827", font=F["small"])
+    d.text((x0 + widths[0] + 18, y0 + 80 + row_h + 42), "Keynote: Metrics that Matter", fill="#111827", font=F["small"])
+    y10 = y0 + 80 + row_h * 2
+    d.text((x0 + widths[0] + 18, y10 + 40), "star SLO Math", fill="#111827", font=F["small"])
+    d.text((x0 + widths[0] + widths[1] + 18, y10 + 40), "dot Tracing Lab", fill="#111827", font=F["small"])
+    d.text((x0 + widths[0] + widths[1] + widths[2] + 18, y10 + 40), "Cost Controls", fill="#111827", font=F["small"])
+    y11 = y0 + 80 + row_h * 3
+    d.text((x0 + widths[0] + 18, y11 + 40), "Vendor briefings", fill="#111827", font=F["small"])
+    d.rectangle((x0 + widths[0] + widths[1], y11, x0 + sum(widths), y11 + row_h), fill="#ecfeff", outline="#111827", width=3)
+    d.text((x0 + widths[0] + widths[1] + 18, y11 + 40), "Incident Drill (spans Lab 1 and Lab 2)", fill="#111827", font=F["small"])
+    y12 = y0 + 80 + row_h * 4
+    d.rectangle((x0 + widths[0], y12, x0 + sum(widths), y12 + row_h), fill="#f8fafc", outline="#111827", width=3)
+    d.text((x0 + widths[0] + 18, y12 + 40), "Lunch, Courtyard (spans all rooms)", fill="#111827", font=F["small"])
+    y13 = y0 + 80 + row_h * 5
+    d.text((x0 + widths[0] + 18, y13 + 40), "Postmortem Patterns", fill="#111827", font=F["small"])
+    d.text((x0 + widths[0] + widths[1] + 18, y13 + 40), "Forecasting", fill="#111827", font=F["small"])
+    d.text((x0 + widths[0] + widths[1] + widths[2] + 18, y13 + 40), "FinOps Clinic", fill="#111827", font=F["small"])
+    d.text((110, 1155), "Legend: star = preregistration required. dot = hybrid session.", fill="#111827", font=F["small"])
+    return Case(
+        "H21-conference-schedule-grid",
+        "Conference Schedule Grid",
+        "spatial",
+        ["raster-only", "schedule", "merged-cells", "icons", "room-grid"],
+        "Recover a time-by-room schedule grid with room-spanning cells and icon legend semantics.",
+        "Raster-only conference schedule with merged cells and legend icons.",
+        ["time/room grid", "merged-room sessions", "all-room sessions", "icon legend"],
+        ["Preserve room spans and blank cells.", "Bind icons to their legend meanings.", "Do not duplicate merged sessions into wrong rooms without noting the span."],
+        "# OpsConf 2026 - Day 2 Program\n\nLegend: star = preregistration required; dot = hybrid session.\n\n| Time | Hall A | Lab 1 | Lab 2 |\n| --- | --- | --- | --- |\n| 08:30-09:00 | Registration, Atrium, spans all rooms |  |  |\n| 09:00-09:45 | Keynote: Metrics that Matter |  |  |\n| 10:00-10:45 | star SLO Math | dot Tracing Lab | Cost Controls |\n| 11:00-12:00 | Vendor briefings | Incident Drill, spans Lab 1 and Lab 2 |  |\n| 12:00-13:00 | Lunch, Courtyard, spans all rooms |  |  |\n| 13:15-14:00 | Postmortem Patterns | Forecasting | FinOps Clinic |\n",
+        [
+            near_check("registration-span", "spatial", ["08:30", "09:00", "Registration", "Atrium", "spans all rooms"], 3, 420),
+            near_check("icons", "visual", ["star", "preregistration", "dot", "hybrid"], 2.5, 360),
+            near_check("slot-1000", "spatial", ["10:00", "SLO Math", "Tracing Lab", "Cost Controls"], 3, 520),
+            near_check("incident-span", "spatial", ["11:00", "12:00", "Incident Drill", "Lab 1", "Lab 2"], 3, 520),
+            near_check("lunch-span", "spatial", ["12:00", "13:00", "Lunch", "Courtyard", "spans all rooms"], 3, 420),
+            near_check("slot-1315", "spatial", ["13:15", "Postmortem Patterns", "Forecasting", "FinOps Clinic"], 2.5, 520),
+        ],
+        [img],
+        facts=[
+            fact("schedule.legend", "visual", 3, "Legend says star means preregistration required and dot means hybrid session."),
+            fact("schedule.registration", "spatial", 4, "08:30-09:00 Registration in Atrium spans all rooms."),
+            fact("schedule.1000", "spatial", 5, "10:00-10:45 has star SLO Math in Hall A, dot Tracing Lab in Lab 1, and Cost Controls in Lab 2."),
+            fact("schedule.incident", "spatial", 5, "11:00-12:00 has Vendor briefings in Hall A and Incident Drill spanning Lab 1 and Lab 2."),
+            fact("schedule.lunch", "spatial", 4, "12:00-13:00 Lunch in Courtyard spans all rooms."),
+            fact("schedule.1315", "spatial", 4, "13:15-14:00 has Postmortem Patterns in Hall A, Forecasting in Lab 1, and FinOps Clinic in Lab 2."),
+        ],
+    )
+
+
+CASES = [h01(), h02(), h03(), h07(), h11(), h12(), h13(), h14(), h15(), h16(), h17(), h18(), h19(), h20(), h21()]
 
 
 def write_pdf(case: Case, path: Path) -> None:
@@ -1082,6 +1341,8 @@ def write_case(case: Case) -> dict:
     (out / "spec.md").write_text(write_spec(case), encoding="utf-8")
     checks = {"id": case.id, "title": case.title, "family": case.family, "tags": case.tags, "checks": case.checks}
     (out / "checks.json").write_text(json.dumps(checks, indent=2) + "\n", encoding="utf-8")
+    facts = {"id": case.id, "title": case.title, "family": case.family, "tags": case.tags, "facts": case.facts or facts_from_checks(case)}
+    (out / "facts.json").write_text(json.dumps(facts, indent=2) + "\n", encoding="utf-8")
     return {
         "id": case.id,
         "title": case.title,
@@ -1092,6 +1353,7 @@ def write_case(case: Case) -> dict:
         "gold": f"benchmark/cases/{case.slug}/gold.md",
         "spec": f"benchmark/cases/{case.slug}/spec.md",
         "checks": f"benchmark/cases/{case.slug}/checks.json",
+        "facts": f"benchmark/cases/{case.slug}/facts.json",
     }
 
 
@@ -1100,9 +1362,9 @@ def main() -> None:
         shutil.rmtree(BENCHMARK_ROOT)
     CASE_ROOT.mkdir(parents=True, exist_ok=True)
     manifest = {
-        "name": "Doc2MD-Hard-11",
-        "version": "0.4.0",
-        "description": "Compact hard Doc2MD candidate suite focused on complex raster layouts, visual-to-structure reconstruction, table/figure binding, redlines, and visibility semantics.",
+        "name": "Doc2MD-Hard-15",
+        "version": "0.5.0",
+        "description": "Compact hard Doc2MD candidate suite focused on compound document reasoning: complex raster layouts, visual-to-structure reconstruction, table/figure binding, redlines, schedules, forms, diagrams, and financial tables.",
         "caseCount": len(CASES),
         "pageCount": sum(len(case.pages) for case in CASES),
         "cases": [write_case(case) for case in CASES],

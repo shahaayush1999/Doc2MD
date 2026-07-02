@@ -1,0 +1,33 @@
+{
+  "id": "H02-opaque-stale-shipment",
+  "title": "Opaque Stale Shipment Overlay",
+  "family": "visibility",
+  "tags": [
+    "covered-text",
+    "raster-card",
+    "negative-check"
+  ],
+  "facts": [
+    {
+      "id": "visible-shipment",
+      "category": "text",
+      "weight": 1,
+      "expectation": "visible-shipment",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "status-port-eta",
+      "category": "binding",
+      "weight": 2.5,
+      "expectation": "status-port-eta",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "no-covered-stale",
+      "category": "hallucination",
+      "weight": 3,
+      "expectation": "no-covered-stale",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    }
+  ]
+}

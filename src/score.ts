@@ -30,6 +30,7 @@ type ManifestCase = {
   tags: string[];
   gold: string;
   checks: string;
+  facts?: string;
 };
 
 type Manifest = {
@@ -44,11 +45,34 @@ type JudgeFinding = {
   actual?: string;
 };
 
+type Fact = {
+  id: string;
+  category: string;
+  weight: number;
+  expectation: string;
+  guidance?: string;
+};
+
+type FactFile = {
+  id: string;
+  title: string;
+  family: string;
+  tags: string[];
+  facts: Fact[];
+};
+
+type FactResult = {
+  id: string;
+  status: "correct" | "partial" | "incorrect" | "missing";
+  rationale: string;
+};
+
 type JudgeResult = {
   accuracy: number;
   completeness: number;
   structure: number;
   markdownQuality: number;
+  factResults: FactResult[];
   findings: JudgeFinding[];
   rationale: string;
 };
@@ -72,7 +96,7 @@ const weights = {
 const judgeSchema = jsonSchema<JudgeResult>({
   type: "object",
   additionalProperties: false,
-  required: ["accuracy", "completeness", "structure", "markdownQuality", "findings", "rationale"],
+  required: ["accuracy", "completeness", "structure", "markdownQuality", "factResults", "findings", "rationale"],
   properties: {
     accuracy: {
       type: "number",
@@ -98,6 +122,20 @@ const judgeSchema = jsonSchema<JudgeResult>({
       minimum: 0,
       maximum: 100,
       description: "Usefulness and clarity of Markdown representation. Do not penalize harmless formatting differences.",
+    },
+    factResults: {
+      type: "array",
+      description: "Per-fact judgments for every listed fact obligation.",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "status", "rationale"],
+        properties: {
+          id: { type: "string" },
+          status: { type: "string", enum: ["correct", "partial", "incorrect", "missing"] },
+          rationale: { type: "string" },
+        },
+      },
     },
     findings: {
       type: "array",
@@ -235,7 +273,35 @@ function deterministicAudit(checkFile: CheckFile, prediction: string, failed: bo
   };
 }
 
-function judgePrompt(testCase: ManifestCase, gold: string, prediction: string): string {
+function factStatusValue(status: FactResult["status"]): number {
+  if (status === "correct") return 1;
+  if (status === "partial") return 0.5;
+  return 0;
+}
+
+function scoreFacts(facts: Fact[], factResults: FactResult[]) {
+  const byId = new Map(factResults.map((result) => [result.id, result]));
+  let earned = 0;
+  let possible = 0;
+  const details = facts.map((fact) => {
+    possible += fact.weight;
+    const result = byId.get(fact.id) ?? { id: fact.id, status: "missing" as const, rationale: "The evaluator did not return a judgment for this fact." };
+    const credit = factStatusValue(result.status) * fact.weight;
+    earned += credit;
+    return { ...fact, status: result.status, rationale: result.rationale, earned: round(credit, 2) };
+  });
+  return {
+    score: possible === 0 ? null : round((earned / possible) * 100),
+    earned: round(earned, 2),
+    possible: round(possible, 2),
+    details,
+  };
+}
+
+function judgePrompt(testCase: ManifestCase, gold: string, facts: Fact[], prediction: string): string {
+  const factBlock = facts
+    .map((fact) => `- ${fact.id} [${fact.category}, weight ${fact.weight}]: ${fact.expectation}${fact.guidance ? ` Guidance: ${fact.guidance}` : ""}`)
+    .join("\n");
   return `You are evaluating Doc2MD, a benchmark for converting documents into faithful Markdown.
 
 Compare the candidate Markdown against the gold answer key. The gold answer key is the authoritative representation of the original document.
@@ -257,10 +323,21 @@ Important judging rules:
 - Penalize false assertions, invented values, wrong checkbox states, wrong table row/column bindings, wrong timeline spans, or treating deleted/hidden/covered text as current.
 - If the candidate is a summary rather than a reconstruction, score completeness and structure low even if some facts are correct.
 - Findings should list only substantive issues.
+- You must judge every fact obligation listed below by id.
+- Fact status meanings:
+  - correct: all required information is present and correctly bound.
+  - partial: some required information is present, but a minor value, binding, or context is missing.
+  - incorrect: the candidate asserts a contradictory or wrong value/binding/state.
+  - missing: the information is absent or too vague to verify.
 
 Case: ${testCase.id} - ${testCase.title}
 Family: ${testCase.family}
 Tags: ${testCase.tags.join(", ")}
+
+FACT OBLIGATIONS:
+<<<FACTS
+${factBlock}
+FACTS
 
 GOLD ANSWER KEY:
 <<<GOLD
@@ -273,7 +350,7 @@ ${prediction}
 CANDIDATE`;
 }
 
-async function judgeWithGemini(testCase: ManifestCase, gold: string, prediction: string): Promise<{
+async function judgeWithGemini(testCase: ManifestCase, gold: string, facts: Fact[], prediction: string): Promise<{
   result: JudgeResult;
   elapsedMs: number;
   usage: any;
@@ -283,7 +360,7 @@ async function judgeWithGemini(testCase: ManifestCase, gold: string, prediction:
   const response = await generateObject({
     model: googleVertex(evaluator.modelName),
     schema: judgeSchema,
-    prompt: judgePrompt(testCase, gold, prediction),
+    prompt: judgePrompt(testCase, gold, facts, prediction),
     reasoning: evaluator.reasoning,
     maxOutputTokens: 3000,
   });
@@ -298,6 +375,9 @@ async function judgeWithGemini(testCase: ManifestCase, gold: string, prediction:
 
 async function scoreCase(modelId: string, testCase: ManifestCase) {
   const checkFile = JSON.parse(await readFile(testCase.checks, "utf-8")) as CheckFile;
+  const factFile = testCase.facts
+    ? (JSON.parse(await readFile(testCase.facts, "utf-8")) as FactFile)
+    : ({ facts: [] } as unknown as FactFile);
   const runDir = path.join("runs", modelId, testCase.id);
   const rawPrediction = await readFile(path.join(runDir, "prediction.md"), "utf-8");
   const prediction = normalize(rawPrediction);
@@ -318,12 +398,13 @@ async function scoreCase(modelId: string, testCase: ManifestCase) {
       completeness: 0,
       structure: 0,
       markdownQuality: 0,
+      factResults: factFile.facts.map((fact) => ({ id: fact.id, status: "missing", rationale: "Model run failed." })),
       findings: [{ severity: "critical", type: "missing", explanation: "Model run failed, so no faithful Markdown was produced." }],
       rationale: "The model run failed.",
     };
   } else {
     try {
-      const judged = await judgeWithGemini(testCase, gold, rawPrediction);
+      const judged = await judgeWithGemini(testCase, gold, factFile.facts, rawPrediction);
       judge = judged.result;
       judgeElapsedMs = judged.elapsedMs;
       judgeUsage = judged.usage;
@@ -335,14 +416,16 @@ async function scoreCase(modelId: string, testCase: ManifestCase) {
         completeness: 0,
         structure: 0,
         markdownQuality: 0,
+        factResults: factFile.facts.map((fact) => ({ id: fact.id, status: "missing", rationale: `Evaluator failed: ${judgeError}` })),
         findings: [{ severity: "critical", type: "missing", explanation: `Evaluator failed: ${judgeError}` }],
         rationale: "The evaluator failed.",
       };
     }
   }
 
+  const factScore = scoreFacts(factFile.facts, judge.factResults ?? []);
   const dimensionScores = {
-    accuracy: clampScore(judge.accuracy),
+    accuracy: factScore.score ?? clampScore(judge.accuracy),
     completeness: clampScore(judge.completeness),
     structure: clampScore(judge.structure),
     markdownQuality: clampScore(judge.markdownQuality),
@@ -373,6 +456,7 @@ async function scoreCase(modelId: string, testCase: ManifestCase) {
       error: judgeError,
     },
     dimensions: dimensionScores,
+    factScore,
     findings: judge.findings,
     rationale: judge.rationale,
     deterministic,

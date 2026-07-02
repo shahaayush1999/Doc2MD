@@ -1,0 +1,56 @@
+{
+  "id": "H21-conference-schedule-grid",
+  "title": "Conference Schedule Grid",
+  "family": "spatial",
+  "tags": [
+    "raster-only",
+    "schedule",
+    "merged-cells",
+    "icons",
+    "room-grid"
+  ],
+  "facts": [
+    {
+      "id": "schedule.legend",
+      "category": "visual",
+      "weight": 3,
+      "expectation": "Legend says star means preregistration required and dot means hybrid session.",
+      "guidance": ""
+    },
+    {
+      "id": "schedule.registration",
+      "category": "spatial",
+      "weight": 4,
+      "expectation": "08:30-09:00 Registration in Atrium spans all rooms.",
+      "guidance": ""
+    },
+    {
+      "id": "schedule.1000",
+      "category": "spatial",
+      "weight": 5,
+      "expectation": "10:00-10:45 has star SLO Math in Hall A, dot Tracing Lab in Lab 1, and Cost Controls in Lab 2.",
+      "guidance": ""
+    },
+    {
+      "id": "schedule.incident",
+      "category": "spatial",
+      "weight": 5,
+      "expectation": "11:00-12:00 has Vendor briefings in Hall A and Incident Drill spanning Lab 1 and Lab 2.",
+      "guidance": ""
+    },
+    {
+      "id": "schedule.lunch",
+      "category": "spatial",
+      "weight": 4,
+      "expectation": "12:00-13:00 Lunch in Courtyard spans all rooms.",
+      "guidance": ""
+    },
+    {
+      "id": "schedule.1315",
+      "category": "spatial",
+      "weight": 4,
+      "expectation": "13:15-14:00 has Postmortem Patterns in Hall A, Forecasting in Lab 1, and FinOps Clinic in Lab 2.",
+      "guidance": ""
+    }
+  ]
+}

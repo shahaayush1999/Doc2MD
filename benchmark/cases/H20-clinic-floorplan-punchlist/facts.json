@@ -1,0 +1,42 @@
+{
+  "id": "H20-clinic-floorplan-punchlist",
+  "title": "Clinic Floor-Plan Punch List",
+  "family": "visual",
+  "tags": [
+    "raster-only",
+    "floor-plan",
+    "callouts",
+    "diagram",
+    "table"
+  ],
+  "facts": [
+    {
+      "id": "floorplan.rooms",
+      "category": "visual",
+      "weight": 3,
+      "expectation": "Describes the floor plan rooms A101 Lobby, A102 Exam 1, A103 Storage, and corridor.",
+      "guidance": ""
+    },
+    {
+      "id": "floorplan.p1",
+      "category": "visual",
+      "weight": 5,
+      "expectation": "P1 is a red circle in A102 under the sink for Active leak, owner Mei, due 2026-07-09, priority P0, status Open.",
+      "guidance": ""
+    },
+    {
+      "id": "floorplan.e2",
+      "category": "visual",
+      "weight": 5,
+      "expectation": "E2 is a yellow triangle on the A101 west wall for GFCI outlet mislabeled, owner Omar, due 2026-07-12, priority P2, status Blocked by permit.",
+      "guidance": ""
+    },
+    {
+      "id": "floorplan.f3",
+      "category": "visual",
+      "weight": 5,
+      "expectation": "F3 is a blue square near the A103 south door for Cracked floor tile, owner Lina, due 2026-07-15, priority P3, status Done.",
+      "guidance": ""
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "id": "H15-landscape-heatmap",
+  "title": "Landscape Heatmap Escalation Plan",
+  "family": "tables",
+  "tags": [
+    "raster-only",
+    "landscape-insert",
+    "heatmap",
+    "diagonal-mark",
+    "wide-table"
+  ],
+  "facts": [
+    {
+      "id": "legend",
+      "category": "text",
+      "weight": 2,
+      "expectation": "legend",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "api-thu",
+      "category": "tables",
+      "weight": 2.5,
+      "expectation": "api-thu",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "data-fri",
+      "category": "tables",
+      "weight": 2.5,
+      "expectation": "data-fri",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "billing-sat",
+      "category": "tables",
+      "weight": 2.5,
+      "expectation": "billing-sat",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "export-fri-yellow",
+      "category": "binding",
+      "weight": 2.5,
+      "expectation": "export-fri-yellow",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "weekend",
+      "category": "structure",
+      "weight": 1.5,
+      "expectation": "weekend",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    }
+  ]
+}

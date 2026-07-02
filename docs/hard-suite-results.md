@@ -1,47 +1,42 @@
-# Doc2MD-Hard-11 Calibration Results
+# Doc2MD-Hard-15 Calibration Status
 
-These results are from the current generated `Doc2MD-Hard-11` suite, version `0.4.0`. Raw run outputs live under ignored `runs/` directories and are not committed.
+The current generated suite is `Doc2MD-Hard-15`, version `0.5.0`. It has not yet been fully calibrated across the comparison model set.
 
-Version `0.4.0` switches the primary score from deterministic checklist scoring to gold-answer-key comparison with a Gemini 3.1 Flash Lite judge. Each case's `gold.md` is the source of truth. The deterministic checks remain in `score.json` as an audit signal, but they do not determine the headline score.
+Version `0.5.0` makes two important changes:
 
-These scores are not directly comparable with the earlier `0.3.1` deterministic calibration. Each score below is from one judged run; repeat variance should be measured before publishing leaderboard claims.
+- Adds `facts.json` beside each `gold.md`. The evaluator now marks weighted fact obligations as `correct`, `partial`, `incorrect`, or `missing`, and the headline accuracy score is computed from those labels.
+- Adds four compound document-reasoning cases: financial ARR bridge, insurance EOB, clinic floor-plan punch list, and conference schedule grid.
 
-## Calibration
+The previous `Doc2MD-Hard-11` v0.4.0 results are now historical and should not be compared directly with v0.5.0 results. The suite size changed from 11 to 15 cases, and the scoring method changed from holistic gold-key accuracy to weighted fact-obligation accuracy.
 
-| Model | Score | Accuracy | Family minimum | Model cost | Judge cost | Total latency | Avg latency | Failures |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| `vertex-gemini-3.5-flash` | 96.9 | 97.7 | 86.5 | $0.034167 | $0.006243 | 31.333s | 2.848s | 0% |
-| `vertex-gemini-3.1-flash-lite` | 92.5 | 92.3 | 46.5 | $0.005192 | $0.006633 | 26.005s | 2.364s | 0% |
-| `openai-gpt-5.4-nano` | 90.5 | 90.5 | 66.5 | $0.005022 | $0.007125 | 66.212s | 6.019s | 0% |
-| `openai-gpt-5-nano` | 83.7 | 83.2 | 40.5 | $0.001754 | $0.007686 | 62.513s | 5.683s | 0% |
-| `openai-gpt-4o-mini` | 75.5 | 73.2 | 30.5 | $0.043617 | $0.007510 | 81.552s | 7.414s | 0% |
+## Historical v0.4.0 Reference
 
-## Family Scores
+These one-run scores are retained only as context for why v0.5.0 was created:
 
-| Family | Gemini 3.5 Flash | Gemini 3.1 Flash Lite | GPT-5.4 Nano | GPT-5 Nano | GPT-4o Mini |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Visibility | 99.5 | 99.2 | 99.4 | 99.4 | 93.8 |
-| Spatial | 98.8 | 46.5 | 66.5 | 40.5 | 30.5 |
-| Layout | 96.6 | 95.9 | 90.9 | 86.2 | 90.4 |
-| Forms | 98.8 | 99.3 | 90.8 | 87.0 | 50.0 |
-| Tables | 100.0 | 100.0 | 99.3 | 93.8 | 40.0 |
-| Visual | 86.5 | 93.5 | 85.3 | 69.5 | 70.0 |
+| Model | v0.4.0 Score | v0.4.0 Accuracy |
+| --- | ---: | ---: |
+| `vertex-gemini-3.5-flash` | 96.9 | 97.7 |
+| `vertex-gemini-3.1-flash-lite` | 92.5 | 92.3 |
+| `openai-gpt-5.4-nano` | 90.5 | 90.5 |
+| `openai-gpt-5-nano` | 83.7 | 83.2 |
+| `openai-gpt-4o-mini` | 75.5 | 73.2 |
 
-## Current Read
+The spread was too small because many cases were single-challenge pages. v0.5.0 shifts toward compound pages where table structure, visual relations, legends, numeric facts, footnotes, and reading order interact.
 
-The gold-key judge gives better signal than the deterministic checklist for this suite:
+## Smoke Test
 
-- `H15-landscape-heatmap` now heavily penalizes GPT-4o Mini because it loses the red-slash condition and corrupts several table cells. The old checklist overestimated this response.
-- `H17-redlined-contract` now heavily penalizes GPT-5 Nano because it reverses inserted/deleted text. The old checklist caught some of this, but not enough.
-- `H03-raster-gantt` remains the strongest visual-spatial separator. Gemini 3.5 Flash scores `98.8`; all other tested models are weak or incomplete.
-- `H16-multipanel-metrics` now separates models on whether they preserve the required cross-panel warning instead of replacing it with generic analysis.
+The fact-aware scorer was smoke-tested on the existing `openai-gpt-5-nano` run outputs for the 11 overlapping cases. It produced harsher scores on cases where previous holistic judging was too generous, especially `H03-raster-gantt`, which dropped to `9.5` because the weighted task/owner/time obligations were missing or wrong.
 
-The current ordering is more plausible than the deterministic `0.3.1` pass: Gemini 3.5 Flash leads overall, Gemini 3.1 Flash Lite remains strong, GPT-5.4 Nano is close on many text-heavy cases but weaker on visual-spatial reconstruction, and older/smaller models fall further behind.
+This is not a leaderboard result because the four new v0.5.0 cases have not been run for that model.
 
-## Evaluator Caveats
+## Next Calibration
 
-The judge is itself an LLM, so these scores have evaluator variance. It is especially important to repeat judge runs for close comparisons, and to inspect judge findings when a result contradicts qualitative review.
+Run the full v0.5.0 suite for:
 
-Using Gemini 3.1 Flash Lite as judge also means Gemini-family candidates are not evaluated by a provider-independent system. The deterministic audit and manual inspection should be used to catch suspicious self-family bias until a multi-judge or human-audited calibration exists.
+- `vertex-gemini-3.5-flash`
+- `vertex-gemini-3.1-flash-lite`
+- `openai-gpt-5.4-nano`
+- `openai-gpt-5-nano`
+- `openai-gpt-4o-mini`
 
-Next work should focus on repeat variance for the new gold-key judge and on strengthening the remaining saturated cases, not on adding many more documents.
+For benchmark-development calibration, run at least three repetitions before treating close scores as meaningful. For publication-quality claims, use five repetitions and report mean, standard deviation, confidence intervals, family scores, worst-run score, cost, latency, and Pareto frontiers.

@@ -6,9 +6,9 @@ Current benchmark planning is in [docs/benchmark-design.md](docs/benchmark-desig
 
 ## Hard Candidate Suite
 
-The current runnable suite is **Doc2MD-Hard-11**, a compact benchmark focused on visible-vs-extractable conflicts, raster spatial normalization, complex scientific/poster layouts, wide heatmaps, multi-panel charts, redlines, and nonlinear reading order.
+The current runnable suite is **Doc2MD-Hard-15**, a compact benchmark focused on visible-vs-extractable conflicts, raster spatial normalization, complex scientific/poster layouts, wide heatmaps, multi-panel charts, redlines, schedules, floor-plan callouts, forms, and financial tables.
 
-Each case includes a `gold.md` answer key. `npm run score` compares model output against that answer key with a Gemini 3.1 Flash Lite judge, with accuracy weighted most heavily. Deterministic checks are retained as an audit signal in each `score.json`.
+Each case includes a `gold.md` answer key and `facts.json` weighted fact obligations. `npm run score` uses a Gemini 3.1 Flash Lite judge to mark each fact as correct, partial, incorrect, or missing, then computes accuracy from those fact labels. Deterministic checks are retained as an audit signal in each `score.json`.
 
 Generate the benchmark:
 

@@ -1,0 +1,57 @@
+{
+  "id": "H13-scientific-two-column",
+  "title": "Scientific Paper With Embedded Table And Figure",
+  "family": "layout",
+  "tags": [
+    "raster-only",
+    "scientific-paper",
+    "multi-column",
+    "table",
+    "figure",
+    "footnote"
+  ],
+  "facts": [
+    {
+      "id": "paper-reading-order",
+      "category": "layout",
+      "weight": 3,
+      "expectation": "paper-reading-order",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "ablation-patch",
+      "category": "tables",
+      "weight": 2,
+      "expectation": "ablation-patch",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "ablation-caption",
+      "category": "tables",
+      "weight": 2,
+      "expectation": "ablation-caption",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "figure-path",
+      "category": "visual",
+      "weight": 2.5,
+      "expectation": "figure-path",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "equation",
+      "category": "text",
+      "weight": 1.5,
+      "expectation": "equation",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    },
+    {
+      "id": "footnote",
+      "category": "text",
+      "weight": 1.5,
+      "expectation": "footnote",
+      "guidance": "Derived from the deterministic audit checklist. Mark correct when the candidate faithfully preserves this obligation, even if wording or Markdown syntax differs."
+    }
+  ]
+}

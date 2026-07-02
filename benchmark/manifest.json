@@ -1,9 +1,9 @@
 {
-  "name": "Doc2MD-Hard-11",
-  "version": "0.4.0",
-  "description": "Compact hard Doc2MD candidate suite focused on complex raster layouts, visual-to-structure reconstruction, table/figure binding, redlines, and visibility semantics.",
-  "caseCount": 11,
-  "pageCount": 11,
+  "name": "Doc2MD-Hard-15",
+  "version": "0.5.0",
+  "description": "Compact hard Doc2MD candidate suite focused on compound document reasoning: complex raster layouts, visual-to-structure reconstruction, table/figure binding, redlines, schedules, forms, diagrams, and financial tables.",
+  "caseCount": 15,
+  "pageCount": 15,
   "cases": [
     {
       "id": "H01-hidden-stale-release",
@@ -18,7 +18,8 @@
       "pdf": "benchmark/cases/H01-hidden-stale-release/source.pdf",
       "gold": "benchmark/cases/H01-hidden-stale-release/gold.md",
       "spec": "benchmark/cases/H01-hidden-stale-release/spec.md",
-      "checks": "benchmark/cases/H01-hidden-stale-release/checks.json"
+      "checks": "benchmark/cases/H01-hidden-stale-release/checks.json",
+      "facts": "benchmark/cases/H01-hidden-stale-release/facts.json"
     },
     {
       "id": "H02-opaque-stale-shipment",
@@ -33,7 +34,8 @@
       "pdf": "benchmark/cases/H02-opaque-stale-shipment/source.pdf",
       "gold": "benchmark/cases/H02-opaque-stale-shipment/gold.md",
       "spec": "benchmark/cases/H02-opaque-stale-shipment/spec.md",
-      "checks": "benchmark/cases/H02-opaque-stale-shipment/checks.json"
+      "checks": "benchmark/cases/H02-opaque-stale-shipment/checks.json",
+      "facts": "benchmark/cases/H02-opaque-stale-shipment/facts.json"
     },
     {
       "id": "H03-raster-gantt",
@@ -48,7 +50,8 @@
       "pdf": "benchmark/cases/H03-raster-gantt/source.pdf",
       "gold": "benchmark/cases/H03-raster-gantt/gold.md",
       "spec": "benchmark/cases/H03-raster-gantt/spec.md",
-      "checks": "benchmark/cases/H03-raster-gantt/checks.json"
+      "checks": "benchmark/cases/H03-raster-gantt/checks.json",
+      "facts": "benchmark/cases/H03-raster-gantt/facts.json"
     },
     {
       "id": "H07-broken-pitch-slide",
@@ -65,7 +68,8 @@
       "pdf": "benchmark/cases/H07-broken-pitch-slide/source.pdf",
       "gold": "benchmark/cases/H07-broken-pitch-slide/gold.md",
       "spec": "benchmark/cases/H07-broken-pitch-slide/spec.md",
-      "checks": "benchmark/cases/H07-broken-pitch-slide/checks.json"
+      "checks": "benchmark/cases/H07-broken-pitch-slide/checks.json",
+      "facts": "benchmark/cases/H07-broken-pitch-slide/facts.json"
     },
     {
       "id": "H11-two-column-sidebar",
@@ -81,7 +85,8 @@
       "pdf": "benchmark/cases/H11-two-column-sidebar/source.pdf",
       "gold": "benchmark/cases/H11-two-column-sidebar/gold.md",
       "spec": "benchmark/cases/H11-two-column-sidebar/spec.md",
-      "checks": "benchmark/cases/H11-two-column-sidebar/checks.json"
+      "checks": "benchmark/cases/H11-two-column-sidebar/checks.json",
+      "facts": "benchmark/cases/H11-two-column-sidebar/facts.json"
     },
     {
       "id": "H12-bilingual-credit",
@@ -96,7 +101,8 @@
       "pdf": "benchmark/cases/H12-bilingual-credit/source.pdf",
       "gold": "benchmark/cases/H12-bilingual-credit/gold.md",
       "spec": "benchmark/cases/H12-bilingual-credit/spec.md",
-      "checks": "benchmark/cases/H12-bilingual-credit/checks.json"
+      "checks": "benchmark/cases/H12-bilingual-credit/checks.json",
+      "facts": "benchmark/cases/H12-bilingual-credit/facts.json"
     },
     {
       "id": "H13-scientific-two-column",
@@ -114,7 +120,8 @@
       "pdf": "benchmark/cases/H13-scientific-two-column/source.pdf",
       "gold": "benchmark/cases/H13-scientific-two-column/gold.md",
       "spec": "benchmark/cases/H13-scientific-two-column/spec.md",
-      "checks": "benchmark/cases/H13-scientific-two-column/checks.json"
+      "checks": "benchmark/cases/H13-scientific-two-column/checks.json",
+      "facts": "benchmark/cases/H13-scientific-two-column/facts.json"
     },
     {
       "id": "H14-three-column-poster",
@@ -131,7 +138,8 @@
       "pdf": "benchmark/cases/H14-three-column-poster/source.pdf",
       "gold": "benchmark/cases/H14-three-column-poster/gold.md",
       "spec": "benchmark/cases/H14-three-column-poster/spec.md",
-      "checks": "benchmark/cases/H14-three-column-poster/checks.json"
+      "checks": "benchmark/cases/H14-three-column-poster/checks.json",
+      "facts": "benchmark/cases/H14-three-column-poster/facts.json"
     },
     {
       "id": "H15-landscape-heatmap",
@@ -148,7 +156,8 @@
       "pdf": "benchmark/cases/H15-landscape-heatmap/source.pdf",
       "gold": "benchmark/cases/H15-landscape-heatmap/gold.md",
       "spec": "benchmark/cases/H15-landscape-heatmap/spec.md",
-      "checks": "benchmark/cases/H15-landscape-heatmap/checks.json"
+      "checks": "benchmark/cases/H15-landscape-heatmap/checks.json",
+      "facts": "benchmark/cases/H15-landscape-heatmap/facts.json"
     },
     {
       "id": "H16-multipanel-metrics",
@@ -166,7 +175,8 @@
       "pdf": "benchmark/cases/H16-multipanel-metrics/source.pdf",
       "gold": "benchmark/cases/H16-multipanel-metrics/gold.md",
       "spec": "benchmark/cases/H16-multipanel-metrics/spec.md",
-      "checks": "benchmark/cases/H16-multipanel-metrics/checks.json"
+      "checks": "benchmark/cases/H16-multipanel-metrics/checks.json",
+      "facts": "benchmark/cases/H16-multipanel-metrics/facts.json"
     },
     {
       "id": "H17-redlined-contract",
@@ -183,7 +193,80 @@
       "pdf": "benchmark/cases/H17-redlined-contract/source.pdf",
       "gold": "benchmark/cases/H17-redlined-contract/gold.md",
       "spec": "benchmark/cases/H17-redlined-contract/spec.md",
-      "checks": "benchmark/cases/H17-redlined-contract/checks.json"
+      "checks": "benchmark/cases/H17-redlined-contract/checks.json",
+      "facts": "benchmark/cases/H17-redlined-contract/facts.json"
+    },
+    {
+      "id": "H18-financial-arr-bridge",
+      "title": "Financial ARR Bridge Board Pack",
+      "family": "tables",
+      "tags": [
+        "raster-only",
+        "finance",
+        "hierarchical-table",
+        "waterfall-chart",
+        "footnotes"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H18-financial-arr-bridge/source.pdf",
+      "gold": "benchmark/cases/H18-financial-arr-bridge/gold.md",
+      "spec": "benchmark/cases/H18-financial-arr-bridge/spec.md",
+      "checks": "benchmark/cases/H18-financial-arr-bridge/checks.json",
+      "facts": "benchmark/cases/H18-financial-arr-bridge/facts.json"
+    },
+    {
+      "id": "H19-insurance-eob",
+      "title": "Insurance Explanation of Benefits",
+      "family": "forms",
+      "tags": [
+        "raster-only",
+        "insurance",
+        "checkbox",
+        "summary-card",
+        "financial-table"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H19-insurance-eob/source.pdf",
+      "gold": "benchmark/cases/H19-insurance-eob/gold.md",
+      "spec": "benchmark/cases/H19-insurance-eob/spec.md",
+      "checks": "benchmark/cases/H19-insurance-eob/checks.json",
+      "facts": "benchmark/cases/H19-insurance-eob/facts.json"
+    },
+    {
+      "id": "H20-clinic-floorplan-punchlist",
+      "title": "Clinic Floor-Plan Punch List",
+      "family": "visual",
+      "tags": [
+        "raster-only",
+        "floor-plan",
+        "callouts",
+        "diagram",
+        "table"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H20-clinic-floorplan-punchlist/source.pdf",
+      "gold": "benchmark/cases/H20-clinic-floorplan-punchlist/gold.md",
+      "spec": "benchmark/cases/H20-clinic-floorplan-punchlist/spec.md",
+      "checks": "benchmark/cases/H20-clinic-floorplan-punchlist/checks.json",
+      "facts": "benchmark/cases/H20-clinic-floorplan-punchlist/facts.json"
+    },
+    {
+      "id": "H21-conference-schedule-grid",
+      "title": "Conference Schedule Grid",
+      "family": "spatial",
+      "tags": [
+        "raster-only",
+        "schedule",
+        "merged-cells",
+        "icons",
+        "room-grid"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H21-conference-schedule-grid/source.pdf",
+      "gold": "benchmark/cases/H21-conference-schedule-grid/gold.md",
+      "spec": "benchmark/cases/H21-conference-schedule-grid/spec.md",
+      "checks": "benchmark/cases/H21-conference-schedule-grid/checks.json",
+      "facts": "benchmark/cases/H21-conference-schedule-grid/facts.json"
     }
   ]
 }

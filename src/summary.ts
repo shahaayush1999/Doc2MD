@@ -8,6 +8,7 @@ type Score = {
   score: number;
   dimensions?: Record<string, number>;
   findings?: Array<{ severity: string; type: string; explanation: string }>;
+  factScore?: { score: number | null; earned: number; possible: number };
   scorer?: { estimatedCostUsd?: number; elapsedMs?: number; evaluatorModelId?: string };
   estimatedCostUsd: number;
   elapsedMs: number;
@@ -110,6 +111,7 @@ const summary = {
     elapsedMs: score.elapsedMs,
     estimatedCostUsd: round(score.estimatedCostUsd, 6),
     judgeCostUsd: round(score.scorer?.estimatedCostUsd ?? 0, 6),
+    factScore: score.factScore?.score,
     deterministicScore: score.deterministic?.score,
   })),
   weakestFindings,
