@@ -21,7 +21,7 @@ type ModelSpec = {
   id: string;
   modelName: string;
   provider: "google-vertex" | "openai";
-  reasoning: "none" | "minimal";
+  reasoning?: "none" | "minimal";
   inputPerMillion: number;
   outputPerMillion: number;
 };
@@ -58,6 +58,13 @@ const models: Record<string, ModelSpec> = {
     reasoning: "minimal",
     inputPerMillion: 0.05,
     outputPerMillion: 0.4,
+  },
+  "openai-gpt-4o-mini": {
+    id: "openai-gpt-4o-mini",
+    modelName: "gpt-4o-mini",
+    provider: "openai",
+    inputPerMillion: 0.15,
+    outputPerMillion: 0.6,
   },
 };
 
@@ -113,7 +120,7 @@ async function runCase(testCase: ManifestCase, spec: ModelSpec) {
         },
       ],
       maxOutputTokens: 12000,
-      reasoning: spec.reasoning,
+      ...(spec.reasoning ? { reasoning: spec.reasoning } : {}),
     });
     const elapsedMs = Math.round(performance.now() - started);
     const summary = {

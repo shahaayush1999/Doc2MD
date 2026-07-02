@@ -35,6 +35,8 @@ function normalize(text: string): string {
     .replace(/<[^>]+>/g, " ")
     .replace(/[*_`~]+/g, "")
     .replace(/(\d+(?:\.\d+)?)\s+h\b/giu, "$1h")
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
     .replace(/[ \t]+/g, " ")
     .replace(/[“”]/g, '"')
     .replace(/[‘’]/g, "'")
