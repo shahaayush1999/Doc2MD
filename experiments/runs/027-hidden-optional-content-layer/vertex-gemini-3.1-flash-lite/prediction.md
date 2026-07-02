@@ -1,1 +1,0 @@
-[Image: The original document is a blank white page.]
