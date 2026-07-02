@@ -52,26 +52,31 @@
       }
     },
     {
-      "id": "checkboxes",
+      "id": "customer-informed-checked",
       "category": "forms",
-      "weight": 1.5,
-      "description": "checkboxes",
-      "near": {
-        "terms": [
-          "Cliente informado",
-          "Customer informed",
-          "Pieza pendiente",
-          "Part pending"
-        ],
-        "window": 420
-      }
+      "weight": 2,
+      "description": "customer informed checkbox is checked",
+      "all": [
+        "(\\[x\\]\\s*Cliente informado|\u2611\\s*Cliente informado|Cliente informado[\\s\\S]{0,80}(selected|checked))"
+      ]
+    },
+    {
+      "id": "pending-part-unchecked",
+      "category": "forms",
+      "weight": 2.5,
+      "description": "pending part checkbox is unchecked",
+      "all": [
+        "(\\[\\s\\]\\s*Pieza pendiente|\u2610\\s*Pieza pendiente|Pieza pendiente[\\s\\S]{0,80}(unselected|unchecked|no part is pending))"
+      ]
     },
     {
       "id": "no-pending-selected",
       "category": "hallucination",
-      "weight": 2,
+      "weight": 2.5,
       "description": "no-pending-selected",
       "none": [
+        "\\[x\\]\\s*Pieza pendiente",
+        "\u2611\\s*Pieza pendiente",
         "Pieza pendiente selected",
         "Part pending selected",
         "Pieza pendiente checked",

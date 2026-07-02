@@ -87,7 +87,8 @@
       "description": "no-current-30",
       "none": [
         "must return Customer Data within 30 calendar days",
-        "current\\.\\*30 calendar days"
+        "current.*30 calendar days",
+        "within 10 calendar days"
       ]
     },
     {
@@ -96,8 +97,18 @@
       "weight": 2,
       "description": "no-inserted-efforts",
       "none": [
-        "Inserted\\.\\*commercially reasonable efforts",
-        "current\\.\\*commercially reasonable efforts"
+        "Inserted.*commercially reasonable efforts",
+        "current.*commercially reasonable efforts",
+        "Inserted phrase: commercially reasonable efforts"
+      ]
+    },
+    {
+      "id": "no-inserted-as-deleted",
+      "category": "structure",
+      "weight": 2,
+      "description": "no-inserted-as-deleted",
+      "none": [
+        "include inserted text as deleted"
       ]
     }
   ]

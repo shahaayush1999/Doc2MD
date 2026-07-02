@@ -150,6 +150,10 @@ def none_check(id_: str, terms: list[str], weight: float = 2, category: str = "h
     return {"id": id_, "category": category, "weight": weight, "description": description or id_, "none": [literal(t) for t in terms]}
 
 
+def none_regex_check(id_: str, patterns: list[str], weight: float = 2, category: str = "hallucination", description: str | None = None) -> dict:
+    return {"id": id_, "category": category, "weight": weight, "description": description or id_, "none": patterns}
+
+
 def near_check(id_: str, category: str, terms: list[str], weight: float = 2, window: int = 280, description: str | None = None) -> dict:
     return {
         "id": id_,
@@ -413,30 +417,63 @@ def h06() -> Case:
 
 
 def h07() -> Case:
-    img = base_page("Broken Pitch Slide Export")
+    img = base_page("Overlapping GTM Timeline Slide")
     d = ImageDraw.Draw(img)
-    draw_card(d, (90, 260, 540, 820), "Phase 1", ["Collect source PDFs", "Inspect gold object list"], "#eef2ff", "#4338ca")
-    draw_card(d, (470, 480, 1010, 1040), "Phase 2", ["Run cheap models", "Harden cases where", "scores saturate"], "#ecfeff", "#0f766e")
-    draw_card(d, (980, 300, 1530, 870), "Phase 3", ["Publish calibration", "after leakage and", "ambiguity review"], "#f0fdf4", "#15803d")
-    d.rounded_rectangle((255, 1040, 930, 1230), radius=16, fill="#fef3c7", outline="#92400e", width=4)
-    d.text((285, 1092), "Sticky note:", fill="#92400e", font=F["h2"])
-    d.text((285, 1145), "Do NOT call this a leaderboard yet", fill="#92400e", font=F["body"])
-    d.text((110, 1340), "Decision requested: approve hard-suite pilot, not public launch.", fill="#111827", font=F["h2"])
+    d.text((100, 150), "Investor update slide. Read each lane left-to-right; exported cards overlap.", fill="#7f1d1d", font=F["small"])
+    months = ["Aug", "Sep", "Oct", "Nov"]
+    left, top = 360, 315
+    for i, month in enumerate(months):
+        x = left + i * 265
+        d.text((x + 82, 255), month, fill="#111827", font=F["h2"])
+        d.line((x, 305, x, 1190), fill="#e2e8f0", width=4)
+    d.line((left + len(months) * 265, 305, left + len(months) * 265, 1190), fill="#e2e8f0", width=4)
+
+    lanes = [("Product", 390), ("Security", 660), ("Sales", 930)]
+    for lane, y in lanes:
+        d.text((110, y + 52), lane, fill="#111827", font=F["h2"])
+        d.line((95, y + 145, 1510, y + 145), fill="#f1f5f9", width=3)
+
+    cards = [
+        ("Beta signups", "Maya", "target 1,200", 0.05, 0.85, 390, "#eef2ff", "#4338ca"),
+        ("Workflow v2", "Jon", "ship Oct 18", 1.05, 2.35, 430, "#ecfeff", "#0f766e"),
+        ("SOC2 audit", "Priya", "fieldwork", 0.1, 2.45, 660, "#fff7ed", "#c2410c"),
+        ("HIPAA BAA", "Lena", "legal review", 2.0, 3.55, 700, "#fee2e2", "#991b1b"),
+        ("Design partners", "Omar", "9 accounts", 0.0, 0.72, 930, "#f0fdf4", "#15803d"),
+        ("Enterprise pilots", "Omar", "$4.2M pipeline", 1.05, 3.75, 970, "#f8fafc", "#334155"),
+    ]
+    for title, owner, detail, start, end, y, fill, outline in cards:
+        x1 = int(left + start * 265)
+        x2 = int(left + end * 265)
+        d.rounded_rectangle((x1, y, x2, y + 120), radius=18, fill=fill, outline=outline, width=4)
+        d.text((x1 + 18, y + 16), title, fill="#111827", font=F["small"])
+        d.text((x1 + 18, y + 52), f"Owner: {owner}", fill="#334155", font=F["tiny"])
+        d.text((x1 + 18, y + 82), detail, fill="#334155", font=F["tiny"])
+
+    d.rounded_rectangle((1030, 1225, 1510, 1410), radius=16, fill="#fef3c7", outline="#92400e", width=4)
+    d.text((1060, 1260), "October dependency", fill="#92400e", font=F["h2"])
+    draw_text(d, (1060, 1310), "HIPAA BAA belongs to Security, not Product. Enterprise pilots depend on BAA legal review.", F["small"], fill="#92400e", width=33, leading=28)
+    d.text((100, 1350), "Footer: Board packet GTM-09. Preserve lane, month span, owner, and dependency.", fill="#475569", font=F["small"])
     return Case(
         "H07-broken-pitch-slide",
-        "Broken Pitch Slide Export",
+        "Overlapping GTM Timeline Slide",
         "layout",
-        ["raster-only", "slide", "overlap"],
-        "Untangle a mildly broken Office-export style slide without losing grouped callouts.",
-        "Raster-only slide with overlapping phase cards and a sticky note.",
-        ["phase order", "grouped phase text", "sticky note", "decision line"],
-        ["Recover reading order despite overlap.", "Bind Phase 2 to cheap models and hardening.", "Preserve sticky warning."],
-        "# Broken Pitch Slide Export\n\nPhase 1: Collect source PDFs and inspect the gold object list.\nPhase 2: Run cheap models, then harden cases where scores saturate.\nPhase 3: Publish calibration cases after leakage and ambiguity review.\nSticky note: Do NOT call this a leaderboard yet.\nDecision requested: approve hard-suite pilot, not public launch.\n",
+        ["raster-only", "slide", "overlap", "timeline", "swimlanes"],
+        "Recover an overlapping pitch-deck timeline by binding each card to lane, month span, owner, detail, and dependency.",
+        "Raster-only investor update slide with month grid, swimlanes, overlapping cards, and dependency note.",
+        ["lane-card bindings", "month spans", "owners", "dependency note", "footer"],
+        ["Bind each initiative to the correct lane.", "Preserve month spans and owners.", "Do not assign HIPAA BAA to Product."],
+        "# Overlapping GTM Timeline Slide\n\nProduct lane: Beta signups runs in Aug, owner Maya, target 1,200. Workflow v2 runs Sep-Oct, owner Jon, ship Oct 18.\n\nSecurity lane: SOC2 audit runs Aug-Oct, owner Priya, fieldwork. HIPAA BAA runs Oct-Nov, owner Lena, legal review.\n\nSales lane: Design partners runs in Aug, owner Omar, 9 accounts. Enterprise pilots runs Sep-Nov, owner Omar, $4.2M pipeline.\n\nOctober dependency: HIPAA BAA belongs to Security, not Product. Enterprise pilots depend on BAA legal review.\n\nFooter: Board packet GTM-09. Preserve lane, month span, owner, and dependency.\n",
         [
-            ordered_check("phase-order", "layout", ["Phase 1", "Phase 2", "Phase 3", "Sticky note", "Decision requested"], 2.5),
-            near_check("phase2", "layout", ["Phase 2", "cheap models", "harden", "saturate"], 2.5, 320),
-            all_check("sticky", "visual", ["Do NOT call this a leaderboard yet"], 2),
-            all_check("decision", "text", ["hard-suite pilot", "not public launch"], 1),
+            {"id": "product-beta", "category": "binding", "weight": 2, "description": "product beta card with Aug span", "all": [r"Product[\s\S]{0,500}Beta signups(?=[\s\S]{0,180}Aug)(?=[\s\S]{0,180}Maya)(?=[\s\S]{0,180}1,200)"]},
+            {"id": "product-workflow", "category": "binding", "weight": 2.5, "description": "workflow card with Sep-Oct span", "all": [r"Product[\s\S]{0,600}Workflow v2(?=[\s\S]{0,220}(Sep[\s\S]{0,80}Oct|Sep\s*[-–]\s*Oct))(?=[\s\S]{0,220}Jon)(?=[\s\S]{0,220}Oct 18)"]},
+            {"id": "security-soc2", "category": "binding", "weight": 2.5, "description": "SOC2 card with Aug-Oct span", "all": [r"Security[\s\S]{0,500}SOC2 audit(?=[\s\S]{0,220}(Aug[\s\S]{0,80}Oct|Aug\s*[-–]\s*Oct))(?=[\s\S]{0,220}Priya)(?=[\s\S]{0,220}fieldwork)"]},
+            {"id": "security-hipaa", "category": "binding", "weight": 2.5, "description": "HIPAA card with Oct-Nov span", "all": [r"Security[\s\S]{0,650}HIPAA BAA(?=[\s\S]{0,220}(Oct[\s\S]{0,80}Nov|Oct\s*[-–]\s*Nov))(?=[\s\S]{0,220}Lena)(?=[\s\S]{0,220}legal review)"]},
+            {"id": "sales-design", "category": "binding", "weight": 2, "description": "design partners card with Aug span", "all": [r"Sales[\s\S]{0,500}Design partners(?=[\s\S]{0,180}Aug)(?=[\s\S]{0,180}Omar)(?=[\s\S]{0,180}9 accounts)"]},
+            {"id": "sales-pilots", "category": "binding", "weight": 2.5, "description": "enterprise pilots card with Sep-Nov span", "all": [r"Sales[\s\S]{0,700}Enterprise pilots(?=[\s\S]{0,260}(Sep[\s\S]{0,100}Nov|Sep\s*[-–]\s*Nov))(?=[\s\S]{0,260}Omar)(?=[\s\S]{0,260}\$4\.2M)"]},
+            near_check("dependency", "layout", ["October dependency", "HIPAA BAA", "Security", "not Product", "Enterprise pilots"], 2, 520),
+            none_regex_check("no-hipaa-product", [r"HIPAA BAA[\s\S]{0,120}(Product lane|under Product|in Product)"], 2, "binding"),
+            none_regex_check("no-design-target-error", [r"Design partners[\s\S]{0,120}1,000", r"target 1,000"], 2, "binding"),
+            all_check("footer", "text", ["GTM-09", "lane", "month span"], 1),
         ],
         [img],
     )
@@ -472,7 +509,7 @@ def h08() -> Case:
             near_check("elim-negative", "tables", ["Intercompany", "(72)", "(81)"], 2.5),
             near_check("footnote-b", "tables", ["Footnote B", "SMB", "west region"], 2),
             all_check("total-q2", "tables", ["2,010"], 1),
-            none_check("no-positive-elim", ["Intercompany 72", "Intercompany.* 72 .* 81"], 2),
+            none_regex_check("no-positive-elim", [r"Intercompany 72", r"Intercompany.* 72 .* 81"], 2),
         ],
         [img],
     )
@@ -643,8 +680,21 @@ def h12() -> Case:
             {"id": "customer", "category": "text", "weight": 0.4, "description": "customer name", "all": [r"Jard[ií]n Norte"]},
             all_check("amount-invoice", "text", ["$128.40", "INV-771"], 0.5),
             near_check("reason-visit", "forms", ["demora de servicio", "12 dias", "2026-09-04", "Luis"], 2.5, 360),
-            near_check("checkboxes", "forms", ["Cliente informado", "Customer informed", "Pieza pendiente", "Part pending"], 1.5, 420),
-            none_check("no-pending-selected", ["Pieza pendiente selected", "Part pending selected", "Pieza pendiente checked", "Part pending checked"], 2),
+            {
+                "id": "customer-informed-checked",
+                "category": "forms",
+                "weight": 2,
+                "description": "customer informed checkbox is checked",
+                "all": [r"(\[x\]\s*Cliente informado|☑\s*Cliente informado|Cliente informado[\s\S]{0,80}(selected|checked))"],
+            },
+            {
+                "id": "pending-part-unchecked",
+                "category": "forms",
+                "weight": 2.5,
+                "description": "pending part checkbox is unchecked",
+                "all": [r"(\[\s\]\s*Pieza pendiente|☐\s*Pieza pendiente|Pieza pendiente[\s\S]{0,80}(unselected|unchecked|no part is pending))"],
+            },
+            none_regex_check("no-pending-selected", [r"\[x\]\s*Pieza pendiente", r"☑\s*Pieza pendiente", r"Pieza pendiente selected", r"Part pending selected", r"Pieza pendiente checked", r"Part pending checked"], 2.5),
         ],
         [img],
     )
@@ -896,7 +946,7 @@ def h16() -> Case:
             near_check("visual-severe", "visual", ["Visual", "severe", "19"], 2.5, 260),
             near_check("ken-aged", "tables", ["Ken", "24", "11", "risk"], 2.5, 260),
             near_check("noor-row", "tables", ["Noor", "14", "6", "risk"], 2, 260),
-            none_check("no-wrong-severe", ["Tables has the most severe", "Tables.*most severe"], 2),
+            none_regex_check("no-wrong-severe", [r"Tables has the most severe", r"Tables.*most severe"], 2),
         ],
         [img],
     )
@@ -943,8 +993,9 @@ def h17() -> Case:
             near_check("audit-current", "text", ["Audit logs", "400 days", "48 hours"], 2.5, 320),
             near_check("comment-a", "layout", ["Comment A", "Legal", "regulated customers"], 2, 260),
             near_check("comment-b", "layout", ["Comment B", "Security", "400 days", "deleted efforts"], 2, 360),
-            none_check("no-current-30", ["must return Customer Data within 30 calendar days", "current.*30 calendar days"], 3),
-            none_check("no-inserted-efforts", ["Inserted.*commercially reasonable efforts", "current.*commercially reasonable efforts"], 2),
+            none_regex_check("no-current-30", [r"must return Customer Data within 30 calendar days", r"current.*30 calendar days", r"within 10 calendar days"], 3),
+            none_regex_check("no-inserted-efforts", [r"Inserted.*commercially reasonable efforts", r"current.*commercially reasonable efforts", r"Inserted phrase: commercially reasonable efforts"], 2),
+            none_regex_check("no-inserted-as-deleted", [r"include inserted text as deleted"], 2, "structure"),
         ],
         [img],
     )
@@ -1050,7 +1101,7 @@ def main() -> None:
     CASE_ROOT.mkdir(parents=True, exist_ok=True)
     manifest = {
         "name": "Doc2MD-Hard-11",
-        "version": "0.3.0",
+        "version": "0.3.1",
         "description": "Compact hard Doc2MD candidate suite focused on complex raster layouts, visual-to-structure reconstruction, table/figure binding, redlines, and visibility semantics.",
         "caseCount": len(CASES),
         "pageCount": sum(len(case.pages) for case in CASES),

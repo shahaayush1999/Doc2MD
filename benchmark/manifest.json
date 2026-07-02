@@ -1,6 +1,6 @@
 {
   "name": "Doc2MD-Hard-11",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Compact hard Doc2MD candidate suite focused on complex raster layouts, visual-to-structure reconstruction, table/figure binding, redlines, and visibility semantics.",
   "caseCount": 11,
   "pageCount": 11,
@@ -52,12 +52,14 @@
     },
     {
       "id": "H07-broken-pitch-slide",
-      "title": "Broken Pitch Slide Export",
+      "title": "Overlapping GTM Timeline Slide",
       "family": "layout",
       "tags": [
         "raster-only",
         "slide",
-        "overlap"
+        "overlap",
+        "timeline",
+        "swimlanes"
       ],
       "pages": 1,
       "pdf": "benchmark/cases/H07-broken-pitch-slide/source.pdf",

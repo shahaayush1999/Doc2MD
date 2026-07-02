@@ -1,58 +1,113 @@
 {
   "id": "H07-broken-pitch-slide",
-  "title": "Broken Pitch Slide Export",
+  "title": "Overlapping GTM Timeline Slide",
   "family": "layout",
   "tags": [
     "raster-only",
     "slide",
-    "overlap"
+    "overlap",
+    "timeline",
+    "swimlanes"
   ],
   "checks": [
     {
-      "id": "phase-order",
-      "category": "layout",
-      "weight": 2.5,
-      "description": "phase-order",
-      "ordered": [
-        "Phase 1",
-        "Phase 2",
-        "Phase 3",
-        "Sticky note",
-        "Decision requested"
+      "id": "product-beta",
+      "category": "binding",
+      "weight": 2,
+      "description": "product beta card with Aug span",
+      "all": [
+        "Product[\\s\\S]{0,500}Beta signups(?=[\\s\\S]{0,180}Aug)(?=[\\s\\S]{0,180}Maya)(?=[\\s\\S]{0,180}1,200)"
       ]
     },
     {
-      "id": "phase2",
-      "category": "layout",
+      "id": "product-workflow",
+      "category": "binding",
       "weight": 2.5,
-      "description": "phase2",
+      "description": "workflow card with Sep-Oct span",
+      "all": [
+        "Product[\\s\\S]{0,600}Workflow v2(?=[\\s\\S]{0,220}(Sep[\\s\\S]{0,80}Oct|Sep\\s*[-\u2013]\\s*Oct))(?=[\\s\\S]{0,220}Jon)(?=[\\s\\S]{0,220}Oct 18)"
+      ]
+    },
+    {
+      "id": "security-soc2",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "SOC2 card with Aug-Oct span",
+      "all": [
+        "Security[\\s\\S]{0,500}SOC2 audit(?=[\\s\\S]{0,220}(Aug[\\s\\S]{0,80}Oct|Aug\\s*[-\u2013]\\s*Oct))(?=[\\s\\S]{0,220}Priya)(?=[\\s\\S]{0,220}fieldwork)"
+      ]
+    },
+    {
+      "id": "security-hipaa",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "HIPAA card with Oct-Nov span",
+      "all": [
+        "Security[\\s\\S]{0,650}HIPAA BAA(?=[\\s\\S]{0,220}(Oct[\\s\\S]{0,80}Nov|Oct\\s*[-\u2013]\\s*Nov))(?=[\\s\\S]{0,220}Lena)(?=[\\s\\S]{0,220}legal review)"
+      ]
+    },
+    {
+      "id": "sales-design",
+      "category": "binding",
+      "weight": 2,
+      "description": "design partners card with Aug span",
+      "all": [
+        "Sales[\\s\\S]{0,500}Design partners(?=[\\s\\S]{0,180}Aug)(?=[\\s\\S]{0,180}Omar)(?=[\\s\\S]{0,180}9 accounts)"
+      ]
+    },
+    {
+      "id": "sales-pilots",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "enterprise pilots card with Sep-Nov span",
+      "all": [
+        "Sales[\\s\\S]{0,700}Enterprise pilots(?=[\\s\\S]{0,260}(Sep[\\s\\S]{0,100}Nov|Sep\\s*[-\u2013]\\s*Nov))(?=[\\s\\S]{0,260}Omar)(?=[\\s\\S]{0,260}\\$4\\.2M)"
+      ]
+    },
+    {
+      "id": "dependency",
+      "category": "layout",
+      "weight": 2,
+      "description": "dependency",
       "near": {
         "terms": [
-          "Phase 2",
-          "cheap models",
-          "harden",
-          "saturate"
+          "October dependency",
+          "HIPAA BAA",
+          "Security",
+          "not Product",
+          "Enterprise pilots"
         ],
-        "window": 320
+        "window": 520
       }
     },
     {
-      "id": "sticky",
-      "category": "visual",
+      "id": "no-hipaa-product",
+      "category": "binding",
       "weight": 2,
-      "description": "sticky",
-      "all": [
-        "Do NOT call this a leaderboard yet"
+      "description": "no-hipaa-product",
+      "none": [
+        "HIPAA BAA[\\s\\S]{0,120}(Product lane|under Product|in Product)"
       ]
     },
     {
-      "id": "decision",
+      "id": "no-design-target-error",
+      "category": "binding",
+      "weight": 2,
+      "description": "no-design-target-error",
+      "none": [
+        "Design partners[\\s\\S]{0,120}1,000",
+        "target 1,000"
+      ]
+    },
+    {
+      "id": "footer",
       "category": "text",
       "weight": 1,
-      "description": "decision",
+      "description": "footer",
       "all": [
-        "hard-suite pilot",
-        "not public launch"
+        "GTM-09",
+        "lane",
+        "month span"
       ]
     }
   ]

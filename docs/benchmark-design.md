@@ -26,7 +26,7 @@ The target is not to trick models with artificial prompt-injection style documen
 | Tables in context | H15 | Wide heatmap table, slash markers, legend semantics, weekend columns. |
 | Forms and dense state binding | H12 | Bilingual labels, checkbox state, exact case IDs, blank/pending semantics. |
 | Visual facts | H16 | Multi-panel line chart, stacked bar chart, matrix, and cross-panel warning. |
-| Layout and reading order | H07, H11, H13, H14, H17 | Broken slide exports, sidebars, scientific paper columns, borderless pitch-deck matrices, redlined contracts, margin comments. |
+| Layout and reading order | H07, H11, H13, H14, H17 | Overlapping pitch-deck timelines, sidebars, scientific paper columns, borderless pitch-deck matrices, redlined contracts, margin comments. |
 
 ## Scoring
 
@@ -36,6 +36,8 @@ Each case has weighted deterministic checks:
 - `none`: prohibited regex patterns do not appear.
 - `ordered`: required terms appear in the intended reading order.
 - `near`: required terms appear within a local window.
+
+Generator helpers distinguish escaped literal negatives from raw regex negatives. Use `none_check` only for literal strings and `none_regex_check` when a prohibited pattern intentionally uses regex syntax.
 
 The current scorer reports:
 

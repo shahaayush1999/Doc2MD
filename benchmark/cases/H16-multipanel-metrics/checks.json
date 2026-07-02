@@ -73,7 +73,7 @@
       "description": "no-wrong-severe",
       "none": [
         "Tables has the most severe",
-        "Tables\\.\\*most severe"
+        "Tables.*most severe"
       ]
     }
   ]
