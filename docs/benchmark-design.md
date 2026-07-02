@@ -71,19 +71,19 @@ The current scorer reports:
 - Judge dimension scores.
 - Weighted fact score.
 - Deterministic audit category scores.
-- Model cost and judge cost.
+- Model cost.
 - Latency.
 - Input and output tokens.
 - Failure rate.
 - Judge findings and weakest deterministic audit checks.
 
-The scorer is still intentionally compact. Future versions can add Markdown parsing, table-grid scoring, structured block alignment, and multi-judge/repeated evaluation after the hard cases are stable. For publication-quality claims, repeated judge runs are needed because an LLM evaluator can have its own variance and provider-specific bias.
+The public benchmark row should stay compact: one score per model, model cost, model time, and output tokens. Judge internals are for debugging the benchmark, not for leaderboard reporting.
 
 ## Calibration Rule
 
 The first bar is: **calibration must preserve known capability ordering**.
 
-For the current model set, Gemini 3.5 Flash should score clearly above Gemini 3.1 Flash Lite on visual-to-structure cases, and Gemini 3.1 Flash Lite should not be judged mainly against GPT-5.4 Nano because GPT Nano is a weaker visual reasoner. If the best public model saturates the suite, that is acceptable only if cheaper models still separate cleanly and the benchmark reports score, cost, latency, and tokens as a Pareto frontier.
+For the current model set, Gemini 3.5 Flash should score clearly above Gemini 3.1 Flash Lite on visual-to-structure cases, and Gemini 3.1 Flash Lite should not be judged mainly against GPT-5.4 Nano because GPT Nano is a weaker visual reasoner. If the best public model saturates the suite, that is acceptable only if cheaper models still separate cleanly and the benchmark reports score, cost, latency, and output tokens.
 
 ## Expansion Policy
 

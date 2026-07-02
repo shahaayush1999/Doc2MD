@@ -29,6 +29,15 @@ The fact-aware scorer was smoke-tested on the existing `openai-gpt-5-nano` run o
 
 This is not a leaderboard result because the four new v0.5.0 cases have not been run for that model.
 
+## Current v0.5.0 Runs
+
+| Model | Score | Cost | Time | Output tokens |
+| --- | ---: | ---: | ---: | ---: |
+| `vertex-gemini-3.1-flash-lite` | 89.6 | $0.007523 | 38.278s | 3,385 |
+| `openai-gpt-5.4-nano` | 84.2 | $0.007224 | 100.334s | 3,160 |
+
+Current gap between these two models: `5.4` points.
+
 ## Next Calibration
 
 Run the full v0.5.0 suite for:
@@ -39,4 +48,4 @@ Run the full v0.5.0 suite for:
 - `openai-gpt-5-nano`
 - `openai-gpt-4o-mini`
 
-For benchmark-development calibration, run at least three repetitions before treating close scores as meaningful. For publication-quality claims, use five repetitions and report mean, standard deviation, confidence intervals, family scores, worst-run score, cost, latency, and Pareto frontiers.
+The public result table should report one row per model: score, model cost, model runtime, and output tokens. Repeat runs are useful only when diagnosing noise or suspicious close calls.
