@@ -1,11 +1,9 @@
-# Quadrant Roadmap Pitch Slide
+# Borderless Team Matrix Pitch Slide
 
-Legend: A is Relay cache, size S; B is PDF vision parser, size L; C is Billing export, size M; D is Partner sync, size S.
+Core team: Maya Singh is CEO / Product, ex-Stripe, has 12 yrs product experience, and led Relay launch. Jon Bell is CTO / Infra, ex-Snowflake, owns retrieval infra, and built vector cache. Priya Nair is COO / Ops, ex-Flexport, scaled support, and owns compliance. Omar Haddad is GTM / RevOps, ex-Atlassian, has pipeline $4.2M, and leads enterprise sales.
 
-Quadrant rules: upper-right means ship now; lower-right means schedule; upper-left means research; lower-left means park.
+Advisors: Lena Ortiz - former CISO, Okta. Theo Park - ex-CFO, Datadog.
 
-Chart interpretation: A / Relay cache is in the ship-now quadrant and is small. B / PDF vision parser is in the research quadrant and is large. C / Billing export is in the schedule quadrant and is medium. D / Partner sync is in the park quadrant and is small.
+Hiring next: VP Sales - Q4. Clinical Lead - Q1.
 
-Callout 1: A is small and in the ship-now quadrant. Callout 2: B is large; do not confuse its size with priority.
-
-Footer: Roadmap board RB-19. Preserve legend, quadrant meaning, marker sizes, and callouts.
+Footer: Deck v12. Advisors are not core team members. Hiring rows are open roles, not current employees.

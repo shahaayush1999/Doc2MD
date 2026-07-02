@@ -723,79 +723,67 @@ def h13() -> Case:
 
 
 def h14() -> Case:
-    img = base_page("Quadrant Roadmap Pitch Slide")
+    img = base_page("Borderless Team Matrix Pitch Slide")
     d = ImageDraw.Draw(img)
-    d.text((100, 150), "Roadmap review: infer quadrant placement from the plotted markers and the legend.", fill="#7f1d1d", font=F["small"])
-    d.rounded_rectangle((80, 240, 540, 1040), radius=16, fill="#f8fafc", outline="#334155", width=3)
-    d.text((110, 275), "Legend", fill="#111827", font=F["h2"])
-    draw_table(
-        d,
-        110,
-        335,
-        [100, 245, 80],
-        [["Code", "Initiative", "Size"], ["A", "Relay cache", "S"], ["B", "PDF vision parser", "L"], ["C", "Billing export", "M"], ["D", "Partner sync", "S"]],
-        60,
-    )
-    d.rounded_rectangle((120, 760, 500, 950), radius=14, fill="#fff7ed", outline="#c2410c", width=3)
-    draw_text(d, (145, 795), "Rule: upper-right means ship now. Lower-right means schedule. Upper-left means research. Lower-left means park.", F["small"], fill="#9a3412", width=27, leading=28)
+    d.text((100, 150), "Series A team slide. Names are column headers; facts below align vertically.", fill="#7f1d1d", font=F["small"])
+    d.text((100, 230), "Core team", fill="#111827", font=F["h1"])
+    d.text((100, 280), "Borderless matrix exported from slides. Preserve each person-to-fact binding.", fill="#475569", font=F["small"])
 
-    px1, py1, px2, py2 = 650, 300, 1510, 1060
-    d.rounded_rectangle((620, 240, 1570, 1120), radius=16, fill="#ffffff", outline="#334155", width=3)
-    d.text((875, 265), "Impact vs feasibility", fill="#111827", font=F["h2"])
-    # Quadrant fills
-    midx, midy = (px1 + px2) // 2, (py1 + py2) // 2
-    d.rectangle((px1, py1, midx, midy), fill="#eef2ff")
-    d.rectangle((midx, py1, px2, midy), fill="#dcfce7")
-    d.rectangle((px1, midy, midx, py2), fill="#f1f5f9")
-    d.rectangle((midx, midy, px2, py2), fill="#fef3c7")
-    d.line((px1, midy, px2, midy), fill="#111827", width=4)
-    d.line((midx, py1, midx, py2), fill="#111827", width=4)
-    d.rectangle((px1, py1, px2, py2), outline="#111827", width=4)
-    d.text((px1 + 22, py1 + 22), "Research", fill="#4338ca", font=F["small"])
-    d.text((midx + 22, py1 + 22), "Ship now", fill="#15803d", font=F["small"])
-    d.text((px1 + 22, midy + 22), "Park", fill="#475569", font=F["small"])
-    d.text((midx + 22, midy + 22), "Schedule", fill="#92400e", font=F["small"])
-    d.text((px1, py2 + 30), "Low feasibility", fill="#111827", font=F["tiny"])
-    d.text((px2 - 150, py2 + 30), "High feasibility", fill="#111827", font=F["tiny"])
-    d.text((px1 - 55, py2 - 20), "Low impact", fill="#111827", font=F["tiny"])
-    d.text((px1 - 55, py1 + 10), "High impact", fill="#111827", font=F["tiny"])
-
-    bubbles = [
-        ("A", 1320, 430, 52, "#16a34a"),  # ship now
-        ("B", 860, 430, 78, "#4f46e5"),   # research
-        ("C", 1260, 850, 64, "#d97706"),  # schedule
-        ("D", 850, 870, 48, "#64748b"),   # park
+    names = [
+        ("Maya Singh", "CEO / Product", "ex-Stripe", "12 yrs product", "led Relay launch", "#0f766e"),
+        ("Jon Bell", "CTO / Infra", "ex-Snowflake", "owns retrieval infra", "built vector cache", "#1d4ed8"),
+        ("Priya Nair", "COO / Ops", "ex-Flexport", "scaled support", "owns compliance", "#a16207"),
+        ("Omar Haddad", "GTM / RevOps", "ex-Atlassian", "pipeline $4.2M", "leads enterprise sales", "#be123c"),
     ]
-    for label, x, y, r, color in bubbles:
-        d.ellipse((x - r, y - r, x + r, y + r), fill=color, outline="#111827", width=3)
-        d.text((x - 12, y - 18), label, fill="white", font=F["h2"])
-    # Crossing callouts that make naive reading order harder.
-    d.rounded_rectangle((690, 1135, 1010, 1280), radius=14, fill="#ecfeff", outline="#0f766e", width=3)
-    draw_text(d, (715, 1168), "Callout 1: A is small and in the ship-now quadrant.", F["small"], fill="#0f766e", width=24, leading=27)
-    d.line((1010, 1160, 1285, 460), fill="#0f766e", width=4)
-    d.rounded_rectangle((1110, 1135, 1510, 1280), radius=14, fill="#fee2e2", outline="#991b1b", width=3)
-    draw_text(d, (1135, 1168), "Callout 2: B is large; do not confuse its size with priority.", F["small"], fill="#991b1b", width=30, leading=27)
-    d.line((1110, 1160, 860, 455), fill="#991b1b", width=4)
-    d.text((100, 1370), "Footer: Roadmap board RB-19. Preserve legend, quadrant meaning, marker sizes, and callouts.", fill="#475569", font=F["small"])
+    row_labels = ["Role", "Former", "Proof", "Owns"]
+    x0, col_w = 340, 305
+    row_ys = [590, 710, 830, 950]
+    for i, label in enumerate(row_labels):
+        d.text((110, row_ys[i] + 6), label, fill="#64748b", font=F["small"])
+        d.line((250, row_ys[i] + 34, 1525, row_ys[i] + 34), fill="#e2e8f0", width=3)
+
+    for idx, (name, role, former, proof, owns, color) in enumerate(names):
+        x = x0 + idx * col_w
+        d.line((x - 38, 350, x - 38, 1040), fill="#f1f5f9", width=4)
+        d.ellipse((x + 70, 365, x + 170, 465), fill="#f8fafc", outline=color, width=5)
+        initials = "".join(part[0] for part in name.split())
+        d.text((x + 100, 394), initials, fill=color, font=F["h2"])
+        d.text((x, 495), name, fill="#111827", font=F["h2"])
+        d.text((x, 590), role, fill="#111827", font=F["small"])
+        d.text((x, 710), former, fill="#111827", font=F["small"])
+        d.text((x, 830), proof, fill="#111827", font=F["small"])
+        d.text((x, 950), owns, fill="#111827", font=F["small"])
+
+    d.rounded_rectangle((100, 1135, 760, 1360), radius=14, fill="#ecfeff", outline="#0f766e", width=3)
+    d.text((130, 1170), "Advisors", fill="#0f766e", font=F["h2"])
+    d.text((130, 1230), "Lena Ortiz - former CISO, Okta", fill="#111827", font=F["small"])
+    d.text((130, 1290), "Theo Park - ex-CFO, Datadog", fill="#111827", font=F["small"])
+
+    d.rounded_rectangle((855, 1135, 1510, 1360), radius=14, fill="#fff7ed", outline="#c2410c", width=3)
+    d.text((885, 1170), "Hiring next", fill="#c2410c", font=F["h2"])
+    d.text((885, 1230), "VP Sales - Q4", fill="#111827", font=F["small"])
+    d.text((885, 1290), "Clinical Lead - Q1", fill="#111827", font=F["small"])
+
+    d.text((100, 1450), "Footer: Deck v12. Advisors are not core team members. Hiring rows are open roles, not current employees.", fill="#475569", font=F["small"])
     return Case(
         "H14-three-column-poster",
-        "Quadrant Roadmap Pitch Slide",
+        "Borderless Team Matrix Pitch Slide",
         "layout",
-        ["raster-only", "pitch-slide", "quadrant", "bubble-chart", "legend", "callout"],
-        "Map bubble codes through a legend and infer the quadrant/action for each initiative.",
-        "Raster-only pitch slide with legend, quadrant chart, different marker sizes, and crossing callouts.",
-        ["legend mapping", "quadrant semantics", "bubble positions", "size notes", "callouts", "footer"],
-        ["Bind each code to initiative name.", "Infer action from quadrant placement.", "Do not confuse marker size with priority."],
-        "# Quadrant Roadmap Pitch Slide\n\nLegend: A is Relay cache, size S; B is PDF vision parser, size L; C is Billing export, size M; D is Partner sync, size S.\n\nQuadrant rules: upper-right means ship now; lower-right means schedule; upper-left means research; lower-left means park.\n\nChart interpretation: A / Relay cache is in the ship-now quadrant and is small. B / PDF vision parser is in the research quadrant and is large. C / Billing export is in the schedule quadrant and is medium. D / Partner sync is in the park quadrant and is small.\n\nCallout 1: A is small and in the ship-now quadrant. Callout 2: B is large; do not confuse its size with priority.\n\nFooter: Roadmap board RB-19. Preserve legend, quadrant meaning, marker sizes, and callouts.\n",
+        ["raster-only", "pitch-slide", "borderless-table", "team-matrix", "advisor-sidebar"],
+        "Recover a borderless pitch-deck team matrix by binding facts under each name column.",
+        "Raster-only pitch slide with names as column headers, unlabeled visual alignment, advisor sidebar, and open-role box.",
+        ["person-to-fact bindings", "row label semantics", "advisors separate from core team", "hiring roles separate from employees", "footer"],
+        ["Bind each person to role, former company, proof, and ownership facts.", "Do not merge row-wise facts across people.", "Do not treat advisors or open roles as core team members."],
+        "# Borderless Team Matrix Pitch Slide\n\nCore team: Maya Singh is CEO / Product, ex-Stripe, has 12 yrs product experience, and led Relay launch. Jon Bell is CTO / Infra, ex-Snowflake, owns retrieval infra, and built vector cache. Priya Nair is COO / Ops, ex-Flexport, scaled support, and owns compliance. Omar Haddad is GTM / RevOps, ex-Atlassian, has pipeline $4.2M, and leads enterprise sales.\n\nAdvisors: Lena Ortiz - former CISO, Okta. Theo Park - ex-CFO, Datadog.\n\nHiring next: VP Sales - Q4. Clinical Lead - Q1.\n\nFooter: Deck v12. Advisors are not core team members. Hiring rows are open roles, not current employees.\n",
         [
-            near_check("legend-a", "binding", ["A", "Relay cache", "S"], 1.5, 240),
-            near_check("legend-b", "binding", ["B", "PDF vision parser", "L"], 1.5, 260),
-            near_check("ship-now-a", "visual", ["A", "ship now"], 2.5, 360),
-            near_check("research-b", "visual", ["B", "research"], 2.5, 360),
-            near_check("schedule-c", "visual", ["C", "schedule"], 2.5, 360),
-            near_check("park-d", "visual", ["D", "park"], 2.5, 360),
-            near_check("size-priority", "layout", ["B", "large", "priority"], 2, 360),
-            all_check("footer", "text", ["RB-19", "quadrant", "callouts"], 1),
+            near_check("maya-binding", "binding", ["Maya Singh", "CEO", "Stripe", "Relay launch"], 2.5, 420),
+            near_check("jon-binding", "binding", ["Jon Bell", "CTO", "Snowflake", "vector cache"], 2.5, 420),
+            near_check("priya-binding", "binding", ["Priya Nair", "COO", "Flexport", "compliance"], 2.5, 420),
+            near_check("omar-binding", "binding", ["Omar Haddad", "GTM", "Atlassian", "$4.2M"], 2.5, 420),
+            near_check("advisors-separate", "structure", ["Advisors", "Lena Ortiz", "Okta", "Theo Park", "Datadog"], 2, 520),
+            near_check("hiring-separate", "structure", ["Hiring next", "VP Sales", "Q4", "Clinical Lead", "Q1"], 1.5, 420),
+            all_check("footer", "text", ["Deck v12", "Advisors are not core team members", "open roles"], 1),
+            {"id": "no-advisor-as-core", "category": "binding", "weight": 2, "description": "advisors not bound as core employees", "none": [r"Lena Ortiz[\s\S]{0,120}(CEO|CTO|COO|GTM)", r"Theo Park[\s\S]{0,120}(CEO|CTO|COO|GTM)"]},
         ],
         [img],
     )

@@ -26,7 +26,7 @@ The target is not to trick models with artificial prompt-injection style documen
 | Tables in context | H15 | Wide heatmap table, slash markers, legend semantics, weekend columns. |
 | Forms and dense state binding | H12 | Bilingual labels, checkbox state, exact case IDs, blank/pending semantics. |
 | Visual facts | H16 | Multi-panel line chart, stacked bar chart, matrix, and cross-panel warning. |
-| Layout and reading order | H07, H11, H13, H14, H17 | Broken slide exports, sidebars, scientific paper columns, quadrant pitch slides, redlined contracts, margin comments. |
+| Layout and reading order | H07, H11, H13, H14, H17 | Broken slide exports, sidebars, scientific paper columns, borderless pitch-deck matrices, redlined contracts, margin comments. |
 
 ## Scoring
 

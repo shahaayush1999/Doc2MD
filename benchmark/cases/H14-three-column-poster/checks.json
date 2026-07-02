@@ -1,108 +1,105 @@
 {
   "id": "H14-three-column-poster",
-  "title": "Quadrant Roadmap Pitch Slide",
+  "title": "Borderless Team Matrix Pitch Slide",
   "family": "layout",
   "tags": [
     "raster-only",
     "pitch-slide",
-    "quadrant",
-    "bubble-chart",
-    "legend",
-    "callout"
+    "borderless-table",
+    "team-matrix",
+    "advisor-sidebar"
   ],
   "checks": [
     {
-      "id": "legend-a",
+      "id": "maya-binding",
       "category": "binding",
-      "weight": 1.5,
-      "description": "legend-a",
+      "weight": 2.5,
+      "description": "maya-binding",
       "near": {
         "terms": [
-          "A",
-          "Relay cache",
-          "S"
+          "Maya Singh",
+          "CEO",
+          "Stripe",
+          "Relay launch"
         ],
-        "window": 240
+        "window": 420
       }
     },
     {
-      "id": "legend-b",
+      "id": "jon-binding",
       "category": "binding",
-      "weight": 1.5,
-      "description": "legend-b",
-      "near": {
-        "terms": [
-          "B",
-          "PDF vision parser",
-          "L"
-        ],
-        "window": 260
-      }
-    },
-    {
-      "id": "ship-now-a",
-      "category": "visual",
       "weight": 2.5,
-      "description": "ship-now-a",
+      "description": "jon-binding",
       "near": {
         "terms": [
-          "A",
-          "ship now"
+          "Jon Bell",
+          "CTO",
+          "Snowflake",
+          "vector cache"
         ],
-        "window": 360
+        "window": 420
       }
     },
     {
-      "id": "research-b",
-      "category": "visual",
+      "id": "priya-binding",
+      "category": "binding",
       "weight": 2.5,
-      "description": "research-b",
+      "description": "priya-binding",
       "near": {
         "terms": [
-          "B",
-          "research"
+          "Priya Nair",
+          "COO",
+          "Flexport",
+          "compliance"
         ],
-        "window": 360
+        "window": 420
       }
     },
     {
-      "id": "schedule-c",
-      "category": "visual",
+      "id": "omar-binding",
+      "category": "binding",
       "weight": 2.5,
-      "description": "schedule-c",
+      "description": "omar-binding",
       "near": {
         "terms": [
-          "C",
-          "schedule"
+          "Omar Haddad",
+          "GTM",
+          "Atlassian",
+          "\\$4\\.2M"
         ],
-        "window": 360
+        "window": 420
       }
     },
     {
-      "id": "park-d",
-      "category": "visual",
-      "weight": 2.5,
-      "description": "park-d",
-      "near": {
-        "terms": [
-          "D",
-          "park"
-        ],
-        "window": 360
-      }
-    },
-    {
-      "id": "size-priority",
-      "category": "layout",
+      "id": "advisors-separate",
+      "category": "structure",
       "weight": 2,
-      "description": "size-priority",
+      "description": "advisors-separate",
       "near": {
         "terms": [
-          "B",
-          "large",
-          "priority"
+          "Advisors",
+          "Lena Ortiz",
+          "Okta",
+          "Theo Park",
+          "Datadog"
         ],
-        "window": 360
+        "window": 520
+      }
+    },
+    {
+      "id": "hiring-separate",
+      "category": "structure",
+      "weight": 1.5,
+      "description": "hiring-separate",
+      "near": {
+        "terms": [
+          "Hiring next",
+          "VP Sales",
+          "Q4",
+          "Clinical Lead",
+          "Q1"
+        ],
+        "window": 420
       }
     },
     {
@@ -111,9 +108,19 @@
       "weight": 1,
       "description": "footer",
       "all": [
-        "RB-19",
-        "quadrant",
-        "callouts"
+        "Deck v12",
+        "Advisors are not core team members",
+        "open roles"
+      ]
+    },
+    {
+      "id": "no-advisor-as-core",
+      "category": "binding",
+      "weight": 2,
+      "description": "advisors not bound as core employees",
+      "none": [
+        "Lena Ortiz[\\s\\S]{0,120}(CEO|CTO|COO|GTM)",
+        "Theo Park[\\s\\S]{0,120}(CEO|CTO|COO|GTM)"
       ]
     }
   ]

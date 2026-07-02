@@ -1,22 +1,21 @@
-# Quadrant Roadmap Pitch Slide
+# Borderless Team Matrix Pitch Slide
 
-Purpose: Map bubble codes through a legend and infer the quadrant/action for each initiative.
+Purpose: Recover a borderless pitch-deck team matrix by binding facts under each name column.
 
-Source modality: Raster-only pitch slide with legend, quadrant chart, different marker sizes, and crossing callouts.
+Source modality: Raster-only pitch slide with names as column headers, unlabeled visual alignment, advisor sidebar, and open-role box.
 
 Expected gold objects:
-- legend mapping
-- quadrant semantics
-- bubble positions
-- size notes
-- callouts
+- person-to-fact bindings
+- row label semantics
+- advisors separate from core team
+- hiring roles separate from employees
 - footer
 
 Scoring checklist:
-- Bind each code to initiative name.
-- Infer action from quadrant placement.
-- Do not confuse marker size with priority.
+- Bind each person to role, former company, proof, and ownership facts.
+- Do not merge row-wise facts across people.
+- Do not treat advisors or open roles as core team members.
 
 Family: `layout`
 
-Tags: `raster-only`, `pitch-slide`, `quadrant`, `bubble-chart`, `legend`, `callout`
+Tags: `raster-only`, `pitch-slide`, `borderless-table`, `team-matrix`, `advisor-sidebar`

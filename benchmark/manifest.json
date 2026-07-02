@@ -116,15 +116,14 @@
     },
     {
       "id": "H14-three-column-poster",
-      "title": "Quadrant Roadmap Pitch Slide",
+      "title": "Borderless Team Matrix Pitch Slide",
       "family": "layout",
       "tags": [
         "raster-only",
         "pitch-slide",
-        "quadrant",
-        "bubble-chart",
-        "legend",
-        "callout"
+        "borderless-table",
+        "team-matrix",
+        "advisor-sidebar"
       ],
       "pages": 1,
       "pdf": "benchmark/cases/H14-three-column-poster/source.pdf",
