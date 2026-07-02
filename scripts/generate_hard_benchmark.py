@@ -723,55 +723,79 @@ def h13() -> Case:
 
 
 def h14() -> Case:
-    img = base_page("Three-Column Launch Poster")
+    img = base_page("Quadrant Roadmap Pitch Slide")
     d = ImageDraw.Draw(img)
-    cols = [(90, 250, 500), (600, 250, 1010), (1110, 250, 1520)]
-    headings = ["Signal", "Evidence", "Decision"]
-    colors = ["#eef2ff", "#ecfeff", "#f0fdf4"]
-    for (x1, y1, x2), heading, color in zip(cols, headings, colors):
-        d.rounded_rectangle((x1, y1, x2, 1260), radius=18, fill=color, outline="#334155", width=3)
-        d.text((x1 + 22, y1 + 24), heading, fill="#111827", font=F["h2"])
+    d.text((100, 150), "Roadmap review: infer quadrant placement from the plotted markers and the legend.", fill="#7f1d1d", font=F["small"])
+    d.rounded_rectangle((80, 240, 540, 1040), radius=16, fill="#f8fafc", outline="#334155", width=3)
+    d.text((110, 275), "Legend", fill="#111827", font=F["h2"])
+    draw_table(
+        d,
+        110,
+        335,
+        [100, 245, 80],
+        [["Code", "Initiative", "Size"], ["A", "Relay cache", "S"], ["B", "PDF vision parser", "L"], ["C", "Billing export", "M"], ["D", "Partner sync", "S"]],
+        60,
+    )
+    d.rounded_rectangle((120, 760, 500, 950), radius=14, fill="#fff7ed", outline="#c2410c", width=3)
+    draw_text(d, (145, 795), "Rule: upper-right means ship now. Lower-right means schedule. Upper-left means research. Lower-left means park.", F["small"], fill="#9a3412", width=27, leading=28)
 
-    draw_text(d, (115, 330), "North funnel shows high visits but weak activation. Do not combine with partner leads.", F["small"], width=27, leading=29)
-    d.text((115, 540), "Mini table", fill="#111827", font=F["small"])
-    draw_table(d, 115, 580, [130, 130, 130], [["Region", "Visits", "Act."], ["North", "18k", "4.1%"], ["West", "9k", "7.8%"], ["Partner", "3k", "11.2%"]], 54)
-    d.rounded_rectangle((165, 970, 460, 1115), radius=14, fill="#fee2e2", outline="#991b1b", width=3)
-    d.text((190, 1018), "Risk: North volume", fill="#991b1b", font=F["small"])
+    px1, py1, px2, py2 = 650, 300, 1510, 1060
+    d.rounded_rectangle((620, 240, 1570, 1120), radius=16, fill="#ffffff", outline="#334155", width=3)
+    d.text((875, 265), "Impact vs feasibility", fill="#111827", font=F["h2"])
+    # Quadrant fills
+    midx, midy = (px1 + px2) // 2, (py1 + py2) // 2
+    d.rectangle((px1, py1, midx, midy), fill="#eef2ff")
+    d.rectangle((midx, py1, px2, midy), fill="#dcfce7")
+    d.rectangle((px1, midy, midx, py2), fill="#f1f5f9")
+    d.rectangle((midx, midy, px2, py2), fill="#fef3c7")
+    d.line((px1, midy, px2, midy), fill="#111827", width=4)
+    d.line((midx, py1, midx, py2), fill="#111827", width=4)
+    d.rectangle((px1, py1, px2, py2), outline="#111827", width=4)
+    d.text((px1 + 22, py1 + 22), "Research", fill="#4338ca", font=F["small"])
+    d.text((midx + 22, py1 + 22), "Ship now", fill="#15803d", font=F["small"])
+    d.text((px1 + 22, midy + 22), "Park", fill="#475569", font=F["small"])
+    d.text((midx + 22, midy + 22), "Schedule", fill="#92400e", font=F["small"])
+    d.text((px1, py2 + 30), "Low feasibility", fill="#111827", font=F["tiny"])
+    d.text((px2 - 150, py2 + 30), "High feasibility", fill="#111827", font=F["tiny"])
+    d.text((px1 - 55, py2 - 20), "Low impact", fill="#111827", font=F["tiny"])
+    d.text((px1 - 55, py1 + 10), "High impact", fill="#111827", font=F["tiny"])
 
-    draw_text(d, (625, 330), "Figure A traces the evidence chain. Website visits feed trial starts, but partner leads bypass trials.", F["small"], width=28, leading=29)
-    flow = [("Website", 650, 590), ("Trial", 800, 740), ("Paid", 650, 890)]
-    for label, x, y in flow:
-        d.ellipse((x, y, x + 130, y + 75), fill="#dbeafe", outline="#1d4ed8", width=3)
-        d.text((x + 24, y + 24), label, fill="#111827", font=F["tiny"])
-    d.line((760, 645, 820, 740), fill="#111827", width=4)
-    d.line((800, 815, 735, 890), fill="#111827", width=4)
-    d.rounded_rectangle((890, 560, 1000, 650), radius=12, fill="#fef3c7", outline="#92400e", width=3)
-    d.text((908, 595), "Partner", fill="#92400e", font=F["tiny"])
-    d.line((940, 650, 755, 910), fill="#92400e", width=4)
-
-    draw_text(d, (1135, 330), "Decision: launch West first, hold North until activation improves, and track Partner separately.", F["small"], width=28, leading=29)
-    d.rounded_rectangle((1140, 560, 1490, 720), radius=14, fill="#dcfce7", outline="#15803d", width=3)
-    d.text((1170, 612), "APPROVE WEST", fill="#15803d", font=F["stamp"])
-    d.rounded_rectangle((1140, 810, 1490, 995), radius=14, fill="#fff7ed", outline="#c2410c", width=3)
-    draw_text(d, (1170, 850), "Margin note: Partner leads are not part of North.", F["small"], fill="#9a3412", width=24, leading=28)
-    d.text((100, 1370), "Poster footer: GTM-27 draft 4. Reading order is Signal -> Evidence -> Decision.", fill="#475569", font=F["small"])
+    bubbles = [
+        ("A", 1320, 430, 52, "#16a34a"),  # ship now
+        ("B", 860, 430, 78, "#4f46e5"),   # research
+        ("C", 1260, 850, 64, "#d97706"),  # schedule
+        ("D", 850, 870, 48, "#64748b"),   # park
+    ]
+    for label, x, y, r, color in bubbles:
+        d.ellipse((x - r, y - r, x + r, y + r), fill=color, outline="#111827", width=3)
+        d.text((x - 12, y - 18), label, fill="white", font=F["h2"])
+    # Crossing callouts that make naive reading order harder.
+    d.rounded_rectangle((690, 1135, 1010, 1280), radius=14, fill="#ecfeff", outline="#0f766e", width=3)
+    draw_text(d, (715, 1168), "Callout 1: A is small and in the ship-now quadrant.", F["small"], fill="#0f766e", width=24, leading=27)
+    d.line((1010, 1160, 1285, 460), fill="#0f766e", width=4)
+    d.rounded_rectangle((1110, 1135, 1510, 1280), radius=14, fill="#fee2e2", outline="#991b1b", width=3)
+    draw_text(d, (1135, 1168), "Callout 2: B is large; do not confuse its size with priority.", F["small"], fill="#991b1b", width=30, leading=27)
+    d.line((1110, 1160, 860, 455), fill="#991b1b", width=4)
+    d.text((100, 1370), "Footer: Roadmap board RB-19. Preserve legend, quadrant meaning, marker sizes, and callouts.", fill="#475569", font=F["small"])
     return Case(
         "H14-three-column-poster",
-        "Three-Column Launch Poster",
+        "Quadrant Roadmap Pitch Slide",
         "layout",
-        ["raster-only", "three-column", "poster", "diagram", "table", "callout"],
-        "Recover a three-column poster with an embedded table, flow diagram, stamp, and margin note.",
-        "Raster-only poster page with three visual columns.",
-        ["column reading order", "mini table", "flow diagram", "decision stamp", "margin note", "footer"],
-        ["Read Signal before Evidence before Decision.", "Keep Partner separate from North.", "Preserve approve/hold decision."],
-        "# Three-Column Launch Poster\n\nSignal: North funnel shows high visits but weak activation. Do not combine North with partner leads. Mini table: North 18k visits and 4.1% activation; West 9k visits and 7.8% activation; Partner 3k visits and 11.2% activation. Risk: North volume.\n\nEvidence: Figure A traces Website -> Trial -> Paid, while Partner bypasses Trial and points to Paid.\n\nDecision: launch West first, hold North until activation improves, and track Partner separately. Stamp: APPROVE WEST. Margin note: Partner leads are not part of North.\n\nPoster footer: GTM-27 draft 4. Reading order is Signal -> Evidence -> Decision.\n",
+        ["raster-only", "pitch-slide", "quadrant", "bubble-chart", "legend", "callout"],
+        "Map bubble codes through a legend and infer the quadrant/action for each initiative.",
+        "Raster-only pitch slide with legend, quadrant chart, different marker sizes, and crossing callouts.",
+        ["legend mapping", "quadrant semantics", "bubble positions", "size notes", "callouts", "footer"],
+        ["Bind each code to initiative name.", "Infer action from quadrant placement.", "Do not confuse marker size with priority."],
+        "# Quadrant Roadmap Pitch Slide\n\nLegend: A is Relay cache, size S; B is PDF vision parser, size L; C is Billing export, size M; D is Partner sync, size S.\n\nQuadrant rules: upper-right means ship now; lower-right means schedule; upper-left means research; lower-left means park.\n\nChart interpretation: A / Relay cache is in the ship-now quadrant and is small. B / PDF vision parser is in the research quadrant and is large. C / Billing export is in the schedule quadrant and is medium. D / Partner sync is in the park quadrant and is small.\n\nCallout 1: A is small and in the ship-now quadrant. Callout 2: B is large; do not confuse its size with priority.\n\nFooter: Roadmap board RB-19. Preserve legend, quadrant meaning, marker sizes, and callouts.\n",
         [
-            ordered_check("poster-reading-order", "layout", ["Signal", "North", "Evidence", "Website", "Decision", "APPROVE WEST", "GTM-27"], 3),
-            near_check("north-row", "tables", ["North", "18k", "4.1%"], 2, 180),
-            near_check("west-row", "tables", ["West", "9k", "7.8%"], 2, 180),
-            ordered_check("flow-main", "visual", ["Website", "Trial", "Paid"], 2),
-            near_check("partner-separate", "binding", ["Partner", "bypass", "Trial", "Paid"], 2.5, 360),
-            all_check("decision", "text", ["launch West", "hold North", "track Partner separately"], 2),
+            near_check("legend-a", "binding", ["A", "Relay cache", "S"], 1.5, 240),
+            near_check("legend-b", "binding", ["B", "PDF vision parser", "L"], 1.5, 260),
+            near_check("ship-now-a", "visual", ["A", "ship now"], 2.5, 360),
+            near_check("research-b", "visual", ["B", "research"], 2.5, 360),
+            near_check("schedule-c", "visual", ["C", "schedule"], 2.5, 360),
+            near_check("park-d", "visual", ["D", "park"], 2.5, 360),
+            near_check("size-priority", "layout", ["B", "large", "priority"], 2, 360),
+            all_check("footer", "text", ["RB-19", "quadrant", "callouts"], 1),
         ],
         [img],
     )
@@ -824,7 +848,7 @@ def h15() -> Case:
             near_check("api-thu", "tables", ["API", "Thu", "red", "slash"], 2.5, 420),
             near_check("data-fri", "tables", ["Data", "Fri", "red", "slash"], 2.5, 420),
             near_check("billing-sat", "tables", ["Billing", "Sat", "red", "slash"], 2.5, 420),
-            near_check("export-fri-yellow", "binding", ["Export", "Fri", "yellow", "not red"], 2.5, 420),
+            {"id": "export-fri-yellow", "category": "binding", "weight": 2.5, "description": "export-fri-yellow", "all": [r"Export[\s\S]{0,220}(Fri|Y|yellow)"], "none": [r"Export[\s\S]{0,120}Fri[\s\S]{0,80}(red|R with slash)", r"Export Fri red"]},
             all_check("weekend", "structure", ["Sat", "weekend"], 1.5),
         ],
         [img],
@@ -880,7 +904,7 @@ def h16() -> Case:
         ["State Friday queue depth.", "Identify Visual severe defects.", "Bind Ken aged count.", "Do not say Tables has most severe defects."],
         "# Multi-Panel Metrics Report\n\nPanel A Queue depth rises every day and ends at 47 on Friday.\n\nPanel B Defect mix: red means severe and blue means minor. Visual has the most severe defects, with 19 severe defects.\n\nPanel C Owner matrix: Noor has 14 open and 6 aged with SLA risk; Mira has 9 open and 1 aged with SLA ok; Ken has 24 open and 11 aged with SLA risk.\n\nCross-panel warning: Ken has the highest aged count at 11. The defect mix warning is severe Visual defects, not total Tables defects.\n",
         [
-            near_check("queue-friday", "visual", ["Queue depth", "Friday", "47"], 2.5, 260),
+            {"id": "queue-friday", "category": "visual", "weight": 2.5, "description": "queue-friday", "all": [r"Queue depth", r"(Friday|Fri)", r"47"]},
             near_check("visual-severe", "visual", ["Visual", "severe", "19"], 2.5, 260),
             near_check("ken-aged", "tables", ["Ken", "24", "11", "risk"], 2.5, 260),
             near_check("noor-row", "tables", ["Noor", "14", "6", "risk"], 2, 260),

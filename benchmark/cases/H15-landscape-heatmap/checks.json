@@ -72,15 +72,13 @@
       "category": "binding",
       "weight": 2.5,
       "description": "export-fri-yellow",
-      "near": {
-        "terms": [
-          "Export",
-          "Fri",
-          "yellow",
-          "not red"
-        ],
-        "window": 420
-      }
+      "all": [
+        "Export[\\s\\S]{0,220}(Fri|Y|yellow)"
+      ],
+      "none": [
+        "Export[\\s\\S]{0,120}Fri[\\s\\S]{0,80}(red|R with slash)",
+        "Export Fri red"
+      ]
     },
     {
       "id": "weekend",

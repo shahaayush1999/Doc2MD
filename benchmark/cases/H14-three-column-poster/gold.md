@@ -1,9 +1,11 @@
-# Three-Column Launch Poster
+# Quadrant Roadmap Pitch Slide
 
-Signal: North funnel shows high visits but weak activation. Do not combine North with partner leads. Mini table: North 18k visits and 4.1% activation; West 9k visits and 7.8% activation; Partner 3k visits and 11.2% activation. Risk: North volume.
+Legend: A is Relay cache, size S; B is PDF vision parser, size L; C is Billing export, size M; D is Partner sync, size S.
 
-Evidence: Figure A traces Website -> Trial -> Paid, while Partner bypasses Trial and points to Paid.
+Quadrant rules: upper-right means ship now; lower-right means schedule; upper-left means research; lower-left means park.
 
-Decision: launch West first, hold North until activation improves, and track Partner separately. Stamp: APPROVE WEST. Margin note: Partner leads are not part of North.
+Chart interpretation: A / Relay cache is in the ship-now quadrant and is small. B / PDF vision parser is in the research quadrant and is large. C / Billing export is in the schedule quadrant and is medium. D / Partner sync is in the park quadrant and is small.
 
-Poster footer: GTM-27 draft 4. Reading order is Signal -> Evidence -> Decision.
+Callout 1: A is small and in the ship-now quadrant. Callout 2: B is large; do not confuse its size with priority.
+
+Footer: Roadmap board RB-19. Preserve legend, quadrant meaning, marker sizes, and callouts.

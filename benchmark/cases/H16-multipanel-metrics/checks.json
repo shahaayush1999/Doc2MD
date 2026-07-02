@@ -16,14 +16,11 @@
       "category": "visual",
       "weight": 2.5,
       "description": "queue-friday",
-      "near": {
-        "terms": [
-          "Queue depth",
-          "Friday",
-          "47"
-        ],
-        "window": 260
-      }
+      "all": [
+        "Queue depth",
+        "(Friday|Fri)",
+        "47"
+      ]
     },
     {
       "id": "visual-severe",

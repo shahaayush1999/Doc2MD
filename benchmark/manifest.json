@@ -116,14 +116,14 @@
     },
     {
       "id": "H14-three-column-poster",
-      "title": "Three-Column Launch Poster",
+      "title": "Quadrant Roadmap Pitch Slide",
       "family": "layout",
       "tags": [
         "raster-only",
-        "three-column",
-        "poster",
-        "diagram",
-        "table",
+        "pitch-slide",
+        "quadrant",
+        "bubble-chart",
+        "legend",
         "callout"
       ],
       "pages": 1,

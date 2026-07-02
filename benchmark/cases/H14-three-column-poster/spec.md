@@ -1,22 +1,22 @@
-# Three-Column Launch Poster
+# Quadrant Roadmap Pitch Slide
 
-Purpose: Recover a three-column poster with an embedded table, flow diagram, stamp, and margin note.
+Purpose: Map bubble codes through a legend and infer the quadrant/action for each initiative.
 
-Source modality: Raster-only poster page with three visual columns.
+Source modality: Raster-only pitch slide with legend, quadrant chart, different marker sizes, and crossing callouts.
 
 Expected gold objects:
-- column reading order
-- mini table
-- flow diagram
-- decision stamp
-- margin note
+- legend mapping
+- quadrant semantics
+- bubble positions
+- size notes
+- callouts
 - footer
 
 Scoring checklist:
-- Read Signal before Evidence before Decision.
-- Keep Partner separate from North.
-- Preserve approve/hold decision.
+- Bind each code to initiative name.
+- Infer action from quadrant placement.
+- Do not confuse marker size with priority.
 
 Family: `layout`
 
-Tags: `raster-only`, `three-column`, `poster`, `diagram`, `table`, `callout`
+Tags: `raster-only`, `pitch-slide`, `quadrant`, `bubble-chart`, `legend`, `callout`
