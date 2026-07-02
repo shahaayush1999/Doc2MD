@@ -6,7 +6,7 @@ Current benchmark planning is in [docs/benchmark-design.md](docs/benchmark-desig
 
 ## Hard Candidate Suite
 
-The current runnable suite is **Doc2MD-Hard-12**, a compact benchmark focused on visible-vs-extractable conflicts, raster spatial normalization, complex table semantics, dense form state binding, dashboards, and nonlinear layouts.
+The current runnable suite is **Doc2MD-Hard-11**, a compact benchmark focused on visible-vs-extractable conflicts, raster spatial normalization, complex scientific/poster layouts, wide heatmaps, multi-panel charts, redlines, and nonlinear reading order.
 
 Generate the benchmark:
 

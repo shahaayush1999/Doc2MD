@@ -1,9 +1,9 @@
 {
-  "name": "Doc2MD-Hard-12",
-  "version": "0.2.0",
-  "description": "Compact hard Doc2MD candidate suite focused on visibility semantics, raster spatial normalization, table semantics, forms, dashboards, and layout binding.",
-  "caseCount": 12,
-  "pageCount": 13,
+  "name": "Doc2MD-Hard-11",
+  "version": "0.3.0",
+  "description": "Compact hard Doc2MD candidate suite focused on complex raster layouts, visual-to-structure reconstruction, table/figure binding, redlines, and visibility semantics.",
+  "caseCount": 11,
+  "pageCount": 11,
   "cases": [
     {
       "id": "H01-hidden-stale-release",
@@ -51,51 +51,6 @@
       "checks": "benchmark/cases/H03-raster-gantt/checks.json"
     },
     {
-      "id": "H04-carrydown-rota",
-      "title": "Carry-Down Rota Table",
-      "family": "tables",
-      "tags": [
-        "raster-only",
-        "carry-down",
-        "ditto"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H04-carrydown-rota/source.pdf",
-      "gold": "benchmark/cases/H04-carrydown-rota/gold.md",
-      "spec": "benchmark/cases/H04-carrydown-rota/spec.md",
-      "checks": "benchmark/cases/H04-carrydown-rota/checks.json"
-    },
-    {
-      "id": "H05-state-matrix",
-      "title": "Dense State Matrix",
-      "family": "forms",
-      "tags": [
-        "raster-only",
-        "checkbox",
-        "state-binding"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H05-state-matrix/source.pdf",
-      "gold": "benchmark/cases/H05-state-matrix/gold.md",
-      "spec": "benchmark/cases/H05-state-matrix/spec.md",
-      "checks": "benchmark/cases/H05-state-matrix/checks.json"
-    },
-    {
-      "id": "H06-ops-dashboard",
-      "title": "Weekly Ops Dashboard",
-      "family": "visual",
-      "tags": [
-        "raster-only",
-        "dashboard",
-        "chart"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H06-ops-dashboard/source.pdf",
-      "gold": "benchmark/cases/H06-ops-dashboard/gold.md",
-      "spec": "benchmark/cases/H06-ops-dashboard/spec.md",
-      "checks": "benchmark/cases/H06-ops-dashboard/checks.json"
-    },
-    {
       "id": "H07-broken-pitch-slide",
       "title": "Broken Pitch Slide Export",
       "family": "layout",
@@ -109,53 +64,6 @@
       "gold": "benchmark/cases/H07-broken-pitch-slide/gold.md",
       "spec": "benchmark/cases/H07-broken-pitch-slide/spec.md",
       "checks": "benchmark/cases/H07-broken-pitch-slide/checks.json"
-    },
-    {
-      "id": "H08-complex-financial-table",
-      "title": "Complex Financial Table",
-      "family": "tables",
-      "tags": [
-        "raster-only",
-        "multi-row-header",
-        "footnotes",
-        "negative-values"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H08-complex-financial-table/source.pdf",
-      "gold": "benchmark/cases/H08-complex-financial-table/gold.md",
-      "spec": "benchmark/cases/H08-complex-financial-table/spec.md",
-      "checks": "benchmark/cases/H08-complex-financial-table/checks.json"
-    },
-    {
-      "id": "H09-insurance-form",
-      "title": "Insurance Intake Form",
-      "family": "forms",
-      "tags": [
-        "raster-only",
-        "checkbox",
-        "stamp",
-        "blank-field"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H09-insurance-form/source.pdf",
-      "gold": "benchmark/cases/H09-insurance-form/gold.md",
-      "spec": "benchmark/cases/H09-insurance-form/spec.md",
-      "checks": "benchmark/cases/H09-insurance-form/checks.json"
-    },
-    {
-      "id": "H10-continuation-register",
-      "title": "Continuation Register",
-      "family": "tables",
-      "tags": [
-        "raster-only",
-        "multi-page-table",
-        "carry-down"
-      ],
-      "pages": 2,
-      "pdf": "benchmark/cases/H10-continuation-register/source.pdf",
-      "gold": "benchmark/cases/H10-continuation-register/gold.md",
-      "spec": "benchmark/cases/H10-continuation-register/spec.md",
-      "checks": "benchmark/cases/H10-continuation-register/checks.json"
     },
     {
       "id": "H11-two-column-sidebar",
@@ -187,6 +95,94 @@
       "gold": "benchmark/cases/H12-bilingual-credit/gold.md",
       "spec": "benchmark/cases/H12-bilingual-credit/spec.md",
       "checks": "benchmark/cases/H12-bilingual-credit/checks.json"
+    },
+    {
+      "id": "H13-scientific-two-column",
+      "title": "Scientific Paper With Embedded Table And Figure",
+      "family": "layout",
+      "tags": [
+        "raster-only",
+        "scientific-paper",
+        "multi-column",
+        "table",
+        "figure",
+        "footnote"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H13-scientific-two-column/source.pdf",
+      "gold": "benchmark/cases/H13-scientific-two-column/gold.md",
+      "spec": "benchmark/cases/H13-scientific-two-column/spec.md",
+      "checks": "benchmark/cases/H13-scientific-two-column/checks.json"
+    },
+    {
+      "id": "H14-three-column-poster",
+      "title": "Three-Column Launch Poster",
+      "family": "layout",
+      "tags": [
+        "raster-only",
+        "three-column",
+        "poster",
+        "diagram",
+        "table",
+        "callout"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H14-three-column-poster/source.pdf",
+      "gold": "benchmark/cases/H14-three-column-poster/gold.md",
+      "spec": "benchmark/cases/H14-three-column-poster/spec.md",
+      "checks": "benchmark/cases/H14-three-column-poster/checks.json"
+    },
+    {
+      "id": "H15-landscape-heatmap",
+      "title": "Landscape Heatmap Escalation Plan",
+      "family": "tables",
+      "tags": [
+        "raster-only",
+        "landscape-insert",
+        "heatmap",
+        "diagonal-mark",
+        "wide-table"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H15-landscape-heatmap/source.pdf",
+      "gold": "benchmark/cases/H15-landscape-heatmap/gold.md",
+      "spec": "benchmark/cases/H15-landscape-heatmap/spec.md",
+      "checks": "benchmark/cases/H15-landscape-heatmap/checks.json"
+    },
+    {
+      "id": "H16-multipanel-metrics",
+      "title": "Multi-Panel Metrics Report",
+      "family": "visual",
+      "tags": [
+        "raster-only",
+        "multi-panel",
+        "line-chart",
+        "stacked-bar",
+        "matrix",
+        "callout"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H16-multipanel-metrics/source.pdf",
+      "gold": "benchmark/cases/H16-multipanel-metrics/gold.md",
+      "spec": "benchmark/cases/H16-multipanel-metrics/spec.md",
+      "checks": "benchmark/cases/H16-multipanel-metrics/checks.json"
+    },
+    {
+      "id": "H17-redlined-contract",
+      "title": "Redlined Data Processing Addendum",
+      "family": "layout",
+      "tags": [
+        "raster-only",
+        "redline",
+        "contract",
+        "margin-comments",
+        "deleted-text"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H17-redlined-contract/source.pdf",
+      "gold": "benchmark/cases/H17-redlined-contract/gold.md",
+      "spec": "benchmark/cases/H17-redlined-contract/spec.md",
+      "checks": "benchmark/cases/H17-redlined-contract/checks.json"
     }
   ]
 }

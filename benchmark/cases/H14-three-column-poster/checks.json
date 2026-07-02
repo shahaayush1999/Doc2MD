@@ -1,0 +1,95 @@
+{
+  "id": "H14-three-column-poster",
+  "title": "Three-Column Launch Poster",
+  "family": "layout",
+  "tags": [
+    "raster-only",
+    "three-column",
+    "poster",
+    "diagram",
+    "table",
+    "callout"
+  ],
+  "checks": [
+    {
+      "id": "poster-reading-order",
+      "category": "layout",
+      "weight": 3,
+      "description": "poster-reading-order",
+      "ordered": [
+        "Signal",
+        "North",
+        "Evidence",
+        "Website",
+        "Decision",
+        "APPROVE WEST",
+        "GTM-27"
+      ]
+    },
+    {
+      "id": "north-row",
+      "category": "tables",
+      "weight": 2,
+      "description": "north-row",
+      "near": {
+        "terms": [
+          "North",
+          "18k",
+          "4\\.1%"
+        ],
+        "window": 180
+      }
+    },
+    {
+      "id": "west-row",
+      "category": "tables",
+      "weight": 2,
+      "description": "west-row",
+      "near": {
+        "terms": [
+          "West",
+          "9k",
+          "7\\.8%"
+        ],
+        "window": 180
+      }
+    },
+    {
+      "id": "flow-main",
+      "category": "visual",
+      "weight": 2,
+      "description": "flow-main",
+      "ordered": [
+        "Website",
+        "Trial",
+        "Paid"
+      ]
+    },
+    {
+      "id": "partner-separate",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "partner-separate",
+      "near": {
+        "terms": [
+          "Partner",
+          "bypass",
+          "Trial",
+          "Paid"
+        ],
+        "window": 360
+      }
+    },
+    {
+      "id": "decision",
+      "category": "text",
+      "weight": 2,
+      "description": "decision",
+      "all": [
+        "launch West",
+        "hold North",
+        "track Partner separately"
+      ]
+    }
+  ]
+}

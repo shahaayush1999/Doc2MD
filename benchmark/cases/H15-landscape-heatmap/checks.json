@@ -1,0 +1,96 @@
+{
+  "id": "H15-landscape-heatmap",
+  "title": "Landscape Heatmap Escalation Plan",
+  "family": "tables",
+  "tags": [
+    "raster-only",
+    "landscape-insert",
+    "heatmap",
+    "diagonal-mark",
+    "wide-table"
+  ],
+  "checks": [
+    {
+      "id": "legend",
+      "category": "text",
+      "weight": 2,
+      "description": "legend",
+      "all": [
+        "green normal",
+        "yellow watch",
+        "red escalation",
+        "slash"
+      ]
+    },
+    {
+      "id": "api-thu",
+      "category": "tables",
+      "weight": 2.5,
+      "description": "api-thu",
+      "near": {
+        "terms": [
+          "API",
+          "Thu",
+          "red",
+          "slash"
+        ],
+        "window": 420
+      }
+    },
+    {
+      "id": "data-fri",
+      "category": "tables",
+      "weight": 2.5,
+      "description": "data-fri",
+      "near": {
+        "terms": [
+          "Data",
+          "Fri",
+          "red",
+          "slash"
+        ],
+        "window": 420
+      }
+    },
+    {
+      "id": "billing-sat",
+      "category": "tables",
+      "weight": 2.5,
+      "description": "billing-sat",
+      "near": {
+        "terms": [
+          "Billing",
+          "Sat",
+          "red",
+          "slash"
+        ],
+        "window": 420
+      }
+    },
+    {
+      "id": "export-fri-yellow",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "export-fri-yellow",
+      "near": {
+        "terms": [
+          "Export",
+          "Fri",
+          "yellow",
+          "not red"
+        ],
+        "window": 420
+      }
+    },
+    {
+      "id": "weekend",
+      "category": "structure",
+      "weight": 1.5,
+      "description": "weekend",
+      "all": [
+        "Sat",
+        "weekend"
+      ]
+    }
+  ]
+}

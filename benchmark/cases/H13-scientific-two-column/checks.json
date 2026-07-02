@@ -1,0 +1,94 @@
+{
+  "id": "H13-scientific-two-column",
+  "title": "Scientific Paper With Embedded Table And Figure",
+  "family": "layout",
+  "tags": [
+    "raster-only",
+    "scientific-paper",
+    "multi-column",
+    "table",
+    "figure",
+    "footnote"
+  ],
+  "checks": [
+    {
+      "id": "paper-reading-order",
+      "category": "layout",
+      "weight": 3,
+      "description": "paper-reading-order",
+      "ordered": [
+        "Abstract",
+        "1\\. Method",
+        "Equation 1",
+        "Table 1",
+        "2\\. Results",
+        "Figure 2",
+        "3\\. Limitations",
+        "Reviewer note",
+        "Footnote 1"
+      ]
+    },
+    {
+      "id": "ablation-patch",
+      "category": "tables",
+      "weight": 2,
+      "description": "ablation-patch",
+      "near": {
+        "terms": [
+          "\\+patch",
+          "80\\.1",
+          "74\\.5"
+        ],
+        "window": 220
+      }
+    },
+    {
+      "id": "ablation-caption",
+      "category": "tables",
+      "weight": 2,
+      "description": "ablation-caption",
+      "near": {
+        "terms": [
+          "\\+caption",
+          "82\\.0",
+          "75\\.1"
+        ],
+        "window": 220
+      }
+    },
+    {
+      "id": "figure-path",
+      "category": "visual",
+      "weight": 2.5,
+      "description": "figure-path",
+      "ordered": [
+        "PDF page",
+        "patch grid",
+        "reranker",
+        "Markdown blocks"
+      ]
+    },
+    {
+      "id": "equation",
+      "category": "text",
+      "weight": 1.5,
+      "description": "equation",
+      "all": [
+        "0\\.62",
+        "0\\.28",
+        "0\\.10"
+      ]
+    },
+    {
+      "id": "footnote",
+      "category": "text",
+      "weight": 1.5,
+      "description": "footnote",
+      "all": [
+        "macro-averaged",
+        "pages",
+        "not documents"
+      ]
+    }
+  ]
+}

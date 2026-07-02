@@ -27,7 +27,9 @@ function round(value: number, digits = 1) {
 
 const modelId = process.argv[2] ?? "vertex-gemini-3.1-flash-lite";
 const runRoot = path.join("runs", modelId);
-const caseIds = (await readdir(runRoot)).filter((name) => name.startsWith("H"));
+const manifest = JSON.parse(await readFile("benchmark/manifest.json", "utf-8")) as { cases: Array<{ id: string }> };
+const manifestCaseIds = new Set(manifest.cases.map((testCase) => testCase.id));
+const caseIds = (await readdir(runRoot)).filter((name) => manifestCaseIds.has(name));
 const scores: Score[] = [];
 for (const caseId of caseIds) {
   try {

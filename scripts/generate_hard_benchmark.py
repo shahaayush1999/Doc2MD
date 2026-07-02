@@ -650,7 +650,295 @@ def h12() -> Case:
     )
 
 
-CASES = [h01(), h02(), h03(), h04(), h05(), h06(), h07(), h08(), h09(), h10(), h11(), h12()]
+def h13() -> Case:
+    img = base_page("Sparse Retrieval Paper Excerpt")
+    d = ImageDraw.Draw(img)
+    d.text((100, 150), "Sparse Retrieval With Patch Reranking", fill="#111827", font=F["h1"])
+    d.text((104, 205), "A. Rao, L. Chen, M. Iqbal", fill="#475569", font=F["small"])
+    d.rounded_rectangle((100, 255, 1580, 420), radius=12, fill="#f8fafc", outline="#64748b", width=3)
+    draw_text(
+        d,
+        (130, 285),
+        "Abstract: We evaluate a patch reranker that improves table-region recall without changing OCR. The main result is a 6.3 point F1 gain on scanned appendices.",
+        F["small"],
+        width=112,
+        leading=29,
+    )
+
+    left_x, mid_x, right_x = 95, 615, 1125
+    y = 485
+    d.text((left_x, y), "1. Method", fill="#111827", font=F["h2"])
+    draw_text(d, (left_x, y + 45), "The parser emits candidate blocks, then applies a patch reranker only to regions marked table-like or figure-like.", F["small"], width=34, leading=29)
+    d.text((left_x, 735), "Equation 1", fill="#111827", font=F["small"])
+    d.rounded_rectangle((left_x, 775, left_x + 430, 855), radius=10, fill="#eef2ff", outline="#4338ca", width=3)
+    d.text((left_x + 22, 802), "score = 0.62*T + 0.28*V + 0.10*R", fill="#111827", font=F["tiny"])
+    d.text((left_x, 900), "Table 1. Ablation", fill="#111827", font=F["small"])
+    draw_table(
+        d,
+        left_x,
+        940,
+        [160, 130, 130],
+        [["Variant", "Recall", "F1"], ["base", "71.4", "68.2"], ["+patch", "80.1", "74.5"], ["+caption", "82.0", "75.1"]],
+        58,
+    )
+
+    d.text((mid_x, y), "2. Results", fill="#111827", font=F["h2"])
+    draw_text(d, (mid_x, y + 45), "The caption-aware variant is strongest, but most of the gain comes from patch reranking. Failure cases cluster around equation/table boundaries.", F["small"], width=35, leading=29)
+    d.text((mid_x, 720), "Figure 2. Retrieval path", fill="#111827", font=F["small"])
+    nodes = [("PDF page", 635, 780), ("patch grid", 835, 780), ("reranker", 735, 930), ("Markdown blocks", 640, 1080)]
+    for label, x, yy in nodes:
+        d.rounded_rectangle((x, yy, x + 180, yy + 68), radius=12, fill="#ecfeff", outline="#0f766e", width=3)
+        d.text((x + 16, yy + 22), label, fill="#111827", font=F["tiny"])
+    d.line((815, 814, 835, 814), fill="#111827", width=4)
+    d.line((925, 848, 835, 930), fill="#111827", width=4)
+    d.line((735, 998, 710, 1080), fill="#111827", width=4)
+    d.text((mid_x, 1190), "Caption: patch grid feeds the reranker before Markdown block assembly.", fill="#475569", font=F["tiny"])
+
+    d.text((right_x, y), "3. Limitations", fill="#111827", font=F["h2"])
+    draw_text(d, (right_x, y + 45), "The model still confuses marginal notes with captions when the note touches a figure border. Rotated labels were excluded from the pilot.", F["small"], width=33, leading=29)
+    d.rounded_rectangle((right_x, 760, 1580, 1020), radius=14, fill="#fff7ed", outline="#c2410c", width=3)
+    d.text((right_x + 20, 790), "Reviewer note", fill="#c2410c", font=F["small"])
+    draw_text(d, (right_x + 20, 830), "Do not read this box before the Results section; it comments on Figure 2.", F["tiny"], fill="#9a3412", width=34, leading=25)
+    d.text((105, 1370), "Footnote 1: F1 is macro-averaged over pages, not documents.", fill="#475569", font=F["tiny"])
+    return Case(
+        "H13-scientific-two-column",
+        "Scientific Paper With Embedded Table And Figure",
+        "layout",
+        ["raster-only", "scientific-paper", "multi-column", "table", "figure", "footnote"],
+        "Recover paper reading order while preserving embedded table, equation, figure, sidebar, and footnote.",
+        "Raster-only scientific page with three text columns and embedded visual objects.",
+        ["abstract", "method equation", "ablation table", "figure path", "limitations", "reviewer note", "footnote"],
+        ["Preserve abstract before sections.", "Bind ablation values to variants.", "Describe Figure 2 path after results.", "Do not move reviewer note before results."],
+        "# Sparse Retrieval With Patch Reranking\n\nAbstract: We evaluate a patch reranker that improves table-region recall without changing OCR. The main result is a 6.3 point F1 gain on scanned appendices.\n\n## 1. Method\n\nThe parser emits candidate blocks, then applies a patch reranker only to regions marked table-like or figure-like.\n\nEquation 1: score = 0.62*T + 0.28*V + 0.10*R.\n\nTable 1. Ablation: base recall 71.4 and F1 68.2; +patch recall 80.1 and F1 74.5; +caption recall 82.0 and F1 75.1.\n\n## 2. Results\n\nThe caption-aware variant is strongest, but most of the gain comes from patch reranking. Failure cases cluster around equation/table boundaries.\n\nFigure 2 retrieval path: PDF page -> patch grid -> reranker -> Markdown blocks. Caption: patch grid feeds the reranker before Markdown block assembly.\n\n## 3. Limitations\n\nThe model still confuses marginal notes with captions when the note touches a figure border. Rotated labels were excluded from the pilot.\n\nReviewer note: Do not read this box before the Results section; it comments on Figure 2.\n\nFootnote 1: F1 is macro-averaged over pages, not documents.\n",
+        [
+            ordered_check("paper-reading-order", "layout", ["Abstract", "1. Method", "Equation 1", "Table 1", "2. Results", "Figure 2", "3. Limitations", "Reviewer note", "Footnote 1"], 3),
+            near_check("ablation-patch", "tables", ["+patch", "80.1", "74.5"], 2, 220),
+            near_check("ablation-caption", "tables", ["+caption", "82.0", "75.1"], 2, 220),
+            ordered_check("figure-path", "visual", ["PDF page", "patch grid", "reranker", "Markdown blocks"], 2.5),
+            all_check("equation", "text", ["0.62", "0.28", "0.10"], 1.5),
+            all_check("footnote", "text", ["macro-averaged", "pages", "not documents"], 1.5),
+        ],
+        [img],
+    )
+
+
+def h14() -> Case:
+    img = base_page("Three-Column Launch Poster")
+    d = ImageDraw.Draw(img)
+    cols = [(90, 250, 500), (600, 250, 1010), (1110, 250, 1520)]
+    headings = ["Signal", "Evidence", "Decision"]
+    colors = ["#eef2ff", "#ecfeff", "#f0fdf4"]
+    for (x1, y1, x2), heading, color in zip(cols, headings, colors):
+        d.rounded_rectangle((x1, y1, x2, 1260), radius=18, fill=color, outline="#334155", width=3)
+        d.text((x1 + 22, y1 + 24), heading, fill="#111827", font=F["h2"])
+
+    draw_text(d, (115, 330), "North funnel shows high visits but weak activation. Do not combine with partner leads.", F["small"], width=27, leading=29)
+    d.text((115, 540), "Mini table", fill="#111827", font=F["small"])
+    draw_table(d, 115, 580, [130, 130, 130], [["Region", "Visits", "Act."], ["North", "18k", "4.1%"], ["West", "9k", "7.8%"], ["Partner", "3k", "11.2%"]], 54)
+    d.rounded_rectangle((165, 970, 460, 1115), radius=14, fill="#fee2e2", outline="#991b1b", width=3)
+    d.text((190, 1018), "Risk: North volume", fill="#991b1b", font=F["small"])
+
+    draw_text(d, (625, 330), "Figure A traces the evidence chain. Website visits feed trial starts, but partner leads bypass trials.", F["small"], width=28, leading=29)
+    flow = [("Website", 650, 590), ("Trial", 800, 740), ("Paid", 650, 890)]
+    for label, x, y in flow:
+        d.ellipse((x, y, x + 130, y + 75), fill="#dbeafe", outline="#1d4ed8", width=3)
+        d.text((x + 24, y + 24), label, fill="#111827", font=F["tiny"])
+    d.line((760, 645, 820, 740), fill="#111827", width=4)
+    d.line((800, 815, 735, 890), fill="#111827", width=4)
+    d.rounded_rectangle((890, 560, 1000, 650), radius=12, fill="#fef3c7", outline="#92400e", width=3)
+    d.text((908, 595), "Partner", fill="#92400e", font=F["tiny"])
+    d.line((940, 650, 755, 910), fill="#92400e", width=4)
+
+    draw_text(d, (1135, 330), "Decision: launch West first, hold North until activation improves, and track Partner separately.", F["small"], width=28, leading=29)
+    d.rounded_rectangle((1140, 560, 1490, 720), radius=14, fill="#dcfce7", outline="#15803d", width=3)
+    d.text((1170, 612), "APPROVE WEST", fill="#15803d", font=F["stamp"])
+    d.rounded_rectangle((1140, 810, 1490, 995), radius=14, fill="#fff7ed", outline="#c2410c", width=3)
+    draw_text(d, (1170, 850), "Margin note: Partner leads are not part of North.", F["small"], fill="#9a3412", width=24, leading=28)
+    d.text((100, 1370), "Poster footer: GTM-27 draft 4. Reading order is Signal -> Evidence -> Decision.", fill="#475569", font=F["small"])
+    return Case(
+        "H14-three-column-poster",
+        "Three-Column Launch Poster",
+        "layout",
+        ["raster-only", "three-column", "poster", "diagram", "table", "callout"],
+        "Recover a three-column poster with an embedded table, flow diagram, stamp, and margin note.",
+        "Raster-only poster page with three visual columns.",
+        ["column reading order", "mini table", "flow diagram", "decision stamp", "margin note", "footer"],
+        ["Read Signal before Evidence before Decision.", "Keep Partner separate from North.", "Preserve approve/hold decision."],
+        "# Three-Column Launch Poster\n\nSignal: North funnel shows high visits but weak activation. Do not combine North with partner leads. Mini table: North 18k visits and 4.1% activation; West 9k visits and 7.8% activation; Partner 3k visits and 11.2% activation. Risk: North volume.\n\nEvidence: Figure A traces Website -> Trial -> Paid, while Partner bypasses Trial and points to Paid.\n\nDecision: launch West first, hold North until activation improves, and track Partner separately. Stamp: APPROVE WEST. Margin note: Partner leads are not part of North.\n\nPoster footer: GTM-27 draft 4. Reading order is Signal -> Evidence -> Decision.\n",
+        [
+            ordered_check("poster-reading-order", "layout", ["Signal", "North", "Evidence", "Website", "Decision", "APPROVE WEST", "GTM-27"], 3),
+            near_check("north-row", "tables", ["North", "18k", "4.1%"], 2, 180),
+            near_check("west-row", "tables", ["West", "9k", "7.8%"], 2, 180),
+            ordered_check("flow-main", "visual", ["Website", "Trial", "Paid"], 2),
+            near_check("partner-separate", "binding", ["Partner", "bypass", "Trial", "Paid"], 2.5, 360),
+            all_check("decision", "text", ["launch West", "hold North", "track Partner separately"], 2),
+        ],
+        [img],
+    )
+
+
+def h15() -> Case:
+    img = base_page("Landscape Heatmap Escalation Plan")
+    d = ImageDraw.Draw(img)
+    d.text((100, 150), "Page is shown in portrait, but the matrix is a landscape insert.", fill="#7f1d1d", font=F["small"])
+    x0, y0 = 140, 370
+    teams = ["API", "Data", "Export", "Billing"]
+    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    vals = [
+        ["G", "Y", "Y", "R", "R", "Y"],
+        ["G", "G", "Y", "Y", "R", "R"],
+        ["Y", "Y", "R", "R", "Y", "G"],
+        ["G", "Y", "G", "Y", "Y", "R"],
+    ]
+    legend = {"G": ("green", "#dcfce7"), "Y": ("yellow", "#fef3c7"), "R": ("red", "#fee2e2")}
+    d.text((x0 + 260, 270), "Escalation heatmap: color + letter both matter", fill="#111827", font=F["h2"])
+    for i, day in enumerate(days):
+        d.text((x0 + 260 + i * 190, y0 - 45), day, fill="#111827", font=F["small"])
+    for r, team in enumerate(teams):
+        y = y0 + r * 120
+        d.text((x0, y + 38), team, fill="#111827", font=F["small"])
+        for c, day in enumerate(days):
+            key = vals[r][c]
+            x = x0 + 240 + c * 190
+            d.rectangle((x, y, x + 145, y + 86), fill=legend[key][1], outline="#111827", width=3)
+            d.text((x + 58, y + 28), key, fill="#111827", font=F["small"])
+            if (team, day) in [("API", "Thu"), ("Data", "Fri"), ("Export", "Wed"), ("Billing", "Sat")]:
+                d.line((x + 10, y + 10, x + 135, y + 76), fill="#991b1b", width=4)
+    d.rounded_rectangle((105, 880, 600, 1110), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    draw_text(d, (135, 915), "Legend: G green normal; Y yellow watch; R red escalation. Diagonal slash means owner must page incident lead.", F["small"], width=34, leading=29)
+    d.rounded_rectangle((710, 880, 1510, 1110), radius=14, fill="#fff7ed", outline="#c2410c", width=3)
+    draw_text(d, (740, 915), "Reviewer instruction: derive the red slash cells from the matrix itself. Do not infer severity from row totals. Export Friday must be read directly from its cell.", F["small"], width=58, leading=29)
+    d.text((105, 1240), "Note: weekend columns are part of the table and must not be dropped.", fill="#111827", font=F["small"])
+    return Case(
+        "H15-landscape-heatmap",
+        "Landscape Heatmap Escalation Plan",
+        "tables",
+        ["raster-only", "landscape-insert", "heatmap", "diagonal-mark", "wide-table"],
+        "Recover a wide heatmap table with color/letter states, slash markers, legend, and weekend columns.",
+        "Raster-only page with a landscape-style heatmap embedded in portrait.",
+        ["wide matrix", "legend", "critical red slash cells", "yellow not red distinction", "weekend columns"],
+        ["Preserve team/day/state bindings.", "Describe slash semantics.", "Do not drop Saturday."],
+        "# Landscape Heatmap Escalation Plan\n\nLegend: G green normal; Y yellow watch; R red escalation. A diagonal slash means the owner must page the incident lead.\n\nCritical red slash cells: API Thu, Data Fri, Export Wed, and Billing Sat. Export Fri is yellow, not red. Weekend columns are part of the table and must not be dropped.\n",
+        [
+            all_check("legend", "text", ["green normal", "yellow watch", "red escalation", "slash"], 2),
+            near_check("api-thu", "tables", ["API", "Thu", "red", "slash"], 2.5, 420),
+            near_check("data-fri", "tables", ["Data", "Fri", "red", "slash"], 2.5, 420),
+            near_check("billing-sat", "tables", ["Billing", "Sat", "red", "slash"], 2.5, 420),
+            near_check("export-fri-yellow", "binding", ["Export", "Fri", "yellow", "not red"], 2.5, 420),
+            all_check("weekend", "structure", ["Sat", "weekend"], 1.5),
+        ],
+        [img],
+    )
+
+
+def h16() -> Case:
+    img = base_page("Multi-Panel Metrics Report")
+    d = ImageDraw.Draw(img)
+    d.text((100, 150), "Operations metrics: panels must be described inline, not summarized.", fill="#7f1d1d", font=F["small"])
+    # Panel A line chart
+    d.rounded_rectangle((90, 250, 790, 760), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    d.text((120, 285), "Panel A. Queue depth", fill="#111827", font=F["h2"])
+    axes_x, axes_y = 160, 680
+    d.line((axes_x, axes_y, 720, axes_y), fill="#111827", width=3)
+    d.line((axes_x, axes_y, axes_x, 360), fill="#111827", width=3)
+    points = [(180, 620), (300, 575), (420, 500), (540, 430), (660, 390)]
+    for a, b in zip(points, points[1:]):
+        d.line((*a, *b), fill="#2563eb", width=5)
+    for p, label in zip(points, ["12", "18", "29", "41", "47"]):
+        d.ellipse((p[0] - 7, p[1] - 7, p[0] + 7, p[1] + 7), fill="#2563eb")
+        d.text((p[0] - 10, p[1] - 35), label, fill="#111827", font=F["tiny"])
+    d.text((610, 700), "Fri", fill="#111827", font=F["tiny"])
+
+    # Panel B stacked bars
+    d.rounded_rectangle((900, 250, 1590, 760), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    d.text((930, 285), "Panel B. Defect mix", fill="#111827", font=F["h2"])
+    bars = [("Ingest", 12, 5), ("Visual", 21, 19), ("Tables", 10, 17)]
+    for i, (name, low, high) in enumerate(bars):
+        x = 990 + i * 180
+        yb = 660
+        d.rectangle((x, yb - low * 8, x + 70, yb), fill="#93c5fd", outline="#1d4ed8", width=2)
+        d.rectangle((x, yb - (low + high) * 8, x + 70, yb - low * 8), fill="#fca5a5", outline="#b91c1c", width=2)
+        d.text((x + 22, yb - low * 4 - 8), str(low), fill="#111827", font=F["tiny"])
+        d.text((x + 22, yb - (low + high) * 8 + high * 4 - 8), str(high), fill="#111827", font=F["tiny"])
+        d.text((x - 15, yb + 20), name, fill="#111827", font=F["tiny"])
+    d.text((930, 700), "Red = severe; blue = minor. Use segment labels, not total height.", fill="#475569", font=F["tiny"])
+
+    # Panel C matrix and callout
+    d.rounded_rectangle((90, 870, 790, 1290), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    d.text((120, 905), "Panel C. Owner matrix", fill="#111827", font=F["h2"])
+    draw_table(d, 120, 965, [190, 160, 160, 160], [["Owner", "Open", "Aged", "SLA"], ["Noor", "14", "6", "risk"], ["Mira", "9", "1", "ok"], ["Ken", "24", "11", "risk"]], 62)
+    d.rounded_rectangle((900, 900, 1590, 1230), radius=14, fill="#fef3c7", outline="#92400e", width=3)
+    draw_text(d, (930, 940), "Reviewer instruction: describe each panel separately, then state one cross-panel warning. Do not copy panel titles as a substitute for chart facts.", F["small"], fill="#92400e", width=48, leading=31)
+    return Case(
+        "H16-multipanel-metrics",
+        "Multi-Panel Metrics Report",
+        "visual",
+        ["raster-only", "multi-panel", "line-chart", "stacked-bar", "matrix", "callout"],
+        "Recover facts from multiple chart panels and avoid confusing severe counts with totals.",
+        "Raster-only metrics page with line chart, stacked bar chart, matrix, and narrative callout.",
+        ["Panel A trend", "Panel B severe/minor legend", "Panel C owner matrix", "callout warning"],
+        ["State Friday queue depth.", "Identify Visual severe defects.", "Bind Ken aged count.", "Do not say Tables has most severe defects."],
+        "# Multi-Panel Metrics Report\n\nPanel A Queue depth rises every day and ends at 47 on Friday.\n\nPanel B Defect mix: red means severe and blue means minor. Visual has the most severe defects, with 19 severe defects.\n\nPanel C Owner matrix: Noor has 14 open and 6 aged with SLA risk; Mira has 9 open and 1 aged with SLA ok; Ken has 24 open and 11 aged with SLA risk.\n\nCross-panel warning: Ken has the highest aged count at 11. The defect mix warning is severe Visual defects, not total Tables defects.\n",
+        [
+            near_check("queue-friday", "visual", ["Queue depth", "Friday", "47"], 2.5, 260),
+            near_check("visual-severe", "visual", ["Visual", "severe", "19"], 2.5, 260),
+            near_check("ken-aged", "tables", ["Ken", "24", "11", "risk"], 2.5, 260),
+            near_check("noor-row", "tables", ["Noor", "14", "6", "risk"], 2, 260),
+            none_check("no-wrong-severe", ["Tables has the most severe", "Tables.*most severe"], 2),
+        ],
+        [img],
+    )
+
+
+def h17() -> Case:
+    img = base_page("Redlined Data Processing Addendum")
+    d = ImageDraw.Draw(img)
+    d.text((100, 160), "Visible redline policy: include inserted text, describe deleted text as deleted, do not treat deleted text as current.", fill="#7f1d1d", font=F["small"])
+    d.text((100, 250), "Section 4. Data return", fill="#111827", font=F["h2"])
+    draw_text(d, (105, 305), "Processor must return Customer Data within 10 business days after termination.", F["small"], width=72, leading=31)
+    d.text((105, 405), "Old text:", fill="#991b1b", font=F["small"])
+    d.text((225, 405), "within 30 calendar days", fill="#991b1b", font=F["small"])
+    d.line((225, 421, 490, 421), fill="#991b1b", width=4)
+    d.text((520, 405), "Deleted", fill="#991b1b", font=F["tiny"])
+    d.text((105, 475), "Inserted:", fill="#15803d", font=F["small"])
+    d.text((245, 475), "within 10 business days", fill="#15803d", font=F["small"])
+    d.rectangle((240, 468, 545, 510), outline="#15803d", width=3)
+    d.text((100, 610), "Section 5. Audit logs", fill="#111827", font=F["h2"])
+    draw_text(d, (105, 665), "Processor must retain audit logs for 400 days and provide export within 48 hours of written request.", F["small"], width=74, leading=31)
+    d.text((105, 765), "Deleted phrase:", fill="#991b1b", font=F["small"])
+    d.text((300, 765), "commercially reasonable efforts", fill="#991b1b", font=F["small"])
+    d.line((300, 781, 665, 781), fill="#991b1b", width=4)
+    d.text((980, 300), "Comment A", fill="#92400e", font=F["h2"])
+    d.rounded_rectangle((955, 350, 1510, 530), radius=14, fill="#fef3c7", outline="#92400e", width=3)
+    draw_text(d, (985, 385), "Legal asks whether 10 business days is acceptable for regulated customers.", F["small"], fill="#92400e", width=38, leading=29)
+    d.text((980, 650), "Comment B", fill="#92400e", font=F["h2"])
+    d.rounded_rectangle((955, 700, 1510, 880), radius=14, fill="#fef3c7", outline="#92400e", width=3)
+    draw_text(d, (985, 735), "Security accepts 400 days. Do not restore the deleted efforts language.", F["small"], fill="#92400e", width=38, leading=29)
+    d.text((105, 1040), "Signature block remains unchanged: NovaCloud / Atlas Retail.", fill="#111827", font=F["small"])
+    return Case(
+        "H17-redlined-contract",
+        "Redlined Data Processing Addendum",
+        "layout",
+        ["raster-only", "redline", "contract", "margin-comments", "deleted-text"],
+        "Recover current contract text while preserving redline semantics and margin comments.",
+        "Raster-only contract excerpt with insertions, deletions, and side comments.",
+        ["current clause text", "deleted text marked deleted", "inserted text current", "margin comments", "signature block"],
+        ["Do not treat deleted 30 calendar days as current.", "Preserve 10 business days and 400 days.", "Keep comments as comments."],
+        "# Redlined Data Processing Addendum\n\nSection 4. Data return: Processor must return Customer Data within 10 business days after termination. Deleted old text: within 30 calendar days. Comment A: Legal asks whether 10 business days is acceptable for regulated customers.\n\nSection 5. Audit logs: Processor must retain audit logs for 400 days and provide export within 48 hours of written request. Deleted phrase: commercially reasonable efforts. Comment B: Security accepts 400 days and says not to restore the deleted efforts language.\n\nSignature block remains unchanged: NovaCloud / Atlas Retail.\n",
+        [
+            near_check("current-return", "text", ["Data return", "10 business days", "termination"], 2.5, 260),
+            near_check("deleted-30", "structure", ["Deleted", "30 calendar days"], 2, 220),
+            near_check("audit-current", "text", ["Audit logs", "400 days", "48 hours"], 2.5, 320),
+            near_check("comment-a", "layout", ["Comment A", "Legal", "regulated customers"], 2, 260),
+            near_check("comment-b", "layout", ["Comment B", "Security", "400 days", "deleted efforts"], 2, 360),
+            none_check("no-current-30", ["must return Customer Data within 30 calendar days", "current.*30 calendar days"], 3),
+            none_check("no-inserted-efforts", ["Inserted.*commercially reasonable efforts", "current.*commercially reasonable efforts"], 2),
+        ],
+        [img],
+    )
+
+
+CASES = [h01(), h02(), h03(), h07(), h11(), h12(), h13(), h14(), h15(), h16(), h17()]
 
 
 def write_pdf(case: Case, path: Path) -> None:
@@ -749,9 +1037,9 @@ def main() -> None:
         shutil.rmtree(BENCHMARK_ROOT)
     CASE_ROOT.mkdir(parents=True, exist_ok=True)
     manifest = {
-        "name": "Doc2MD-Hard-12",
-        "version": "0.2.0",
-        "description": "Compact hard Doc2MD candidate suite focused on visibility semantics, raster spatial normalization, table semantics, forms, dashboards, and layout binding.",
+        "name": "Doc2MD-Hard-11",
+        "version": "0.3.0",
+        "description": "Compact hard Doc2MD candidate suite focused on complex raster layouts, visual-to-structure reconstruction, table/figure binding, redlines, and visibility semantics.",
         "caseCount": len(CASES),
         "pageCount": sum(len(case.pages) for case in CASES),
         "cases": [write_case(case) for case in CASES],

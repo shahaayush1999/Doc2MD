@@ -6,10 +6,10 @@ The current benchmark direction is deliberately compact: build a small suite of 
 
 ## Current Suite
 
-The current runnable candidate is **Doc2MD-Hard-12**:
+The current runnable candidate is **Doc2MD-Hard-11**:
 
-- 12 documents.
-- 13 total PDF pages.
+- 11 documents.
+- 11 total PDF pages.
 - Generated from `scripts/generate_hard_benchmark.py`.
 - Stored under `benchmark/cases/`.
 - Scored by deterministic checklist checks in each case's `checks.json`.
@@ -23,10 +23,10 @@ The target is not to trick models with artificial prompt-injection style documen
 | --- | --- | --- |
 | Visibility semantics | H01, H02 | Visible rendered content must win over hidden or covered stale PDF text. |
 | Spatial normalization | H03 | A raster Gantt chart must become explicit task/owner/start/end rows. |
-| Tables in context | H04, H08, H10 | Carry-down cells, financial negatives, footnotes, and multi-page continuations. |
-| Forms and dense state binding | H05, H09, H12 | Near-duplicate row labels, checkbox state, blank fields, bilingual labels. |
-| Visual facts | H06 | KPI cards and bar-chart facts. |
-| Layout and reading order | H07, H11 | Broken slide exports, sidebars, multi-column reading order, figure descriptions. |
+| Tables in context | H15 | Wide heatmap table, slash markers, legend semantics, weekend columns. |
+| Forms and dense state binding | H12 | Bilingual labels, checkbox state, exact case IDs, blank/pending semantics. |
+| Visual facts | H16 | Multi-panel line chart, stacked bar chart, matrix, and cross-panel warning. |
+| Layout and reading order | H07, H11, H13, H14, H17 | Broken slide exports, sidebars, scientific paper columns, poster columns, redlined contracts, margin comments. |
 
 ## Scoring
 
@@ -61,12 +61,12 @@ For the current model set, Gemini 3.5 Flash should score clearly above Gemini 3.
 
 Do not grow the benchmark by accumulation. Add a case only when it covers a realistic failure mode that is not already represented.
 
-Good candidates for future additions:
+Good candidates for future replacement cases:
 
-- A landscape wide table with many columns.
 - A technical/API excerpt with code blocks and callouts.
 - A legal or policy excerpt with nested numbering and footnotes.
-- A chart-heavy report page with multiple legends and small multiples.
 - A lightly degraded scan where OCR is necessary but not the main challenge.
+- A genuinely hard scientific figure with subpanels and caption references.
+- A multi-page section where a figure/table is referenced before appearing.
 
 Keep extreme OCR, heavy handwriting, adversarial PDF internals, 100-page long-document stress tests, and leakage/tie-break cases outside the core suite until the compact benchmark is validated.

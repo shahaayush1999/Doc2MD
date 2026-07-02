@@ -1,32 +1,49 @@
-# Doc2MD-Hard-12 Calibration Results
+# Doc2MD-Hard-11 Calibration Results
 
-These results are from the first calibration pass against the generated `Doc2MD-Hard-12` suite. Raw run outputs live under ignored `runs/` directories and are not committed.
+These results are from the current generated `Doc2MD-Hard-11` suite, version `0.3.0`. Raw run outputs live under ignored `runs/` directories and are not committed.
 
-## Models
+`Doc2MD-Hard-11` supersedes the earlier `Doc2MD-Hard-12` calibration. The older suite was too saturated, especially by older OpenAI models, and several simple cases were removed from the active manifest.
+
+## Limited Calibration
+
+This is not a final leaderboard. To control cost, only three calibration models were run after the suite revision.
 
 | Model | Score | Family minimum | Cost | Total latency | Avg latency | Input tokens | Output tokens | Failures |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| `vertex-gemini-3.5-flash` | 100.0 | 100.0 | $0.032127 | 29.827s | 2.486s | 8,344 | 2,179 | 0% |
-| `vertex-gemini-3.1-flash-lite` | 91.7 | 0.0 | $0.004696 | 23.970s | 1.998s | 8,344 | 1,740 | 0% |
-| `openai-gpt-5.4-nano` | 89.6 | 0.0 | $0.004819 | 70.093s | 5.841s | 14,028 | 1,611 | 0% |
-| `openai-gpt-5-nano` | 87.0 | 0.0 | $0.001568 | 59.299s | 4.942s | 17,018 | 1,792 | 0% |
-| `openai-gpt-4o-mini` | 84.8 | 0.0 | $0.050999 | 78.346s | 6.529s | 333,567 | 1,607 | 0% |
+| `vertex-gemini-3.1-flash-lite` | 89.2 | 0.0 | $0.004921 | 23.820s | 2.165s | 7,172 | 2,085 | 0% |
+| `openai-gpt-5-nano` | 76.5 | 0.0 | $0.001687 | 57.247s | 5.204s | 14,539 | 2,399 | 0% |
+| `openai-gpt-4o-mini` | 71.4 | 0.0 | $0.043476 | 75.368s | 6.852s | 282,389 | 1,862 | 0% |
 
 ## Family Scores
 
-| Family | Gemini 3.5 Flash | Gemini 3.1 Flash Lite | GPT-5.4 Nano | GPT-5 Nano | GPT-4o Mini |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Visibility | 100.0 | 100.0 | 100.0 | 100.0 | 76.9 |
-| Spatial | 100.0 | 0.0 | 0.0 | 0.0 | 0.0 |
-| Tables | 100.0 | 100.0 | 100.0 | 100.0 | 100.0 |
-| Forms | 100.0 | 100.0 | 97.3 | 97.3 | 100.0 |
-| Visual | 100.0 | 100.0 | 83.3 | 100.0 | 100.0 |
-| Layout | 100.0 | 100.0 | 100.0 | 75.9 | 82.2 |
+| Family | Gemini 3.1 Flash Lite | GPT-5 Nano | GPT-4o Mini |
+| --- | ---: | ---: | ---: |
+| Visibility | 100.0 | 100.0 | 76.9 |
+| Spatial | 0.0 | 0.0 | 0.0 |
+| Layout | 100.0 | 77.7 | 80.9 |
+| Forms | 100.0 | 86.7 | 100.0 |
+| Tables | 81.5 | 66.7 | 66.7 |
+| Visual | 100.0 | 100.0 | 60.9 |
 
 ## Current Read
 
-The suite is mostly saturated by the best tested public model. `vertex-gemini-3.5-flash` scores 100/100. That is not automatically a failure if the benchmark is used to find a Pareto frontier, but it means this suite is not yet strong enough to be the final benchmark.
+The revised suite has materially better separation than the earlier Hard-12 slice:
 
-The meaningful differentiator is `H03-raster-gantt`: Gemini 3.5 Flash reconstructs exact task/owner/start/end rows from a raster Gantt chart, while Gemini 3.1 Flash Lite, GPT-5.4 Nano, GPT-5 Nano, and GPT-4o Mini do not. GPT-5.4 Nano also misses the `Median repair: 18.6h` KPI binding in `H06-ops-dashboard` and changes `SRV-88-ES` to `SRV-88-FS` in `H12-bilingual-credit`. GPT-5 Nano is lower than GPT-5.4 Nano on this single run, mostly from layout/reading-order misses; `reasoning: none` is unsupported for GPT-5 Nano, so this run uses `minimal`. GPT-4o Mini is lower again, but still scores 84.8, which is too high for an older weak model if this suite is meant to separate capability sharply. Its run also used far more input tokens than the GPT-5 family runs, so provider PDF handling and cost are confounded with model quality.
+- GPT-5 Nano dropped from `87.0` on the old active suite to `76.5`.
+- GPT-4o Mini dropped from `84.8` to `71.4`.
+- Gemini 3.1 Flash Lite still scores high at `89.2`, which is acceptable for a cheap strong visual model but still leaves room for harder cases.
 
-This is enough to validate one useful case pattern, but not enough to treat the current suite as a benchmark leaderboard. The next useful step is to replace saturated cases with more cases like H03: realistic visual-to-structure transformations where superior visual reasoners score cleanly higher without relying on adversarial tricks.
+The highest-signal cases so far are:
+
+- `H03-raster-gantt`: all three tested models fail exact visual span reconstruction.
+- `H13-scientific-two-column`: GPT-5 Nano scores `64.0`; GPT-4o Mini scores `40.0`.
+- `H15-landscape-heatmap`: GPT-5 Nano and GPT-4o Mini score `66.7`; Gemini 3.1 Flash Lite scores `81.5`.
+- `H16-multipanel-metrics`: GPT-4o Mini scores `60.9` while the newer models pass.
+
+Still-saturated or weaker-signal cases:
+
+- `H01` and `H02` remain useful visibility policy checks, but they are not enough for model differentiation.
+- `H14-three-column-poster` is currently saturated by the tested models and may need replacement or harder scoring.
+- `H16` separates GPT-4o Mini, but GPT-5 Nano and Gemini 3.1 both solve it.
+
+Next calibration should not run the full model matrix yet. The next useful checks are `gpt-5.4-nano` and `gemini-3.5-flash` on this revised suite, after one more pass replacing or hardening saturated cases.
