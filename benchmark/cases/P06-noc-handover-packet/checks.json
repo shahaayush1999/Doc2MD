@@ -1,0 +1,356 @@
+{
+  "id": "P06-noc-handover-packet",
+  "title": "NOC Handover Packet",
+  "family": "packet",
+  "tags": [
+    "multi-page",
+    "raster-gantt",
+    "timeline",
+    "borderless-table",
+    "heatmap",
+    "visual-binding"
+  ],
+  "checks": [
+    {
+      "id": "gantt.dock-row",
+      "category": "spatial",
+      "weight": 3,
+      "description": "gantt: Dock intake row with exact inferred span",
+      "all": [
+        "Dock intake(?=[^\\n]{0,260}Noor)(?=[^\\n]{0,260}08:00)(?=[^\\n]{0,260}11:00)(?=[^\\n]{0,260}Load A-17)"
+      ]
+    },
+    {
+      "id": "gantt.release-row",
+      "category": "spatial",
+      "weight": 3,
+      "description": "gantt: Release gate row with exact inferred span",
+      "all": [
+        "Release gate(?=[^\\n]{0,260}Ken)(?=[^\\n]{0,260}10:00)(?=[^\\n]{0,260}16:30)(?=[^\\n]{0,260}REL-82)"
+      ]
+    },
+    {
+      "id": "gantt.qa-row",
+      "category": "spatial",
+      "weight": 3,
+      "description": "gantt: QA bench row with exact inferred span",
+      "all": [
+        "QA bench(?=[^\\n]{0,260}Priya)(?=[^\\n]{0,260}12:00)(?=[^\\n]{0,260}15:00)(?=[^\\n]{0,260}Lot Q4)"
+      ]
+    },
+    {
+      "id": "gantt.rollback-row",
+      "category": "spatial",
+      "weight": 3,
+      "description": "gantt: Rollback watch row with exact inferred span",
+      "all": [
+        "Rollback watch(?=[^\\n]{0,260}Mira)(?=[^\\n]{0,260}16:00)(?=[^\\n]{0,260}18:00)(?=[^\\n]{0,260}RB-9)"
+      ]
+    },
+    {
+      "id": "timeline.product-beta",
+      "category": "binding",
+      "weight": 2,
+      "description": "timeline: product beta card with Aug span",
+      "all": [
+        "Product[\\s\\S]{0,500}Beta signups(?=[\\s\\S]{0,180}Aug)(?=[\\s\\S]{0,180}Maya)(?=[\\s\\S]{0,180}1,200)"
+      ]
+    },
+    {
+      "id": "timeline.product-workflow",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "timeline: workflow card with Sep-Oct span",
+      "all": [
+        "Product[\\s\\S]{0,600}Workflow v2(?=[\\s\\S]{0,220}(Sep[\\s\\S]{0,80}Oct|Sep\\s*[-\u2013]\\s*Oct))(?=[\\s\\S]{0,220}Jon)(?=[\\s\\S]{0,220}Oct 18)"
+      ]
+    },
+    {
+      "id": "timeline.security-soc2",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "timeline: SOC2 card with Aug-Oct span",
+      "all": [
+        "Security[\\s\\S]{0,500}SOC2 audit(?=[\\s\\S]{0,220}(Aug[\\s\\S]{0,80}Oct|Aug\\s*[-\u2013]\\s*Oct))(?=[\\s\\S]{0,220}Priya)(?=[\\s\\S]{0,220}fieldwork)"
+      ]
+    },
+    {
+      "id": "timeline.security-hipaa",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "timeline: HIPAA card with Oct-Nov span",
+      "all": [
+        "Security[\\s\\S]{0,650}HIPAA BAA(?=[\\s\\S]{0,220}(Oct[\\s\\S]{0,80}Nov|Oct\\s*[-\u2013]\\s*Nov))(?=[\\s\\S]{0,220}Lena)(?=[\\s\\S]{0,220}legal review)"
+      ]
+    },
+    {
+      "id": "timeline.sales-design",
+      "category": "binding",
+      "weight": 2,
+      "description": "timeline: design partners card with Aug span",
+      "all": [
+        "Sales[\\s\\S]{0,500}Design partners(?=[\\s\\S]{0,180}Aug)(?=[\\s\\S]{0,180}Omar)(?=[\\s\\S]{0,180}9 accounts)"
+      ]
+    },
+    {
+      "id": "timeline.sales-pilots",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "timeline: enterprise pilots card with Sep-Nov span",
+      "all": [
+        "Sales[\\s\\S]{0,700}Enterprise pilots(?=[\\s\\S]{0,260}(Sep[\\s\\S]{0,100}Nov|Sep\\s*[-\u2013]\\s*Nov))(?=[\\s\\S]{0,260}Omar)(?=[\\s\\S]{0,260}\\$4\\.2M)"
+      ]
+    },
+    {
+      "id": "timeline.dependency",
+      "category": "layout",
+      "weight": 2,
+      "description": "timeline: dependency",
+      "near": {
+        "terms": [
+          "October dependency",
+          "HIPAA BAA",
+          "Security",
+          "not Product",
+          "Enterprise pilots"
+        ],
+        "window": 520
+      }
+    },
+    {
+      "id": "timeline.no-hipaa-product",
+      "category": "binding",
+      "weight": 2,
+      "description": "timeline: no-hipaa-product",
+      "none": [
+        "HIPAA BAA[\\s\\S]{0,120}(Product lane|under Product|in Product)"
+      ]
+    },
+    {
+      "id": "timeline.no-design-target-error",
+      "category": "binding",
+      "weight": 2,
+      "description": "timeline: no-design-target-error",
+      "none": [
+        "Design partners[\\s\\S]{0,120}1,000",
+        "target 1,000"
+      ]
+    },
+    {
+      "id": "timeline.footer",
+      "category": "text",
+      "weight": 1,
+      "description": "timeline: footer",
+      "all": [
+        "GTM-09",
+        "lane",
+        "month span"
+      ]
+    },
+    {
+      "id": "matrix.maya-binding",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "matrix: maya-binding",
+      "near": {
+        "terms": [
+          "Maya Singh",
+          "CEO",
+          "Stripe",
+          "Relay launch"
+        ],
+        "window": 420
+      }
+    },
+    {
+      "id": "matrix.jon-binding",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "matrix: jon-binding",
+      "near": {
+        "terms": [
+          "Jon Bell",
+          "CTO",
+          "Snowflake",
+          "vector cache"
+        ],
+        "window": 420
+      }
+    },
+    {
+      "id": "matrix.priya-binding",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "matrix: priya-binding",
+      "near": {
+        "terms": [
+          "Priya Nair",
+          "COO",
+          "Flexport",
+          "compliance"
+        ],
+        "window": 420
+      }
+    },
+    {
+      "id": "matrix.omar-binding",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "matrix: omar-binding",
+      "near": {
+        "terms": [
+          "Omar Haddad",
+          "GTM",
+          "Atlassian",
+          "\\$4\\.2M"
+        ],
+        "window": 420
+      }
+    },
+    {
+      "id": "matrix.advisors-separate",
+      "category": "structure",
+      "weight": 2,
+      "description": "matrix: advisors-separate",
+      "near": {
+        "terms": [
+          "Advisors",
+          "Lena Ortiz",
+          "Okta",
+          "Theo Park",
+          "Datadog"
+        ],
+        "window": 520
+      }
+    },
+    {
+      "id": "matrix.hiring-separate",
+      "category": "structure",
+      "weight": 1.5,
+      "description": "matrix: hiring-separate",
+      "near": {
+        "terms": [
+          "Hiring next",
+          "VP Sales",
+          "Q4",
+          "Clinical Lead",
+          "Q1"
+        ],
+        "window": 420
+      }
+    },
+    {
+      "id": "matrix.footer",
+      "category": "text",
+      "weight": 1,
+      "description": "matrix: footer",
+      "all": [
+        "Deck v12",
+        "Advisors are not core team members",
+        "open roles"
+      ]
+    },
+    {
+      "id": "matrix.no-advisor-as-core",
+      "category": "binding",
+      "weight": 2,
+      "description": "matrix: advisors not bound as core employees",
+      "none": [
+        "Lena Ortiz[\\s\\S]{0,120}(CEO|CTO|COO|GTM)",
+        "Theo Park[\\s\\S]{0,120}(CEO|CTO|COO|GTM)"
+      ]
+    },
+    {
+      "id": "heatmap.legend",
+      "category": "text",
+      "weight": 2,
+      "description": "heatmap: legend",
+      "all": [
+        "green normal",
+        "yellow watch",
+        "red escalation",
+        "slash"
+      ]
+    },
+    {
+      "id": "heatmap.api-thu",
+      "category": "tables",
+      "weight": 2.5,
+      "description": "heatmap: api-thu",
+      "near": {
+        "terms": [
+          "API",
+          "Thu",
+          "red",
+          "slash"
+        ],
+        "window": 420
+      }
+    },
+    {
+      "id": "heatmap.data-fri",
+      "category": "tables",
+      "weight": 2.5,
+      "description": "heatmap: data-fri",
+      "near": {
+        "terms": [
+          "Data",
+          "Fri",
+          "red",
+          "slash"
+        ],
+        "window": 420
+      }
+    },
+    {
+      "id": "heatmap.billing-sat",
+      "category": "tables",
+      "weight": 2.5,
+      "description": "heatmap: billing-sat",
+      "near": {
+        "terms": [
+          "Billing",
+          "Sat",
+          "red",
+          "slash"
+        ],
+        "window": 420
+      }
+    },
+    {
+      "id": "heatmap.export-fri-yellow",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "heatmap: export-fri-yellow",
+      "all": [
+        "Export[\\s\\S]{0,220}(Fri|Y|yellow)"
+      ],
+      "none": [
+        "Export[\\s\\S]{0,120}Fri[\\s\\S]{0,80}(red|R with slash)",
+        "Export Fri red"
+      ]
+    },
+    {
+      "id": "heatmap.weekend",
+      "category": "structure",
+      "weight": 1.5,
+      "description": "heatmap: weekend",
+      "all": [
+        "Sat",
+        "weekend"
+      ]
+    },
+    {
+      "id": "packet.page-order",
+      "category": "structure",
+      "weight": 3,
+      "description": "Packet preserves artifact order: Gantt, timeline, team matrix, heatmap.",
+      "ordered": [
+        "Raster Shift Gantt",
+        "Overlapping GTM Timeline",
+        "Borderless Team Matrix",
+        "Escalation Heatmap"
+      ]
+    }
+  ]
+}

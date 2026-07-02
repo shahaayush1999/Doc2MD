@@ -1,272 +1,64 @@
 {
-  "name": "Doc2MD-Hard-15",
-  "version": "0.5.0",
-  "description": "Compact hard Doc2MD candidate suite focused on compound document reasoning: complex raster layouts, visual-to-structure reconstruction, table/figure binding, redlines, schedules, forms, diagrams, and financial tables.",
-  "caseCount": 15,
-  "pageCount": 15,
+  "name": "Doc2MD-LongPackets-3",
+  "version": "0.6.0-experimental",
+  "description": "Experimental multi-page realistic packet benchmark focused on charts, dense visual matrices, spatial timelines, continuations, borderless layouts, and cross-page conflicts.",
+  "caseCount": 3,
+  "pageCount": 14,
   "cases": [
     {
-      "id": "H01-hidden-stale-release",
-      "title": "Hidden Stale Release Card",
-      "family": "visibility",
+      "id": "P01-board-ops-packet",
+      "title": "Board Operating Packet",
+      "family": "packet",
       "tags": [
-        "hidden-text",
-        "raster-card",
-        "negative-check"
+        "multi-page",
+        "finance",
+        "dashboard",
+        "source-precedence",
+        "charts"
       ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H01-hidden-stale-release/source.pdf",
-      "gold": "benchmark/cases/H01-hidden-stale-release/gold.md",
-      "spec": "benchmark/cases/H01-hidden-stale-release/spec.md",
-      "checks": "benchmark/cases/H01-hidden-stale-release/checks.json",
-      "facts": "benchmark/cases/H01-hidden-stale-release/facts.json"
+      "pages": 4,
+      "pdf": "benchmark/cases/P01-board-ops-packet/source.pdf",
+      "gold": "benchmark/cases/P01-board-ops-packet/gold.md",
+      "spec": "benchmark/cases/P01-board-ops-packet/spec.md",
+      "checks": "benchmark/cases/P01-board-ops-packet/checks.json",
+      "facts": "benchmark/cases/P01-board-ops-packet/facts.json"
     },
     {
-      "id": "H02-opaque-stale-shipment",
-      "title": "Opaque Stale Shipment Overlay",
-      "family": "visibility",
+      "id": "P04-scientific-supplement",
+      "title": "Scientific Supplement Packet",
+      "family": "scientific",
       "tags": [
-        "covered-text",
-        "raster-card",
-        "negative-check"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H02-opaque-stale-shipment/source.pdf",
-      "gold": "benchmark/cases/H02-opaque-stale-shipment/gold.md",
-      "spec": "benchmark/cases/H02-opaque-stale-shipment/spec.md",
-      "checks": "benchmark/cases/H02-opaque-stale-shipment/checks.json",
-      "facts": "benchmark/cases/H02-opaque-stale-shipment/facts.json"
-    },
-    {
-      "id": "H03-raster-gantt",
-      "title": "Raster Gantt Shift Schedule",
-      "family": "spatial",
-      "tags": [
-        "raster-only",
-        "gantt",
-        "schedule"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H03-raster-gantt/source.pdf",
-      "gold": "benchmark/cases/H03-raster-gantt/gold.md",
-      "spec": "benchmark/cases/H03-raster-gantt/spec.md",
-      "checks": "benchmark/cases/H03-raster-gantt/checks.json",
-      "facts": "benchmark/cases/H03-raster-gantt/facts.json"
-    },
-    {
-      "id": "H07-broken-pitch-slide",
-      "title": "Overlapping GTM Timeline Slide",
-      "family": "layout",
-      "tags": [
-        "raster-only",
-        "slide",
-        "overlap",
-        "timeline",
-        "swimlanes"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H07-broken-pitch-slide/source.pdf",
-      "gold": "benchmark/cases/H07-broken-pitch-slide/gold.md",
-      "spec": "benchmark/cases/H07-broken-pitch-slide/spec.md",
-      "checks": "benchmark/cases/H07-broken-pitch-slide/checks.json",
-      "facts": "benchmark/cases/H07-broken-pitch-slide/facts.json"
-    },
-    {
-      "id": "H11-two-column-sidebar",
-      "title": "Two-Column Incident Report",
-      "family": "layout",
-      "tags": [
-        "raster-only",
-        "multi-column",
-        "sidebar",
-        "figure"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H11-two-column-sidebar/source.pdf",
-      "gold": "benchmark/cases/H11-two-column-sidebar/gold.md",
-      "spec": "benchmark/cases/H11-two-column-sidebar/spec.md",
-      "checks": "benchmark/cases/H11-two-column-sidebar/checks.json",
-      "facts": "benchmark/cases/H11-two-column-sidebar/facts.json"
-    },
-    {
-      "id": "H12-bilingual-credit",
-      "title": "Bilingual Service Credit",
-      "family": "forms",
-      "tags": [
-        "raster-only",
-        "bilingual",
-        "checkbox"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H12-bilingual-credit/source.pdf",
-      "gold": "benchmark/cases/H12-bilingual-credit/gold.md",
-      "spec": "benchmark/cases/H12-bilingual-credit/spec.md",
-      "checks": "benchmark/cases/H12-bilingual-credit/checks.json",
-      "facts": "benchmark/cases/H12-bilingual-credit/facts.json"
-    },
-    {
-      "id": "H13-scientific-two-column",
-      "title": "Scientific Paper With Embedded Table And Figure",
-      "family": "layout",
-      "tags": [
-        "raster-only",
-        "scientific-paper",
-        "multi-column",
-        "table",
+        "multi-page",
+        "equation",
         "figure",
+        "continued-table",
         "footnote"
       ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H13-scientific-two-column/source.pdf",
-      "gold": "benchmark/cases/H13-scientific-two-column/gold.md",
-      "spec": "benchmark/cases/H13-scientific-two-column/spec.md",
-      "checks": "benchmark/cases/H13-scientific-two-column/checks.json",
-      "facts": "benchmark/cases/H13-scientific-two-column/facts.json"
+      "pages": 5,
+      "pdf": "benchmark/cases/P04-scientific-supplement/source.pdf",
+      "gold": "benchmark/cases/P04-scientific-supplement/gold.md",
+      "spec": "benchmark/cases/P04-scientific-supplement/spec.md",
+      "checks": "benchmark/cases/P04-scientific-supplement/checks.json",
+      "facts": "benchmark/cases/P04-scientific-supplement/facts.json"
     },
     {
-      "id": "H14-three-column-poster",
-      "title": "Borderless Team Matrix Pitch Slide",
-      "family": "layout",
+      "id": "P06-noc-handover-packet",
+      "title": "NOC Handover Packet",
+      "family": "packet",
       "tags": [
-        "raster-only",
-        "pitch-slide",
+        "multi-page",
+        "raster-gantt",
+        "timeline",
         "borderless-table",
-        "team-matrix",
-        "advisor-sidebar"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H14-three-column-poster/source.pdf",
-      "gold": "benchmark/cases/H14-three-column-poster/gold.md",
-      "spec": "benchmark/cases/H14-three-column-poster/spec.md",
-      "checks": "benchmark/cases/H14-three-column-poster/checks.json",
-      "facts": "benchmark/cases/H14-three-column-poster/facts.json"
-    },
-    {
-      "id": "H15-landscape-heatmap",
-      "title": "Landscape Heatmap Escalation Plan",
-      "family": "tables",
-      "tags": [
-        "raster-only",
-        "landscape-insert",
         "heatmap",
-        "diagonal-mark",
-        "wide-table"
+        "visual-binding"
       ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H15-landscape-heatmap/source.pdf",
-      "gold": "benchmark/cases/H15-landscape-heatmap/gold.md",
-      "spec": "benchmark/cases/H15-landscape-heatmap/spec.md",
-      "checks": "benchmark/cases/H15-landscape-heatmap/checks.json",
-      "facts": "benchmark/cases/H15-landscape-heatmap/facts.json"
-    },
-    {
-      "id": "H16-multipanel-metrics",
-      "title": "Multi-Panel Metrics Report",
-      "family": "visual",
-      "tags": [
-        "raster-only",
-        "multi-panel",
-        "line-chart",
-        "stacked-bar",
-        "matrix",
-        "callout"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H16-multipanel-metrics/source.pdf",
-      "gold": "benchmark/cases/H16-multipanel-metrics/gold.md",
-      "spec": "benchmark/cases/H16-multipanel-metrics/spec.md",
-      "checks": "benchmark/cases/H16-multipanel-metrics/checks.json",
-      "facts": "benchmark/cases/H16-multipanel-metrics/facts.json"
-    },
-    {
-      "id": "H17-redlined-contract",
-      "title": "Redlined Data Processing Addendum",
-      "family": "layout",
-      "tags": [
-        "raster-only",
-        "redline",
-        "contract",
-        "margin-comments",
-        "deleted-text"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H17-redlined-contract/source.pdf",
-      "gold": "benchmark/cases/H17-redlined-contract/gold.md",
-      "spec": "benchmark/cases/H17-redlined-contract/spec.md",
-      "checks": "benchmark/cases/H17-redlined-contract/checks.json",
-      "facts": "benchmark/cases/H17-redlined-contract/facts.json"
-    },
-    {
-      "id": "H18-financial-arr-bridge",
-      "title": "Financial ARR Bridge Board Pack",
-      "family": "tables",
-      "tags": [
-        "raster-only",
-        "finance",
-        "hierarchical-table",
-        "waterfall-chart",
-        "footnotes"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H18-financial-arr-bridge/source.pdf",
-      "gold": "benchmark/cases/H18-financial-arr-bridge/gold.md",
-      "spec": "benchmark/cases/H18-financial-arr-bridge/spec.md",
-      "checks": "benchmark/cases/H18-financial-arr-bridge/checks.json",
-      "facts": "benchmark/cases/H18-financial-arr-bridge/facts.json"
-    },
-    {
-      "id": "H19-insurance-eob",
-      "title": "Insurance Explanation of Benefits",
-      "family": "forms",
-      "tags": [
-        "raster-only",
-        "insurance",
-        "checkbox",
-        "summary-card",
-        "financial-table"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H19-insurance-eob/source.pdf",
-      "gold": "benchmark/cases/H19-insurance-eob/gold.md",
-      "spec": "benchmark/cases/H19-insurance-eob/spec.md",
-      "checks": "benchmark/cases/H19-insurance-eob/checks.json",
-      "facts": "benchmark/cases/H19-insurance-eob/facts.json"
-    },
-    {
-      "id": "H20-clinic-floorplan-punchlist",
-      "title": "Clinic Floor-Plan Punch List",
-      "family": "visual",
-      "tags": [
-        "raster-only",
-        "floor-plan",
-        "callouts",
-        "diagram",
-        "table"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H20-clinic-floorplan-punchlist/source.pdf",
-      "gold": "benchmark/cases/H20-clinic-floorplan-punchlist/gold.md",
-      "spec": "benchmark/cases/H20-clinic-floorplan-punchlist/spec.md",
-      "checks": "benchmark/cases/H20-clinic-floorplan-punchlist/checks.json",
-      "facts": "benchmark/cases/H20-clinic-floorplan-punchlist/facts.json"
-    },
-    {
-      "id": "H21-conference-schedule-grid",
-      "title": "Conference Schedule Grid",
-      "family": "spatial",
-      "tags": [
-        "raster-only",
-        "schedule",
-        "merged-cells",
-        "icons",
-        "room-grid"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/H21-conference-schedule-grid/source.pdf",
-      "gold": "benchmark/cases/H21-conference-schedule-grid/gold.md",
-      "spec": "benchmark/cases/H21-conference-schedule-grid/spec.md",
-      "checks": "benchmark/cases/H21-conference-schedule-grid/checks.json",
-      "facts": "benchmark/cases/H21-conference-schedule-grid/facts.json"
+      "pages": 5,
+      "pdf": "benchmark/cases/P06-noc-handover-packet/source.pdf",
+      "gold": "benchmark/cases/P06-noc-handover-packet/gold.md",
+      "spec": "benchmark/cases/P06-noc-handover-packet/spec.md",
+      "checks": "benchmark/cases/P06-noc-handover-packet/checks.json",
+      "facts": "benchmark/cases/P06-noc-handover-packet/facts.json"
     }
   ]
 }

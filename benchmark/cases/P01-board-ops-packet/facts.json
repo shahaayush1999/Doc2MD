@@ -1,0 +1,77 @@
+{
+  "id": "P01-board-ops-packet",
+  "title": "Board Operating Packet",
+  "family": "packet",
+  "tags": [
+    "multi-page",
+    "finance",
+    "dashboard",
+    "source-precedence",
+    "charts"
+  ],
+  "facts": [
+    {
+      "id": "p01.final.summary",
+      "category": "text",
+      "weight": 4,
+      "expectation": "Executive summary says ARR closed at $200.5M, net retention 117%, Support breach risk NA-West, and Release Alpha BLOCKED.",
+      "guidance": ""
+    },
+    {
+      "id": "p01.decisions",
+      "category": "tables",
+      "weight": 4,
+      "expectation": "Decision table has Alpha release/Nisha/2026-07-18/BLOCKED, APAC pricing/Omar/2026-07-21/APPROVED, Support freeze/Mei/when NA-West <25/ACTIVE.",
+      "guidance": ""
+    },
+    {
+      "id": "p01.arr.table",
+      "category": "tables",
+      "weight": 6,
+      "expectation": "ARR bridge table preserves region rows and total row: total FY2025 164.5, New +35.5, Expansion +13.5, Churn -12.5, FX -0.5, FY2026 200.5.",
+      "guidance": ""
+    },
+    {
+      "id": "p01.footnotes",
+      "category": "text",
+      "weight": 3,
+      "expectation": "Footnotes state churn is negative, EMEA includes Israel and South Africa, and intercompany rows are excluded.",
+      "guidance": ""
+    },
+    {
+      "id": "p01.dashboard.line",
+      "category": "visual",
+      "weight": 5,
+      "expectation": "Queue depth values are 12, 41, 38, 29, 18 at 08:00, 10:00, 12:00, 14:00, 16:00 and threshold 35 is crossed at 10:00 and 12:00.",
+      "guidance": ""
+    },
+    {
+      "id": "p01.dashboard.backlog",
+      "category": "visual",
+      "weight": 4,
+      "expectation": "Backlog by region preserves NA-West 18/11, NA-East 9/7, EMEA 12/5, APAC 6/2 for Tier 1/Tier 2.",
+      "guidance": ""
+    },
+    {
+      "id": "p01.sla",
+      "category": "tables",
+      "weight": 4,
+      "expectation": "SLA matrix preserves Critical 3 breached and 2 at risk, High 5 breached and 4 at risk, Normal 2 breached and 6 at risk.",
+      "guidance": ""
+    },
+    {
+      "id": "p01.warning",
+      "category": "visual",
+      "weight": 4,
+      "expectation": "Warning says NA-West crossed depth 35 at 10:00 and 12:00; reopen freeze until depth is below 25.",
+      "guidance": ""
+    },
+    {
+      "id": "p01.superseded",
+      "category": "forbidden_text",
+      "weight": 5,
+      "expectation": "Draft appendix values $198.8M, -$9.1M, Alpha APPROVED, and support freeze inactive are marked superseded and not treated as final.",
+      "guidance": ""
+    }
+  ]
+}

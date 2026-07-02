@@ -1,0 +1,30 @@
+{
+  "id": "P04-scientific-supplement",
+  "title": "Scientific Supplement Packet",
+  "family": "scientific",
+  "tags": [
+    "multi-page",
+    "equation",
+    "figure",
+    "continued-table",
+    "footnote"
+  ],
+  "checks": [
+    {
+      "id": "cohort-d",
+      "category": "tables",
+      "weight": 3,
+      "description": "cohort-d",
+      "near": {
+        "terms": [
+          "D",
+          "severe",
+          "455",
+          "0\\.071",
+          "0\\.744"
+        ],
+        "window": 360
+      }
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "id": "P06-noc-handover-packet",
+  "title": "NOC Handover Packet",
+  "family": "packet",
+  "tags": [
+    "multi-page",
+    "raster-gantt",
+    "timeline",
+    "borderless-table",
+    "heatmap",
+    "visual-binding"
+  ],
+  "facts": [
+    {
+      "id": "p06.page_order",
+      "category": "structure",
+      "weight": 4,
+      "expectation": "The output preserves the artifact order: raster shift Gantt, overlapping GTM timeline, borderless team matrix, then escalation heatmap.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.gantt.dock",
+      "category": "spatial",
+      "weight": 4,
+      "expectation": "Gantt: Dock intake is owned by Noor, runs 08:00-11:00, and has label Load A-17.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.gantt.release",
+      "category": "spatial",
+      "weight": 4,
+      "expectation": "Gantt: Release gate is owned by Ken, runs 10:00-16:30, and has label REL-82.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.gantt.qa",
+      "category": "spatial",
+      "weight": 4,
+      "expectation": "Gantt: QA bench is owned by Priya, runs 12:00-15:00, and has label Lot Q4.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.gantt.rollback",
+      "category": "spatial",
+      "weight": 4,
+      "expectation": "Gantt: Rollback watch is owned by Mira, runs 16:00-18:00, and has label RB-9.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.timeline.product",
+      "category": "visual_relation",
+      "weight": 5,
+      "expectation": "Timeline: Product lane has Beta signups in Aug owned by Maya target 1,200, and Workflow v2 spanning Sep-Oct owned by Jon shipping Oct 18.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.timeline.security",
+      "category": "visual_relation",
+      "weight": 5,
+      "expectation": "Timeline: Security lane has SOC2 audit spanning Aug-Oct owned by Priya and HIPAA BAA spanning Oct-Nov owned by Lena.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.timeline.sales",
+      "category": "visual_relation",
+      "weight": 5,
+      "expectation": "Timeline: Sales lane has Design partners in Aug owned by Omar with 9 accounts and Enterprise pilots spanning Sep-Nov owned by Omar with $4.2M pipeline.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.timeline.dependency",
+      "category": "visual_relation",
+      "weight": 4,
+      "expectation": "Timeline dependency says HIPAA BAA belongs to Security, not Product, and Enterprise pilots depend on BAA legal review.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.matrix.maya",
+      "category": "visual_relation",
+      "weight": 4,
+      "expectation": "Team matrix: Maya Singh is CEO/Product, ex-Stripe, 12 yrs product, led Relay launch.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.matrix.jon",
+      "category": "visual_relation",
+      "weight": 4,
+      "expectation": "Team matrix: Jon Bell is CTO/Infra, ex-Snowflake, owns retrieval infra, built vector cache.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.matrix.priya",
+      "category": "visual_relation",
+      "weight": 4,
+      "expectation": "Team matrix: Priya Nair is COO/Ops, ex-Flexport, scaled support, owns compliance.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.matrix.omar",
+      "category": "visual_relation",
+      "weight": 4,
+      "expectation": "Team matrix: Omar Haddad is GTM/RevOps, ex-Atlassian, pipeline $4.2M, leads enterprise sales.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.matrix.sidebars",
+      "category": "structure",
+      "weight": 4,
+      "expectation": "Advisors Lena Ortiz and Theo Park are separate from core team; VP Sales Q4 and Clinical Lead Q1 are open roles, not employees.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.heatmap.legend",
+      "category": "visual_relation",
+      "weight": 4,
+      "expectation": "Heatmap legend: G green normal, Y yellow watch, R red escalation; diagonal slash means owner must page incident lead.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.heatmap.slashes",
+      "category": "visual_relation",
+      "weight": 6,
+      "expectation": "Critical red slash cells are API Thu, Data Fri, Export Wed, and Billing Sat.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.heatmap.export_fri",
+      "category": "visual_relation",
+      "weight": 5,
+      "expectation": "Export Friday is yellow, not red and not slash-marked.",
+      "guidance": ""
+    },
+    {
+      "id": "p06.heatmap.weekend",
+      "category": "structure",
+      "weight": 3,
+      "expectation": "Saturday/weekend columns are preserved and not dropped.",
+      "guidance": ""
+    }
+  ]
+}

@@ -75,6 +75,7 @@ class Case:
     facts: list[dict] | None = None
     hidden_text: list[str] | None = None
     covered_text: list[str] | None = None
+    extractable_text_pages: list[list[tuple[int, int, str]]] | None = None
 
     @property
     def slug(self) -> str:
@@ -1260,7 +1261,701 @@ def h21() -> Case:
     )
 
 
-CASES = [h01(), h02(), h03(), h07(), h11(), h12(), h13(), h14(), h15(), h16(), h17(), h18(), h19(), h20(), h21()]
+def overlays(lines: list[str], x: int, y: int, step: int = 30) -> list[tuple[int, int, str]]:
+    return [(x, y + i * step, line) for i, line in enumerate(lines)]
+
+
+def packet_ops_board() -> Case:
+    pages: list[Image.Image] = []
+
+    p1 = base_page("Northstar Board Packet - Q3 Operating Review")
+    d = ImageDraw.Draw(p1)
+    d.text((100, 150), "Packet prepared 2026-07-02. Visible CFO correction badges supersede draft appendix values.", fill="#7f1d1d", font=F["small"])
+    draw_card(d, (90, 245, 770, 560), "Executive summary", ["ARR closed at $200.5M", "Net retention 117%", "Support breach risk: NA-West", "Release Alpha stays blocked"], "#f8fafc")
+    draw_card(d, (850, 245, 1540, 560), "CFO correction", ["Use final churn: -$12.5M", "Exclude intercompany rows", "Do not use draft appendix totals"], "#fff7ed", "#c2410c")
+    rows = [["Decision", "Owner", "Due", "Visible state"], ["Alpha release", "Nisha", "2026-07-18", "BLOCKED"], ["APAC pricing", "Omar", "2026-07-21", "APPROVED"], ["Support freeze", "Mei", "when NA-West <25", "ACTIVE"]]
+    draw_table(d, 105, 720, [350, 260, 300, 360], rows, 80)
+    d.text((105, 1120), "Reading order: summary, CFO correction, decision table, then appendix context.", fill="#475569", font=F["small"])
+    pages.append(p1)
+
+    p2 = base_page("Note 3 - ARR Bridge and Waterfall")
+    d = ImageDraw.Draw(p2)
+    rows = [["Region", "FY2025", "New", "Expansion", "Churn", "FX", "FY2026"], ["North America", "84.0", "+18.5", "+6.0", "(4.2)", "+0.7", "105.0"], ["EMEA", "56.0", "+9.4", "+5.1", "(6.8)", "(1.2)", "62.5"], ["APAC", "24.5", "+7.6", "+2.4", "(1.5)", "+0.0", "33.0"], ["Total", "164.5", "+35.5", "+13.5", "(12.5)", "(0.5)", "200.5"]]
+    draw_table(d, 70, 230, [285, 170, 170, 205, 165, 150, 170], rows, 78)
+    d.text((100, 710), "Footnotes: Churn shown as negative. EMEA includes Israel and South Africa. Intercompany rows excluded.", fill="#111827", font=F["small"])
+    d.text((100, 840), "Waterfall chart: final values after CFO correction", fill="#111827", font=F["h2"])
+    steps = [("FY2025", 164.5, "#64748b"), ("New", 35.5, "#16a34a"), ("Expansion", 13.5, "#16a34a"), ("Churn", -12.5, "#dc2626"), ("FX", -0.5, "#dc2626"), ("FY2026", 200.5, "#64748b")]
+    base_y, x0 = 1470, 150
+    for i, (label, value, color) in enumerate(steps):
+        x = x0 + i * 230
+        h = int((abs(value) if i not in [0, 5] else value) * 1.35)
+        y1 = base_y - h if value >= 0 else base_y - 40
+        y2 = base_y if value >= 0 else base_y - 40 + h
+        d.rectangle((x, y1, x + 105, y2), fill=color, outline="#111827", width=2)
+        d.text((x, min(y1, y2) - 32), f"{value:+.1f}" if i not in [0, 5] else f"{value:.1f}", fill="#111827", font=F["tiny"])
+        d.text((x - 4, base_y + 22), label, fill="#111827", font=F["tiny"])
+    pages.append(p2)
+
+    p3 = base_page("Support Queue Dashboard")
+    d = ImageDraw.Draw(p3)
+    d.text((100, 150), "Some chart values are visual only. Warning banner must be derived from the panels.", fill="#7f1d1d", font=F["small"])
+    d.rounded_rectangle((90, 245, 790, 760), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    d.text((120, 285), "Queue depth", fill="#111827", font=F["h2"])
+    pts = [(170, 650), (285, 390), (400, 430), (515, 515), (630, 610)]
+    labels = [("08:00", "12"), ("10:00", "41"), ("12:00", "38"), ("14:00", "29"), ("16:00", "18")]
+    d.line((150, 675, 690, 675), fill="#111827", width=3)
+    d.line((150, 675, 150, 330), fill="#111827", width=3)
+    d.line((150, 455, 690, 455), fill="#dc2626", width=4)
+    d.text((700, 443), "threshold 35", fill="#dc2626", font=F["tiny"])
+    for a, b in zip(pts, pts[1:]):
+        d.line((*a, *b), fill="#2563eb", width=5)
+    for p, (t, v) in zip(pts, labels):
+        d.ellipse((p[0] - 7, p[1] - 7, p[0] + 7, p[1] + 7), fill="#2563eb")
+        d.text((p[0] - 16, p[1] - 35), v, fill="#111827", font=F["tiny"])
+        d.text((p[0] - 24, 695), t, fill="#111827", font=F["tiny"])
+    d.rounded_rectangle((900, 245, 1590, 760), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    d.text((930, 285), "Backlog by region", fill="#111827", font=F["h2"])
+    for i, (region, t1, t2) in enumerate([("NA-West", 18, 11), ("NA-East", 9, 7), ("EMEA", 12, 5), ("APAC", 6, 2)]):
+        x = 970 + i * 150
+        yb = 675
+        d.rectangle((x, yb - t1 * 9, x + 60, yb), fill="#93c5fd", outline="#1d4ed8")
+        d.rectangle((x, yb - (t1 + t2) * 9, x + 60, yb - t1 * 9), fill="#fca5a5", outline="#b91c1c")
+        d.text((x, yb + 20), region, fill="#111827", font=F["tiny"])
+    draw_table(d, 105, 900, [260, 240, 240, 240], [["Priority", "Breached", "At risk", "OK"], ["Critical", "3", "2", "7"], ["High", "5", "4", "18"], ["Normal", "2", "6", "31"]], 70)
+    d.rounded_rectangle((900, 930, 1590, 1165), radius=14, fill="#fff7ed", outline="#c2410c", width=4)
+    draw_text(d, (930, 965), "Warning: NA-West crossed depth 35 at 10:00 and 12:00. Reopen freeze until depth is below 25.", F["small"], fill="#9a3412", width=48, leading=31)
+    pages.append(p3)
+
+    p4 = base_page("Draft Appendix - Superseded")
+    d = ImageDraw.Draw(p4)
+    d.text((100, 155), "DRAFT APPENDIX - superseded by pages 1-3", fill="#991b1b", font=F["h1"])
+    draw_table(d, 110, 300, [360, 260, 260, 260], [["Draft field", "Draft value", "Visible final", "Status"], ["ARR total", "$198.8M", "$200.5M", "superseded"], ["Churn", "-$9.1M", "-$12.5M", "superseded"], ["Release Alpha", "APPROVED", "BLOCKED", "superseded"], ["Support freeze", "inactive", "ACTIVE", "superseded"]], 86)
+    d.text((110, 760), "The appendix is included for context but must not override the visible final values.", fill="#111827", font=F["small"])
+    pages.append(p4)
+
+    gold = """# Northstar Board Packet - Q3 Operating Review
+
+## Executive summary
+
+ARR closed at $200.5M. Net retention is 117%. Support breach risk is NA-West. Release Alpha stays BLOCKED.
+
+## CFO correction
+
+Use final churn of -$12.5M. Exclude intercompany rows. Do not use draft appendix totals.
+
+## Decisions
+
+| Decision | Owner | Due | Visible state |
+| --- | --- | --- | --- |
+| Alpha release | Nisha | 2026-07-18 | BLOCKED |
+| APAC pricing | Omar | 2026-07-21 | APPROVED |
+| Support freeze | Mei | when NA-West <25 | ACTIVE |
+
+## Note 3 - ARR Bridge and Waterfall
+
+| Region | FY2025 | New | Expansion | Churn | FX | FY2026 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| North America | 84.0 | +18.5 | +6.0 | -4.2 | +0.7 | 105.0 |
+| EMEA | 56.0 | +9.4 | +5.1 | -6.8 | -1.2 | 62.5 |
+| APAC | 24.5 | +7.6 | +2.4 | -1.5 | +0.0 | 33.0 |
+| Total | 164.5 | +35.5 | +13.5 | -12.5 | -0.5 | 200.5 |
+
+Footnotes: Churn is shown as negative. EMEA includes Israel and South Africa. Intercompany rows are excluded.
+
+Waterfall chart: FY2025 starts at 164.5, New and Expansion are positive steps, Churn and FX are negative steps, and FY2026 ends at 200.5.
+
+## Support Queue Dashboard
+
+Queue depth values are 08:00 12, 10:00 41, 12:00 38, 14:00 29, 16:00 18. The threshold is 35, crossed at 10:00 and 12:00.
+
+Backlog by region: NA-West has Tier 1 18 and Tier 2 11; NA-East has Tier 1 9 and Tier 2 7; EMEA has Tier 1 12 and Tier 2 5; APAC has Tier 1 6 and Tier 2 2.
+
+SLA matrix: Critical breached 3, Critical at risk 2, Critical OK 7. High breached 5, High at risk 4, High OK 18. Normal breached 2, Normal at risk 6, Normal OK 31.
+
+Warning: NA-West crossed depth 35 at 10:00 and 12:00. Reopen freeze until depth is below 25.
+
+## Draft Appendix
+
+The draft appendix is superseded. It must not override final values. Draft ARR $198.8M, draft churn -$9.1M, draft Alpha APPROVED, and draft support freeze inactive are historical/superseded values.
+"""
+    return Case(
+        "P01-board-ops-packet",
+        "Board Operating Packet",
+        "packet",
+        ["multi-page", "finance", "dashboard", "source-precedence", "charts"],
+        "Recover a realistic board packet with final values, draft appendix conflicts, financial table, dashboard, and derived warning.",
+        "Four-page packet with mixed extractable text overlays and raster visual tables/charts.",
+        ["final decisions", "ARR bridge", "dashboard", "draft appendix precedence"],
+        ["Preserve page order.", "Use final visible values over draft appendix values.", "Reconstruct financial and dashboard tables."],
+        gold,
+        [near_check("final-arr", "tables", ["ARR", "$200.5M", "churn", "-$12.5M"], 3, 500)],
+        pages,
+        facts=[
+            fact("p01.final.summary", "text", 4, "Executive summary says ARR closed at $200.5M, net retention 117%, Support breach risk NA-West, and Release Alpha BLOCKED."),
+            fact("p01.decisions", "tables", 4, "Decision table has Alpha release/Nisha/2026-07-18/BLOCKED, APAC pricing/Omar/2026-07-21/APPROVED, Support freeze/Mei/when NA-West <25/ACTIVE."),
+            fact("p01.arr.table", "tables", 6, "ARR bridge table preserves region rows and total row: total FY2025 164.5, New +35.5, Expansion +13.5, Churn -12.5, FX -0.5, FY2026 200.5."),
+            fact("p01.footnotes", "text", 3, "Footnotes state churn is negative, EMEA includes Israel and South Africa, and intercompany rows are excluded."),
+            fact("p01.dashboard.line", "visual", 5, "Queue depth values are 12, 41, 38, 29, 18 at 08:00, 10:00, 12:00, 14:00, 16:00 and threshold 35 is crossed at 10:00 and 12:00."),
+            fact("p01.dashboard.backlog", "visual", 4, "Backlog by region preserves NA-West 18/11, NA-East 9/7, EMEA 12/5, APAC 6/2 for Tier 1/Tier 2."),
+            fact("p01.sla", "tables", 4, "SLA matrix preserves Critical 3 breached and 2 at risk, High 5 breached and 4 at risk, Normal 2 breached and 6 at risk."),
+            fact("p01.warning", "visual", 4, "Warning says NA-West crossed depth 35 at 10:00 and 12:00; reopen freeze until depth is below 25."),
+            fact("p01.superseded", "forbidden_text", 5, "Draft appendix values $198.8M, -$9.1M, Alpha APPROVED, and support freeze inactive are marked superseded and not treated as final."),
+        ],
+        extractable_text_pages=[
+            overlays(["Northstar Board Packet - Q3 Operating Review", "ARR closed at $200.5M", "Net retention 117%", "Release Alpha stays blocked"], 100, 105),
+            [],
+            [],
+            overlays(["DRAFT APPENDIX - superseded by pages 1-3", "The appendix is included for context but must not override final values."], 100, 150),
+        ],
+    )
+
+
+def packet_claims_appeal() -> Case:
+    pages: list[Image.Image] = []
+    p1 = base_page("Summit Health EOB Appeal Packet")
+    d = ImageDraw.Draw(p1)
+    draw_card(d, (100, 220, 760, 550), "Member and claim", ["Member: Ana Rivera", "Claim: 5821-A", "Plan: Silver HMO", "This is not a bill"], "#f8fafc")
+    draw_card(d, (900, 220, 1530, 550), "Final responsibility", ["Patient may owe: $48.32", "Appeal by: 2026-08-31", "Network: In-network"], "#fff7ed", "#c2410c")
+    checkbox(d, 130, 650, "In-network", True, F["small"])
+    checkbox(d, 130, 705, "Out-of-network", False, F["small"])
+    checkbox(d, 130, 760, "Appeal form attached", True, F["small"])
+    d.text((100, 900), "Important: Page 3 denial note changes only the lab-panel adjustment, not the office visit row.", fill="#7f1d1d", font=F["small"])
+    pages.append(p1)
+
+    p2 = base_page("EOB Detail - Claim 5821-A")
+    d = ImageDraw.Draw(p2)
+    rows = [["Service", "Code", "Charged", "Allowed", "Deductible", "Plan paid", "Patient may owe"], ["Office visit", "99213", "$215.00", "$143.20", "$20.00", "$98.56", "$44.64"], ["Comprehensive metabolic panel", "80053", "$72.00", "$18.40", "$0.00", "$14.72", "$3.68"], ["Total", "", "$287.00", "$161.60", "$20.00", "$113.28", "$48.32"]]
+    draw_table(d, 60, 230, [350, 130, 170, 170, 185, 180, 225], rows, 92)
+    d.rounded_rectangle((105, 720, 1540, 960), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    draw_text(d, (135, 755), "Footnote A: The comprehensive metabolic panel was repriced under the in-network lab schedule. Do not add the lab adjustment twice.", F["small"], width=96, leading=31)
+    pages.append(p2)
+
+    p3 = base_page("Denial and Adjustment Notes")
+    d = ImageDraw.Draw(p3)
+    rows = [["Code", "Applies to", "Meaning", "Effect"], ["N214", "80053 only", "Lab panel repriced", "Allowed becomes $18.40"], ["M51", "Office visit", "Routine office visit", "No denial"], ["X17", "Claim total", "Appeal rights included", "Deadline 2026-08-31"]]
+    draw_table(d, 90, 260, [180, 280, 430, 390], rows, 86)
+    d.rounded_rectangle((980, 820, 1500, 1050), radius=16, fill="#fee2e2", outline="#991b1b", width=4)
+    draw_text(d, (1010, 860), "Visible correction: an earlier draft said patient may owe $63.04. Final card on page 1 controls: $48.32.", F["small"], fill="#991b1b", width=34, leading=30)
+    pages.append(p3)
+
+    p4 = base_page("Appeal Form")
+    d = ImageDraw.Draw(p4)
+    d.text((100, 180), "Appeal deadline: 2026-08-31", fill="#111827", font=F["h2"])
+    checkbox(d, 120, 290, "Member requests appeal", True, F["small"])
+    checkbox(d, 120, 345, "Provider-filed appeal", False, F["small"])
+    checkbox(d, 120, 400, "Expedited review requested", False, F["small"])
+    d.rounded_rectangle((110, 520, 1430, 760), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    draw_text(d, (140, 555), "Reason: member disputes lab-panel pricing only. Office visit is not disputed. Signature: Ana Rivera, dated 2026-07-06.", F["small"], width=92, leading=31)
+    pages.append(p4)
+
+    gold = """# Summit Health EOB Appeal Packet
+
+Member: Ana Rivera. Claim: 5821-A. Plan: Silver HMO. This is not a bill.
+
+Final responsibility card: patient may owe $48.32. Appeal deadline is 2026-08-31. Network status is In-network. In-network is checked; Out-of-network is unchecked; Appeal form attached is checked.
+
+## EOB Detail
+
+| Service | Code | Charged | Allowed | Deductible | Plan paid | Patient may owe |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Office visit | 99213 | $215.00 | $143.20 | $20.00 | $98.56 | $44.64 |
+| Comprehensive metabolic panel | 80053 | $72.00 | $18.40 | $0.00 | $14.72 | $3.68 |
+| Total | | $287.00 | $161.60 | $20.00 | $113.28 | $48.32 |
+
+Footnote A: The comprehensive metabolic panel was repriced under the in-network lab schedule. Do not add the lab adjustment twice.
+
+## Denial and Adjustment Notes
+
+N214 applies to 80053 only and means the lab panel was repriced; allowed becomes $18.40. M51 applies to the office visit and means routine office visit with no denial. X17 applies to the claim total and means appeal rights included with deadline 2026-08-31.
+
+Visible correction: an earlier draft said patient may owe $63.04. The final card on page 1 controls: $48.32.
+
+## Appeal Form
+
+Member requests appeal is checked. Provider-filed appeal is unchecked. Expedited review requested is unchecked. Reason: member disputes lab-panel pricing only. Office visit is not disputed. Signature: Ana Rivera, dated 2026-07-06.
+"""
+    return Case(
+        "P02-eob-appeal-packet",
+        "EOB Appeal Packet",
+        "forms",
+        ["multi-page", "eob", "forms", "corrections", "financial-table"],
+        "Recover a realistic EOB packet with line items, denial notes, correction, and appeal form state.",
+        "Four-page packet with extractable cover text and raster form/table pages.",
+        ["member identity", "line-item table", "denial notes", "appeal form states"],
+        ["Preserve final responsibility and do not use superseded draft amount.", "Keep line-item values bound to services."],
+        gold,
+        [near_check("final-owe", "forms", ["$48.32", "2026-08-31", "In-network"], 3, 360)],
+        pages,
+        facts=[
+            fact("p02.cover", "text", 4, "Member Ana Rivera, claim 5821-A, Silver HMO, not a bill, final responsibility $48.32, appeal by 2026-08-31."),
+            fact("p02.network", "form_state", 4, "In-network is checked, Out-of-network is unchecked, Appeal form attached is checked."),
+            fact("p02.office.row", "table_cell", 5, "Office visit 99213 row has charged $215.00, allowed $143.20, deductible $20.00, plan paid $98.56, patient may owe $44.64."),
+            fact("p02.lab.row", "table_cell", 5, "Comprehensive metabolic panel 80053 row has charged $72.00, allowed $18.40, deductible $0.00, plan paid $14.72, patient may owe $3.68."),
+            fact("p02.total", "table_cell", 4, "Total row has charged $287.00, allowed $161.60, deductible $20.00, plan paid $113.28, patient may owe $48.32."),
+            fact("p02.denials", "table_cell", 4, "N214 applies only to 80053 and sets allowed to $18.40; M51 applies to office visit with no denial; X17 is appeal rights with deadline 2026-08-31."),
+            fact("p02.superseded", "forbidden_text", 5, "Draft amount $63.04 is identified as superseded and not used as final patient responsibility."),
+            fact("p02.appeal.form", "form_state", 4, "Appeal form: member requests appeal checked; provider-filed and expedited review unchecked; reason disputes lab pricing only; office visit not disputed."),
+        ],
+        extractable_text_pages=[overlays(["Member: Ana Rivera", "Claim: 5821-A", "This is not a bill", "Patient may owe: $48.32"], 100, 250), [], [], []],
+    )
+
+
+def packet_facilities() -> Case:
+    pages: list[Image.Image] = []
+    p1 = base_page("Cedar Clinic Renovation Packet")
+    d = ImageDraw.Draw(p1)
+    d.rectangle((110, 260, 1120, 1160), outline="#111827", width=5)
+    d.line((110, 560, 1120, 560), fill="#111827", width=4)
+    d.line((460, 260, 460, 1160), fill="#111827", width=4)
+    d.line((790, 260, 790, 1160), fill="#111827", width=4)
+    d.text((170, 390), "A101 Lobby", fill="#111827", font=F["small"])
+    d.text((520, 390), "A102 Exam 1", fill="#111827", font=F["small"])
+    d.text((850, 390), "A103 Storage", fill="#111827", font=F["small"])
+    d.text((170, 840), "Corridor", fill="#475569", font=F["small"])
+    d.text((525, 840), "A104 Exam 2", fill="#111827", font=F["small"])
+    d.text((845, 840), "A105 Lab", fill="#111827", font=F["small"])
+    for label, x, y, color, shape in [("P1", 610, 455, "#991b1b", "circle"), ("E2", 285, 445, "#a16207", "tri"), ("F3", 895, 930, "#1d4ed8", "square"), ("M4", 1030, 825, "#7c3aed", "diamond")]:
+        if shape == "circle":
+            d.ellipse((x, y, x + 42, y + 42), fill="#fee2e2", outline=color, width=4)
+        elif shape == "tri":
+            d.polygon([(x + 22, y), (x, y + 42), (x + 44, y + 42)], fill="#fef3c7", outline=color)
+        elif shape == "square":
+            d.rectangle((x, y, x + 42, y + 42), fill="#dbeafe", outline=color, width=4)
+        else:
+            d.polygon([(x + 22, y), (x + 44, y + 22), (x + 22, y + 44), (x, y + 22)], fill="#ede9fe", outline=color)
+        d.text((x + 55, y + 4), label, fill=color, font=F["small"])
+    d.rounded_rectangle((1220, 280, 1585, 620), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    draw_text(d, (1240, 315), "Legend: red circle P0 leak; yellow triangle electrical; blue square finish defect; purple diamond map-only equipment issue.", F["small"], width=24, leading=29)
+    pages.append(p1)
+
+    p2 = base_page("Punch List Table")
+    d = ImageDraw.Draw(p2)
+    rows = [["ID", "Location", "Issue", "Owner", "Due", "Status"], ["P1", "A102 under sink", "Active leak", "Mei", "2026-07-09", "Open"], ["E2", "A101 west wall", "GFCI outlet mislabeled", "Omar", "2026-07-12", "Blocked by permit"], ["F3", "A103 south door", "Cracked floor tile", "Lina", "2026-07-15", "Done"]]
+    draw_table(d, 85, 240, [160, 300, 420, 180, 230, 280], rows, 90)
+    d.text((100, 760), "Note: M4 appears on the map only and is missing from this table.", fill="#7f1d1d", font=F["small"])
+    pages.append(p2)
+
+    p3 = base_page("Photo Log and Correction")
+    d = ImageDraw.Draw(p3)
+    draw_card(d, (100, 240, 730, 550), "Photo A", ["P1: water visible below sink", "Severity: P0", "Temporary shutoff installed"], "#fee2e2", "#991b1b")
+    draw_card(d, (870, 240, 1500, 550), "Photo B", ["F3: tile repaired", "Status changed from Open to Done", "Do not reopen"], "#ecfeff", "#0f766e")
+    draw_card(d, (100, 700, 730, 1010), "Map-only issue", ["M4: autoclave vent clearance", "Location: A105 Lab east wall", "Owner: Priya", "Due: 2026-07-20"], "#ede9fe", "#7c3aed")
+    d.text((100, 1160), "Visible correction: F3 final status is Done even if older table export says Open.", fill="#7f1d1d", font=F["small"])
+    pages.append(p3)
+
+    p4 = base_page("Change Order CO-17")
+    d = ImageDraw.Draw(p4)
+    rows = [["Change", "Applies to", "Cost", "Approved"], ["Permit reinspection", "E2", "$420", "No"], ["Emergency plumbing", "P1", "$1,180", "Yes"], ["Vent clearance shim", "M4", "$260", "Yes"]]
+    draw_table(d, 110, 280, [360, 260, 220, 220], rows, 86)
+    d.text((110, 700), "Total approved cost is $1,440. Permit reinspection is not approved.", fill="#111827", font=F["small"])
+    pages.append(p4)
+    gold = """# Cedar Clinic Renovation Packet
+
+## Floor plan
+
+Rooms: A101 Lobby, A102 Exam 1, A103 Storage, Corridor, A104 Exam 2, and A105 Lab. Legend: red circle means P0 leak; yellow triangle means electrical; blue square means finish defect; purple diamond means map-only equipment issue.
+
+Map callouts: P1 red circle is in A102 under the sink. E2 yellow triangle is on the A101 west wall. F3 blue square is at the A103 south door. M4 purple diamond is in A105 Lab on the east wall.
+
+## Punch List
+
+| ID | Location | Issue | Owner | Due | Status |
+| --- | --- | --- | --- | --- | --- |
+| P1 | A102 under sink | Active leak | Mei | 2026-07-09 | Open |
+| E2 | A101 west wall | GFCI outlet mislabeled | Omar | 2026-07-12 | Blocked by permit |
+| F3 | A103 south door | Cracked floor tile | Lina | 2026-07-15 | Done |
+
+M4 appears on the map only and is missing from the punch-list table.
+
+## Photo Log and Correction
+
+P1 photo shows water visible below the sink, severity P0, and temporary shutoff installed. F3 photo says tile repaired and final status changed from Open to Done. M4 map-only issue is autoclave vent clearance in A105 Lab east wall, owner Priya, due 2026-07-20.
+
+## Change Order CO-17
+
+Permit reinspection applies to E2, costs $420, and is not approved. Emergency plumbing applies to P1, costs $1,180, and is approved. Vent clearance shim applies to M4, costs $260, and is approved. Total approved cost is $1,440.
+"""
+    return Case(
+        "P03-facilities-renovation-packet",
+        "Facilities Renovation Packet",
+        "diagram",
+        ["multi-page", "floorplan", "table", "map-only", "change-order"],
+        "Recover a floorplan-driven facilities packet where some facts exist only on the map and corrections override table exports.",
+        "Four-page packet with raster floor plan, punch list table, photo log, and change order.",
+        ["map callouts", "table rows", "map-only issue", "change order"],
+        ["Integrate map and table.", "Do not miss map-only M4.", "Apply visible F3 correction."],
+        gold,
+        [near_check("m4", "visual", ["M4", "A105", "autoclave", "Priya"], 4, 520)],
+        pages,
+        facts=[
+            fact("p03.floorplan.rooms", "visual_relation", 3, "Floor plan includes A101, A102, A103, Corridor, A104, and A105."),
+            fact("p03.p1", "visual_relation", 5, "P1 is a red circle in A102 under sink, active leak, owner Mei, due 2026-07-09, status Open, severity P0."),
+            fact("p03.e2", "visual_relation", 5, "E2 is a yellow triangle on A101 west wall, GFCI outlet mislabeled, owner Omar, due 2026-07-12, blocked by permit."),
+            fact("p03.f3", "visual_relation", 5, "F3 is a blue square at A103 south door, cracked floor tile, final status Done due to photo correction."),
+            fact("p03.m4", "visual_relation", 6, "M4 is map-only purple diamond in A105 Lab east wall for autoclave vent clearance, owner Priya, due 2026-07-20."),
+            fact("p03.change", "table_cell", 4, "Change order: E2 permit reinspection $420 not approved; P1 emergency plumbing $1,180 approved; M4 vent clearance shim $260 approved; approved total $1,440."),
+        ],
+    )
+
+
+def packet_scientific_supplement() -> Case:
+    pages: list[Image.Image] = []
+    p1 = base_page("Model Calibration Under Label Drift")
+    d = ImageDraw.Draw(p1)
+    d.text((100, 150), "A. Rao, L. Chen, M. Iqbal", fill="#475569", font=F["small"])
+    draw_text(d, (100, 230), "Abstract: We evaluate calibration under label drift using ten bins and a drift prior. The main result is that replay buffer improves F1 while lowering ECE.", F["small"], width=70)
+    d.rounded_rectangle((100, 470, 880, 580), radius=12, fill="#eef2ff", outline="#4338ca", width=3)
+    d.text((130, 505), "ECE = sum_b (n_b / n) * |acc(b) - conf(b)|, B = 10", fill="#111827", font=F["small"])
+    draw_table(d, 100, 720, [330, 180, 180], [["Method", "ECE down", "F1 up"], ["Baseline", "0.087", "0.781"], ["+ temperature scaling", "0.041", "0.779"], ["+ drift prior", "0.033", "0.802"], ["+ replay buffer", "0.029", "0.817"]], 70)
+    d.rounded_rectangle((1010, 470, 1530, 900), radius=14, fill="#fff7ed", outline="#c2410c", width=3)
+    draw_text(d, (1040, 510), "Sidebar note: Do not read this before the ablation table. The note explains why the replay buffer row is kept despite higher storage cost.", F["small"], fill="#9a3412", width=34, leading=30)
+    pages.append(p1)
+
+    p2 = base_page("Figure 2 - Calibration Curves")
+    d = ImageDraw.Draw(p2)
+    d.line((220, 1420, 1320, 1420), fill="#111827", width=4)
+    d.line((220, 1420, 220, 340), fill="#111827", width=4)
+    d.line((220, 1420, 1320, 340), fill="#64748b", width=3)
+    curve = [(240, 1380), (430, 1220), (620, 1030), (810, 880), (1000, 790), (1190, 760)]
+    for a, b in zip(curve, curve[1:]):
+        d.line((*a, *b), fill="#dc2626", width=5)
+    d.text((900, 710), "over-confident above 0.75", fill="#dc2626", font=F["small"])
+    d.text((620, 1490), "Confidence", fill="#111827", font=F["small"])
+    d.text((90, 850), "Accuracy", fill="#111827", font=F["small"])
+    d.text((220, 1620), "Caption: dashed diagonal is perfect calibration. Model curve falls below diagonal above confidence 0.75.", fill="#475569", font=F["small"])
+    pages.append(p2)
+
+    p3 = base_page("Supplement Table S1 - continued")
+    d = ImageDraw.Draw(p3)
+    d.text((100, 160), "Rows continue on next page. Do not treat repeated header as data.", fill="#7f1d1d", font=F["small"])
+    rows = [["Cohort", "Shift", "n", "ECE", "F1", "Note"], ["A", "none", "1200", "0.029", "0.817", "baseline final"], ["B", "mild", "840", "0.034", "0.804", "uses drift prior"], ["C", "moderate", "610", "0.052", "0.781", "see footnote 1"]]
+    draw_table(d, 100, 300, [190, 210, 150, 150, 150, 360], rows, 80)
+    d.text((100, 840), "Footnote 1 begins: Cohort C excludes 17 records with missing confidence...", fill="#475569", font=F["small"])
+    pages.append(p3)
+
+    p4 = base_page("Supplement Table S1 - continued")
+    d = ImageDraw.Draw(p4)
+    rows = [["Cohort", "Shift", "n", "ECE", "F1", "Note"], ["D", "severe", "455", "0.071", "0.744", "fails threshold"], ["E", "recovered", "500", "0.038", "0.799", "replay restored"], ["Total", "", "3605", "", "", "do not average ECE from this row"]]
+    draw_table(d, 100, 260, [190, 210, 150, 150, 150, 360], rows, 80)
+    d.text((100, 780), "Footnote 1 continued: ...so reported n is after exclusion. Table S1 total row is a count total, not an ECE average.", fill="#475569", font=F["small"])
+    pages.append(p4)
+
+    p5 = base_page("Supplement Figure S2 - Drift Error Matrix")
+    d = ImageDraw.Draw(p5)
+    d.text((100, 150), "Color and letter both matter. A slash means the cohort/bin pair requires manual review.", fill="#7f1d1d", font=F["small"])
+    x0, y0 = 260, 360
+    bins = ["0.50", "0.60", "0.70", "0.80", "0.90"]
+    cohorts = ["A none", "B mild", "C moderate", "D severe", "E recovered"]
+    matrix = [
+        ["L", "L", "M", "M", "H"],
+        ["L", "M", "M", "H", "H"],
+        ["M", "M", "H", "H", "H"],
+        ["M", "H", "H", "H", "H"],
+        ["L", "M", "M", "H", "M"],
+    ]
+    slash_cells = {("C moderate", "0.80"), ("D severe", "0.70"), ("E recovered", "0.60")}
+    colors = {"L": "#dcfce7", "M": "#fef3c7", "H": "#fee2e2"}
+    d.text((x0 + 260, 275), "Reviewer error level by confidence bin", fill="#111827", font=F["h2"])
+    for c, bin_label in enumerate(bins):
+        d.text((x0 + 270 + c * 170, y0 - 46), bin_label, fill="#111827", font=F["small"])
+    for r, cohort in enumerate(cohorts):
+        y = y0 + r * 118
+        d.text((x0 - 165, y + 32), cohort, fill="#111827", font=F["small"])
+        for c, bin_label in enumerate(bins):
+            key = matrix[r][c]
+            x = x0 + 250 + c * 170
+            d.rectangle((x, y, x + 126, y + 82), fill=colors[key], outline="#111827", width=3)
+            d.text((x + 50, y + 25), key, fill="#111827", font=F["small"])
+            if (cohort, bin_label) in slash_cells:
+                d.line((x + 9, y + 8, x + 118, y + 74), fill="#991b1b", width=4)
+    d.rounded_rectangle((100, 1110, 610, 1345), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    draw_text(d, (130, 1145), "Legend: L low error; M medium error; H high error. Slash means manual review required.", F["small"], width=35, leading=30)
+    d.rounded_rectangle((735, 1110, 1530, 1345), radius=14, fill="#fff7ed", outline="#c2410c", width=3)
+    draw_text(d, (765, 1145), "Caption: Cohort D has high error in every bin from 0.60 through 0.90. E recovered at 0.90 is medium, not high.", F["small"], fill="#9a3412", width=56, leading=30)
+    pages.append(p5)
+    gold = """# Model Calibration Under Label Drift
+
+Authors: A. Rao, L. Chen, M. Iqbal.
+
+Abstract: The paper evaluates calibration under label drift using ten bins and a drift prior. Replay buffer improves F1 while lowering ECE.
+
+Equation: ECE = sum_b (n_b / n) * |acc(b) - conf(b)|, with B = 10.
+
+| Method | ECE down | F1 up |
+| --- | ---: | ---: |
+| Baseline | 0.087 | 0.781 |
+| + temperature scaling | 0.041 | 0.779 |
+| + drift prior | 0.033 | 0.802 |
+| + replay buffer | 0.029 | 0.817 |
+
+Sidebar note: do not read this before the ablation table. It explains why the replay buffer row is kept despite higher storage cost.
+
+Figure 2: dashed diagonal is perfect calibration. The model curve falls below the diagonal above confidence 0.75 and is annotated "over-confident above 0.75."
+
+## Supplement Table S1
+
+| Cohort | Shift | n | ECE | F1 | Note |
+| --- | --- | ---: | ---: | ---: | --- |
+| A | none | 1200 | 0.029 | 0.817 | baseline final |
+| B | mild | 840 | 0.034 | 0.804 | uses drift prior |
+| C | moderate | 610 | 0.052 | 0.781 | see footnote 1 |
+| D | severe | 455 | 0.071 | 0.744 | fails threshold |
+| E | recovered | 500 | 0.038 | 0.799 | replay restored |
+| Total | | 3605 | | | do not average ECE from this row |
+
+Footnote 1: Cohort C excludes 17 records with missing confidence, so reported n is after exclusion. The total row is a count total, not an ECE average.
+
+## Supplement Figure S2 - Drift Error Matrix
+
+Legend: L means low error, M means medium error, and H means high error. A slash means manual review required.
+
+| Cohort | 0.50 | 0.60 | 0.70 | 0.80 | 0.90 |
+| --- | --- | --- | --- | --- | --- |
+| A none | L | L | M | M | H |
+| B mild | L | M | M | H | H |
+| C moderate | M | M | H | H with slash | H |
+| D severe | M | H | H with slash | H | H |
+| E recovered | L | M with slash | M | H | M |
+
+Cohort D has high error in every bin from 0.60 through 0.90. E recovered at 0.90 is medium, not high.
+"""
+    return Case(
+        "P04-scientific-supplement",
+        "Scientific Supplement Packet",
+        "scientific",
+        ["multi-page", "equation", "figure", "continued-table", "footnote"],
+        "Recover a scientific article excerpt with figure semantics and a continued supplement table.",
+        "Four-page raster scientific packet.",
+        ["equation", "ablation table", "figure description", "continued table", "footnote"],
+        ["Do not duplicate repeated headers as data.", "Preserve figure semantics and footnote continuation."],
+        gold,
+        [near_check("cohort-d", "tables", ["D", "severe", "455", "0.071", "0.744"], 3, 360)],
+        pages,
+        facts=[
+            fact("p04.equation", "text", 4, "Equation is ECE = sum_b (n_b / n) * |acc(b) - conf(b)| with B = 10."),
+            fact("p04.ablation", "table_cell", 5, "Ablation table preserves baseline 0.087/0.781, temperature scaling 0.041/0.779, drift prior 0.033/0.802, replay buffer 0.029/0.817."),
+            fact("p04.sidebar.order", "reading_order", 3, "Sidebar note is after/attached to ablation context, not before the ablation table."),
+            fact("p04.figure", "visual_relation", 5, "Figure description includes dashed perfect-calibration diagonal and model curve below diagonal above confidence 0.75 with over-confident annotation."),
+            fact("p04.continuation", "cross_page_binding", 6, "Supplement Table S1 merges rows A-E across pages and does not treat repeated headers as data."),
+            fact("p04.cohort.rows", "table_cell", 6, "Cohort rows preserve A none 1200 0.029 0.817; C moderate 610 0.052 0.781; D severe 455 0.071 0.744; E recovered 500 0.038 0.799."),
+            fact("p04.footnote", "cross_page_binding", 4, "Footnote 1 says Cohort C excludes 17 records with missing confidence and total row is not an ECE average."),
+            fact("p04.error.legend", "visual_relation", 4, "Supplement Figure S2 legend says L low error, M medium error, H high error, and slash means manual review required."),
+            fact("p04.error.slashes", "visual_relation", 6, "Error matrix slash/manual-review cells are C moderate at 0.80, D severe at 0.70, and E recovered at 0.60."),
+            fact("p04.error.d", "visual_relation", 5, "Cohort D severe has M at 0.50 and H at 0.60, 0.70 with slash, 0.80, and 0.90."),
+            fact("p04.error.e", "visual_relation", 5, "Cohort E recovered has L at 0.50, M with slash at 0.60, M at 0.70, H at 0.80, and M at 0.90; 0.90 is not high."),
+        ],
+    )
+
+
+def packet_conference_program() -> Case:
+    pages: list[Image.Image] = []
+    for day, title in [(1, "OpsConf 2026 - Day 1"), (2, "OpsConf 2026 - Day 2")]:
+        img = base_page(title)
+        d = ImageDraw.Draw(img)
+        d.text((100, 155), "Legend: star = preregistration; dot = hybrid; X = canceled. Merged cells span rooms or times.", fill="#7f1d1d", font=F["small"])
+        rows = [["Time", "Hall A", "Lab 1", "Lab 2"], ["08:30-09:00", "Registration spans all rooms", "", ""], ["09:00-09:45", "Keynote" if day == 1 else "Metrics that Matter", "", ""], ["10:00-10:45", "star SLO Math", "dot Tracing Lab", "Cost Controls"], ["11:00-12:00", "Vendor briefings", "Incident Drill spans Lab 1 and Lab 2", ""], ["12:00-13:00", "Lunch spans all rooms", "", ""], ["13:15-14:00", "Postmortem Patterns", "Forecasting", "FinOps Clinic"]]
+        if day == 2:
+            rows[3] = ["10:00-10:45", "X SLO Math canceled", "dot Tracing Lab moved to Hall A", "Cost Controls"]
+        draw_table(d, 80, 260, [220, 410, 410, 410], rows, 86)
+        pages.append(img)
+    p3 = base_page("Room Map and Errata")
+    d = ImageDraw.Draw(p3)
+    d.rectangle((120, 260, 600, 620), outline="#111827", width=4)
+    d.text((260, 420), "Hall A", fill="#111827", font=F["h2"])
+    d.rectangle((760, 260, 1120, 500), outline="#111827", width=4)
+    d.text((870, 360), "Lab 1", fill="#111827", font=F["h2"])
+    d.rectangle((760, 560, 1120, 800), outline="#111827", width=4)
+    d.text((870, 660), "Lab 2", fill="#111827", font=F["h2"])
+    d.rounded_rectangle((120, 980, 1500, 1230), radius=14, fill="#fff7ed", outline="#c2410c", width=4)
+    draw_text(d, (150, 1015), "Errata for Day 2: SLO Math is canceled. Tracing Lab moves to Hall A at 10:00. Incident Drill still spans Lab 1 and Lab 2 at 11:00.", F["small"], fill="#9a3412", width=92, leading=31)
+    pages.append(p3)
+    gold = """# OpsConf 2026 Program
+
+Legend: star = preregistration; dot = hybrid; X = canceled. Merged cells span rooms or times.
+
+## Day 1
+
+| Time | Hall A | Lab 1 | Lab 2 |
+| --- | --- | --- | --- |
+| 08:30-09:00 | Registration spans all rooms | | |
+| 09:00-09:45 | Keynote | | |
+| 10:00-10:45 | star SLO Math | dot Tracing Lab | Cost Controls |
+| 11:00-12:00 | Vendor briefings | Incident Drill spans Lab 1 and Lab 2 | |
+| 12:00-13:00 | Lunch spans all rooms | | |
+| 13:15-14:00 | Postmortem Patterns | Forecasting | FinOps Clinic |
+
+## Day 2
+
+Day 2 errata controls over the printed grid: SLO Math is canceled. Tracing Lab moves to Hall A at 10:00. Incident Drill still spans Lab 1 and Lab 2 at 11:00.
+
+Room map: Hall A is separate from Lab 1 and Lab 2; Lab 1 is above Lab 2.
+"""
+    return Case(
+        "P05-conference-program-packet",
+        "Conference Program Packet",
+        "schedule",
+        ["multi-page", "schedule", "merged-cells", "errata", "room-map"],
+        "Recover multi-day schedule grids and apply visible errata without losing room span semantics.",
+        "Three-page conference program with schedule grids and room map/errata.",
+        ["day schedules", "legend", "errata", "room map"],
+        ["Preserve merged-cell semantics.", "Apply Day 2 errata.", "Keep cancellation and moved session states."],
+        gold,
+        [near_check("day2-errata", "spatial", ["SLO Math", "canceled", "Tracing Lab", "Hall A"], 4, 520)],
+        pages,
+        facts=[
+            fact("p05.legend", "visual_relation", 3, "Legend says star means preregistration, dot means hybrid, X means canceled, merged cells span rooms or times."),
+            fact("p05.day1.1000", "spatial", 4, "Day 1 10:00-10:45 has star SLO Math in Hall A, dot Tracing Lab in Lab 1, and Cost Controls in Lab 2."),
+            fact("p05.day1.incident", "spatial", 4, "Day 1 11:00-12:00 has Vendor briefings in Hall A and Incident Drill spanning Lab 1 and Lab 2."),
+            fact("p05.day2.errata", "spatial", 6, "Day 2 errata says SLO Math is canceled and Tracing Lab moves to Hall A at 10:00."),
+            fact("p05.day2.incident", "spatial", 4, "Day 2 Incident Drill still spans Lab 1 and Lab 2 at 11:00."),
+            fact("p05.map", "visual_relation", 3, "Room map shows Hall A separate from Lab 1 and Lab 2, with Lab 1 above Lab 2."),
+        ],
+    )
+
+
+def prefixed_checks(prefix: str, checks: list[dict]) -> list[dict]:
+    updated = []
+    for check in checks:
+        copy = dict(check)
+        copy["id"] = f"{prefix}.{check['id']}"
+        copy["description"] = f"{prefix}: {check.get('description', check['id'])}"
+        updated.append(copy)
+    return updated
+
+
+def packet_noc_handover() -> Case:
+    gantt = h03()
+    timeline = h07()
+    matrix = h14()
+    heatmap = h15()
+
+    cover = base_page("NOC Handover Packet - Week 32")
+    d = ImageDraw.Draw(cover)
+    d.text((100, 150), "Packet prepared for the 2026-08-03 reliability handoff.", fill="#475569", font=F["small"])
+    draw_card(
+        d,
+        (95, 245, 760, 555),
+        "Handoff scope",
+        [
+            "Normalize the raster Gantt into task rows",
+            "Preserve GTM lane/month ownership",
+            "Bind team-matrix facts by column",
+            "Read heatmap color + letter + slash state",
+        ],
+        "#f8fafc",
+        "#334155",
+    )
+    draw_card(
+        d,
+        (850, 245, 1530, 555),
+        "Why this packet exists",
+        [
+            "Several pages are image exports",
+            "Some tables have no borders",
+            "Some values are visual-only",
+            "Weekend columns are in scope",
+        ],
+        "#fff7ed",
+        "#c2410c",
+    )
+    rows = [
+        ["Page", "Artifact", "Reconstruction obligation"],
+        ["1", "Cover", "Preserve scope and page order"],
+        ["2", "Raster shift Gantt", "Infer start/end from bar positions"],
+        ["3", "Overlapping GTM timeline", "Bind card to lane and month span"],
+        ["4", "Borderless team matrix", "Bind facts under each person column"],
+        ["5", "Escalation heatmap", "Preserve color/letter/slash/weekend semantics"],
+    ]
+    draw_table(d, 110, 720, [140, 420, 760], rows, 78)
+    draw_text(
+        d,
+        (110, 1230),
+        "This is a realistic handover packet assembled from exported slides and status inserts. Do not flatten it into a summary; reconstruct each artifact where it appears.",
+        F["small"],
+        fill="#7f1d1d",
+        width=88,
+        leading=31,
+    )
+
+    gold = f"""# NOC Handover Packet - Week 32
+
+Packet prepared for the 2026-08-03 reliability handoff.
+
+The packet contains a cover page, raster shift Gantt, overlapping GTM timeline, borderless team matrix, and escalation heatmap. Several pages are image exports; some values are visual-only. Preserve page order and reconstruct each artifact where it appears.
+
+## Raster Shift Gantt
+
+{gantt.gold}
+
+## Overlapping GTM Timeline
+
+{timeline.gold}
+
+## Borderless Team Matrix
+
+{matrix.gold}
+
+## Escalation Heatmap
+
+{heatmap.gold}
+"""
+
+    checks = []
+    checks += prefixed_checks("gantt", gantt.checks)
+    checks += prefixed_checks("timeline", timeline.checks)
+    checks += prefixed_checks("matrix", matrix.checks)
+    checks += prefixed_checks("heatmap", heatmap.checks)
+    checks += [
+        ordered_check(
+            "packet.page-order",
+            "structure",
+            ["Raster Shift Gantt", "Overlapping GTM Timeline", "Borderless Team Matrix", "Escalation Heatmap"],
+            3,
+            "Packet preserves artifact order: Gantt, timeline, team matrix, heatmap.",
+        )
+    ]
+
+    return Case(
+        "P06-noc-handover-packet",
+        "NOC Handover Packet",
+        "packet",
+        ["multi-page", "raster-gantt", "timeline", "borderless-table", "heatmap", "visual-binding"],
+        "Stress realistic multi-page handover reconstruction with spatial spans, borderless alignment, and dense visual encodings.",
+        "Five-page packet composed of exported slide/image artifacts and a cover page.",
+        ["page order", "Gantt rows", "timeline lanes", "team matrix bindings", "heatmap semantics"],
+        [
+            "Do not summarize the packet.",
+            "Infer visual-only spans and cell states.",
+            "Keep each artifact in page order.",
+            "Bind facts to the correct lane, person column, team row, and day column.",
+        ],
+        gold,
+        checks,
+        [cover, *gantt.pages, *timeline.pages, *matrix.pages, *heatmap.pages],
+        facts=[
+            fact("p06.page_order", "structure", 4, "The output preserves the artifact order: raster shift Gantt, overlapping GTM timeline, borderless team matrix, then escalation heatmap."),
+            fact("p06.gantt.dock", "spatial", 4, "Gantt: Dock intake is owned by Noor, runs 08:00-11:00, and has label Load A-17."),
+            fact("p06.gantt.release", "spatial", 4, "Gantt: Release gate is owned by Ken, runs 10:00-16:30, and has label REL-82."),
+            fact("p06.gantt.qa", "spatial", 4, "Gantt: QA bench is owned by Priya, runs 12:00-15:00, and has label Lot Q4."),
+            fact("p06.gantt.rollback", "spatial", 4, "Gantt: Rollback watch is owned by Mira, runs 16:00-18:00, and has label RB-9."),
+            fact("p06.timeline.product", "visual_relation", 5, "Timeline: Product lane has Beta signups in Aug owned by Maya target 1,200, and Workflow v2 spanning Sep-Oct owned by Jon shipping Oct 18."),
+            fact("p06.timeline.security", "visual_relation", 5, "Timeline: Security lane has SOC2 audit spanning Aug-Oct owned by Priya and HIPAA BAA spanning Oct-Nov owned by Lena."),
+            fact("p06.timeline.sales", "visual_relation", 5, "Timeline: Sales lane has Design partners in Aug owned by Omar with 9 accounts and Enterprise pilots spanning Sep-Nov owned by Omar with $4.2M pipeline."),
+            fact("p06.timeline.dependency", "visual_relation", 4, "Timeline dependency says HIPAA BAA belongs to Security, not Product, and Enterprise pilots depend on BAA legal review."),
+            fact("p06.matrix.maya", "visual_relation", 4, "Team matrix: Maya Singh is CEO/Product, ex-Stripe, 12 yrs product, led Relay launch."),
+            fact("p06.matrix.jon", "visual_relation", 4, "Team matrix: Jon Bell is CTO/Infra, ex-Snowflake, owns retrieval infra, built vector cache."),
+            fact("p06.matrix.priya", "visual_relation", 4, "Team matrix: Priya Nair is COO/Ops, ex-Flexport, scaled support, owns compliance."),
+            fact("p06.matrix.omar", "visual_relation", 4, "Team matrix: Omar Haddad is GTM/RevOps, ex-Atlassian, pipeline $4.2M, leads enterprise sales."),
+            fact("p06.matrix.sidebars", "structure", 4, "Advisors Lena Ortiz and Theo Park are separate from core team; VP Sales Q4 and Clinical Lead Q1 are open roles, not employees."),
+            fact("p06.heatmap.legend", "visual_relation", 4, "Heatmap legend: G green normal, Y yellow watch, R red escalation; diagonal slash means owner must page incident lead."),
+            fact("p06.heatmap.slashes", "visual_relation", 6, "Critical red slash cells are API Thu, Data Fri, Export Wed, and Billing Sat."),
+            fact("p06.heatmap.export_fri", "visual_relation", 5, "Export Friday is yellow, not red and not slash-marked."),
+            fact("p06.heatmap.weekend", "structure", 3, "Saturday/weekend columns are preserved and not dropped."),
+        ],
+    )
+
+
+CASES = [packet_ops_board(), packet_scientific_supplement(), packet_noc_handover()]
 
 
 def write_pdf(case: Case, path: Path) -> None:
@@ -1273,10 +1968,16 @@ def write_pdf(case: Case, path: Path) -> None:
             c.drawString(72, y, line)
             y -= 18
     for i, page in enumerate(case.pages):
-        image_to_pdf_page(c, page)
-        if i < len(case.pages) - 1 and case.covered_text:
-            # Covered text applies only to the first page before its image.
-            pass
+        buffer = BytesIO()
+        page.save(buffer, format="PNG")
+        buffer.seek(0)
+        c.drawImage(ImageReader(buffer), 0, 0, width=letter[0], height=letter[1])
+        if case.extractable_text_pages and i < len(case.extractable_text_pages):
+            c.setFont("Helvetica", 9)
+            c.setFillColorRGB(0, 0, 0)
+            for px, py, line in case.extractable_text_pages[i]:
+                c.drawString(px / PAGE_W * letter[0], letter[1] - py / PAGE_H * letter[1], line)
+        c.showPage()
     if case.hidden_text:
         # Add invisible-looking white text on a fresh overlay page location before final save.
         # ReportLab extraction preserves it, while it is not visible on a white background.
@@ -1362,9 +2063,9 @@ def main() -> None:
         shutil.rmtree(BENCHMARK_ROOT)
     CASE_ROOT.mkdir(parents=True, exist_ok=True)
     manifest = {
-        "name": "Doc2MD-Hard-15",
-        "version": "0.5.0",
-        "description": "Compact hard Doc2MD candidate suite focused on compound document reasoning: complex raster layouts, visual-to-structure reconstruction, table/figure binding, redlines, schedules, forms, diagrams, and financial tables.",
+        "name": "Doc2MD-LongPackets-3",
+        "version": "0.6.0-experimental",
+        "description": "Experimental multi-page realistic packet benchmark focused on charts, dense visual matrices, spatial timelines, continuations, borderless layouts, and cross-page conflicts.",
         "caseCount": len(CASES),
         "pageCount": sum(len(case.pages) for case in CASES),
         "cases": [write_case(case) for case in CASES],
