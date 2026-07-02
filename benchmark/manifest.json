@@ -1,0 +1,192 @@
+{
+  "name": "Doc2MD-Hard-12",
+  "version": "0.2.0",
+  "description": "Compact hard Doc2MD candidate suite focused on visibility semantics, raster spatial normalization, table semantics, forms, dashboards, and layout binding.",
+  "caseCount": 12,
+  "pageCount": 13,
+  "cases": [
+    {
+      "id": "H01-hidden-stale-release",
+      "title": "Hidden Stale Release Card",
+      "family": "visibility",
+      "tags": [
+        "hidden-text",
+        "raster-card",
+        "negative-check"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H01-hidden-stale-release/source.pdf",
+      "gold": "benchmark/cases/H01-hidden-stale-release/gold.md",
+      "spec": "benchmark/cases/H01-hidden-stale-release/spec.md",
+      "checks": "benchmark/cases/H01-hidden-stale-release/checks.json"
+    },
+    {
+      "id": "H02-opaque-stale-shipment",
+      "title": "Opaque Stale Shipment Overlay",
+      "family": "visibility",
+      "tags": [
+        "covered-text",
+        "raster-card",
+        "negative-check"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H02-opaque-stale-shipment/source.pdf",
+      "gold": "benchmark/cases/H02-opaque-stale-shipment/gold.md",
+      "spec": "benchmark/cases/H02-opaque-stale-shipment/spec.md",
+      "checks": "benchmark/cases/H02-opaque-stale-shipment/checks.json"
+    },
+    {
+      "id": "H03-raster-gantt",
+      "title": "Raster Gantt Shift Schedule",
+      "family": "spatial",
+      "tags": [
+        "raster-only",
+        "gantt",
+        "schedule"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H03-raster-gantt/source.pdf",
+      "gold": "benchmark/cases/H03-raster-gantt/gold.md",
+      "spec": "benchmark/cases/H03-raster-gantt/spec.md",
+      "checks": "benchmark/cases/H03-raster-gantt/checks.json"
+    },
+    {
+      "id": "H04-carrydown-rota",
+      "title": "Carry-Down Rota Table",
+      "family": "tables",
+      "tags": [
+        "raster-only",
+        "carry-down",
+        "ditto"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H04-carrydown-rota/source.pdf",
+      "gold": "benchmark/cases/H04-carrydown-rota/gold.md",
+      "spec": "benchmark/cases/H04-carrydown-rota/spec.md",
+      "checks": "benchmark/cases/H04-carrydown-rota/checks.json"
+    },
+    {
+      "id": "H05-state-matrix",
+      "title": "Dense State Matrix",
+      "family": "forms",
+      "tags": [
+        "raster-only",
+        "checkbox",
+        "state-binding"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H05-state-matrix/source.pdf",
+      "gold": "benchmark/cases/H05-state-matrix/gold.md",
+      "spec": "benchmark/cases/H05-state-matrix/spec.md",
+      "checks": "benchmark/cases/H05-state-matrix/checks.json"
+    },
+    {
+      "id": "H06-ops-dashboard",
+      "title": "Weekly Ops Dashboard",
+      "family": "visual",
+      "tags": [
+        "raster-only",
+        "dashboard",
+        "chart"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H06-ops-dashboard/source.pdf",
+      "gold": "benchmark/cases/H06-ops-dashboard/gold.md",
+      "spec": "benchmark/cases/H06-ops-dashboard/spec.md",
+      "checks": "benchmark/cases/H06-ops-dashboard/checks.json"
+    },
+    {
+      "id": "H07-broken-pitch-slide",
+      "title": "Broken Pitch Slide Export",
+      "family": "layout",
+      "tags": [
+        "raster-only",
+        "slide",
+        "overlap"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H07-broken-pitch-slide/source.pdf",
+      "gold": "benchmark/cases/H07-broken-pitch-slide/gold.md",
+      "spec": "benchmark/cases/H07-broken-pitch-slide/spec.md",
+      "checks": "benchmark/cases/H07-broken-pitch-slide/checks.json"
+    },
+    {
+      "id": "H08-complex-financial-table",
+      "title": "Complex Financial Table",
+      "family": "tables",
+      "tags": [
+        "raster-only",
+        "multi-row-header",
+        "footnotes",
+        "negative-values"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H08-complex-financial-table/source.pdf",
+      "gold": "benchmark/cases/H08-complex-financial-table/gold.md",
+      "spec": "benchmark/cases/H08-complex-financial-table/spec.md",
+      "checks": "benchmark/cases/H08-complex-financial-table/checks.json"
+    },
+    {
+      "id": "H09-insurance-form",
+      "title": "Insurance Intake Form",
+      "family": "forms",
+      "tags": [
+        "raster-only",
+        "checkbox",
+        "stamp",
+        "blank-field"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H09-insurance-form/source.pdf",
+      "gold": "benchmark/cases/H09-insurance-form/gold.md",
+      "spec": "benchmark/cases/H09-insurance-form/spec.md",
+      "checks": "benchmark/cases/H09-insurance-form/checks.json"
+    },
+    {
+      "id": "H10-continuation-register",
+      "title": "Continuation Register",
+      "family": "tables",
+      "tags": [
+        "raster-only",
+        "multi-page-table",
+        "carry-down"
+      ],
+      "pages": 2,
+      "pdf": "benchmark/cases/H10-continuation-register/source.pdf",
+      "gold": "benchmark/cases/H10-continuation-register/gold.md",
+      "spec": "benchmark/cases/H10-continuation-register/spec.md",
+      "checks": "benchmark/cases/H10-continuation-register/checks.json"
+    },
+    {
+      "id": "H11-two-column-sidebar",
+      "title": "Two-Column Incident Report",
+      "family": "layout",
+      "tags": [
+        "raster-only",
+        "multi-column",
+        "sidebar",
+        "figure"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H11-two-column-sidebar/source.pdf",
+      "gold": "benchmark/cases/H11-two-column-sidebar/gold.md",
+      "spec": "benchmark/cases/H11-two-column-sidebar/spec.md",
+      "checks": "benchmark/cases/H11-two-column-sidebar/checks.json"
+    },
+    {
+      "id": "H12-bilingual-credit",
+      "title": "Bilingual Service Credit",
+      "family": "forms",
+      "tags": [
+        "raster-only",
+        "bilingual",
+        "checkbox"
+      ],
+      "pages": 1,
+      "pdf": "benchmark/cases/H12-bilingual-credit/source.pdf",
+      "gold": "benchmark/cases/H12-bilingual-credit/gold.md",
+      "spec": "benchmark/cases/H12-bilingual-credit/spec.md",
+      "checks": "benchmark/cases/H12-bilingual-credit/checks.json"
+    }
+  ]
+}

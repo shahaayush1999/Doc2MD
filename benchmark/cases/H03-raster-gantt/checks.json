@@ -1,0 +1,48 @@
+{
+  "id": "H03-raster-gantt",
+  "title": "Raster Gantt Shift Schedule",
+  "family": "spatial",
+  "tags": [
+    "raster-only",
+    "gantt",
+    "schedule"
+  ],
+  "checks": [
+    {
+      "id": "dock-row",
+      "category": "spatial",
+      "weight": 3,
+      "description": "Dock intake row with exact inferred span",
+      "all": [
+        "Dock intake[\\s\\S]{0,260}Noor[\\s\\S]{0,260}08:00[\\s\\S]{0,80}11:00[\\s\\S]{0,260}Load A-17"
+      ]
+    },
+    {
+      "id": "release-row",
+      "category": "spatial",
+      "weight": 3,
+      "description": "Release gate row with exact inferred span",
+      "all": [
+        "Release gate[\\s\\S]{0,260}Ken[\\s\\S]{0,260}10:00[\\s\\S]{0,80}16:30[\\s\\S]{0,260}REL-82"
+      ]
+    },
+    {
+      "id": "qa-row",
+      "category": "spatial",
+      "weight": 3,
+      "description": "QA bench row with exact inferred span",
+      "all": [
+        "QA bench[\\s\\S]{0,260}Priya[\\s\\S]{0,260}12:00[\\s\\S]{0,80}15:00[\\s\\S]{0,260}Lot Q4"
+      ]
+    },
+    {
+      "id": "rollback-row",
+      "category": "spatial",
+      "weight": 3,
+      "description": "Rollback watch row with exact inferred span",
+      "all": [
+        "Rollback watch[\\s\\S]{0,260}Mira[\\s\\S]{0,260}16:00[\\s\\S]{0,80}18:00[\\s\\S]{0,260}RB-9"
+      ]
+    }
+  ]
+}

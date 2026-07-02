@@ -1,0 +1,49 @@
+{
+  "id": "H01-hidden-stale-release",
+  "title": "Hidden Stale Release Card",
+  "family": "visibility",
+  "tags": [
+    "hidden-text",
+    "raster-card",
+    "negative-check"
+  ],
+  "checks": [
+    {
+      "id": "visible-values",
+      "category": "text",
+      "weight": 1,
+      "description": "visible-values",
+      "all": [
+        "REL-47B",
+        "BLOCKED",
+        "Nisha Vora",
+        "\\$14,900"
+      ]
+    },
+    {
+      "id": "status-owner-budget",
+      "category": "binding",
+      "weight": 2.5,
+      "description": "status-owner-budget",
+      "near": {
+        "terms": [
+          "BLOCKED",
+          "Nisha Vora",
+          "\\$14,900"
+        ],
+        "window": 280
+      }
+    },
+    {
+      "id": "no-hidden-stale",
+      "category": "hallucination",
+      "weight": 3,
+      "description": "no-hidden-stale",
+      "none": [
+        "APPROVED",
+        "\\$19,400",
+        "Mira Chen"
+      ]
+    }
+  ]
+}

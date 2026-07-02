@@ -1,0 +1,59 @@
+{
+  "id": "H07-broken-pitch-slide",
+  "title": "Broken Pitch Slide Export",
+  "family": "layout",
+  "tags": [
+    "raster-only",
+    "slide",
+    "overlap"
+  ],
+  "checks": [
+    {
+      "id": "phase-order",
+      "category": "layout",
+      "weight": 2.5,
+      "description": "phase-order",
+      "ordered": [
+        "Phase 1",
+        "Phase 2",
+        "Phase 3",
+        "Sticky note",
+        "Decision requested"
+      ]
+    },
+    {
+      "id": "phase2",
+      "category": "layout",
+      "weight": 2.5,
+      "description": "phase2",
+      "near": {
+        "terms": [
+          "Phase 2",
+          "cheap models",
+          "harden",
+          "saturate"
+        ],
+        "window": 320
+      }
+    },
+    {
+      "id": "sticky",
+      "category": "visual",
+      "weight": 2,
+      "description": "sticky",
+      "all": [
+        "Do NOT call this a leaderboard yet"
+      ]
+    },
+    {
+      "id": "decision",
+      "category": "text",
+      "weight": 1,
+      "description": "decision",
+      "all": [
+        "hard-suite pilot",
+        "not public launch"
+      ]
+    }
+  ]
+}

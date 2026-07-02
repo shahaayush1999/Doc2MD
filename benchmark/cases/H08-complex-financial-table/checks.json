@@ -1,0 +1,84 @@
+{
+  "id": "H08-complex-financial-table",
+  "title": "Complex Financial Table",
+  "family": "tables",
+  "tags": [
+    "raster-only",
+    "multi-row-header",
+    "footnotes",
+    "negative-values"
+  ],
+  "checks": [
+    {
+      "id": "units",
+      "category": "tables",
+      "weight": 1,
+      "description": "units",
+      "all": [
+        "USD thousands",
+        "Negative numbers"
+      ]
+    },
+    {
+      "id": "enterprise-q2",
+      "category": "tables",
+      "weight": 2,
+      "description": "enterprise-q2",
+      "near": {
+        "terms": [
+          "Enterprise",
+          "1,386",
+          "44%"
+        ],
+        "window": 280
+      }
+    },
+    {
+      "id": "elim-negative",
+      "category": "tables",
+      "weight": 2.5,
+      "description": "elim-negative",
+      "near": {
+        "terms": [
+          "Intercompany",
+          "\\(72\\)",
+          "\\(81\\)"
+        ],
+        "window": 280
+      }
+    },
+    {
+      "id": "footnote-b",
+      "category": "tables",
+      "weight": 2,
+      "description": "footnote-b",
+      "near": {
+        "terms": [
+          "Footnote B",
+          "SMB",
+          "west region"
+        ],
+        "window": 280
+      }
+    },
+    {
+      "id": "total-q2",
+      "category": "tables",
+      "weight": 1,
+      "description": "total-q2",
+      "all": [
+        "2,010"
+      ]
+    },
+    {
+      "id": "no-positive-elim",
+      "category": "hallucination",
+      "weight": 2,
+      "description": "no-positive-elim",
+      "none": [
+        "Intercompany 72",
+        "Intercompany\\.\\* 72 \\.\\* 81"
+      ]
+    }
+  ]
+}

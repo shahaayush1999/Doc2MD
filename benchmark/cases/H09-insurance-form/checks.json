@@ -1,0 +1,69 @@
+{
+  "id": "H09-insurance-form",
+  "title": "Insurance Intake Form",
+  "family": "forms",
+  "tags": [
+    "raster-only",
+    "checkbox",
+    "stamp",
+    "blank-field"
+  ],
+  "checks": [
+    {
+      "id": "claim-plan",
+      "category": "forms",
+      "weight": 1.5,
+      "description": "claim-plan",
+      "near": {
+        "terms": [
+          "CLM-2026-884",
+          "Silver HMO"
+        ],
+        "window": 180
+      }
+    },
+    {
+      "id": "prior-blank",
+      "category": "forms",
+      "weight": 2,
+      "description": "prior-blank",
+      "near": {
+        "terms": [
+          "Prior auth",
+          "blank"
+        ],
+        "window": 160
+      }
+    },
+    {
+      "id": "selected-coverage",
+      "category": "forms",
+      "weight": 2,
+      "description": "selected coverage boxes",
+      "all": [
+        "(\\[x\\]\\s*Emergency|\u2611\\s*Emergency|Emergency.{0,50}selected)",
+        "(\\[x\\]\\s*Out-of-network|\u2611\\s*Out-of-network|Out-of-network.{0,50}selected)"
+      ]
+    },
+    {
+      "id": "unselected-coverage",
+      "category": "forms",
+      "weight": 2,
+      "description": "unselected coverage boxes",
+      "all": [
+        "(\\[\\s\\]\\s*Dental|\u2610\\s*Dental|Dental.{0,50}unselected)",
+        "(\\[\\s\\]\\s*Vision|\u2610\\s*Vision|Vision.{0,50}unselected)"
+      ]
+    },
+    {
+      "id": "stamp-signature",
+      "category": "visual",
+      "weight": 2,
+      "description": "stamp-signature",
+      "all": [
+        "REVIEW REQUIRED",
+        "J\\. Patel"
+      ]
+    }
+  ]
+}

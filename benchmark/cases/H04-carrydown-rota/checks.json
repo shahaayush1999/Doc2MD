@@ -1,0 +1,70 @@
+{
+  "id": "H04-carrydown-rota",
+  "title": "Carry-Down Rota Table",
+  "family": "tables",
+  "tags": [
+    "raster-only",
+    "carry-down",
+    "ditto"
+  ],
+  "checks": [
+    {
+      "id": "kitchen-ravi",
+      "category": "tables",
+      "weight": 2,
+      "description": "kitchen-ravi",
+      "near": {
+        "terms": [
+          "Kitchen",
+          "Ravi",
+          "Prep",
+          "06:00",
+          "10:00"
+        ],
+        "window": 280
+      }
+    },
+    {
+      "id": "kitchen-mina",
+      "category": "tables",
+      "weight": 2,
+      "description": "kitchen-mina",
+      "near": {
+        "terms": [
+          "Kitchen",
+          "Mina",
+          "Service",
+          "10:00",
+          "14:00"
+        ],
+        "window": 280
+      }
+    },
+    {
+      "id": "dock-ken",
+      "category": "tables",
+      "weight": 2,
+      "description": "dock-ken",
+      "near": {
+        "terms": [
+          "Dock",
+          "Ken",
+          "Security",
+          "18:00",
+          "22:00"
+        ],
+        "window": 280
+      }
+    },
+    {
+      "id": "carrydown-policy",
+      "category": "structure",
+      "weight": 1,
+      "description": "carrydown-policy",
+      "all": [
+        "blank",
+        "ditto"
+      ]
+    }
+  ]
+}
