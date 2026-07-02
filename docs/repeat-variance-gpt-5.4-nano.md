@@ -5,7 +5,7 @@ Reasoning: `none`
 Suite: `Doc2MD-Hard-12`  
 Repeats: 3 total runs, including the existing calibration run plus two fresh reruns.
 
-This is a historical variance note for the older suite. The active `Doc2MD-Hard-11` v0.3.1 suite has replaced the old H07 broken phase slide with an overlapping GTM timeline, so the H07 variance row below should not be used for current calibration.
+This is a historical variance note for an older failed calibration suite. It should not be used for the consolidated `Doc2MD-Core-16` release target.
 
 For comparison, `openai-gpt-5-nano` does not support `reasoning: none`; its one-run comparison uses `reasoning: minimal`.
 

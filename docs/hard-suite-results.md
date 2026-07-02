@@ -1,51 +1,55 @@
-# Doc2MD-Hard-15 Calibration Status
+# Doc2MD-Hard-15 Calibration Result
 
-The current generated suite is `Doc2MD-Hard-15`, version `0.5.0`. It has not yet been fully calibrated across the comparison model set.
+`Doc2MD-Hard-15` v0.5.0 is a failed calibration. It should not be released as the public benchmark.
 
-Version `0.5.0` makes two important changes:
-
-- Adds `facts.json` beside each `gold.md`. The evaluator now marks weighted fact obligations as `correct`, `partial`, `incorrect`, or `missing`, and the headline accuracy score is computed from those labels.
-- Adds four compound document-reasoning cases: financial ARR bridge, insurance EOB, clinic floor-plan punch list, and conference schedule grid.
-
-The previous `Doc2MD-Hard-11` v0.4.0 results are now historical and should not be compared directly with v0.5.0 results. The suite size changed from 11 to 15 cases, and the scoring method changed from holistic gold-key accuracy to weighted fact-obligation accuracy.
-
-## Historical v0.4.0 Reference
-
-These one-run scores are retained only as context for why v0.5.0 was created:
-
-| Model | v0.4.0 Score | v0.4.0 Accuracy |
-| --- | ---: | ---: |
-| `vertex-gemini-3.5-flash` | 96.9 | 97.7 |
-| `vertex-gemini-3.1-flash-lite` | 92.5 | 92.3 |
-| `openai-gpt-5.4-nano` | 90.5 | 90.5 |
-| `openai-gpt-5-nano` | 83.7 | 83.2 |
-| `openai-gpt-4o-mini` | 75.5 | 73.2 |
-
-The spread was too small because many cases were single-challenge pages. v0.5.0 shifts toward compound pages where table structure, visual relations, legends, numeric facts, footnotes, and reading order interact.
-
-## Smoke Test
-
-The fact-aware scorer was smoke-tested on the existing `openai-gpt-5-nano` run outputs for the 11 overlapping cases. It produced harsher scores on cases where previous holistic judging was too generous, especially `H03-raster-gantt`, which dropped to `9.5` because the weighted task/owner/time obligations were missing or wrong.
-
-This is not a leaderboard result because the four new v0.5.0 cases have not been run for that model.
-
-## Current v0.5.0 Runs
+## Full-Bench Scores
 
 | Model | Score | Cost | Time | Output tokens |
 | --- | ---: | ---: | ---: | ---: |
 | `vertex-gemini-3.1-flash-lite` | 89.6 | $0.007523 | 38.278s | 3,385 |
 | `openai-gpt-5.4-nano` | 84.2 | $0.007224 | 100.334s | 3,160 |
+| `openai-gpt-4o-mini` | 81.1 | $0.059601 | 106.295s | 3,067 |
 
-Current gap between these two models: `5.4` points.
+The benchmark does not produce enough spread. GPT-4o Mini should not be within `8.5` points of Gemini 3.1 Flash Lite.
 
-## Next Calibration
+## Per-Case Scores
 
-Run the full v0.5.0 suite for:
+| ID | Case | Gemini 3.1 Flash Lite | GPT-5.4 Nano | GPT-4o Mini | Spread |
+| --- | --- | ---: | ---: | ---: | ---: |
+| H01 | Hidden Stale Release Card | 99.3 | 100.0 | 100.0 | 0.7 |
+| H02 | Opaque Stale Shipment Overlay | 100.0 | 61.9 | 100.0 | 38.1 |
+| H03 | Raster Gantt Shift Schedule | 12.0 | 16.0 | 44.5 | 32.5 |
+| H07 | Overlapping GTM Timeline Slide | 77.7 | 70.7 | 67.0 | 10.7 |
+| H11 | Two-Column Incident Report | 98.8 | 99.3 | 84.3 | 15.0 |
+| H12 | Bilingual Service Credit | 99.5 | 94.1 | 100.0 | 5.9 |
+| H13 | Scientific Paper With Embedded Table And Figure | 98.3 | 89.3 | 84.0 | 14.3 |
+| H14 | Borderless Team Matrix Pitch Slide | 100.0 | 100.0 | 50.1 | 49.9 |
+| H15 | Landscape Heatmap Escalation Plan | 100.0 | 100.0 | 35.4 | 64.6 |
+| H16 | Multi-Panel Metrics Report | 67.2 | 42.3 | 81.7 | 39.4 |
+| H17 | Redlined Data Processing Addendum | 98.5 | 97.8 | 97.8 | 0.7 |
+| H18 | Financial ARR Bridge Board Pack | 100.0 | 98.8 | 88.0 | 12.0 |
+| H19 | Insurance Explanation of Benefits | 94.2 | 99.3 | 100.0 | 5.8 |
+| H20 | Clinic Floor-Plan Punch List | 98.3 | 100.0 | 98.5 | 1.7 |
+| H21 | Conference Schedule Grid | 100.0 | 93.8 | 85.8 | 14.2 |
 
-- `vertex-gemini-3.5-flash`
-- `vertex-gemini-3.1-flash-lite`
-- `openai-gpt-5.4-nano`
-- `openai-gpt-5-nano`
-- `openai-gpt-4o-mini`
+## Diagnosis
 
-The public result table should report one row per model: score, model cost, model runtime, and output tokens. Repeat runs are useful only when diagnosing noise or suspicious close calls.
+The current suite is too saturated because most pages are clean, compact, and single-challenge. OCR plus straightforward reconstruction is enough for an old multimodal model to score highly.
+
+Saturated or weak cases:
+
+- H01, H12, H17, H19, H20 are effectively solved.
+- H11, H13, H18, H21 are not hard enough.
+- H03 and H16 have inverted or suspicious model ordering and should be rebuilt before they are trusted.
+
+Useful separators:
+
+- H14 works because it requires dense column binding.
+- H15 works because it requires dense visual table semantics.
+- H07 is directionally useful but needs much harder layout and span binding.
+
+## Decision
+
+Do not create multiple public benchmark variants. Consolidate toward one release suite: `Doc2MD-Core-16`.
+
+Use `Doc2MD-Hard-15` only as development evidence. The release suite should replace saturated cases instead of adding more cases on top.

@@ -1,100 +1,165 @@
 # Doc2MD Benchmark Design
 
-Doc2MD evaluates whether a model can convert a document into faithful Markdown: preserving text, reading order, structure, tables, forms, figures, charts, captions, and useful descriptions of non-text visual content. It is not a summarization, QA, citation, or OCR torture benchmark.
+Doc2MD evaluates whether a model can convert a document into faithful Markdown: preserving text, reading order, structure, tables, forms, figures, charts, captions, annotations, and useful descriptions of non-text visual content. It is not summarization, QA, citation, or an OCR torture test.
 
-The current benchmark direction is deliberately compact: build a small suite of hard, realistic document cases, run cheap capable models first, and only expand once the suite proves it can separate model behavior.
+## Release Target
 
-## Current Suite
+The benchmark should consolidate around one scored suite: **Doc2MD-Core-16**.
 
-The current runnable candidate is **Doc2MD-Hard-15**:
+There should not be separate public easy, hard, probe, sanity, or private variants before the first release. Development can generate candidate cases, but the repo should converge on one release benchmark with one score per model.
 
-- 15 documents.
-- 15 total PDF pages.
-- Generated from `scripts/generate_hard_benchmark.py`.
-- Stored under `benchmark/cases/`.
-- Each case has an authoritative `gold.md` answer key.
-- Each case has weighted fact obligations in `facts.json`.
-- Scored by a Gemini 3.1 Flash Lite fact judge, with deterministic checklist checks retained as an audit signal.
-- Designed to be difficult for models that rely too heavily on extracted PDF text, superficial OCR, generic table transcription, or single-pass visual summaries.
+Public reporting stays simple:
 
-The target is not to trick models with artificial prompt-injection style documents. The cases are synthetic, but each represents a common real document failure mode. The v0.5.0 direction is compound document reasoning: pages where text, spatial grouping, tables, legends, checkboxes, charts, diagrams, footnotes, and reading order interact.
+| Model | Score | Cost | Time | Output tokens |
+| --- | ---: | ---: | ---: | ---: |
 
-## Case Families
+Evaluator cost, judge runtime, family subscores, findings, and deterministic audit details are internal debugging artifacts, not public leaderboard columns.
 
-| Family | Cases | What it probes |
+## Current Status
+
+`Doc2MD-Hard-15` v0.5.0 is a failed calibration, not the release suite.
+
+It is useful as a development artifact because it showed what does and does not separate models. It is not useful as a ranking benchmark because GPT-4o Mini scores `81.1`, too close to current cheap models:
+
+| Model | v0.5.0 Score |
+| --- | ---: |
+| Gemini 3.1 Flash Lite | 89.6 |
+| GPT-5.4 Nano | 84.2 |
+| GPT-4o Mini | 81.1 |
+
+The failure mode is clear: many cases are clean, compact, single-challenge documents where OCR plus straightforward reconstruction is enough.
+
+## Calibration Target
+
+The first release should roughly target:
+
+| Model class | Target score |
+| --- | ---: |
+| Text extraction / OCR-only baseline | 10-30 |
+| Old weak multimodal model, e.g. GPT-4o Mini | 35-55 |
+| Cheap current multimodal model | 55-75 |
+| Strong visual/document model | 75-90 |
+| Frontier model | 85-94 |
+| Human-audited reconstruction | 97-100 |
+
+If GPT-4o Mini scores above `60`, the benchmark is still too easy. If a case gives GPT-4o Mini above `85` and the best model above `92`, delete or rebuild it unless it is indispensable and very low weight.
+
+## Design Principle
+
+A case is useful only if a plaintext OCR transcript is insufficient to score well.
+
+Every scored case should require at least one of:
+
+- Dense row/column/person/date binding.
+- Visual state that changes meaning: color, slash, hatch, strikeout, disabled, circled, checked, unchecked, moved, inserted, deleted.
+- Spatial measurement or grid position.
+- Multi-element consistency: table plus chart, form plus summary card, diagram plus punch list, note plus visible correction.
+- Cross-page continuation or source precedence.
+- Annotation anchoring: comments, arrows, sticky notes, margin notes, callouts.
+
+Do not add cases by accumulation. Replace saturated cases.
+
+## Current Case Triage
+
+| Current case | Decision | Reason |
 | --- | --- | --- |
-| Visibility semantics | H01, H02 | Visible rendered content must win over hidden or covered stale PDF text. |
-| Spatial normalization | H03, H21 | Gantt and schedule grids must become explicit rows with spans, owners, rooms, and legend semantics. |
-| Tables in context | H15, H18 | Wide heatmaps and financial bridge tables require cell bindings, sign conventions, footnotes, and chart/table consistency. |
-| Forms and dense state binding | H12, H19 | Bilingual labels, checkbox state, exact IDs, blank/pending semantics, EOB rows, summary cards, and deadlines. |
-| Visual facts | H16, H20 | Multi-panel charts and floor-plan callouts require visual-to-text relation extraction. |
-| Layout and reading order | H07, H11, H13, H14, H17 | Overlapping pitch-deck timelines, sidebars, scientific paper columns, borderless pitch-deck matrices, redlined contracts, margin comments. |
+| H01 Hidden Stale Release | Delete from scored suite | Fully saturated; relies on one PDF-layer trick. |
+| H02 Opaque Stale Shipment | Rebuild | Good source-precedence idea, but unstable ordering. |
+| H03 Raster Gantt | Rebuild before scoring | Hard, but model ordering is inverted. |
+| H07 Pitch Timeline | Harden | Useful layout binding, but too weak. |
+| H11 Two-Column Sidebar | Harden or replace | Clean two-column reading order is mostly solved. |
+| H12 Bilingual Credit | Replace | Simple form state is saturated. |
+| H13 Scientific Page | Harden | Important family, currently too clean. |
+| H14 Borderless Matrix | Keep and harden | Strong separator; dense spatial binding works. |
+| H15 Heatmap | Keep and harden | Best current separator; visual table semantics work. |
+| H16 Metrics Dashboard | Rebuild before scoring | Inverted ordering suggests ambiguity or bad fact design. |
+| H17 Redlined Contract | Replace | Redline is too clean and saturated. |
+| H18 Financial ARR Bridge | Harden | Important family, but too easy. |
+| H19 Insurance EOB | Replace | Saturated; table/form too clean. |
+| H20 Floorplan Punch List | Replace | Table alone carries too much; map is too easy. |
+| H21 Conference Schedule | Harden | Valuable, but needs harder spans/icons/continuation. |
+
+## Doc2MD-Core-16
+
+The release suite should be these 16 cases. Existing code can reuse current IDs later, but the design target is this single suite.
+
+| ID | Case | What it tests |
+| --- | --- | --- |
+| D01 | Layered Release Packet | Source precedence across visible corrections, covered/stale text, and an appendix. |
+| D02 | Borderless Executive Team Matrix v2 | Dense column binding with icons, spanning notes, and group headers. |
+| D03 | Financial ARR Bridge With Waterfall | Multi-level financial table, signs, units, subtotal exclusions, footnotes, and chart consistency. |
+| D04 | Operations Heatmap Calendar v2 | Dense visual table semantics: color, letter, slash, hatch, legend exceptions, weekend columns. |
+| D05 | Raster Gantt With Change Callout | Bar-position start/end inference plus visible correction callout and dependencies. |
+| D06 | Conference Schedule With Merged Cells | Multi-day room/time grid, merged cells, icons, cancellations, split sessions. |
+| D07 | Corrected Bilingual Service Form | Checked/unchecked/disabled/crossed-out/circled/corrected form states. |
+| D08 | Insurance EOB Appeal Packet | Multi-page EOB with summary/table conflicts, line items, footnotes, deadline, final responsibility. |
+| D09 | Redlined Contract Negotiation | Insertions, deletions, moved text, unresolved comments, anchors, final effective clause. |
+| D10 | Clinic Floorplan Punch List v2 | Map-only facts, rotated labels, legend symbols, table/map inconsistencies. |
+| D11 | Network Architecture Swimlane Diagram | Nodes, swimlanes, arrows, retry loops, optional dashed paths, callouts. |
+| D12 | Scientific Article Page v2 | Two-column paper with equation, subfigures, table notes, sidebar, footnote anchors. |
+| D13 | Scientific Supplement Continuation | Multi-page table continuation, repeated headers, caption continuation, row footnotes. |
+| D14 | Incident Dashboard With Cross-Panel Warning | Chart values, threshold band, stacked bars, matrix, warning derived from panels. |
+| D15 | Operational Packet With Conflicting Attachments | Email, invoice, delivery slip, packing table, visible correction, conflicting dates. |
+| D16 | Annotated Product Review Slide | UI screenshot, sticky notes, arrows, badges, decision table, annotation anchoring. |
+
+## Difficulty Mix
+
+The suite should be hard-skewed but not all extreme:
+
+| Difficulty | Share | Purpose |
+| --- | ---: | --- |
+| Easy sanity | 5-10% | Catch broken prompting/OCR without deciding rankings. |
+| Medium | 20-30% | Separate weak from competent models. |
+| Hard | 60-70% | Drive leaderboard spread. |
+
+For a 16-case suite, that means roughly:
+
+- 1 easy case.
+- 4 medium cases.
+- 11 hard cases.
+
+Saturated easy cases must have low influence. They should never let weak models coast to a high final score.
 
 ## Scoring
 
-Each case is primarily scored by an LLM judge that receives:
+Each case should keep:
 
-- Case metadata.
-- The known correct answer key from `gold.md`.
-- Weighted fact obligations from `facts.json`.
-- The candidate Markdown from the model run.
+- `source.pdf`
+- `gold.md`
+- `facts.json`
 
-The current judge is `gemini-3.1-flash-lite` through Google Vertex with minimal reasoning. The judge compares semantic fidelity against the gold answer key and marks every fact obligation as `correct`, `partial`, `incorrect`, or `missing`. Different wording, table formatting, and natural-language descriptions are acceptable when they faithfully preserve the document's information.
+The public score is the weighted case average. Each fact should be atomic and local, not a broad holistic instruction.
 
-The final score is a weighted dimension score:
+Fact categories should include:
 
-| Dimension | Weight | Meaning |
-| --- | ---: | --- |
-| Accuracy | 75% | Weighted `facts.json` score for correct facts, numbers, labels, checkbox states, table bindings, chart/timeline bindings, redline state, and absence of contradictions. |
-| Completeness | 10% | Coverage of all information in the gold answer key. |
-| Structure | 10% | Reading order, grouping, table/list/form structure, and visual-to-text relationships. |
-| Markdown quality | 5% | Clarity and usefulness of the Markdown representation. |
+- `table_cell`
+- `form_state`
+- `forbidden_text`
+- `reading_order`
+- `visual_relation`
+- `chart_value`
+- `redline_state`
+- `cross_page_binding`
+- `annotation_anchor`
 
-Accuracy dominates because a nicely structured Markdown document is still a bad reconstruction if it changes values, swaps labels, includes hidden/deleted text as current, or loses visible state. Computing accuracy from fact obligations makes the score more auditable than a single holistic judge number.
+Facts should include credit rules when structure matters. A value appearing somewhere in prose should not receive full credit if the task requires row/column binding, checkbox state, or comment anchoring.
 
-Each case also has weighted deterministic checks:
+Use case-level caps:
 
-- `all`: required regex patterns all appear.
-- `none`: prohibited regex patterns do not appear.
-- `ordered`: required terms appear in the intended reading order.
-- `near`: required terms appear within a local window.
+- Summary instead of reconstruction: max `50`.
+- Primary table missing in table-heavy case: max `65`.
+- Visible source-precedence failure: max `45`.
+- Redline output only as clean final text: max `65`.
+- Diagram case transcribes table but ignores diagram-only facts: max `65`.
 
-Generator helpers distinguish escaped literal negatives from raw regex negatives. Use `none_check` only for literal strings and `none_regex_check` when a prohibited pattern intentionally uses regex syntax.
+## Release Rule
 
-These checks no longer determine the primary score. They are stored under `deterministic` in each `score.json` so we can audit the LLM judge, catch obvious regressions, and identify where strict checklist scoring disagrees with semantic scoring.
+Before release:
 
-The current scorer reports:
+- GPT-4o Mini should average `35-55`.
+- Gemini 3.1 Flash Lite should be meaningfully above GPT-4o Mini.
+- The gap between weak and strong models should be at least `25` points.
+- Cases where weak models beat strong models must be manually inspected and rebuilt unless the inversion is clearly real.
+- Text-only extraction should score poorly on most cases.
 
-- Case score.
-- Overall macro score.
-- Family scores and family minimum.
-- Judge dimension scores.
-- Weighted fact score.
-- Deterministic audit category scores.
-- Model cost.
-- Latency.
-- Input and output tokens.
-- Failure rate.
-- Judge findings and weakest deterministic audit checks.
-
-The public benchmark row should stay compact: one score per model, model cost, model time, and output tokens. Judge internals are for debugging the benchmark, not for leaderboard reporting.
-
-## Calibration Rule
-
-The first bar is: **calibration must preserve known capability ordering**.
-
-For the current model set, Gemini 3.5 Flash should score clearly above Gemini 3.1 Flash Lite on visual-to-structure cases, and Gemini 3.1 Flash Lite should not be judged mainly against GPT-5.4 Nano because GPT Nano is a weaker visual reasoner. If the best public model saturates the suite, that is acceptable only if cheaper models still separate cleanly and the benchmark reports score, cost, latency, and output tokens.
-
-## Expansion Policy
-
-Do not grow the benchmark by accumulation. Add a case only when it covers a realistic failure mode that is not already represented.
-
-Good candidates for future replacement cases:
-
-- A technical/API excerpt with code blocks and callouts.
-- A legal or policy excerpt with nested numbering and footnotes.
-- A lightly degraded scan where OCR is necessary but not the main challenge.
-- A genuinely hard scientific figure with subpanels and caption references.
-- A multi-page section where a figure/table is referenced before appearing.
-
-Keep extreme OCR, heavy handwriting, adversarial PDF internals, 100-page long-document stress tests, and leakage/tie-break cases outside the core suite until the compact benchmark is validated.
+The benchmark is ready only when the suite creates real spread without relying on OCR degradation, malicious prompt injection, or unrealistic hidden traps.
