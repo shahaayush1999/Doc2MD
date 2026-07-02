@@ -1,6 +1,6 @@
 {
   "name": "Doc2MD-Hard-11",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Compact hard Doc2MD candidate suite focused on complex raster layouts, visual-to-structure reconstruction, table/figure binding, redlines, and visibility semantics.",
   "caseCount": 11,
   "pageCount": 11,

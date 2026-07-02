@@ -12,7 +12,8 @@ The current runnable candidate is **Doc2MD-Hard-11**:
 - 11 total PDF pages.
 - Generated from `scripts/generate_hard_benchmark.py`.
 - Stored under `benchmark/cases/`.
-- Scored by deterministic checklist checks in each case's `checks.json`.
+- Each case has an authoritative `gold.md` answer key.
+- Scored by a Gemini 3.1 Flash Lite gold-key judge, with deterministic checklist checks retained as an audit signal.
 - Designed to be difficult for models that rely too heavily on extracted PDF text, superficial OCR, or generic table transcription.
 
 The target is not to trick models with artificial prompt-injection style documents. The cases are synthetic, but each represents a common real document failure mode.
@@ -30,7 +31,26 @@ The target is not to trick models with artificial prompt-injection style documen
 
 ## Scoring
 
-Each case has weighted deterministic checks:
+Each case is primarily scored by an LLM judge that receives:
+
+- Case metadata.
+- The known correct answer key from `gold.md`.
+- The candidate Markdown from the model run.
+
+The current judge is `gemini-3.1-flash-lite` through Google Vertex with minimal reasoning. The judge compares semantic fidelity against the gold answer key rather than exact Markdown syntax. Different wording, table formatting, and natural-language descriptions are acceptable when they faithfully preserve the document's information.
+
+The final score is a weighted dimension score:
+
+| Dimension | Weight | Meaning |
+| --- | ---: | --- |
+| Accuracy | 75% | Correct facts, numbers, labels, checkbox states, table bindings, chart/timeline bindings, redline state, and absence of contradictions. |
+| Completeness | 10% | Coverage of all information in the gold answer key. |
+| Structure | 10% | Reading order, grouping, table/list/form structure, and visual-to-text relationships. |
+| Markdown quality | 5% | Clarity and usefulness of the Markdown representation. |
+
+Accuracy dominates because a nicely structured Markdown document is still a bad reconstruction if it changes values, swaps labels, includes hidden/deleted text as current, or loses visible state.
+
+Each case also has weighted deterministic checks:
 
 - `all`: required regex patterns all appear.
 - `none`: prohibited regex patterns do not appear.
@@ -39,19 +59,22 @@ Each case has weighted deterministic checks:
 
 Generator helpers distinguish escaped literal negatives from raw regex negatives. Use `none_check` only for literal strings and `none_regex_check` when a prohibited pattern intentionally uses regex syntax.
 
+These checks no longer determine the primary score. They are stored under `deterministic` in each `score.json` so we can audit the LLM judge, catch obvious regressions, and identify where strict checklist scoring disagrees with semantic scoring.
+
 The current scorer reports:
 
 - Case score.
 - Overall macro score.
 - Family scores and family minimum.
-- Category scores.
-- Estimated cost.
+- Judge dimension scores.
+- Deterministic audit category scores.
+- Model cost and judge cost.
 - Latency.
 - Input and output tokens.
 - Failure rate.
-- Weakest failed checks.
+- Judge findings and weakest deterministic audit checks.
 
-The scorer is intentionally simple for now. It should stay simple until the suite itself proves useful. Future versions can add Markdown parsing, table-grid scoring, and structured block alignment after the hard cases are stable.
+The scorer is still intentionally compact. Future versions can add Markdown parsing, table-grid scoring, structured block alignment, and multi-judge/repeated evaluation after the hard cases are stable. For publication-quality claims, repeated judge runs are needed because an LLM evaluator can have its own variance and provider-specific bias.
 
 ## Calibration Rule
 

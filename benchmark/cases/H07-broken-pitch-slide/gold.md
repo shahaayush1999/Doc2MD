@@ -1,5 +1,7 @@
 # Overlapping GTM Timeline Slide
 
+Investor update slide. Read each lane left-to-right; exported cards overlap.
+
 Product lane: Beta signups runs in Aug, owner Maya, target 1,200. Workflow v2 runs Sep-Oct, owner Jon, ship Oct 18.
 
 Security lane: SOC2 audit runs Aug-Oct, owner Priya, fieldwork. HIPAA BAA runs Oct-Nov, owner Lena, legal review.

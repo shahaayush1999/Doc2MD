@@ -196,7 +196,7 @@ def h01() -> Case:
         "Visible content is a raster card. Conflicting stale values are invisible PDF text.",
         ["release fields", "status/owner/budget binding", "hidden stale text policy"],
         ["Preserve visible status, owner, budget, reason, and stamp.", "Penalize hidden APPROVED/Mira/$19,400 values."],
-        "# Release Approval Card\n\nStatus: BLOCKED\nOwner: Nisha Vora\nBudget cap: $14,900\nReason: Security signoff missing for EU tenant\nStamp: HOLD UNTIL 2026-08-17\n",
+        "# Release Approval Card\n\nVisible release decision:\n\nRelease: REL-47B\nStatus: BLOCKED\nOwner: Nisha Vora\nBudget cap: $14,900\nReason: Security signoff missing for EU tenant\nStamp: HOLD UNTIL 2026-08-17\n\nBenchmark policy: score only rendered visible values; hidden stale text is wrong.\n",
         [
             all_check("visible-values", "text", ["REL-47B", "BLOCKED", "Nisha Vora", "$14,900"]),
             near_check("status-owner-budget", "binding", ["BLOCKED", "Nisha Vora", "$14,900"], 2.5),
@@ -235,7 +235,7 @@ def h02() -> Case:
         "Stale extractable text is drawn first, then covered by an opaque raster card.",
         ["shipment fields", "status/port/ETA binding", "covered stale text policy"],
         ["Preserve visible delayed Osaka ETA values.", "Penalize stale ON TIME Busan values."],
-        "# Shipping Exception Overlay\n\nShipment XQ-17 is DELAYED at Osaka with ETA 2026-08-14. Owner: Ren Ito.\nReason: customs inspection hold.\n",
+        "# Shipping Exception Overlay\n\nRendered exception card: Shipment XQ-17 has visible status DELAYED, current port Osaka, ETA 2026-08-14, owner Ren Ito, and reason customs inspection hold.\n\nOpaque card covers a stale text layer. Use the rendered exception card.\n",
         [
             all_check("visible-shipment", "text", ["XQ-17", "DELAYED", "Osaka", "2026-08-14", "Ren Ito"]),
             near_check("status-port-eta", "binding", ["DELAYED", "Osaka", "2026-08-14"], 2.5),
@@ -462,7 +462,7 @@ def h07() -> Case:
         "Raster-only investor update slide with month grid, swimlanes, overlapping cards, and dependency note.",
         ["lane-card bindings", "month spans", "owners", "dependency note", "footer"],
         ["Bind each initiative to the correct lane.", "Preserve month spans and owners.", "Do not assign HIPAA BAA to Product."],
-        "# Overlapping GTM Timeline Slide\n\nProduct lane: Beta signups runs in Aug, owner Maya, target 1,200. Workflow v2 runs Sep-Oct, owner Jon, ship Oct 18.\n\nSecurity lane: SOC2 audit runs Aug-Oct, owner Priya, fieldwork. HIPAA BAA runs Oct-Nov, owner Lena, legal review.\n\nSales lane: Design partners runs in Aug, owner Omar, 9 accounts. Enterprise pilots runs Sep-Nov, owner Omar, $4.2M pipeline.\n\nOctober dependency: HIPAA BAA belongs to Security, not Product. Enterprise pilots depend on BAA legal review.\n\nFooter: Board packet GTM-09. Preserve lane, month span, owner, and dependency.\n",
+        "# Overlapping GTM Timeline Slide\n\nInvestor update slide. Read each lane left-to-right; exported cards overlap.\n\nProduct lane: Beta signups runs in Aug, owner Maya, target 1,200. Workflow v2 runs Sep-Oct, owner Jon, ship Oct 18.\n\nSecurity lane: SOC2 audit runs Aug-Oct, owner Priya, fieldwork. HIPAA BAA runs Oct-Nov, owner Lena, legal review.\n\nSales lane: Design partners runs in Aug, owner Omar, 9 accounts. Enterprise pilots runs Sep-Nov, owner Omar, $4.2M pipeline.\n\nOctober dependency: HIPAA BAA belongs to Security, not Product. Enterprise pilots depend on BAA legal review.\n\nFooter: Board packet GTM-09. Preserve lane, month span, owner, and dependency.\n",
         [
             {"id": "product-beta", "category": "binding", "weight": 2, "description": "product beta card with Aug span", "all": [r"Product[\s\S]{0,500}Beta signups(?=[\s\S]{0,180}Aug)(?=[\s\S]{0,180}Maya)(?=[\s\S]{0,180}1,200)"]},
             {"id": "product-workflow", "category": "binding", "weight": 2.5, "description": "workflow card with Sep-Oct span", "all": [r"Product[\s\S]{0,600}Workflow v2(?=[\s\S]{0,220}(Sep[\s\S]{0,80}Oct|Sep\s*[-–]\s*Oct))(?=[\s\S]{0,220}Jon)(?=[\s\S]{0,220}Oct 18)"]},
@@ -880,7 +880,7 @@ def h15() -> Case:
         "Raster-only page with a landscape-style heatmap embedded in portrait.",
         ["wide matrix", "legend", "critical red slash cells", "yellow not red distinction", "weekend columns"],
         ["Preserve team/day/state bindings.", "Describe slash semantics.", "Do not drop Saturday."],
-        "# Landscape Heatmap Escalation Plan\n\nLegend: G green normal; Y yellow watch; R red escalation. A diagonal slash means the owner must page the incident lead.\n\nCritical red slash cells: API Thu, Data Fri, Export Wed, and Billing Sat. Export Fri is yellow, not red. Weekend columns are part of the table and must not be dropped.\n",
+        "# Landscape Heatmap Escalation Plan\n\nPage is shown in portrait, but the matrix is a landscape insert.\n\n## Escalation heatmap: color + letter both matter\n\n| Team | Mon | Tue | Wed | Thu | Fri | Sat |\n| --- | --- | --- | --- | --- | --- | --- |\n| API | G | Y | Y | R with slash | R | Y |\n| Data | G | G | Y | Y | R with slash | R |\n| Export | Y | Y | R with slash | R | Y | G |\n| Billing | G | Y | G | Y | Y | R with slash |\n\nLegend: G green normal; Y yellow watch; R red escalation. A diagonal slash means the owner must page the incident lead.\n\nReviewer instruction: derive the red slash cells from the matrix itself. Do not infer severity from row totals. Export Friday must be read directly from its cell.\n\nCritical red slash cells: API Thu, Data Fri, Export Wed, and Billing Sat. Export Fri is yellow, not red. Weekend columns are part of the table and must not be dropped.\n",
         [
             all_check("legend", "text", ["green normal", "yellow watch", "red escalation", "slash"], 2),
             near_check("api-thu", "tables", ["API", "Thu", "red", "slash"], 2.5, 420),
@@ -940,7 +940,7 @@ def h16() -> Case:
         "Raster-only metrics page with line chart, stacked bar chart, matrix, and narrative callout.",
         ["Panel A trend", "Panel B severe/minor legend", "Panel C owner matrix", "callout warning"],
         ["State Friday queue depth.", "Identify Visual severe defects.", "Bind Ken aged count.", "Do not say Tables has most severe defects."],
-        "# Multi-Panel Metrics Report\n\nPanel A Queue depth rises every day and ends at 47 on Friday.\n\nPanel B Defect mix: red means severe and blue means minor. Visual has the most severe defects, with 19 severe defects.\n\nPanel C Owner matrix: Noor has 14 open and 6 aged with SLA risk; Mira has 9 open and 1 aged with SLA ok; Ken has 24 open and 11 aged with SLA risk.\n\nCross-panel warning: Ken has the highest aged count at 11. The defect mix warning is severe Visual defects, not total Tables defects.\n",
+        "# Multi-Panel Metrics Report\n\nOperations metrics: panels must be described inline, not summarized.\n\n## Panel A. Queue depth\n\nQueue depth rises every day with values 12, 18, 29, 41, and 47. It ends at 47 on Friday.\n\n## Panel B. Defect mix\n\nRed means severe and blue means minor. Segment labels should be used, not total bar height.\n\n| Lane | Minor / blue | Severe / red |\n| --- | ---: | ---: |\n| Ingest | 12 | 5 |\n| Visual | 21 | 19 |\n| Tables | 10 | 17 |\n\nVisual has the most severe defects, with 19 severe defects. Tables has 17 severe defects and does not have the most severe defects.\n\n## Panel C. Owner matrix\n\n| Owner | Open | Aged | SLA |\n| --- | ---: | ---: | --- |\n| Noor | 14 | 6 | risk |\n| Mira | 9 | 1 | ok |\n| Ken | 24 | 11 | risk |\n\nReviewer instruction: describe each panel separately, then state one cross-panel warning. Do not copy panel titles as a substitute for chart facts.\n\nCross-panel warning: Ken has the highest aged count at 11. The defect mix warning is severe Visual defects, not total Tables defects.\n",
         [
             {"id": "queue-friday", "category": "visual", "weight": 2.5, "description": "queue-friday", "all": [r"Queue depth", r"(Friday|Fri)", r"47"]},
             near_check("visual-severe", "visual", ["Visual", "severe", "19"], 2.5, 260),
@@ -986,7 +986,7 @@ def h17() -> Case:
         "Raster-only contract excerpt with insertions, deletions, and side comments.",
         ["current clause text", "deleted text marked deleted", "inserted text current", "margin comments", "signature block"],
         ["Do not treat deleted 30 calendar days as current.", "Preserve 10 business days and 400 days.", "Keep comments as comments."],
-        "# Redlined Data Processing Addendum\n\nSection 4. Data return: Processor must return Customer Data within 10 business days after termination. Deleted old text: within 30 calendar days. Comment A: Legal asks whether 10 business days is acceptable for regulated customers.\n\nSection 5. Audit logs: Processor must retain audit logs for 400 days and provide export within 48 hours of written request. Deleted phrase: commercially reasonable efforts. Comment B: Security accepts 400 days and says not to restore the deleted efforts language.\n\nSignature block remains unchanged: NovaCloud / Atlas Retail.\n",
+        "# Redlined Data Processing Addendum\n\nVisible redline policy: include inserted text, describe deleted text as deleted, do not treat deleted text as current.\n\nSection 4. Data return: Processor must return Customer Data within 10 business days after termination. Deleted old text: within 30 calendar days. Inserted text: within 10 business days. Comment A: Legal asks whether 10 business days is acceptable for regulated customers.\n\nSection 5. Audit logs: Processor must retain audit logs for 400 days and provide export within 48 hours of written request. Deleted phrase: commercially reasonable efforts. Comment B: Security accepts 400 days and says not to restore the deleted efforts language.\n\nSignature block remains unchanged: NovaCloud / Atlas Retail.\n",
         [
             near_check("current-return", "text", ["Data return", "10 business days", "termination"], 2.5, 260),
             near_check("deleted-30", "structure", ["Deleted", "30 calendar days"], 2, 220),
@@ -1101,7 +1101,7 @@ def main() -> None:
     CASE_ROOT.mkdir(parents=True, exist_ok=True)
     manifest = {
         "name": "Doc2MD-Hard-11",
-        "version": "0.3.1",
+        "version": "0.4.0",
         "description": "Compact hard Doc2MD candidate suite focused on complex raster layouts, visual-to-structure reconstruction, table/figure binding, redlines, and visibility semantics.",
         "caseCount": len(CASES),
         "pageCount": sum(len(case.pages) for case in CASES),

@@ -1,5 +1,8 @@
 import { readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { performance } from "node:perf_hooks";
+import { generateObject, jsonSchema } from "ai";
+import { googleVertex } from "@ai-sdk/google-vertex";
 
 type Check = {
   id: string;
@@ -22,12 +25,119 @@ type CheckFile = {
 
 type ManifestCase = {
   id: string;
+  title: string;
+  family: string;
+  tags: string[];
+  gold: string;
   checks: string;
 };
 
 type Manifest = {
   cases: ManifestCase[];
 };
+
+type JudgeFinding = {
+  severity: "critical" | "major" | "minor";
+  type: "missing" | "incorrect" | "extra" | "structure" | "format";
+  explanation: string;
+  expected?: string;
+  actual?: string;
+};
+
+type JudgeResult = {
+  accuracy: number;
+  completeness: number;
+  structure: number;
+  markdownQuality: number;
+  findings: JudgeFinding[];
+  rationale: string;
+};
+
+const evaluator = {
+  id: "vertex-gemini-3.1-flash-lite",
+  modelName: "gemini-3.1-flash-lite",
+  provider: "google-vertex",
+  reasoning: "minimal",
+  inputPerMillion: 0.25,
+  outputPerMillion: 1.5,
+} as const;
+
+const weights = {
+  accuracy: 0.75,
+  completeness: 0.1,
+  structure: 0.1,
+  markdownQuality: 0.05,
+};
+
+const judgeSchema = jsonSchema<JudgeResult>({
+  type: "object",
+  additionalProperties: false,
+  required: ["accuracy", "completeness", "structure", "markdownQuality", "findings", "rationale"],
+  properties: {
+    accuracy: {
+      type: "number",
+      minimum: 0,
+      maximum: 100,
+      description:
+        "Semantic correctness of represented facts, values, labels, state, and bindings. Penalize contradictions and wrong values heavily, but do not lower accuracy for formatting-only issues.",
+    },
+    completeness: {
+      type: "number",
+      minimum: 0,
+      maximum: 100,
+      description: "Coverage of all information in the gold answer key.",
+    },
+    structure: {
+      type: "number",
+      minimum: 0,
+      maximum: 100,
+      description: "Preservation of reading order, grouping, table/list/form structure, and visual-to-text bindings.",
+    },
+    markdownQuality: {
+      type: "number",
+      minimum: 0,
+      maximum: 100,
+      description: "Usefulness and clarity of Markdown representation. Do not penalize harmless formatting differences.",
+    },
+    findings: {
+      type: "array",
+      maxItems: 12,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["severity", "type", "explanation"],
+        properties: {
+          severity: { type: "string", enum: ["critical", "major", "minor"] },
+          type: { type: "string", enum: ["missing", "incorrect", "extra", "structure", "format"] },
+          explanation: { type: "string" },
+          expected: { type: "string" },
+          actual: { type: "string" },
+        },
+      },
+    },
+    rationale: {
+      type: "string",
+      description: "Brief explanation of the score in one or two sentences.",
+    },
+  },
+});
+
+function clampScore(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  if (value >= 0 && value <= 1) return value * 100;
+  return Math.max(0, Math.min(100, value));
+}
+
+function round(value: number, digits = 1): number {
+  const factor = 10 ** digits;
+  return Math.round(value * factor) / factor;
+}
+
+function cost(usage: any): number {
+  const input = usage?.inputTokens ?? 0;
+  const output = usage?.outputTokens ?? 0;
+  return (input / 1_000_000) * evaluator.inputPerMillion + (output / 1_000_000) * evaluator.outputPerMillion;
+}
 
 function normalize(text: string): string {
   return text
@@ -87,13 +197,7 @@ function nearMatch(near: Check["near"], text: string): boolean {
   });
 }
 
-async function scoreCase(modelId: string, testCase: ManifestCase) {
-  const checkFile = JSON.parse(await readFile(testCase.checks, "utf-8")) as CheckFile;
-  const runDir = path.join("runs", modelId, testCase.id);
-  const prediction = normalize(await readFile(path.join(runDir, "prediction.md"), "utf-8"));
-  const result = JSON.parse(await readFile(path.join(runDir, "result.json"), "utf-8"));
-  const failed = Boolean(result.error || result.finishReason === "error");
-
+function deterministicAudit(checkFile: CheckFile, prediction: string, failed: boolean) {
   let earned = 0;
   let possible = 0;
   const byCategory: Record<string, { earned: number; possible: number }> = {};
@@ -118,28 +222,166 @@ async function scoreCase(modelId: string, testCase: ManifestCase) {
   const categoryScores = Object.fromEntries(
     Object.entries(byCategory).map(([category, value]) => [
       category,
-      value.possible === 0 ? null : Math.round((value.earned / value.possible) * 1000) / 10,
+      value.possible === 0 ? null : round((value.earned / value.possible) * 100),
     ]),
   );
 
-  const score = possible === 0 ? 0 : (earned / possible) * 100;
+  return {
+    score: possible === 0 ? 0 : round((earned / possible) * 100),
+    earned,
+    possible,
+    categoryScores,
+    details,
+  };
+}
+
+function judgePrompt(testCase: ManifestCase, gold: string, prediction: string): string {
+  return `You are evaluating Doc2MD, a benchmark for converting documents into faithful Markdown.
+
+Compare the candidate Markdown against the gold answer key. The gold answer key is the authoritative representation of the original document.
+
+Score dimensions:
+- accuracy: highest importance. Correct facts, numbers, labels, checkbox states, redline/current-vs-deleted status, table bindings, chart/schedule bindings, and absence of contradictions.
+- completeness: whether the candidate preserves all information in the gold answer key.
+- structure: whether reading order, grouping, table/list/form structure, and visual-to-text relationships are faithfully represented.
+- markdownQuality: whether the Markdown is usable and clear.
+
+All four score dimensions MUST be numeric scores from 0 to 100, where 100 is perfect. Do not use a 0 to 1 scale.
+
+Important judging rules:
+- Do not require identical wording or identical Markdown syntax.
+- Do not penalize harmless formatting differences, section title variants, or concise natural-language descriptions when the same information is faithfully represented.
+- Accuracy is semantic fidelity. Do not lower accuracy for malformed Markdown, raw HTML, table style, or representation choice unless it changes, hides, or makes ambiguous the actual document information.
+- Put representation-only problems in structure or markdownQuality, not accuracy.
+- Penalize wrong information more than missing information.
+- Penalize false assertions, invented values, wrong checkbox states, wrong table row/column bindings, wrong timeline spans, or treating deleted/hidden/covered text as current.
+- If the candidate is a summary rather than a reconstruction, score completeness and structure low even if some facts are correct.
+- Findings should list only substantive issues.
+
+Case: ${testCase.id} - ${testCase.title}
+Family: ${testCase.family}
+Tags: ${testCase.tags.join(", ")}
+
+GOLD ANSWER KEY:
+<<<GOLD
+${gold}
+GOLD
+
+CANDIDATE MARKDOWN:
+<<<CANDIDATE
+${prediction}
+CANDIDATE`;
+}
+
+async function judgeWithGemini(testCase: ManifestCase, gold: string, prediction: string): Promise<{
+  result: JudgeResult;
+  elapsedMs: number;
+  usage: any;
+  estimatedCostUsd: number;
+}> {
+  const started = performance.now();
+  const response = await generateObject({
+    model: googleVertex(evaluator.modelName),
+    schema: judgeSchema,
+    prompt: judgePrompt(testCase, gold, prediction),
+    reasoning: evaluator.reasoning,
+    maxOutputTokens: 3000,
+  });
+  const elapsedMs = Math.round(performance.now() - started);
+  return {
+    result: response.object,
+    elapsedMs,
+    usage: response.usage,
+    estimatedCostUsd: cost(response.usage),
+  };
+}
+
+async function scoreCase(modelId: string, testCase: ManifestCase) {
+  const checkFile = JSON.parse(await readFile(testCase.checks, "utf-8")) as CheckFile;
+  const runDir = path.join("runs", modelId, testCase.id);
+  const rawPrediction = await readFile(path.join(runDir, "prediction.md"), "utf-8");
+  const prediction = normalize(rawPrediction);
+  const gold = await readFile(testCase.gold, "utf-8");
+  const result = JSON.parse(await readFile(path.join(runDir, "result.json"), "utf-8"));
+  const failed = Boolean(result.error || result.finishReason === "error");
+  const deterministic = deterministicAudit(checkFile, prediction, failed);
+
+  let judge: JudgeResult;
+  let judgeElapsedMs = 0;
+  let judgeUsage: any = null;
+  let judgeCostUsd = 0;
+  let judgeError: string | undefined;
+
+  if (failed) {
+    judge = {
+      accuracy: 0,
+      completeness: 0,
+      structure: 0,
+      markdownQuality: 0,
+      findings: [{ severity: "critical", type: "missing", explanation: "Model run failed, so no faithful Markdown was produced." }],
+      rationale: "The model run failed.",
+    };
+  } else {
+    try {
+      const judged = await judgeWithGemini(testCase, gold, rawPrediction);
+      judge = judged.result;
+      judgeElapsedMs = judged.elapsedMs;
+      judgeUsage = judged.usage;
+      judgeCostUsd = judged.estimatedCostUsd;
+    } catch (error) {
+      judgeError = error instanceof Error ? error.message : String(error);
+      judge = {
+        accuracy: 0,
+        completeness: 0,
+        structure: 0,
+        markdownQuality: 0,
+        findings: [{ severity: "critical", type: "missing", explanation: `Evaluator failed: ${judgeError}` }],
+        rationale: "The evaluator failed.",
+      };
+    }
+  }
+
+  const dimensionScores = {
+    accuracy: clampScore(judge.accuracy),
+    completeness: clampScore(judge.completeness),
+    structure: clampScore(judge.structure),
+    markdownQuality: clampScore(judge.markdownQuality),
+  };
+  const score = round(
+    dimensionScores.accuracy * weights.accuracy +
+      dimensionScores.completeness * weights.completeness +
+      dimensionScores.structure * weights.structure +
+      dimensionScores.markdownQuality * weights.markdownQuality,
+  );
+
   const scored = {
     caseId: testCase.id,
     title: checkFile.title,
     family: checkFile.family,
     tags: checkFile.tags,
     modelId,
-    score: Math.round(score * 10) / 10,
-    earned,
-    possible,
-    categoryScores,
+    score,
+    scorer: {
+      type: "llm-gold-comparison",
+      evaluatorModelId: evaluator.id,
+      evaluatorModelName: evaluator.modelName,
+      evaluatorReasoning: evaluator.reasoning,
+      weights,
+      elapsedMs: judgeElapsedMs,
+      usage: judgeUsage,
+      estimatedCostUsd: judgeCostUsd,
+      error: judgeError,
+    },
+    dimensions: dimensionScores,
+    findings: judge.findings,
+    rationale: judge.rationale,
+    deterministic,
     estimatedCostUsd: result.estimatedCostUsd ?? 0,
     elapsedMs: result.elapsedMs ?? 0,
     usage: result.usage ?? null,
     outputLength: result.outputLength ?? prediction.length,
     finishReason: result.finishReason ?? "unknown",
     error: result.error,
-    details,
   };
 
   await writeFile(path.join(runDir, "score.json"), JSON.stringify(scored, null, 2) + "\n", "utf-8");
@@ -153,15 +395,24 @@ const cases = manifest.cases.filter((testCase) => existing.has(testCase.id));
 if (cases.length === 0) throw new Error(`No run outputs found for ${modelId}`);
 
 const scores = [];
-for (const testCase of cases) scores.push(await scoreCase(modelId, testCase));
+for (const testCase of cases) {
+  const scored = await scoreCase(modelId, testCase);
+  scores.push(scored);
+  console.log(
+    `${modelId} ${testCase.id}: ${scored.score.toFixed(1)} ` +
+      `(accuracy ${scored.dimensions.accuracy.toFixed(1)}, judge $${scored.scorer.estimatedCostUsd.toFixed(6)})`,
+  );
+}
 
 console.table(
   scores.map((score) => ({
     case: score.caseId,
     pct: score.score,
+    accuracy: score.dimensions.accuracy,
     family: score.family,
     finish: score.finishReason,
     cost: Number(score.estimatedCostUsd.toFixed(6)),
+    judgeCost: Number(score.scorer.estimatedCostUsd.toFixed(6)),
     ms: score.elapsedMs,
   })),
 );

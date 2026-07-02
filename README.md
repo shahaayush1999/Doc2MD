@@ -8,6 +8,8 @@ Current benchmark planning is in [docs/benchmark-design.md](docs/benchmark-desig
 
 The current runnable suite is **Doc2MD-Hard-11**, a compact benchmark focused on visible-vs-extractable conflicts, raster spatial normalization, complex scientific/poster layouts, wide heatmaps, multi-panel charts, redlines, and nonlinear reading order.
 
+Each case includes a `gold.md` answer key. `npm run score` compares model output against that answer key with a Gemini 3.1 Flash Lite judge, with accuracy weighted most heavily. Deterministic checks are retained as an audit signal in each `score.json`.
+
 Generate the benchmark:
 
 ```bash
@@ -29,7 +31,7 @@ npm run score -- vertex-gemini-3.1-flash-lite
 npm run summary -- vertex-gemini-3.1-flash-lite
 ```
 
-Run the weak visual baseline after the suite is not saturated by Gemini:
+Run the comparison set:
 
 ```bash
 npm run run -- --model vertex-gemini-3.5-flash
