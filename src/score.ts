@@ -32,6 +32,9 @@ type Manifest = {
 function normalize(text: string): string {
   return text
     .replace(/\r\n/g, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/[*_`~]+/g, "")
+    .replace(/(\d+(?:\.\d+)?)\s+h\b/giu, "$1h")
     .replace(/[ \t]+/g, " ")
     .replace(/[“”]/g, '"')
     .replace(/[‘’]/g, "'")
