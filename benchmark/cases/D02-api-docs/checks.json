@@ -1,0 +1,167 @@
+{
+  "id": "D02-api-docs",
+  "title": "Technical API Documentation Excerpt",
+  "family": "text_structure",
+  "tags": [
+    "born-digital",
+    "code",
+    "simple-table",
+    "callout"
+  ],
+  "public": false,
+  "checks": [
+    {
+      "id": "text-ledger-export-api",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Ledger Export API",
+      "patterns": [
+        "Ledger Export API"
+      ]
+    },
+    {
+      "id": "text-post-v2-ledger-exports",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: POST /v2/ledger_exports",
+      "patterns": [
+        "POST /v2/ledger_exports"
+      ]
+    },
+    {
+      "id": "text-period-end",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: period_end",
+      "patterns": [
+        "period_end"
+      ]
+    },
+    {
+      "id": "text-export-exists",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: export_exists",
+      "patterns": [
+        "export_exists"
+      ]
+    },
+    {
+      "id": "structure-endpoint",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ## Endpoint",
+      "patterns": [
+        "^#{1,6}\\s+Endpoint"
+      ]
+    },
+    {
+      "id": "structure-request-fields",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ### Request fields",
+      "patterns": [
+        "^#{1,6}\\s+Request fields"
+      ]
+    },
+    {
+      "id": "structure-error-codes",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ## Error codes",
+      "patterns": [
+        "^#{1,6}\\s+Error codes"
+      ]
+    },
+    {
+      "id": "structure-webhook-payload",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ## Webhook payload",
+      "patterns": [
+        "^#{1,6}\\s+Webhook payload"
+      ]
+    },
+    {
+      "id": "tables-workspace-id",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: workspace_id",
+      "patterns": [
+        "workspace_id"
+      ]
+    },
+    {
+      "id": "tables-period-start",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: period_start",
+      "patterns": [
+        "period_start"
+      ]
+    },
+    {
+      "id": "tables-rate-limited",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: rate_limited",
+      "patterns": [
+        "rate_limited"
+      ]
+    },
+    {
+      "id": "tables-retryable",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: Retryable",
+      "patterns": [
+        "Retryable"
+      ]
+    },
+    {
+      "id": "special-json",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: ```json",
+      "patterns": [
+        "```json"
+      ]
+    },
+    {
+      "id": "special-ledgerexportwebhook",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: LedgerExportWebhook",
+      "patterns": [
+        "LedgerExportWebhook"
+      ]
+    },
+    {
+      "id": "special-openai-api-key",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: OPENAI_API_KEY",
+      "patterns": [
+        "OPENAI_API_KEY"
+      ]
+    },
+    {
+      "id": "markdown-has-heading",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should contain at least one Markdown heading.",
+      "patterns": [
+        "^#\\s"
+      ]
+    },
+    {
+      "id": "no-json-wrapper",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should not be wrapped as JSON.",
+      "mustNotPatterns": [
+        "^\\s*\\{[\\s\\S]*\"markdown\""
+      ]
+    }
+  ]
+}

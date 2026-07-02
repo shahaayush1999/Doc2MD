@@ -1,0 +1,131 @@
+{
+  "id": "D01-policy-memo",
+  "title": "Clean Business Policy Memo",
+  "family": "text_structure",
+  "tags": [
+    "public",
+    "born-digital",
+    "nested-list",
+    "header-footer"
+  ],
+  "public": true,
+  "checks": [
+    {
+      "id": "text-acme-operations-memo",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Acme Operations Memo",
+      "patterns": [
+        "Acme Operations Memo"
+      ]
+    },
+    {
+      "id": "text-d01-pol-447",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: D01-POL-447",
+      "patterns": [
+        "D01-POL-447"
+      ]
+    },
+    {
+      "id": "text-partner-sourced-revenue",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: partner-sourced revenue",
+      "patterns": [
+        "partner-sourced revenue"
+      ]
+    },
+    {
+      "id": "text-exception-r-8",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Exception R-8",
+      "patterns": [
+        "Exception R-8"
+      ]
+    },
+    {
+      "id": "structure-purpose",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ## Purpose",
+      "patterns": [
+        "^#{1,6}\\s+Purpose"
+      ]
+    },
+    {
+      "id": "structure-procedure",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ## Procedure",
+      "patterns": [
+        "^#{1,6}\\s+Procedure"
+      ]
+    },
+    {
+      "id": "structure-required-approvals",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ### Required approvals",
+      "patterns": [
+        "^#{1,6}\\s+Required approvals"
+      ]
+    },
+    {
+      "id": "structure-appendix-a",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: Appendix A",
+      "patterns": [
+        "Appendix A"
+      ]
+    },
+    {
+      "id": "tables-currency-mismatch",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: Currency mismatch",
+      "patterns": [
+        "Currency mismatch"
+      ]
+    },
+    {
+      "id": "tables-missing-reseller-remittance",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: Missing reseller remittance",
+      "patterns": [
+        "Missing reseller remittance"
+      ]
+    },
+    {
+      "id": "tables-manual-invoice-not-linked",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: Manual invoice not linked",
+      "patterns": [
+        "Manual invoice not linked"
+      ]
+    },
+    {
+      "id": "markdown-has-heading",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should contain at least one Markdown heading.",
+      "patterns": [
+        "^#\\s"
+      ]
+    },
+    {
+      "id": "no-json-wrapper",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should not be wrapped as JSON.",
+      "mustNotPatterns": [
+        "^\\s*\\{[\\s\\S]*\"markdown\""
+      ]
+    }
+  ]
+}

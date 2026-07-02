@@ -1,0 +1,131 @@
+{
+  "id": "D24-newspaper-scan",
+  "title": "Historical Newspaper Scan",
+  "family": "ocr_robustness",
+  "tags": [
+    "scan",
+    "multi-column",
+    "mild-degradation",
+    "caption"
+  ],
+  "public": false,
+  "checks": [
+    {
+      "id": "text-the-harbor-chronicle",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: The Harbor Chronicle",
+      "patterns": [
+        "The Harbor Chronicle"
+      ]
+    },
+    {
+      "id": "text-march-14-1932",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: March 14, 1932",
+      "patterns": [
+        "March 14, 1932"
+      ]
+    },
+    {
+      "id": "text-ferry-service-restored",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Ferry Service Restored",
+      "patterns": [
+        "Ferry Service Restored"
+      ]
+    },
+    {
+      "id": "text-twenty-seven-passengers",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: twenty-seven passengers",
+      "patterns": [
+        "twenty-seven passengers"
+      ]
+    },
+    {
+      "id": "structure-headline",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: Headline",
+      "patterns": [
+        "Headline"
+      ]
+    },
+    {
+      "id": "structure-subhead",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: Subhead",
+      "patterns": [
+        "Subhead"
+      ]
+    },
+    {
+      "id": "structure-column-1",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: Column 1",
+      "patterns": [
+        "Column 1"
+      ]
+    },
+    {
+      "id": "structure-column-2",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: Column 2",
+      "patterns": [
+        "Column 2"
+      ]
+    },
+    {
+      "id": "structure-caption",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: Caption",
+      "patterns": [
+        "Caption"
+      ]
+    },
+    {
+      "id": "visual-repaired-gangway",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: repaired gangway",
+      "patterns": [
+        "repaired gangway"
+      ]
+    },
+    {
+      "id": "visual-pier-3",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: Pier 3",
+      "patterns": [
+        "Pier 3"
+      ]
+    },
+    {
+      "id": "markdown-has-heading",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should contain at least one Markdown heading.",
+      "patterns": [
+        "^#\\s"
+      ]
+    },
+    {
+      "id": "no-json-wrapper",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should not be wrapped as JSON.",
+      "mustNotPatterns": [
+        "^\\s*\\{[\\s\\S]*\"markdown\""
+      ]
+    }
+  ]
+}

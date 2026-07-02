@@ -1,0 +1,112 @@
+{
+  "id": "D13-lab-form",
+  "title": "Lab-Style Intake Form",
+  "family": "forms_tables",
+  "tags": [
+    "form",
+    "checkbox",
+    "dense-boxes"
+  ],
+  "public": false,
+  "checks": [
+    {
+      "id": "text-lab-ax-771",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: LAB-AX-771",
+      "patterns": [
+        "LAB-AX-771"
+      ]
+    },
+    {
+      "id": "text-redacted-test-record",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: REDACTED TEST RECORD",
+      "patterns": [
+        "REDACTED TEST RECORD"
+      ]
+    },
+    {
+      "id": "text-stat",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: STAT",
+      "patterns": [
+        "STAT"
+      ]
+    },
+    {
+      "id": "text-rk",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: RK",
+      "patterns": [
+        "RK"
+      ]
+    },
+    {
+      "id": "forms-cbc",
+      "category": "forms",
+      "weight": 1,
+      "description": "Output should preserve: CBC",
+      "patterns": [
+        "CBC"
+      ]
+    },
+    {
+      "id": "forms-cmp",
+      "category": "forms",
+      "weight": 1,
+      "description": "Output should preserve: CMP",
+      "patterns": [
+        "CMP"
+      ]
+    },
+    {
+      "id": "forms-lipid-panel",
+      "category": "forms",
+      "weight": 1,
+      "description": "Output should preserve: Lipid panel",
+      "patterns": [
+        "Lipid panel"
+      ]
+    },
+    {
+      "id": "forms-temperature-on-arrival-4-c",
+      "category": "forms",
+      "weight": 1,
+      "description": "Output should preserve: Temperature on arrival: 4 C",
+      "patterns": [
+        "Temperature on arrival[\\s*_:\\-]{0,20}4 C"
+      ]
+    },
+    {
+      "id": "special-do-not-infer-any-diagnosis",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: Do not infer any diagnosis",
+      "patterns": [
+        "Do not infer any diagnosis"
+      ]
+    },
+    {
+      "id": "markdown-has-heading",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should contain at least one Markdown heading.",
+      "patterns": [
+        "^#\\s"
+      ]
+    },
+    {
+      "id": "no-json-wrapper",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should not be wrapped as JSON.",
+      "mustNotPatterns": [
+        "^\\s*\\{[\\s\\S]*\"markdown\""
+      ]
+    }
+  ]
+}

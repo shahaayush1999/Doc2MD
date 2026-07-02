@@ -1,0 +1,104 @@
+{
+  "id": "D21-scientific-figure",
+  "title": "Scientific Figure Page",
+  "family": "visual_layout",
+  "tags": [
+    "figure",
+    "multi-panel",
+    "caption",
+    "labels"
+  ],
+  "public": false,
+  "checks": [
+    {
+      "id": "text-figure-5-error-modes",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Figure 5. Error Modes",
+      "patterns": [
+        "Figure 5\\. Error Modes"
+      ]
+    },
+    {
+      "id": "text-section-6-2",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Section 6.2",
+      "patterns": [
+        "Section 6\\.2"
+      ]
+    },
+    {
+      "id": "text-mitigation-details",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: mitigation details",
+      "patterns": [
+        "mitigation details"
+      ]
+    },
+    {
+      "id": "visual-panel-a",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: Panel A",
+      "patterns": [
+        "Panel A"
+      ]
+    },
+    {
+      "id": "visual-missed-table-header",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: missed table header",
+      "patterns": [
+        "missed table header"
+      ]
+    },
+    {
+      "id": "visual-panel-c",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: Panel C",
+      "patterns": [
+        "Panel C"
+      ]
+    },
+    {
+      "id": "visual-invented-trend",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: invented trend",
+      "patterns": [
+        "invented trend"
+      ]
+    },
+    {
+      "id": "visual-panel-d",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: Panel D",
+      "patterns": [
+        "Panel D"
+      ]
+    },
+    {
+      "id": "markdown-has-heading",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should contain at least one Markdown heading.",
+      "patterns": [
+        "^#\\s"
+      ]
+    },
+    {
+      "id": "no-json-wrapper",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should not be wrapped as JSON.",
+      "mustNotPatterns": [
+        "^\\s*\\{[\\s\\S]*\"markdown\""
+      ]
+    }
+  ]
+}

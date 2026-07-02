@@ -2,3 +2,5 @@
 .env.*
 node_modules/
 tmp/
+benchmark/renders/
+runs/

@@ -1,0 +1,158 @@
+{
+  "id": "D04-regulatory-report",
+  "title": "Regulatory Report Section",
+  "family": "text_structure",
+  "tags": [
+    "born-digital",
+    "footnote",
+    "deep-heading",
+    "boxed-notice"
+  ],
+  "public": false,
+  "checks": [
+    {
+      "id": "text-state-energy-resilience-review",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: State Energy Resilience Review",
+      "patterns": [
+        "State Energy Resilience Review"
+      ]
+    },
+    {
+      "id": "text-ser-2026-14",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: SER-2026-14",
+      "patterns": [
+        "SER-2026-14"
+      ]
+    },
+    {
+      "id": "text-rf-12",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: RF-12",
+      "patterns": [
+        "RF-12"
+      ]
+    },
+    {
+      "id": "text-ser-2026-14-b",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: SER-2026-14-B",
+      "patterns": [
+        "SER-2026-14-B"
+      ]
+    },
+    {
+      "id": "structure-4-2-1-scope",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ## 4.2.1 Scope",
+      "patterns": [
+        "^#{1,6}\\s+4\\.2\\.1 Scope"
+      ]
+    },
+    {
+      "id": "structure-finding-a",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ### Finding A",
+      "patterns": [
+        "^#{1,6}\\s+Finding A"
+      ]
+    },
+    {
+      "id": "structure-finding-b",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ### Finding B",
+      "patterns": [
+        "^#{1,6}\\s+Finding B"
+      ]
+    },
+    {
+      "id": "structure-appendix-4b",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: Appendix 4B",
+      "patterns": [
+        "Appendix 4B"
+      ]
+    },
+    {
+      "id": "tables-rural-spare-transformer-coverage",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: Rural spare transformer coverage",
+      "patterns": [
+        "Rural spare transformer coverage"
+      ]
+    },
+    {
+      "id": "tables-62",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: 62%",
+      "patterns": [
+        "62%"
+      ]
+    },
+    {
+      "id": "tables-80",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: 80%",
+      "patterns": [
+        "80%"
+      ]
+    },
+    {
+      "id": "tables-12-mo",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: 12 mo",
+      "patterns": [
+        "12 mo"
+      ]
+    },
+    {
+      "id": "special-compliance-notice",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: Compliance notice",
+      "patterns": [
+        "Compliance notice"
+      ]
+    },
+    {
+      "id": "special-public-filings",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: public filings",
+      "patterns": [
+        "public filings"
+      ]
+    },
+    {
+      "id": "markdown-has-heading",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should contain at least one Markdown heading.",
+      "patterns": [
+        "^#\\s"
+      ]
+    },
+    {
+      "id": "no-json-wrapper",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should not be wrapped as JSON.",
+      "mustNotPatterns": [
+        "^\\s*\\{[\\s\\S]*\"markdown\""
+      ]
+    }
+  ]
+}

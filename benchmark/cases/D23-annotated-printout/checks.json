@@ -1,0 +1,95 @@
+{
+  "id": "D23-annotated-printout",
+  "title": "Printed Document With Light Handwriting",
+  "family": "ocr_robustness",
+  "tags": [
+    "scan",
+    "handwriting-light",
+    "stamp",
+    "redline"
+  ],
+  "public": false,
+  "checks": [
+    {
+      "id": "text-chg-7782",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: CHG-7782",
+      "patterns": [
+        "CHG-7782"
+      ]
+    },
+    {
+      "id": "text-billing-export-worker",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Billing export worker",
+      "patterns": [
+        "Billing export worker"
+      ]
+    },
+    {
+      "id": "text-medium",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Medium",
+      "patterns": [
+        "Medium"
+      ]
+    },
+    {
+      "id": "text-workerctl-rollback",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: workerctl rollback",
+      "patterns": [
+        "workerctl rollback"
+      ]
+    },
+    {
+      "id": "visual-approved-by-cab",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: APPROVED BY CAB",
+      "patterns": [
+        "APPROVED BY CAB"
+      ]
+    },
+    {
+      "id": "visual-move-rollback-owner-from-eli-to-nisha",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: Move rollback owner from Eli to Nisha",
+      "patterns": [
+        "Move rollback owner from Eli to Nisha"
+      ]
+    },
+    {
+      "id": "visual-queue-depth-exceeds-900",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: queue depth exceeds 900",
+      "patterns": [
+        "queue depth exceeds 900"
+      ]
+    },
+    {
+      "id": "markdown-has-heading",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should contain at least one Markdown heading.",
+      "patterns": [
+        "^#\\s"
+      ]
+    },
+    {
+      "id": "no-json-wrapper",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should not be wrapped as JSON.",
+      "mustNotPatterns": [
+        "^\\s*\\{[\\s\\S]*\"markdown\""
+      ]
+    }
+  ]
+}

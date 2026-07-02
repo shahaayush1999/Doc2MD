@@ -1,0 +1,122 @@
+{
+  "id": "D08-financial-statement",
+  "title": "Annual Report Financial Statement",
+  "family": "tables",
+  "tags": [
+    "public",
+    "born-digital",
+    "complex-table",
+    "footnote"
+  ],
+  "public": true,
+  "checks": [
+    {
+      "id": "text-consolidated-statement-of-operations",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Consolidated Statement of Operations",
+      "patterns": [
+        "Consolidated Statement of Operations"
+      ]
+    },
+    {
+      "id": "text-amounts-in-millions",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Amounts in millions",
+      "patterns": [
+        "Amounts in millions"
+      ]
+    },
+    {
+      "id": "text-footnote-a",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Footnote A",
+      "patterns": [
+        "Footnote A"
+      ]
+    },
+    {
+      "id": "tables-revenue",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: Revenue",
+      "patterns": [
+        "Revenue"
+      ]
+    },
+    {
+      "id": "tables-812-4",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: 812.4",
+      "patterns": [
+        "812\\.4"
+      ]
+    },
+    {
+      "id": "tables-gross-profit",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: Gross profit",
+      "patterns": [
+        "Gross profit"
+      ]
+    },
+    {
+      "id": "tables-total-operating-expenses",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: Total operating expenses",
+      "patterns": [
+        "Total operating expenses"
+      ]
+    },
+    {
+      "id": "tables-296-1",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: 296.1",
+      "patterns": [
+        "296\\.1"
+      ]
+    },
+    {
+      "id": "special-anti-dilutive",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: anti-dilutive",
+      "patterns": [
+        "anti-dilutive"
+      ]
+    },
+    {
+      "id": "special-foreign-exchange",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: Foreign exchange",
+      "patterns": [
+        "Foreign exchange"
+      ]
+    },
+    {
+      "id": "markdown-has-heading",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should contain at least one Markdown heading.",
+      "patterns": [
+        "^#\\s"
+      ]
+    },
+    {
+      "id": "no-json-wrapper",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should not be wrapped as JSON.",
+      "mustNotPatterns": [
+        "^\\s*\\{[\\s\\S]*\"markdown\""
+      ]
+    }
+  ]
+}

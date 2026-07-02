@@ -1,0 +1,122 @@
+{
+  "id": "D22-math-note",
+  "title": "Math Lecture Note",
+  "family": "special_formatting",
+  "tags": [
+    "math",
+    "theorem",
+    "proof",
+    "equations"
+  ],
+  "public": false,
+  "checks": [
+    {
+      "id": "text-lecture-12-alignment-loss",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Lecture 12: Alignment Loss",
+      "patterns": [
+        "Lecture 12[\\s*_:\\-]{0,20}Alignment Loss"
+      ]
+    },
+    {
+      "id": "text-theorem-1",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Theorem 1",
+      "patterns": [
+        "Theorem 1"
+      ]
+    },
+    {
+      "id": "text-monotone-alignment",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: monotone alignment",
+      "patterns": [
+        "monotone alignment"
+      ]
+    },
+    {
+      "id": "structure-theorem-1",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ## Theorem 1",
+      "patterns": [
+        "^#{1,6}\\s+Theorem 1"
+      ]
+    },
+    {
+      "id": "structure-proof",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: Proof:",
+      "patterns": [
+        "Proof[\\s*_:\\-]{0,20}"
+      ]
+    },
+    {
+      "id": "structure-equations",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ## Equations",
+      "patterns": [
+        "^#{1,6}\\s+Equations"
+      ]
+    },
+    {
+      "id": "special-l",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: $$L =",
+      "patterns": [
+        "\\$\\$L ="
+      ]
+    },
+    {
+      "id": "special-frac-m-b",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: \\frac{|M|}{|B|}",
+      "patterns": [
+        "\\\\frac\\{\\|M\\|\\}\\{\\|B\\|\\}"
+      ]
+    },
+    {
+      "id": "special-r",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: $$R =",
+      "patterns": [
+        "\\$\\$R ="
+      ]
+    },
+    {
+      "id": "special-precision",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: precision",
+      "patterns": [
+        "precision"
+      ]
+    },
+    {
+      "id": "markdown-has-heading",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should contain at least one Markdown heading.",
+      "patterns": [
+        "^#\\s"
+      ]
+    },
+    {
+      "id": "no-json-wrapper",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should not be wrapped as JSON.",
+      "mustNotPatterns": [
+        "^\\s*\\{[\\s\\S]*\"markdown\""
+      ]
+    }
+  ]
+}

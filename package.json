@@ -4,7 +4,13 @@
   "description": "Doc2MD is a benchmark for evaluating how accurately AI models convert documents into faithful Markdown. Given a document as input, the model should reconstruct its contents as a single Markdown document, preserving all textual information, document structure, tables, lists, headings, and other formatting where possible. Non-textual elements such as images, figures, diagrams, charts, and illustrations should be described in natural language and inserted inline at their appropriate locations. The objective is faithful reconstruction of the original document's information and reading experience, not summarization, interpretation, citation, or source attribution.",
   "main": "index.js",
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "generate": "/Users/aayush/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/generate_benchmark.py",
+    "run": "node --env-file=.env.local --import tsx src/run.ts",
+    "score": "tsx src/score.ts",
+    "summary": "tsx src/summary.ts",
+    "typecheck": "tsc --noEmit"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shahaayush1999/Doc2MD.git"

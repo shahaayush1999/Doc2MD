@@ -1,0 +1,186 @@
+{
+  "id": "D03-academic-paper",
+  "title": "Academic Paper Excerpt",
+  "family": "text_structure",
+  "tags": [
+    "born-digital",
+    "multi-column",
+    "math",
+    "figure",
+    "footnote"
+  ],
+  "public": false,
+  "checks": [
+    {
+      "id": "text-layout-aware-markdown-reconstruction",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Layout-Aware Markdown Reconstruction",
+      "patterns": [
+        "Layout-Aware Markdown Reconstruction"
+      ]
+    },
+    {
+      "id": "text-doc2md-f",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Doc2MD-F",
+      "patterns": [
+        "Doc2MD-F"
+      ]
+    },
+    {
+      "id": "text-single-markdown-artifact",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: single Markdown artifact",
+      "patterns": [
+        "single Markdown artifact"
+      ]
+    },
+    {
+      "id": "text-model-b",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Model B",
+      "patterns": [
+        "Model B"
+      ]
+    },
+    {
+      "id": "structure-abstract",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ## Abstract",
+      "patterns": [
+        "^#{1,6}\\s+Abstract"
+      ]
+    },
+    {
+      "id": "structure-1-introduction",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ## 1. Introduction",
+      "patterns": [
+        "^#{1,6}\\s+1\\. Introduction"
+      ]
+    },
+    {
+      "id": "structure-2-method",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ## 2. Method",
+      "patterns": [
+        "^#{1,6}\\s+2\\. Method"
+      ]
+    },
+    {
+      "id": "structure-references",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ## References",
+      "patterns": [
+        "^#{1,6}\\s+References"
+      ]
+    },
+    {
+      "id": "tables-model-a",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: Model A",
+      "patterns": [
+        "Model A"
+      ]
+    },
+    {
+      "id": "tables-93-1",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: 93.1",
+      "patterns": [
+        "93\\.1"
+      ]
+    },
+    {
+      "id": "tables-88-2",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: 88.2",
+      "patterns": [
+        "88\\.2"
+      ]
+    },
+    {
+      "id": "tables-visuals",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: Visuals",
+      "patterns": [
+        "Visuals"
+      ]
+    },
+    {
+      "id": "visual-evaluation-pipeline",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: Evaluation pipeline",
+      "patterns": [
+        "Evaluation pipeline"
+      ]
+    },
+    {
+      "id": "visual-family-score",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: family score",
+      "patterns": [
+        "family score"
+      ]
+    },
+    {
+      "id": "visual-poor-visual-reconstruction",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: poor visual reconstruction",
+      "patterns": [
+        "poor visual reconstruction"
+      ]
+    },
+    {
+      "id": "special-s",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: $$S =",
+      "patterns": [
+        "\\$\\$S ="
+      ]
+    },
+    {
+      "id": "special-footnote-1",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: Footnote 1",
+      "patterns": [
+        "Footnote 1"
+      ]
+    },
+    {
+      "id": "markdown-has-heading",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should contain at least one Markdown heading.",
+      "patterns": [
+        "^#\\s"
+      ]
+    },
+    {
+      "id": "no-json-wrapper",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should not be wrapped as JSON.",
+      "mustNotPatterns": [
+        "^\\s*\\{[\\s\\S]*\"markdown\""
+      ]
+    }
+  ]
+}

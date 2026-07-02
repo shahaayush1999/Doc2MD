@@ -1,0 +1,113 @@
+{
+  "id": "D17-marketing-brochure",
+  "title": "Marketing Brochure",
+  "family": "visual_layout",
+  "tags": [
+    "brochure",
+    "non-manhattan",
+    "callout",
+    "image"
+  ],
+  "public": false,
+  "checks": [
+    {
+      "id": "text-fieldops-control-room",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: FieldOps Control Room",
+      "patterns": [
+        "FieldOps Control Room"
+      ]
+    },
+    {
+      "id": "text-14-day-pilot",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: 14-day pilot",
+      "patterns": [
+        "14-day pilot"
+      ]
+    },
+    {
+      "id": "text-three-spreadsheets",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: three spreadsheets",
+      "patterns": [
+        "three spreadsheets"
+      ]
+    },
+    {
+      "id": "structure-feature-blocks",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: ## Feature blocks",
+      "patterns": [
+        "^#{1,6}\\s+Feature blocks"
+      ]
+    },
+    {
+      "id": "structure-live-route-board",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: Live route board",
+      "patterns": [
+        "Live route board"
+      ]
+    },
+    {
+      "id": "structure-exception-inbox",
+      "category": "structure",
+      "weight": 1,
+      "description": "Output should preserve: Exception inbox",
+      "patterns": [
+        "Exception inbox"
+      ]
+    },
+    {
+      "id": "visual-dispatcher-dashboard",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: dispatcher dashboard",
+      "patterns": [
+        "dispatcher dashboard"
+      ]
+    },
+    {
+      "id": "visual-technician-route-cards",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: technician route cards",
+      "patterns": [
+        "technician route cards"
+      ]
+    },
+    {
+      "id": "visual-average-dispatch-delay",
+      "category": "visual",
+      "weight": 1,
+      "description": "Output should preserve: Average dispatch delay",
+      "patterns": [
+        "Average dispatch delay"
+      ]
+    },
+    {
+      "id": "markdown-has-heading",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should contain at least one Markdown heading.",
+      "patterns": [
+        "^#\\s"
+      ]
+    },
+    {
+      "id": "no-json-wrapper",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should not be wrapped as JSON.",
+      "mustNotPatterns": [
+        "^\\s*\\{[\\s\\S]*\"markdown\""
+      ]
+    }
+  ]
+}

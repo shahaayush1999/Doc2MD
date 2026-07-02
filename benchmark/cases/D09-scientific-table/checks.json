@@ -1,0 +1,122 @@
+{
+  "id": "D09-scientific-table",
+  "title": "Scientific Complex Table",
+  "family": "tables",
+  "tags": [
+    "born-digital",
+    "complex-table",
+    "symbols",
+    "caption"
+  ],
+  "public": false,
+  "checks": [
+    {
+      "id": "text-ablation-results",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: Ablation Results",
+      "patterns": [
+        "Ablation Results"
+      ]
+    },
+    {
+      "id": "text-expected-calibration-error",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: expected calibration error",
+      "patterns": [
+        "expected calibration error"
+      ]
+    },
+    {
+      "id": "text-p-0-05",
+      "category": "text",
+      "weight": 1,
+      "description": "Output should preserve: p < 0.05",
+      "patterns": [
+        "p < 0\\.05"
+      ]
+    },
+    {
+      "id": "tables-a3",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: A3",
+      "patterns": [
+        "A3"
+      ]
+    },
+    {
+      "id": "tables-hybrid",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: hybrid",
+      "patterns": [
+        "hybrid"
+      ]
+    },
+    {
+      "id": "tables-89-1",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: 89.1",
+      "patterns": [
+        "89\\.1"
+      ]
+    },
+    {
+      "id": "tables-4-9",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: 4.9",
+      "patterns": [
+        "4\\.9"
+      ]
+    },
+    {
+      "id": "tables-raster-only",
+      "category": "tables",
+      "weight": 1,
+      "description": "Output should preserve: raster only",
+      "patterns": [
+        "raster only"
+      ]
+    },
+    {
+      "id": "special-dagger",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: dagger",
+      "patterns": [
+        "dagger"
+      ]
+    },
+    {
+      "id": "special-scanned-documents",
+      "category": "special",
+      "weight": 1,
+      "description": "Output should preserve: scanned documents",
+      "patterns": [
+        "scanned documents"
+      ]
+    },
+    {
+      "id": "markdown-has-heading",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should contain at least one Markdown heading.",
+      "patterns": [
+        "^#\\s"
+      ]
+    },
+    {
+      "id": "no-json-wrapper",
+      "category": "markdown",
+      "weight": 1,
+      "description": "Output should not be wrapped as JSON.",
+      "mustNotPatterns": [
+        "^\\s*\\{[\\s\\S]*\"markdown\""
+      ]
+    }
+  ]
+}
