@@ -90,6 +90,7 @@ async function scoreCase(modelId: string, testCase: ManifestCase) {
   const runDir = path.join("runs", modelId, testCase.id);
   const prediction = normalize(await readFile(path.join(runDir, "prediction.md"), "utf-8"));
   const result = JSON.parse(await readFile(path.join(runDir, "result.json"), "utf-8"));
+  const failed = Boolean(result.error || result.finishReason === "error");
 
   let earned = 0;
   let possible = 0;
@@ -100,6 +101,7 @@ async function scoreCase(modelId: string, testCase: ManifestCase) {
     byCategory[check.category] ??= { earned: 0, possible: 0 };
     byCategory[check.category].possible += check.weight;
     const matched =
+      !failed &&
       allMatch(check.all, prediction) &&
       noneMatch(check.none, prediction) &&
       orderedMatch(check.ordered, prediction) &&

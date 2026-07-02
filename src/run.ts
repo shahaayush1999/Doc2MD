@@ -51,6 +51,14 @@ const models: Record<string, ModelSpec> = {
     inputPerMillion: 0.2,
     outputPerMillion: 1.25,
   },
+  "openai-gpt-5-nano": {
+    id: "openai-gpt-5-nano",
+    modelName: "gpt-5-nano",
+    provider: "openai",
+    reasoning: "minimal",
+    inputPerMillion: 0.05,
+    outputPerMillion: 0.4,
+  },
 };
 
 const prompt = `Convert the attached PDF into one faithful Markdown document.

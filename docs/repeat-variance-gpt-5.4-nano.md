@@ -5,6 +5,8 @@ Reasoning: `none`
 Suite: `Doc2MD-Hard-12`  
 Repeats: 3 total runs, including the existing calibration run plus two fresh reruns.
 
+For comparison, `openai-gpt-5-nano` does not support `reasoning: none`; its one-run comparison uses `reasoning: minimal`.
+
 ## Result
 
 | Run | Score | Cost | Latency |
