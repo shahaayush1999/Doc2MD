@@ -1,0 +1,119 @@
+{
+  "caseId": "023-raster-correction-markup",
+  "modelId": "vertex-gemini-3.1-flash-lite",
+  "score": 0.7352941176470589,
+  "percentage": 73.5,
+  "earned": 50,
+  "possible": 68,
+  "estimatedCostUsd": 0.000696,
+  "elapsedMs": 2878,
+  "usage": {
+    "inputTokens": 600,
+    "inputTokenDetails": {
+      "noCacheTokens": 600,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 364,
+    "outputTokenDetails": {
+      "textTokens": 364,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 964
+  },
+  "details": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "W23-RASTER-MARKUP",
+      "matched": true
+    },
+    {
+      "id": "scan-title",
+      "weight": 2,
+      "pattern": "MARKUP-23",
+      "matched": true
+    },
+    {
+      "id": "po118-baseline",
+      "weight": 3,
+      "pattern": "PO-118[\\s\\S]{0,140}Cedar Lab[\\s\\S]{0,140}\\$1,240\\.00|Cedar Lab[\\s\\S]{0,140}PO-118",
+      "matched": true
+    },
+    {
+      "id": "po181-present",
+      "weight": 2,
+      "pattern": "PO-181",
+      "matched": true
+    },
+    {
+      "id": "po181-amount-correction",
+      "weight": 8,
+      "pattern": "PO-181[\\s\\S]{0,260}(CORRECT TO \\$2,730\\.00|corrected[^\\n]{0,80}\\$2,730\\.00|\\$2,730\\.00)",
+      "matched": true
+    },
+    {
+      "id": "po181-dock-correction",
+      "weight": 8,
+      "pattern": "PO-181[\\s\\S]{0,260}(MOVE TO DOCK C|corrected[^\\n]{0,80}Dock C|Dock C)",
+      "matched": true
+    },
+    {
+      "id": "po181-strikeout-context",
+      "weight": 5,
+      "pattern": "PO-181[\\s\\S]{0,260}(struck|strike|crossed|corrected|red pen)|(?:struck|strike|crossed|corrected|red pen)[\\s\\S]{0,260}PO-181",
+      "matched": true
+    },
+    {
+      "id": "po187-uncorrected",
+      "weight": 4,
+      "pattern": "PO-187[\\s\\S]{0,180}\\$3,030\\.00|\\$3,030\\.00[\\s\\S]{0,180}PO-187",
+      "matched": true
+    },
+    {
+      "id": "po217-release",
+      "weight": 8,
+      "pattern": "PO-217[^\\n]{0,260}RELEASE|PO-217[\\s\\S]{0,180}corrected[^\\n]{0,80}RELEASE",
+      "matched": false
+    },
+    {
+      "id": "po217-kl",
+      "weight": 4,
+      "pattern": "PO-217[^\\n]{0,260}KL|PO-217[\\s\\S]{0,180}corrected[^\\n]{0,80}KL",
+      "matched": false
+    },
+    {
+      "id": "po217-strikeout-context",
+      "weight": 5,
+      "pattern": "PO-217[\\s\\S]{0,260}(HOLD[\\s\\S]{0,80}(struck|strike|crossed|corrected)|struck|strike|crossed|corrected|red pen)",
+      "matched": true
+    },
+    {
+      "id": "po271-uncorrected",
+      "weight": 3,
+      "pattern": "PO-271[\\s\\S]{0,160}\\$808\\.00|\\$808\\.00[\\s\\S]{0,160}PO-271",
+      "matched": true
+    },
+    {
+      "id": "action",
+      "weight": 3,
+      "pattern": "Use red pen corrections for PO-181 and PO-217|PO-181[\\s\\S]{0,100}PO-217[\\s\\S]{0,120}(only|corrections)",
+      "matched": true
+    },
+    {
+      "id": "no-po187-amount-correction",
+      "weight": 6,
+      "mustNotPatterns": [
+        "PO-187[^\\n]{0,120}(CORRECT TO \\$2,730\\.00|corrected[^\\n]{0,80}\\$2,730\\.00|\\$2,730\\.00)"
+      ],
+      "matched": true
+    },
+    {
+      "id": "no-po271-release",
+      "weight": 6,
+      "mustNotPatterns": [
+        "PO-271[^\\n]{0,160}(RELEASE|corrected[^\\n]{0,80}RELEASE)"
+      ],
+      "matched": false
+    }
+  ]
+}

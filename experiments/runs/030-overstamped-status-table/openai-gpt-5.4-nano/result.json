@@ -1,0 +1,23 @@
+{
+  "caseId": "030-overstamped-status-table",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 8756,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 1079,
+    "inputTokenDetails": {
+      "noCacheTokens": 1079,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 342,
+    "outputTokenDetails": {
+      "textTokens": 342,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1421
+  },
+  "estimatedCostUsd": 0.0006433000000000001
+}

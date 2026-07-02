@@ -1,0 +1,23 @@
+{
+  "caseId": "011-two-column-stream-order",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 5571,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 394,
+    "inputTokenDetails": {
+      "noCacheTokens": 394,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 294,
+    "outputTokenDetails": {
+      "textTokens": 294,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 688
+  },
+  "estimatedCostUsd": 0.0004463
+}

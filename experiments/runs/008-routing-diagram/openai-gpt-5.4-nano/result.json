@@ -1,0 +1,23 @@
+{
+  "caseId": "008-routing-diagram",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 6391,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 1091,
+    "inputTokenDetails": {
+      "noCacheTokens": 1091,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 350,
+    "outputTokenDetails": {
+      "textTokens": 350,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1441
+  },
+  "estimatedCostUsd": 0.0006557
+}

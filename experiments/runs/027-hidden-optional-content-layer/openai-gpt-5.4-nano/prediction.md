@@ -1,0 +1,1 @@
+The document contains no readable text or images (it appears to be empty or all content is non-readable/hidden).

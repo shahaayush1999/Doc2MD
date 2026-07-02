@@ -1,0 +1,23 @@
+{
+  "caseId": "007-dependency-map",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 8049,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 1108,
+    "inputTokenDetails": {
+      "noCacheTokens": 1108,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 410,
+    "outputTokenDetails": {
+      "textTokens": 410,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1518
+  },
+  "estimatedCostUsd": 0.0007340999999999999
+}

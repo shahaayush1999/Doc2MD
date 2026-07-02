@@ -1,0 +1,93 @@
+{
+  "id": "030-overstamped-status-table",
+  "title": "Overstamped Status Table",
+  "source": "source.pdf",
+  "reference": "reference.md",
+  "checks": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "AD30-STAMP-STATUS"
+    },
+    {
+      "id": "table-id",
+      "weight": 2,
+      "pattern": "STAMP-30"
+    },
+    {
+      "id": "rule",
+      "weight": 3,
+      "pattern": "stamp changes only the row|Rows with stamp none keep the printed status|row-specific stamps"
+    },
+    {
+      "id": "lot88a-row",
+      "weight": 8,
+      "pattern": "LOT-88A[^\\n]{0,300}Iris Shah[^\\n]{0,300}Valve A[^\\n]{0,300}READY[^\\n]{0,300}HOLD[^\\n]{0,300}HOLD"
+    },
+    {
+      "id": "lot88b-row",
+      "weight": 8,
+      "pattern": "LOT-88B[^\\n]{0,300}Iris Shah[^\\n]{0,300}Valve B[^\\n]{0,300}HOLD[^\\n]{0,300}RELEASE[^\\n]{0,300}RELEASE"
+    },
+    {
+      "id": "lot8ba-row",
+      "weight": 8,
+      "pattern": "LOT-8BA[^\\n]{0,300}Noor Vale[^\\n]{0,300}Seal kit[^\\n]{0,300}READY[^\\n]{0,300}(none|no stamp)[^\\n]{0,300}READY"
+    },
+    {
+      "id": "lot8ab-row",
+      "weight": 8,
+      "pattern": "LOT-8AB[^\\n]{0,300}Noor Vale[^\\n]{0,300}Seal kite[^\\n]{0,300}HOLD[^\\n]{0,300}RECHECK[^\\n]{0,300}RECHECK"
+    },
+    {
+      "id": "lot80a-row",
+      "weight": 8,
+      "pattern": "LOT-80A[^\\n]{0,300}Mira Chen[^\\n]{0,300}Cap ring[^\\n]{0,300}READY[^\\n]{0,300}HOLD[^\\n]{0,300}HOLD"
+    },
+    {
+      "id": "lot08a-row",
+      "weight": 8,
+      "pattern": "LOT-08A[^\\n]{0,300}Mira Chan[^\\n]{0,300}Cup ring[^\\n]{0,300}HOLD[^\\n]{0,300}(none|no stamp)[^\\n]{0,300}HOLD"
+    },
+    {
+      "id": "action",
+      "weight": 2,
+      "pattern": "printed status[\\s\\S]{0,80}visible stamp[\\s\\S]{0,80}final visible state"
+    },
+    {
+      "id": "no-lot88a-release",
+      "weight": 5,
+      "mustNotPattern": "LOT-88A[^\\n]{0,220}RELEASE"
+    },
+    {
+      "id": "no-lot88b-hold-final",
+      "weight": 5,
+      "mustNotPattern": "LOT-88B[^\\n]{0,260}(final|state)[^\\n]{0,80}HOLD"
+    },
+    {
+      "id": "no-lot8ba-hold",
+      "weight": 5,
+      "mustNotPattern": "LOT-8BA[^\\n]{0,220}(HOLD|RECHECK|RELEASE)"
+    },
+    {
+      "id": "no-lot8ab-ready-final",
+      "weight": 5,
+      "mustNotPattern": "LOT-8AB[^\\n]{0,260}(final|state)[^\\n]{0,80}READY"
+    },
+    {
+      "id": "no-lot80a-no-stamp",
+      "weight": 5,
+      "mustNotPattern": "LOT-80A[^\\n]{0,220}(none|no stamp)"
+    },
+    {
+      "id": "no-lot08a-release",
+      "weight": 5,
+      "mustNotPattern": "LOT-08A[^\\n]{0,220}RELEASE"
+    },
+    {
+      "id": "no-external-image-url",
+      "weight": 4,
+      "mustNotPattern": "https?://"
+    }
+  ]
+}

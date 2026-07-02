@@ -1,0 +1,172 @@
+{
+  "caseId": "041-half-day-timeline-transcribe-cue",
+  "modelId": "openai-gpt-5.4-nano",
+  "score": 0.23529411764705882,
+  "percentage": 23.5,
+  "earned": 24,
+  "possible": 102,
+  "estimatedCostUsd": 0.0008211,
+  "elapsedMs": 7306,
+  "usage": {
+    "inputTokens": 1093,
+    "inputTokenDetails": {
+      "noCacheTokens": 1093,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 482,
+    "outputTokenDetails": {
+      "textTokens": 482,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1575
+  },
+  "details": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "AO41-HALF-DAY-CUE",
+      "matched": true
+    },
+    {
+      "id": "board-id",
+      "weight": 2,
+      "pattern": "HALF-41",
+      "matched": true
+    },
+    {
+      "id": "alpha-pump-labels",
+      "weight": 5,
+      "pattern": "Alpha Pump\\s*\\|\\s*A17 prep[\\s\\S]{0,900}Alpha Pump\\s*\\|\\s*H22[\\s\\S]{0,900}Alpha Pump\\s*\\|\\s*ship C71",
+      "matched": false
+    },
+    {
+      "id": "alpha-pump-a-labels",
+      "weight": 5,
+      "pattern": "Alpha Pump A\\s*\\|\\s*A71 prep[\\s\\S]{0,900}Alpha Pump A\\s*\\|\\s*QA14[\\s\\S]{0,900}Alpha Pump A\\s*\\|\\s*R08",
+      "matched": false
+    },
+    {
+      "id": "beryl-gate-labels",
+      "weight": 5,
+      "pattern": "Beryl Gate\\s*\\|\\s*K19[\\s\\S]{0,900}Beryl Gate\\s*\\|\\s*seal[\\s\\S]{0,900}Beryl Gate\\s*\\|\\s*rel G5",
+      "matched": false
+    },
+    {
+      "id": "beryl-gait-labels",
+      "weight": 5,
+      "pattern": "Beryl Gait\\s*\\|\\s*gait[\\s\\S]{0,900}Beryl Gait\\s*\\|\\s*N44[\\s\\S]{0,900}Beryl Gait\\s*\\|\\s*arch",
+      "matched": false
+    },
+    {
+      "id": "cinder-labels",
+      "weight": 5,
+      "pattern": "Cinder QA\\s*\\|\\s*scan[\\s\\S]{0,900}Cinder QA\\s*\\|\\s*owner[\\s\\S]{0,900}Cinder QA\\s*\\|\\s*X12",
+      "matched": false
+    },
+    {
+      "id": "alpha-h22-tue-am",
+      "weight": 5,
+      "patterns": [
+        "Alpha Pump[^A\\n]{0,280}H22[^\\n]{0,160}Tue 07[^\\n]{0,80}AM",
+        "Alpha Pump[^A\\n]{0,280}Tue 07[^\\n]{0,80}AM[^\\n]{0,160}H22"
+      ],
+      "matched": false
+    },
+    {
+      "id": "alpha-ship-wed-pm-thu-am",
+      "weight": 7,
+      "patterns": [
+        "Alpha Pump[^A\\n]{0,320}ship C71[^\\n]{0,160}Wed 08[^\\n]{0,80}PM[^\\n]{0,160}Thu 09[^\\n]{0,80}AM",
+        "Alpha Pump[^A\\n]{0,320}Wed 08[^\\n]{0,80}PM[^\\n]{0,160}Thu 09[^\\n]{0,80}AM[^\\n]{0,160}ship C71"
+      ],
+      "matched": false
+    },
+    {
+      "id": "alpha-a-a71-mon-pm-tue-am",
+      "weight": 7,
+      "patterns": [
+        "Alpha Pump A[^\\n]{0,320}A71 prep[^\\n]{0,160}Mon 06[^\\n]{0,80}PM[^\\n]{0,160}Tue 07[^\\n]{0,80}AM",
+        "Alpha Pump A[^\\n]{0,320}Mon 06[^\\n]{0,80}PM[^\\n]{0,160}Tue 07[^\\n]{0,80}AM[^\\n]{0,160}A71 prep"
+      ],
+      "matched": false
+    },
+    {
+      "id": "alpha-a-r08-fri-am",
+      "weight": 5,
+      "patterns": [
+        "Alpha Pump A[^\\n]{0,280}R08[^\\n]{0,160}Fri 10[^\\n]{0,80}AM",
+        "Alpha Pump A[^\\n]{0,280}Fri 10[^\\n]{0,80}AM[^\\n]{0,160}R08"
+      ],
+      "matched": false
+    },
+    {
+      "id": "beryl-gate-k19-mon-pm",
+      "weight": 5,
+      "patterns": [
+        "Beryl Gate[^\\n]{0,280}K19[^\\n]{0,160}Mon 06[^\\n]{0,80}PM",
+        "Beryl Gate[^\\n]{0,280}Mon 06[^\\n]{0,80}PM[^\\n]{0,160}K19"
+      ],
+      "matched": false
+    },
+    {
+      "id": "beryl-gate-rel-thu-am-fri-pm",
+      "weight": 7,
+      "patterns": [
+        "Beryl Gate[^\\n]{0,320}rel G5[^\\n]{0,160}Thu 09[^\\n]{0,80}AM[^\\n]{0,160}Fri 10[^\\n]{0,80}PM",
+        "Beryl Gate[^\\n]{0,320}Thu 09[^\\n]{0,80}AM[^\\n]{0,160}Fri 10[^\\n]{0,80}PM[^\\n]{0,160}rel G5"
+      ],
+      "matched": false
+    },
+    {
+      "id": "beryl-gait-n44-thu-pm",
+      "weight": 5,
+      "patterns": [
+        "Beryl Gait[^\\n]{0,280}N44[^\\n]{0,160}Thu 09[^\\n]{0,80}PM",
+        "Beryl Gait[^\\n]{0,280}Thu 09[^\\n]{0,80}PM[^\\n]{0,160}N44"
+      ],
+      "matched": false
+    },
+    {
+      "id": "cinder-owner-wed-am-thu-pm",
+      "weight": 7,
+      "patterns": [
+        "Cinder QA[^\\n]{0,320}owner[^\\n]{0,160}Wed 08[^\\n]{0,80}AM[^\\n]{0,160}Thu 09[^\\n]{0,80}PM",
+        "Cinder QA[^\\n]{0,320}Wed 08[^\\n]{0,80}AM[^\\n]{0,160}Thu 09[^\\n]{0,80}PM[^\\n]{0,160}owner"
+      ],
+      "matched": false
+    },
+    {
+      "id": "cinder-x12-fri-pm",
+      "weight": 5,
+      "patterns": [
+        "Cinder QA[^\\n]{0,280}X12[^\\n]{0,160}Fri 10[^\\n]{0,80}PM",
+        "Cinder QA[^\\n]{0,280}Fri 10[^\\n]{0,80}PM[^\\n]{0,160}X12"
+      ],
+      "matched": false
+    },
+    {
+      "id": "action",
+      "weight": 3,
+      "pattern": "Lane[^\\n]{0,40}Item[^\\n]{0,40}Start[^\\n]{0,40}End|Include AM or PM|every time cell",
+      "matched": true
+    },
+    {
+      "id": "no-alpha-h22-tue-pm",
+      "weight": 6,
+      "mustNotPattern": "Alpha Pump[^A\\n]{0,260}H22[^\\n]{0,160}Tue 07[^\\n]{0,80}PM",
+      "matched": true
+    },
+    {
+      "id": "no-alpha-a-r08-fri-pm",
+      "weight": 6,
+      "mustNotPattern": "Alpha Pump A[^\\n]{0,260}R08[^\\n]{0,160}Fri 10[^\\n]{0,80}PM",
+      "matched": true
+    },
+    {
+      "id": "no-cinder-x12-fri-am",
+      "weight": 6,
+      "mustNotPattern": "Cinder QA[^\\n]{0,260}X12[^\\n]{0,160}Fri 10[^\\n]{0,80}AM",
+      "matched": true
+    }
+  ]
+}

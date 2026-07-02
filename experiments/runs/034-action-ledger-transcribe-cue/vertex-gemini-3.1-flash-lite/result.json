@@ -1,0 +1,23 @@
+{
+  "caseId": "034-action-ledger-transcribe-cue",
+  "model": "vertex-gemini-3.1-flash-lite",
+  "provider": "google-vertex",
+  "modelName": "gemini-3.1-flash-lite",
+  "reasoning": "minimal",
+  "elapsedMs": 2546,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 600,
+    "inputTokenDetails": {
+      "noCacheTokens": 600,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 334,
+    "outputTokenDetails": {
+      "textTokens": 334,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 934
+  },
+  "estimatedCostUsd": 0.0006509999999999999
+}

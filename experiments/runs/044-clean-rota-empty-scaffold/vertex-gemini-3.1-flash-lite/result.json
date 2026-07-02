@@ -1,0 +1,23 @@
+{
+  "caseId": "044-clean-rota-empty-scaffold",
+  "model": "vertex-gemini-3.1-flash-lite",
+  "provider": "google-vertex",
+  "modelName": "gemini-3.1-flash-lite",
+  "reasoning": "minimal",
+  "elapsedMs": 2537,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 600,
+    "inputTokenDetails": {
+      "noCacheTokens": 600,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 344,
+    "outputTokenDetails": {
+      "textTokens": 344,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 944
+  },
+  "estimatedCostUsd": 0.0006659999999999999
+}

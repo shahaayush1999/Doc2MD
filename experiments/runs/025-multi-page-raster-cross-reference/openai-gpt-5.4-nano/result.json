@@ -1,0 +1,23 @@
+{
+  "caseId": "025-multi-page-raster-cross-reference",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 7385,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 2074,
+    "inputTokenDetails": {
+      "noCacheTokens": 2074,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 483,
+    "outputTokenDetails": {
+      "textTokens": 483,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 2557
+  },
+  "estimatedCostUsd": 0.00101855
+}

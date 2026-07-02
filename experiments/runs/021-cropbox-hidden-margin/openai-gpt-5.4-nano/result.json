@@ -1,0 +1,23 @@
+{
+  "caseId": "021-cropbox-hidden-margin",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 6491,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 327,
+    "inputTokenDetails": {
+      "noCacheTokens": 327,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 270,
+    "outputTokenDetails": {
+      "textTokens": 270,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 597
+  },
+  "estimatedCostUsd": 0.00040290000000000004
+}

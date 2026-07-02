@@ -1,0 +1,109 @@
+{
+  "caseId": "028-reversed-glyph-order",
+  "modelId": "openai-gpt-5.4-nano",
+  "score": 1,
+  "percentage": 100,
+  "earned": 60,
+  "possible": 60,
+  "estimatedCostUsd": 0.00016915,
+  "elapsedMs": 6052,
+  "usage": {
+    "inputTokens": 177,
+    "inputTokenDetails": {
+      "noCacheTokens": 177,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 107,
+    "outputTokenDetails": {
+      "textTokens": 107,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 284
+  },
+  "details": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "AB28-GLYPH-ORDER",
+      "matched": true
+    },
+    {
+      "id": "heading",
+      "weight": 1,
+      "pattern": "Reversed Glyph Order Label Sheet",
+      "matched": true
+    },
+    {
+      "id": "section",
+      "weight": 1,
+      "pattern": "Visible Label Table",
+      "matched": true
+    },
+    {
+      "id": "kit-visible",
+      "weight": 6,
+      "pattern": "Kit ID[\\s\\S]{0,100}KIT-904A|KIT-904A[\\s\\S]{0,100}Kit ID",
+      "matched": true
+    },
+    {
+      "id": "batch-visible",
+      "weight": 6,
+      "pattern": "Batch[\\s\\S]{0,100}BATCH-17Q|BATCH-17Q[\\s\\S]{0,100}Batch",
+      "matched": true
+    },
+    {
+      "id": "lane-visible",
+      "weight": 6,
+      "pattern": "Lane[\\s\\S]{0,100}LANE-C3|LANE-C3[\\s\\S]{0,100}Lane",
+      "matched": true
+    },
+    {
+      "id": "checksum-visible",
+      "weight": 6,
+      "pattern": "Checksum[\\s\\S]{0,100}SUM-8F2|SUM-8F2[\\s\\S]{0,100}Checksum",
+      "matched": true
+    },
+    {
+      "id": "action-visible",
+      "weight": 6,
+      "pattern": "Action code[\\s\\S]{0,100}HOLD-42|HOLD-42[\\s\\S]{0,100}Action code",
+      "matched": true
+    },
+    {
+      "id": "preserve-action",
+      "weight": 2,
+      "pattern": "visible values exactly|rendered",
+      "matched": true
+    },
+    {
+      "id": "no-reversed-kit",
+      "weight": 5,
+      "mustNotPattern": "A409-TIK",
+      "matched": true
+    },
+    {
+      "id": "no-reversed-batch",
+      "weight": 5,
+      "mustNotPattern": "Q71-HCTAB",
+      "matched": true
+    },
+    {
+      "id": "no-reversed-lane",
+      "weight": 5,
+      "mustNotPattern": "3C-ENAL",
+      "matched": true
+    },
+    {
+      "id": "no-reversed-checksum",
+      "weight": 5,
+      "mustNotPattern": "2F8-MUS",
+      "matched": true
+    },
+    {
+      "id": "no-reversed-action",
+      "weight": 5,
+      "mustNotPattern": "24-DLOH",
+      "matched": true
+    }
+  ]
+}

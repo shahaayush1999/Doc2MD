@@ -1,0 +1,73 @@
+{
+  "id": "015-correction-overlay",
+  "title": "Correction Overlay",
+  "source": "source.pdf",
+  "reference": "reference.md",
+  "checks": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "O15-CORRECTION-OVERLAY"
+    },
+    {
+      "id": "heading",
+      "weight": 1,
+      "pattern": "Corrected Invoice Memo"
+    },
+    {
+      "id": "section",
+      "weight": 1,
+      "pattern": "Corrected Values"
+    },
+    {
+      "id": "table-header",
+      "weight": 2,
+      "pattern": "Field[\\s\\S]{0,80}Final Visible Value"
+    },
+    {
+      "id": "total-visible",
+      "weight": 6,
+      "pattern": "Invoice total[\\s\\S]{0,100}\\$9,880\\.00"
+    },
+    {
+      "id": "date-visible",
+      "weight": 6,
+      "pattern": "Due date[\\s\\S]{0,100}2026-08-15"
+    },
+    {
+      "id": "queue-visible",
+      "weight": 6,
+      "pattern": "Routing queue[\\s\\S]{0,100}Q-NORTH-7"
+    },
+    {
+      "id": "contact-visible",
+      "weight": 6,
+      "pattern": "Contact[\\s\\S]{0,100}Lina Rao"
+    },
+    {
+      "id": "action",
+      "weight": 2,
+      "pattern": "Use only the corrected visible values"
+    },
+    {
+      "id": "no-old-total",
+      "weight": 7,
+      "mustNotPattern": "\\$2,410\\.00"
+    },
+    {
+      "id": "no-old-date",
+      "weight": 7,
+      "mustNotPattern": "2026-07-01"
+    },
+    {
+      "id": "no-old-queue",
+      "weight": 7,
+      "mustNotPattern": "Q-SOUTH-2"
+    },
+    {
+      "id": "no-old-contact",
+      "weight": 7,
+      "mustNotPattern": "Noor Iqbal"
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "caseId": "016-bad-ocr-overlay",
+  "modelId": "openai-gpt-5.4-nano",
+  "score": 0.5,
+  "percentage": 50,
+  "earned": 35,
+  "possible": 70,
+  "estimatedCostUsd": 0.0005676500000000001,
+  "elapsedMs": 5738,
+  "usage": {
+    "inputTokens": 1132,
+    "inputTokenDetails": {
+      "noCacheTokens": 1132,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 273,
+    "outputTokenDetails": {
+      "textTokens": 273,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1405
+  },
+  "details": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "P16-BAD-OCR-OVERLAY",
+      "matched": true
+    },
+    {
+      "id": "scan-title",
+      "weight": 2,
+      "pattern": "OCR-CHECK-16",
+      "matched": true
+    },
+    {
+      "id": "badge-visible",
+      "weight": 6,
+      "pattern": "Badge ID[\\s\\S]{0,100}BDG-47K",
+      "matched": true
+    },
+    {
+      "id": "dose-visible",
+      "weight": 6,
+      "pattern": "Dose reading[\\s\\S]{0,100}18\\.6\\s*mSv",
+      "matched": true
+    },
+    {
+      "id": "lab-visible",
+      "weight": 6,
+      "pattern": "Lab station[\\s\\S]{0,100}QA-7",
+      "matched": true
+    },
+    {
+      "id": "sample-visible",
+      "weight": 6,
+      "pattern": "Sample code[\\s\\S]{0,100}SPL-204",
+      "matched": true
+    },
+    {
+      "id": "status-visible",
+      "weight": 6,
+      "pattern": "Clearance status[\\s\\S]{0,100}Cleared",
+      "matched": true
+    },
+    {
+      "id": "action",
+      "weight": 2,
+      "pattern": "visible scan values only|visible scan is authoritative",
+      "matched": true
+    },
+    {
+      "id": "no-hidden-badge",
+      "weight": 7,
+      "mustNotPattern": "BDG-74X",
+      "matched": false
+    },
+    {
+      "id": "no-hidden-dose",
+      "weight": 7,
+      "mustNotPattern": "81\\.9\\s*mSv",
+      "matched": false
+    },
+    {
+      "id": "no-hidden-lab",
+      "weight": 7,
+      "mustNotPattern": "QA-1",
+      "matched": false
+    },
+    {
+      "id": "no-hidden-sample",
+      "weight": 7,
+      "mustNotPattern": "SPL-240",
+      "matched": false
+    },
+    {
+      "id": "no-hidden-status",
+      "weight": 7,
+      "mustNotPattern": "Quarantined",
+      "matched": false
+    }
+  ]
+}

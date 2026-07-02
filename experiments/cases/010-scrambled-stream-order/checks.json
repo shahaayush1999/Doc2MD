@@ -1,0 +1,78 @@
+{
+  "id": "010-scrambled-stream-order",
+  "title": "Scrambled Stream Order",
+  "source": "source.pdf",
+  "reference": "reference.md",
+  "checks": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "J10-STREAM-ORDER"
+    },
+    {
+      "id": "heading",
+      "weight": 1,
+      "pattern": "Dispatch Runbook Sheet"
+    },
+    {
+      "id": "table-header",
+      "weight": 2,
+      "pattern": "Step[\\s\\S]{0,80}Code[\\s\\S]{0,80}Queue[\\s\\S]{0,80}Owner[\\s\\S]{0,80}Time[\\s\\S]{0,80}Instruction"
+    },
+    {
+      "id": "row-1",
+      "weight": 2,
+      "pattern": "1[\\s\\S]{0,40}A-104[\\s\\S]{0,60}Intake[\\s\\S]{0,60}Redwood[\\s\\S]{0,60}08:10[\\s\\S]{0,80}Open the intake lane"
+    },
+    {
+      "id": "row-2",
+      "weight": 2,
+      "pattern": "2[\\s\\S]{0,40}B-219[\\s\\S]{0,60}Validate[\\s\\S]{0,60}Harbor[\\s\\S]{0,60}08:25[\\s\\S]{0,80}Check the manifest checksum"
+    },
+    {
+      "id": "row-3",
+      "weight": 2,
+      "pattern": "3[\\s\\S]{0,40}C-033[\\s\\S]{0,60}Assign[\\s\\S]{0,60}Delta[\\s\\S]{0,60}08:40[\\s\\S]{0,80}Assign the review pair"
+    },
+    {
+      "id": "row-4",
+      "weight": 2,
+      "pattern": "4[\\s\\S]{0,40}D-772[\\s\\S]{0,60}Pack[\\s\\S]{0,60}Solstice[\\s\\S]{0,60}08:55[\\s\\S]{0,80}Seal package batch four"
+    },
+    {
+      "id": "row-5",
+      "weight": 2,
+      "pattern": "5[\\s\\S]{0,40}E-118[\\s\\S]{0,60}QA[\\s\\S]{0,60}Atlas[\\s\\S]{0,60}09:10[\\s\\S]{0,80}Run the spot audit"
+    },
+    {
+      "id": "row-6",
+      "weight": 2,
+      "pattern": "6[\\s\\S]{0,40}F-604[\\s\\S]{0,60}Release[\\s\\S]{0,60}North[\\s\\S]{0,60}09:25[\\s\\S]{0,80}Release the approved set"
+    },
+    {
+      "id": "row-7",
+      "weight": 2,
+      "pattern": "7[\\s\\S]{0,40}G-441[\\s\\S]{0,60}Archive[\\s\\S]{0,60}Echo[\\s\\S]{0,60}09:40[\\s\\S]{0,80}Archive the signed copy"
+    },
+    {
+      "id": "row-8",
+      "weight": 2,
+      "pattern": "8[\\s\\S]{0,40}H-906[\\s\\S]{0,60}Notify[\\s\\S]{0,60}Vela[\\s\\S]{0,60}09:55[\\s\\S]{0,80}Notify the downstream owner"
+    },
+    {
+      "id": "visible-order",
+      "weight": 12,
+      "pattern": "A-104[\\s\\S]{0,240}B-219[\\s\\S]{0,240}C-033[\\s\\S]{0,240}D-772[\\s\\S]{0,240}E-118[\\s\\S]{0,240}F-604[\\s\\S]{0,240}G-441[\\s\\S]{0,240}H-906"
+    },
+    {
+      "id": "action",
+      "weight": 2,
+      "pattern": "visible order[\\s\\S]{0,80}step 1[\\s\\S]{0,80}step 8"
+    },
+    {
+      "id": "not-stream-order",
+      "weight": 6,
+      "mustNotPattern": "E-118[\\s\\S]{0,240}B-219[\\s\\S]{0,240}H-906[\\s\\S]{0,240}A-104[\\s\\S]{0,240}F-604[\\s\\S]{0,240}C-033[\\s\\S]{0,240}G-441[\\s\\S]{0,240}D-772"
+    }
+  ]
+}

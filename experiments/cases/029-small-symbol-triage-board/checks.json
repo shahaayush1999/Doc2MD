@@ -1,0 +1,108 @@
+{
+  "id": "029-small-symbol-triage-board",
+  "title": "Small Symbol Triage Board",
+  "source": "source.pdf",
+  "reference": "reference.md",
+  "checks": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "AC29-SYMBOL-BOARD"
+    },
+    {
+      "id": "board-id",
+      "weight": 2,
+      "pattern": "SYMBOL-29"
+    },
+    {
+      "id": "legend-triangle",
+      "weight": 3,
+      "pattern": "(triangle|\u25b3)[\\s\\S]{0,80}RECHECK|RECHECK[\\s\\S]{0,80}(triangle|\u25b3)"
+    },
+    {
+      "id": "legend-circle",
+      "weight": 3,
+      "pattern": "(circle|\u25cb)[\\s\\S]{0,80}CLEAR|CLEAR[\\s\\S]{0,80}(circle|\u25cb)"
+    },
+    {
+      "id": "legend-diamond",
+      "weight": 3,
+      "pattern": "(diamond|\u25c7)[\\s\\S]{0,80}HOLD|HOLD[\\s\\S]{0,80}(diamond|\u25c7)"
+    },
+    {
+      "id": "legend-star",
+      "weight": 3,
+      "pattern": "(star|\u2605)[\\s\\S]{0,80}ESCALATE|ESCALATE[\\s\\S]{0,80}(star|\u2605)"
+    },
+    {
+      "id": "r104-row",
+      "weight": 8,
+      "pattern": "R-104[^\\n]{0,260}Mira Chen[^\\n]{0,260}valve kit[^\\n]{0,260}(triangle|\u25b3)[^\\n]{0,260}RECHECK[^\\n]{0,260}Bay A"
+    },
+    {
+      "id": "r140-row",
+      "weight": 8,
+      "pattern": "R-140[^\\n]{0,260}Mira Chan[^\\n]{0,260}value kit[^\\n]{0,260}(circle|\u25cb)[^\\n]{0,260}CLEAR[^\\n]{0,260}Bay C"
+    },
+    {
+      "id": "r401-row",
+      "weight": 8,
+      "pattern": "R-401[^\\n]{0,260}Noor Iqbal[^\\n]{0,260}filter pack[^\\n]{0,260}(diamond|\u25c7)[^\\n]{0,260}HOLD[^\\n]{0,260}Bay B"
+    },
+    {
+      "id": "r410-row",
+      "weight": 8,
+      "pattern": "R-410[^\\n]{0,260}Noor Iqbal[^\\n]{0,260}filter puck[^\\n]{0,260}(star|\u2605)[^\\n]{0,260}ESCALATE[^\\n]{0,260}Bay D"
+    },
+    {
+      "id": "r014-row",
+      "weight": 8,
+      "pattern": "R-014[^\\n]{0,260}Vale Ortiz[^\\n]{0,260}sensor cap[^\\n]{0,260}(circle|\u25cb)[^\\n]{0,260}CLEAR[^\\n]{0,260}Bay C"
+    },
+    {
+      "id": "r041-row",
+      "weight": 8,
+      "pattern": "R-041[^\\n]{0,260}Vela Ortiz[^\\n]{0,260}sensor cup[^\\n]{0,260}(triangle|\u25b3)[^\\n]{0,260}RECHECK[^\\n]{0,260}Bay A"
+    },
+    {
+      "id": "action",
+      "weight": 2,
+      "pattern": "exact symbol[\\s\\S]{0,80}status[\\s\\S]{0,80}route|symbol[\\s\\S]{0,80}status[\\s\\S]{0,80}route"
+    },
+    {
+      "id": "no-r104-clear",
+      "weight": 5,
+      "mustNotPattern": "R-104[^\\n]{0,180}(CLEAR|Bay C|circle|\u25cb)"
+    },
+    {
+      "id": "no-r140-recheck",
+      "weight": 5,
+      "mustNotPattern": "R-140[^\\n]{0,180}(RECHECK|Bay A|triangle|\u25b3)"
+    },
+    {
+      "id": "no-r401-escalate",
+      "weight": 5,
+      "mustNotPattern": "R-401[^\\n]{0,180}(ESCALATE|Bay D|star|\u2605)"
+    },
+    {
+      "id": "no-r410-hold",
+      "weight": 5,
+      "mustNotPattern": "R-410[^\\n]{0,180}(HOLD|Bay B|diamond|\u25c7)"
+    },
+    {
+      "id": "no-r014-recheck",
+      "weight": 5,
+      "mustNotPattern": "R-014[^\\n]{0,180}(RECHECK|Bay A|triangle|\u25b3)"
+    },
+    {
+      "id": "no-r041-clear",
+      "weight": 5,
+      "mustNotPattern": "R-041[^\\n]{0,180}(CLEAR|Bay C|circle|\u25cb)"
+    },
+    {
+      "id": "no-external-image-url",
+      "weight": 4,
+      "mustNotPattern": "https?://"
+    }
+  ]
+}

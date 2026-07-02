@@ -1,0 +1,115 @@
+{
+  "caseId": "003-visual-grid",
+  "modelId": "vertex-gemini-3.1-flash-lite",
+  "score": 0.2631578947368421,
+  "percentage": 26.3,
+  "earned": 10,
+  "possible": 38,
+  "estimatedCostUsd": 0.0009885,
+  "elapsedMs": 3660,
+  "usage": {
+    "inputTokens": 600,
+    "inputTokenDetails": {
+      "noCacheTokens": 600,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 559,
+    "outputTokenDetails": {
+      "textTokens": 559,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1159
+  },
+  "details": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "C3-GRID-MARKS",
+      "matched": true
+    },
+    {
+      "id": "board-id",
+      "weight": 3,
+      "pattern": "GRID-913",
+      "matched": true
+    },
+    {
+      "id": "red-c02",
+      "weight": 3,
+      "pattern": "C02[\\s\\S]{0,60}ZN-104",
+      "matched": false
+    },
+    {
+      "id": "red-c07",
+      "weight": 3,
+      "pattern": "C07[\\s\\S]{0,60}MX-219",
+      "matched": false
+    },
+    {
+      "id": "red-c13",
+      "weight": 3,
+      "pattern": "C13[\\s\\S]{0,60}QH-550",
+      "matched": false
+    },
+    {
+      "id": "red-c19",
+      "weight": 3,
+      "pattern": "C19[\\s\\S]{0,60}HG-017",
+      "matched": false
+    },
+    {
+      "id": "red-c24",
+      "weight": 3,
+      "pattern": "C24[\\s\\S]{0,60}PR-605",
+      "matched": false
+    },
+    {
+      "id": "red-c30",
+      "weight": 3,
+      "pattern": "C30[\\s\\S]{0,60}ZR-038",
+      "matched": false
+    },
+    {
+      "id": "path-c01",
+      "weight": 2,
+      "pattern": "C01[\\s\\S]{0,60}VA-201",
+      "matched": false
+    },
+    {
+      "id": "path-c08",
+      "weight": 2,
+      "pattern": "C08[\\s\\S]{0,60}FO-118",
+      "matched": false
+    },
+    {
+      "id": "path-c15",
+      "weight": 2,
+      "pattern": "C15[\\s\\S]{0,60}OP-314",
+      "matched": false
+    },
+    {
+      "id": "path-c22",
+      "weight": 2,
+      "pattern": "C22[\\s\\S]{0,60}BM-221",
+      "matched": false
+    },
+    {
+      "id": "path-c29",
+      "weight": 2,
+      "pattern": "C29[\\s\\S]{0,60}ND-777",
+      "matched": false
+    },
+    {
+      "id": "path-order",
+      "weight": 4,
+      "pattern": "C01[\\s\\S]{0,120}C08[\\s\\S]{0,120}C15[\\s\\S]{0,120}C22[\\s\\S]{0,120}C29",
+      "matched": true
+    },
+    {
+      "id": "do-not-add-c30",
+      "weight": 2,
+      "pattern": "not[^\\n]{0,80}C30[^\\n]{0,80}path|C30[^\\n]{0,80}not[^\\n]{0,80}path",
+      "matched": true
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "caseId": "025-multi-page-raster-cross-reference",
+  "model": "vertex-gemini-3.1-flash-lite",
+  "provider": "google-vertex",
+  "modelName": "gemini-3.1-flash-lite",
+  "reasoning": "minimal",
+  "elapsedMs": 3403,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 1120,
+    "inputTokenDetails": {
+      "noCacheTokens": 1120,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 424,
+    "outputTokenDetails": {
+      "textTokens": 424,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1544
+  },
+  "estimatedCostUsd": 0.000916
+}

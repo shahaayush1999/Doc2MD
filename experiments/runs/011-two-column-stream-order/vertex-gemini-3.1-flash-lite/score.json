@@ -1,0 +1,109 @@
+{
+  "caseId": "011-two-column-stream-order",
+  "modelId": "vertex-gemini-3.1-flash-lite",
+  "score": 1,
+  "percentage": 100,
+  "earned": 41,
+  "possible": 41,
+  "estimatedCostUsd": 0.000645,
+  "elapsedMs": 2853,
+  "usage": {
+    "inputTokens": 600,
+    "inputTokenDetails": {
+      "noCacheTokens": 600,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 330,
+    "outputTokenDetails": {
+      "textTokens": 330,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 930
+  },
+  "details": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "K11-COLUMN-ORDER",
+      "matched": true
+    },
+    {
+      "id": "heading",
+      "weight": 1,
+      "pattern": "Two-Column Operations Memo",
+      "matched": true
+    },
+    {
+      "id": "s1",
+      "weight": 2,
+      "pattern": "S1[\\s\\S]{0,120}west dock[\\s\\S]{0,80}OAK-17",
+      "matched": true
+    },
+    {
+      "id": "s2",
+      "weight": 2,
+      "pattern": "S2[\\s\\S]{0,120}checksum 4F9C",
+      "matched": true
+    },
+    {
+      "id": "s3",
+      "weight": 2,
+      "pattern": "S3[\\s\\S]{0,120}Lane B[\\s\\S]{0,80}Lane D",
+      "matched": true
+    },
+    {
+      "id": "s4",
+      "weight": 2,
+      "pattern": "S4[\\s\\S]{0,120}Mira[\\s\\S]{0,80}staging slip",
+      "matched": true
+    },
+    {
+      "id": "s5",
+      "weight": 2,
+      "pattern": "S5[\\s\\S]{0,120}SG-42",
+      "matched": true
+    },
+    {
+      "id": "s6",
+      "weight": 2,
+      "pattern": "S6[\\s\\S]{0,120}two cartons[\\s\\S]{0,80}Lane B[\\s\\S]{0,80}one carton[\\s\\S]{0,80}Lane D",
+      "matched": true
+    },
+    {
+      "id": "s7",
+      "weight": 2,
+      "pattern": "S7[\\s\\S]{0,120}North Relay[\\s\\S]{0,80}08:35",
+      "matched": true
+    },
+    {
+      "id": "s8",
+      "weight": 2,
+      "pattern": "S8[\\s\\S]{0,120}RUN-2026-07",
+      "matched": true
+    },
+    {
+      "id": "main-visible-order",
+      "weight": 12,
+      "pattern": "S1[\\s\\S]{0,260}S2[\\s\\S]{0,260}S3[\\s\\S]{0,260}S4[\\s\\S]{0,260}S5[\\s\\S]{0,260}S6[\\s\\S]{0,260}S7[\\s\\S]{0,260}S8",
+      "matched": true
+    },
+    {
+      "id": "sidebar",
+      "weight": 3,
+      "pattern": "Risk flags[\\s\\S]{0,120}OAK-17[\\s\\S]{0,80}OAK-71[\\s\\S]{0,80}SG-24[\\s\\S]{0,80}08:35",
+      "matched": true
+    },
+    {
+      "id": "footnote",
+      "weight": 2,
+      "pattern": "Column order is part of the document record",
+      "matched": true
+    },
+    {
+      "id": "not-stream-order",
+      "weight": 6,
+      "mustNotPattern": "S5[\\s\\S]{0,260}S6[\\s\\S]{0,260}S7[\\s\\S]{0,260}S8[\\s\\S]{0,260}Risk flags[\\s\\S]{0,260}Column order[\\s\\S]{0,260}S1[\\s\\S]{0,260}S2[\\s\\S]{0,260}S3[\\s\\S]{0,260}S4",
+      "matched": true
+    }
+  ]
+}

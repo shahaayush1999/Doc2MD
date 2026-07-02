@@ -1,0 +1,23 @@
+{
+  "caseId": "008-routing-diagram",
+  "model": "vertex-gemini-3.1-flash-lite",
+  "provider": "google-vertex",
+  "modelName": "gemini-3.1-flash-lite",
+  "reasoning": "minimal",
+  "elapsedMs": 2723,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 600,
+    "inputTokenDetails": {
+      "noCacheTokens": 600,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 310,
+    "outputTokenDetails": {
+      "textTokens": 310,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 910
+  },
+  "estimatedCostUsd": 0.000615
+}

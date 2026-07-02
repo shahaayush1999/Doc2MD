@@ -1,0 +1,23 @@
+{
+  "caseId": "040-raster-half-day-timeline",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 6001,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 1084,
+    "inputTokenDetails": {
+      "noCacheTokens": 1084,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 238,
+    "outputTokenDetails": {
+      "textTokens": 238,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1322
+  },
+  "estimatedCostUsd": 0.0005143
+}

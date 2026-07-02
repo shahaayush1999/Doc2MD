@@ -1,0 +1,145 @@
+{
+  "caseId": "042-raster-split-shift-rota",
+  "modelId": "openai-gpt-5.4-nano",
+  "score": 0.21818181818181817,
+  "percentage": 21.8,
+  "earned": 24,
+  "possible": 110,
+  "estimatedCostUsd": 0.0005033500000000001,
+  "elapsedMs": 5566,
+  "usage": {
+    "inputTokens": 1098,
+    "inputTokenDetails": {
+      "noCacheTokens": 1098,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 227,
+    "outputTokenDetails": {
+      "textTokens": 227,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1325
+  },
+  "details": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "AP42-SPLIT-SHIFT-ROTA",
+      "matched": true
+    },
+    {
+      "id": "board-id",
+      "weight": 2,
+      "pattern": "ROTA-42",
+      "matched": true
+    },
+    {
+      "id": "table-header",
+      "weight": 3,
+      "pattern": "Resource[^\\n]{0,40}Assignment[^\\n]{0,40}Start[^\\n]{0,40}End[^\\n]{0,40}Flag|Include Early or Late|Early/Late",
+      "matched": true
+    },
+    {
+      "id": "nova-ops-labels",
+      "weight": 5,
+      "pattern": "Nova Ops\\s*\\|\\s*dock A1[\\s\\S]{0,900}Nova Ops\\s*\\|\\s*kit R7[\\s\\S]{0,900}Nova Ops\\s*\\|\\s*red flag C2",
+      "matched": false
+    },
+    {
+      "id": "nova-east-labels",
+      "weight": 5,
+      "pattern": "Nova Ops East\\s*\\|\\s*scan B4[\\s\\S]{0,900}Nova Ops East\\s*\\|\\s*hold Z9[\\s\\S]{0,900}Nova Ops East\\s*\\|\\s*pack M3",
+      "matched": false
+    },
+    {
+      "id": "quarry-desk-labels",
+      "weight": 5,
+      "pattern": "Quarry Desk\\s*\\|\\s*audit Q1[\\s\\S]{0,900}Quarry Desk\\s*\\|\\s*swap N5[\\s\\S]{0,900}Quarry Desk\\s*\\|\\s*seal L8",
+      "matched": false
+    },
+    {
+      "id": "quarry-dock-labels",
+      "weight": 5,
+      "pattern": "Quarry Dock\\s*\\|\\s*load P6[\\s\\S]{0,900}Quarry Dock\\s*\\|\\s*close V2",
+      "matched": false
+    },
+    {
+      "id": "rift-labels",
+      "weight": 5,
+      "pattern": "Rift QA\\s*\\|\\s*case T2[\\s\\S]{0,900}Rift QA\\s*\\|\\s*review D6[\\s\\S]{0,900}Rift QA\\s*\\|\\s*close X4",
+      "matched": false
+    },
+    {
+      "id": "nova-dock-mon-early",
+      "weight": 5,
+      "pattern": "Nova Ops[^E\\n]{0,220}dock A1[^\\n]{0,120}Mon 06[^\\n]{0,50}Early[^\\n]{0,120}Mon 06[^\\n]{0,50}Early",
+      "matched": false
+    },
+    {
+      "id": "nova-kit-tue-late-wed-early",
+      "weight": 7,
+      "pattern": "Nova Ops[^\\n]{0,220}kit R7[^\\n]{0,120}Tue 07[^\\n]{0,50}Late[^\\n]{0,120}Wed 08[^\\n]{0,50}Early",
+      "matched": false
+    },
+    {
+      "id": "nova-red-thu-late-conflict",
+      "weight": 7,
+      "pattern": "Nova Ops[^\\n]{0,220}red flag C2[^\\n]{0,120}Thu 09[^\\n]{0,50}Late[^\\n]{0,160}conflict",
+      "matched": false
+    },
+    {
+      "id": "nova-east-scan-mon-late-tue-early",
+      "weight": 7,
+      "pattern": "Nova Ops East[^\\n]{0,220}scan B4[^\\n]{0,120}Mon 06[^\\n]{0,50}Late[^\\n]{0,120}Tue 07[^\\n]{0,50}Early",
+      "matched": false
+    },
+    {
+      "id": "nova-east-hold-wed-late-conflict",
+      "weight": 7,
+      "pattern": "Nova Ops East[^\\n]{0,220}hold Z9[^\\n]{0,120}Wed 08[^\\n]{0,50}Late[^\\n]{0,160}conflict",
+      "matched": false
+    },
+    {
+      "id": "quarry-swap-tue-late-conflict",
+      "weight": 7,
+      "pattern": "Quarry Desk[^\\n]{0,220}swap N5[^\\n]{0,120}Tue 07[^\\n]{0,50}Late[^\\n]{0,160}conflict",
+      "matched": false
+    },
+    {
+      "id": "quarry-dock-load-tue-early-wed-late",
+      "weight": 7,
+      "pattern": "Quarry Dock[^\\n]{0,220}load P6[^\\n]{0,120}Tue 07[^\\n]{0,50}Early[^\\n]{0,120}Wed 08[^\\n]{0,50}Late",
+      "matched": false
+    },
+    {
+      "id": "rift-case-mon-late-conflict",
+      "weight": 7,
+      "pattern": "Rift QA[^\\n]{0,220}case T2[^\\n]{0,120}Mon 06[^\\n]{0,50}Late[^\\n]{0,160}conflict",
+      "matched": false
+    },
+    {
+      "id": "rift-review-tue-early-late",
+      "weight": 7,
+      "pattern": "Rift QA[^\\n]{0,220}review D6[^\\n]{0,120}Tue 07[^\\n]{0,50}Early[^\\n]{0,120}Tue 07[^\\n]{0,50}Late",
+      "matched": false
+    },
+    {
+      "id": "no-hold-z9-wed-early",
+      "weight": 6,
+      "mustNotPattern": "Nova Ops East[^\\n]{0,220}hold Z9[^\\n]{0,120}Wed 08[^\\n]{0,50}Early",
+      "matched": true
+    },
+    {
+      "id": "no-red-c2-thu-early",
+      "weight": 6,
+      "mustNotPattern": "Nova Ops[^\\n]{0,220}red flag C2[^\\n]{0,120}Thu 09[^\\n]{0,50}Early",
+      "matched": true
+    },
+    {
+      "id": "no-case-t2-mon-early",
+      "weight": 6,
+      "mustNotPattern": "Rift QA[^\\n]{0,220}case T2[^\\n]{0,120}Mon 06[^\\n]{0,50}Early",
+      "matched": true
+    }
+  ]
+}

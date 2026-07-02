@@ -1,0 +1,129 @@
+{
+  "id": "004-claims-form",
+  "title": "Claims Form",
+  "source": "source.pdf",
+  "reference": "reference.md",
+  "checks": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "D4-FORM-STATES"
+    },
+    {
+      "id": "form-id",
+      "weight": 2,
+      "pattern": "FORM-88Q"
+    },
+    {
+      "id": "claim-id",
+      "weight": 2,
+      "pattern": "CLM-2026-0719"
+    },
+    {
+      "id": "member",
+      "weight": 1,
+      "pattern": "Iris Shah"
+    },
+    {
+      "id": "plan",
+      "weight": 1,
+      "pattern": "Silver HSA"
+    },
+    {
+      "id": "visit-date",
+      "weight": 1,
+      "pattern": "2026-06-14"
+    },
+    {
+      "id": "provider-npi",
+      "weight": 1,
+      "pattern": "NPI-4410-77"
+    },
+    {
+      "id": "amount",
+      "weight": 2,
+      "patterns": [
+        "\\$1,284\\.60",
+        "1284\\.60"
+      ]
+    },
+    {
+      "id": "reviewer",
+      "weight": 1,
+      "pattern": "L\\. Rao"
+    },
+    {
+      "id": "queue",
+      "weight": 1,
+      "pattern": "North-7"
+    },
+    {
+      "id": "checked-address",
+      "weight": 3,
+      "pattern": "(checked|selected|marked|\\[x\\]|\u2611)[\\s\\S]{0,80}Address mismatch|Address mismatch[\\s\\S]{0,80}(checked|selected|marked|\\[x\\]|\u2611)"
+    },
+    {
+      "id": "checked-manual",
+      "weight": 3,
+      "pattern": "(checked|selected|marked|\\[x\\]|\u2611)[\\s\\S]{0,80}Manual review required|Manual review required[\\s\\S]{0,80}(checked|selected|marked|\\[x\\]|\u2611)"
+    },
+    {
+      "id": "checked-expedite",
+      "weight": 3,
+      "pattern": "(checked|selected|marked|\\[x\\]|\u2611)[\\s\\S]{0,80}Expedit(?:e|ed) within 48h|Expedit(?:e|ed) within 48h[\\s\\S]{0,80}(checked|selected|marked|\\[x\\]|\u2611)"
+    },
+    {
+      "id": "unchecked-duplicate",
+      "weight": 2,
+      "pattern": "(unchecked|not selected|unselected|not checked|\\[ \\]|\u2610)[^\\n]{0,80}Duplicate claim|Duplicate claim[^\\n]{0,80}(unchecked|not selected|unselected|not checked|\\[ \\]|\u2610)",
+      "mustNotPattern": "(\\[x\\]|\u2611)[^\\n]{0,40}Duplicate claim|Duplicate claim[^\\n]{0,40}(\\[x\\]|\u2611)"
+    },
+    {
+      "id": "unchecked-fraud",
+      "weight": 3,
+      "pattern": "(unchecked|not selected|unselected|not checked|\\[ \\]|\u2610)[^\\n]{0,80}Fraud suspected|Fraud suspected[^\\n]{0,80}(unchecked|not selected|unselected|not checked|\\[ \\]|\u2610)",
+      "mustNotPattern": "(\\[x\\]|\u2611)[^\\n]{0,40}Fraud suspected|Fraud suspected[^\\n]{0,40}(\\[x\\]|\u2611)"
+    },
+    {
+      "id": "unchecked-normal",
+      "weight": 2,
+      "pattern": "(unchecked|not selected|unselected|not checked|\\[ \\]|\u2610)[^\\n]{0,80}Normal queue|Normal queue[^\\n]{0,80}(unchecked|not selected|unselected|not checked|\\[ \\]|\u2610)",
+      "mustNotPattern": "(\\[x\\]|\u2611)[^\\n]{0,40}Normal queue|Normal queue[^\\n]{0,40}(\\[x\\]|\u2611)"
+    },
+    {
+      "id": "decision-hold",
+      "weight": 3,
+      "pattern": "(selected|filled|chosen|marked|\u25cf|\u25c9|\\(\u25c9\\))[\\s\\S]{0,80}Hold|Hold[\\s\\S]{0,80}(selected|filled|chosen|marked|\u25cf|\u25c9|\\(\u25c9\\))"
+    },
+    {
+      "id": "approve-not-selected",
+      "weight": 1,
+      "pattern": "Approve[\\s\\S]{0,80}(not selected|unselected|not chosen|not filled|\u25cb|\\( \\))|(?:not selected|unselected|not chosen|not filled|\u25cb|\\( \\))[\\s\\S]{0,80}Approve"
+    },
+    {
+      "id": "deny-not-selected",
+      "weight": 1,
+      "pattern": "Deny[\\s\\S]{0,80}(not selected|unselected|not chosen|not filled|\u25cb|\\( \\))|(?:not selected|unselected|not chosen|not filled|\u25cb|\\( \\))[\\s\\S]{0,80}Deny"
+    },
+    {
+      "id": "reviewer-note",
+      "weight": 3,
+      "pattern": "Needs W-9 before release[\\s\\S]{0,120}call member[\\s\\S]{0,120}address verification"
+    },
+    {
+      "id": "stamp",
+      "weight": 2,
+      "pattern": "HOLD UNTIL W-9"
+    },
+    {
+      "id": "final-action",
+      "weight": 1,
+      "pattern": "Hold CLM-2026-0719 until W-9"
+    },
+    {
+      "id": "do-not-mark-fraud",
+      "weight": 2,
+      "pattern": "Do not mark Fraud suspected|Fraud suspected[\\s\\S]{0,80}not"
+    }
+  ]
+}

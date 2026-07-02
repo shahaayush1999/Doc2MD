@@ -1,0 +1,130 @@
+{
+  "caseId": "020-acroform-filled-widgets",
+  "modelId": "vertex-gemini-3.1-flash-lite",
+  "score": 1,
+  "percentage": 100,
+  "earned": 78,
+  "possible": 78,
+  "estimatedCostUsd": 0.000519,
+  "elapsedMs": 3152,
+  "usage": {
+    "inputTokens": 600,
+    "inputTokenDetails": {
+      "noCacheTokens": 600,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 246,
+    "outputTokenDetails": {
+      "textTokens": 246,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 846
+  },
+  "details": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "T20-ACROFORM-WIDGETS",
+      "matched": true
+    },
+    {
+      "id": "heading",
+      "weight": 1,
+      "pattern": "Filled Vendor Onboarding Form",
+      "matched": true
+    },
+    {
+      "id": "vendor-id",
+      "weight": 6,
+      "pattern": "Vendor ID[\\s\\S]{0,80}VEN-4092-Q|VEN-4092-Q[\\s\\S]{0,80}Vendor ID",
+      "matched": true
+    },
+    {
+      "id": "legal-name",
+      "weight": 6,
+      "pattern": "Legal name[\\s\\S]{0,100}Northstar Reagents LLC|Northstar Reagents LLC[\\s\\S]{0,100}Legal name",
+      "matched": true
+    },
+    {
+      "id": "tax-class-llc",
+      "weight": 6,
+      "pattern": "Tax class[\\s\\S]{0,100}LLC|LLC[\\s\\S]{0,100}(selected|Tax class)",
+      "matched": true
+    },
+    {
+      "id": "payment-ach",
+      "weight": 6,
+      "pattern": "Payment method[\\s\\S]{0,100}ACH|ACH[\\s\\S]{0,100}(selected|Payment method)",
+      "matched": true
+    },
+    {
+      "id": "routing",
+      "weight": 6,
+      "pattern": "Routing number[\\s\\S]{0,80}RT-072-441|RT-072-441[\\s\\S]{0,80}Routing number",
+      "matched": true
+    },
+    {
+      "id": "account",
+      "weight": 6,
+      "pattern": "Account suffix[\\s\\S]{0,80}ACCT-8831|ACCT-8831[\\s\\S]{0,80}Account suffix",
+      "matched": true
+    },
+    {
+      "id": "queue",
+      "weight": 5,
+      "pattern": "Review queue[\\s\\S]{0,80}Ops-7A|Ops-7A[\\s\\S]{0,80}Review queue",
+      "matched": true
+    },
+    {
+      "id": "expedite-checked",
+      "weight": 5,
+      "pattern": "Expedite review[\\s\\S]{0,80}(checked|selected|yes|true|\\[x\\]|☒)|(?:checked|selected|\\[x\\]|☒)[\\s\\S]{0,80}Expedite review",
+      "matched": true
+    },
+    {
+      "id": "w9-unchecked",
+      "weight": 5,
+      "pattern": "W-9 received[\\s\\S]{0,80}(not checked|unchecked|not selected|no|false|\\[ \\]|☐)|(?:not checked|unchecked|not selected|\\[ \\]|☐)[\\s\\S]{0,80}W-9 received",
+      "matched": true
+    },
+    {
+      "id": "approver",
+      "weight": 4,
+      "pattern": "Approver initials[\\s\\S]{0,80}MR|MR[\\s\\S]{0,80}Approver initials",
+      "matched": true
+    },
+    {
+      "id": "action",
+      "weight": 3,
+      "pattern": "Route the vendor to the selected review queue using the selected payment method|selected review queue[\\s\\S]{0,80}selected payment method|expedited ACH setup|Route vendor VEN-4092-Q to Ops-7A",
+      "matched": true
+    },
+    {
+      "id": "no-wire-selected",
+      "weight": 6,
+      "mustNotPatterns": [
+        "Wire[\\s\\*\\(\\)]{0,10}(checked|selected|yes|true|☒)",
+        "(checked|selected|yes|true|\\[x\\]|☒)[\\s\\*\\(\\)]{0,10}Wire"
+      ],
+      "matched": true
+    },
+    {
+      "id": "no-ccorp-selected",
+      "weight": 6,
+      "mustNotPatterns": [
+        "C-Corp[\\s\\*\\(\\)]{0,10}(checked|selected|yes|true|☒)",
+        "(checked|selected|yes|true|\\[x\\]|☒)[\\s\\*\\(\\)]{0,10}C-Corp"
+      ],
+      "matched": true
+    },
+    {
+      "id": "no-w9-checked",
+      "weight": 6,
+      "mustNotPatterns": [
+        "W-9 received[\\s\\*\\(\\)]{0,10}(checked|selected|yes|true|☒)",
+        "(checked|selected|yes|true|\\[x\\]|☒)[\\s\\*\\(\\)]{0,10}W-9 received"
+      ],
+      "matched": true
+    }
+  ]
+}

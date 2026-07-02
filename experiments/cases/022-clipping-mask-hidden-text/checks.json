@@ -1,0 +1,73 @@
+{
+  "id": "022-clipping-mask-hidden-text",
+  "title": "Clipping Mask Hidden Text",
+  "source": "source.pdf",
+  "reference": "reference.md",
+  "checks": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "V22-CLIPMASK-VISIBLE"
+    },
+    {
+      "id": "heading",
+      "weight": 1,
+      "pattern": "Clipped Authorization Memo"
+    },
+    {
+      "id": "request",
+      "weight": 6,
+      "pattern": "Request ID[\\s\\S]{0,80}REQ-5831|REQ-5831[\\s\\S]{0,80}Request ID"
+    },
+    {
+      "id": "approver",
+      "weight": 5,
+      "pattern": "Approver[\\s\\S]{0,80}Sima Patel|Sima Patel[\\s\\S]{0,80}Approver"
+    },
+    {
+      "id": "limit",
+      "weight": 6,
+      "pattern": "\\$4,200\\.00|4200\\.00"
+    },
+    {
+      "id": "region",
+      "weight": 5,
+      "pattern": "Region[\\s\\S]{0,80}East-4|East-4[\\s\\S]{0,80}Region"
+    },
+    {
+      "id": "status",
+      "weight": 4,
+      "pattern": "Status[\\s\\S]{0,80}Approved|Approved[\\s\\S]{0,80}Status"
+    },
+    {
+      "id": "action",
+      "weight": 3,
+      "pattern": "Approve REQ-5831|REQ-5831[\\s\\S]{0,80}\\$4,200\\.00[\\s\\S]{0,80}East-4"
+    },
+    {
+      "id": "no-hidden-id",
+      "weight": 8,
+      "mustNotPattern": "REQ-0000"
+    },
+    {
+      "id": "no-hidden-approver",
+      "weight": 8,
+      "mustNotPattern": "Tariq Noor"
+    },
+    {
+      "id": "no-hidden-limit",
+      "weight": 8,
+      "mustNotPattern": "\\$99,000\\.00|99000\\.00"
+    },
+    {
+      "id": "no-hidden-region",
+      "weight": 8,
+      "mustNotPattern": "West-9"
+    },
+    {
+      "id": "no-hidden-action",
+      "weight": 8,
+      "mustNotPattern": "Use clipped values"
+    }
+  ]
+}

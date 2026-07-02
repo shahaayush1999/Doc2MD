@@ -1,0 +1,100 @@
+{
+  "id": "001-figure-trap",
+  "title": "Figure Trap",
+  "source": "source.pdf",
+  "reference": "reference.md",
+  "checks": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "A1-FIGURE-TRAP"
+    },
+    {
+      "id": "heading",
+      "weight": 1,
+      "pattern": "Quarterly Routing Memo"
+    },
+    {
+      "id": "list-structure",
+      "weight": 1,
+      "pattern": "Preserve the document identifier exactly"
+    },
+    {
+      "id": "flow-anchor",
+      "weight": 3,
+      "pattern": "VIS-37B"
+    },
+    {
+      "id": "flow-stage-upload",
+      "weight": 2,
+      "pattern": "Upload\\s+PDF"
+    },
+    {
+      "id": "flow-stage-parse",
+      "weight": 2,
+      "pattern": "Parse\\s+Blocks"
+    },
+    {
+      "id": "flow-stage-reconstruct",
+      "weight": 2,
+      "pattern": "Reconstruct\\s+Markdown"
+    },
+    {
+      "id": "flow-stage-score",
+      "weight": 2,
+      "pattern": "Score\\s+Output"
+    },
+    {
+      "id": "chart-q1",
+      "weight": 2,
+      "patterns": [
+        "Q1[^\\n]{0,40}\\$?12k",
+        "\\$?12k[^\\n]{0,40}Q1"
+      ]
+    },
+    {
+      "id": "chart-q2",
+      "weight": 2,
+      "patterns": [
+        "Q2[^\\n]{0,40}\\$?18k",
+        "\\$?18k[^\\n]{0,40}Q2"
+      ]
+    },
+    {
+      "id": "chart-q3",
+      "weight": 2,
+      "patterns": [
+        "Q3[^\\n]{0,40}\\$?17k",
+        "\\$?17k[^\\n]{0,40}Q3"
+      ]
+    },
+    {
+      "id": "chart-q4",
+      "weight": 2,
+      "patterns": [
+        "Q4[^\\n]{0,40}\\$?29k",
+        "\\$?29k[^\\n]{0,40}Q4"
+      ]
+    },
+    {
+      "id": "threshold",
+      "weight": 2,
+      "pattern": "threshold[^\\n]{0,40}\\$?24k"
+    },
+    {
+      "id": "q4-crosses",
+      "weight": 2,
+      "pattern": "Q4[^\\n]{0,60}crosses"
+    },
+    {
+      "id": "q3-dips",
+      "weight": 2,
+      "pattern": "Q3[^\\n]{0,60}dips"
+    },
+    {
+      "id": "action",
+      "weight": 1,
+      "pattern": "delta exceeds 8%"
+    }
+  ]
+}

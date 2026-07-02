@@ -1,0 +1,23 @@
+{
+  "caseId": "009-routing-no-legend",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 6073,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 1092,
+    "inputTokenDetails": {
+      "noCacheTokens": 1092,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 254,
+    "outputTokenDetails": {
+      "textTokens": 254,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1346
+  },
+  "estimatedCostUsd": 0.0005359
+}

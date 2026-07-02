@@ -1,0 +1,23 @@
+{
+  "caseId": "016-bad-ocr-overlay",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 5738,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 1132,
+    "inputTokenDetails": {
+      "noCacheTokens": 1132,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 273,
+    "outputTokenDetails": {
+      "textTokens": 273,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1405
+  },
+  "estimatedCostUsd": 0.0005676500000000001
+}

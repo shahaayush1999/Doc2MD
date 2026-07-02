@@ -1,0 +1,23 @@
+{
+  "caseId": "029-small-symbol-triage-board",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 10379,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 1077,
+    "inputTokenDetails": {
+      "noCacheTokens": 1077,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 408,
+    "outputTokenDetails": {
+      "textTokens": 408,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1485
+  },
+  "estimatedCostUsd": 0.0007254000000000001
+}

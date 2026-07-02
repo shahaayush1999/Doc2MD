@@ -1,0 +1,23 @@
+{
+  "caseId": "032-checkbox-matrix-transcribe-cue",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 9084,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 1076,
+    "inputTokenDetails": {
+      "noCacheTokens": 1076,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 324,
+    "outputTokenDetails": {
+      "textTokens": 324,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1400
+  },
+  "estimatedCostUsd": 0.0006202
+}

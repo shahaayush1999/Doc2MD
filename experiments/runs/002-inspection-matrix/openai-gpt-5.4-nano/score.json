@@ -1,0 +1,105 @@
+{
+  "caseId": "002-inspection-matrix",
+  "modelId": "openai-gpt-5.4-nano",
+  "score": 1,
+  "percentage": 100,
+  "earned": 33,
+  "possible": 33,
+  "estimatedCostUsd": 0.00065355,
+  "elapsedMs": 8029,
+  "usage": {
+    "inputTokens": 1124,
+    "inputTokenDetails": {
+      "noCacheTokens": 1124,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 343,
+    "outputTokenDetails": {
+      "textTokens": 343,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1467
+  },
+  "details": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "B2-MATRIX-DENSE",
+      "matched": true
+    },
+    {
+      "id": "matrix-id",
+      "weight": 3,
+      "pattern": "KITE-204",
+      "matched": true
+    },
+    {
+      "id": "a17-full",
+      "weight": 4,
+      "patterns": [
+        "A-17[\\s\\S]{0,120}Alpha valve[\\s\\S]{0,120}Mira Chen[\\s\\S]{0,120}High[\\s\\S]{0,120}OPEN[\\s\\S]{0,120}Apr-17"
+      ],
+      "matched": true
+    },
+    {
+      "id": "a71-full",
+      "weight": 4,
+      "patterns": [
+        "A-71[\\s\\S]{0,120}Alpha value[\\s\\S]{0,120}Noor Iqbal[\\s\\S]{0,120}Low[\\s\\S]{0,120}CLOSED[\\s\\S]{0,120}May-03"
+      ],
+      "matched": true
+    },
+    {
+      "id": "g17-full",
+      "weight": 4,
+      "patterns": [
+        "G-17[\\s\\S]{0,120}Gamma valve[\\s\\S]{0,120}Vale Ortiz[\\s\\S]{0,120}Medium[\\s\\S]{0,120}BLOCKED[\\s\\S]{0,120}Jun-11"
+      ],
+      "matched": true
+    },
+    {
+      "id": "b19-full",
+      "weight": 4,
+      "patterns": [
+        "B-19[\\s\\S]{0,120}Beta gasket[\\s\\S]{0,120}Mira Chen[\\s\\S]{0,120}High[\\s\\S]{0,120}OPEN[\\s\\S]{0,120}Jul-02"
+      ],
+      "matched": true
+    },
+    {
+      "id": "legend-open",
+      "weight": 2,
+      "pattern": "OPEN[\\s\\S]{0,80}escalate now",
+      "matched": true
+    },
+    {
+      "id": "legend-closed",
+      "weight": 2,
+      "pattern": "CLOSED[\\s\\S]{0,80}archive",
+      "matched": true
+    },
+    {
+      "id": "legend-blocked",
+      "weight": 2,
+      "pattern": "BLOCKED[\\s\\S]{0,80}needs review",
+      "matched": true
+    },
+    {
+      "id": "route-order",
+      "weight": 3,
+      "pattern": "R1 intake[\\s\\S]{0,160}R2 classify[\\s\\S]{0,160}R3 owner check[\\s\\S]{0,160}R4 final queue",
+      "matched": true
+    },
+    {
+      "id": "route-note",
+      "weight": 3,
+      "pattern": "B-19[\\s\\S]{0,120}A-17[\\s\\S]{0,120}both high severity[\\s\\S]{0,120}only B-19[\\s\\S]{0,120}R4 final queue",
+      "matched": true
+    },
+    {
+      "id": "final-action",
+      "weight": 1,
+      "pattern": "Escalate A-17 and B-19",
+      "matched": true
+    }
+  ]
+}

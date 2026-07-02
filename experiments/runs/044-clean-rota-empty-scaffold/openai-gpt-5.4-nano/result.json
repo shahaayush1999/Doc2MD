@@ -1,0 +1,23 @@
+{
+  "caseId": "044-clean-rota-empty-scaffold",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 5769,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 1098,
+    "inputTokenDetails": {
+      "noCacheTokens": 1098,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 292,
+    "outputTokenDetails": {
+      "textTokens": 292,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1390
+  },
+  "estimatedCostUsd": 0.0005846
+}

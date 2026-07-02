@@ -1,0 +1,23 @@
+{
+  "caseId": "017-rotated-margin-notes",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 5186,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 248,
+    "inputTokenDetails": {
+      "noCacheTokens": 248,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 168,
+    "outputTokenDetails": {
+      "textTokens": 168,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 416
+  },
+  "estimatedCostUsd": 0.00025959999999999997
+}

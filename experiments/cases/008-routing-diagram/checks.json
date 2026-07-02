@@ -1,0 +1,134 @@
+{
+  "id": "008-routing-diagram",
+  "title": "Routing Diagram",
+  "source": "source.pdf",
+  "reference": "reference.md",
+  "checks": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "H8-ROUTE-TOPOLOGY"
+    },
+    {
+      "id": "diagram-id",
+      "weight": 3,
+      "pattern": "ROUTE-19"
+    },
+    {
+      "id": "node-src",
+      "weight": 1,
+      "pattern": "SRC-01"
+    },
+    {
+      "id": "node-auth-a7",
+      "weight": 2,
+      "pattern": "AUTH-A7"
+    },
+    {
+      "id": "node-auth-7a",
+      "weight": 2,
+      "pattern": "AUTH-7A"
+    },
+    {
+      "id": "node-pack-3l",
+      "weight": 2,
+      "pattern": "PACK-3L"
+    },
+    {
+      "id": "node-pack-l3",
+      "weight": 2,
+      "pattern": "PACK-L3"
+    },
+    {
+      "id": "node-qa20",
+      "weight": 2,
+      "pattern": "QA-20"
+    },
+    {
+      "id": "node-qa02",
+      "weight": 2,
+      "pattern": "QA-02"
+    },
+    {
+      "id": "node-rel",
+      "weight": 1,
+      "pattern": "REL-5"
+    },
+    {
+      "id": "selected-route",
+      "weight": 7,
+      "pattern": "(selected route|green path|green arrows?)[^\\n]{0,120}SRC-01\\s*(->|\u2192|to|,)\\s*AUTH-7A\\s*(->|\u2192|to|,)\\s*PACK-L3\\s*(->|\u2192|to|,)\\s*QA-02\\s*(->|\u2192|to|,)\\s*REL-5|SRC-01\\s*(->|\u2192|to)\\s*AUTH-7A\\s*(->|\u2192|to)\\s*PACK-L3\\s*(->|\u2192|to)\\s*QA-02\\s*(->|\u2192|to)\\s*REL-5[^\\n]{0,80}(selected route|green path|green arrows?)"
+    },
+    {
+      "id": "blocked-auth-a7",
+      "weight": 4,
+      "patterns": [
+        "blocked[^\\n]{0,80}AUTH-A7",
+        "AUTH-A7[^\\n]{0,80}blocked"
+      ]
+    },
+    {
+      "id": "blocked-qa20",
+      "weight": 4,
+      "patterns": [
+        "blocked[^\\n]{0,80}QA-20",
+        "QA-20[^\\n]{0,80}blocked"
+      ]
+    },
+    {
+      "id": "fallback-pack3l-qa02",
+      "weight": 4,
+      "pattern": "PACK-3L[\\s\\S]{0,100}QA-02[\\s\\S]{0,120}(fallback|dashed|not selected)|(fallback|dashed|not selected)[\\s\\S]{0,120}PACK-3L[\\s\\S]{0,100}QA-02"
+    },
+    {
+      "id": "fallback-autha7-packl3",
+      "weight": 4,
+      "pattern": "AUTH-A7[\\s\\S]{0,100}PACK-L3[\\s\\S]{0,120}(fallback|dashed|not selected)|(fallback|dashed|not selected)[\\s\\S]{0,120}AUTH-A7[\\s\\S]{0,100}PACK-L3"
+    },
+    {
+      "id": "nonselected-autha7-pack3l",
+      "weight": 2,
+      "pattern": "AUTH-A7[\\s\\S]{0,100}PACK-3L"
+    },
+    {
+      "id": "nonselected-packl3-qa20",
+      "weight": 2,
+      "pattern": "PACK-L3[\\s\\S]{0,100}QA-20"
+    },
+    {
+      "id": "distinct-auth",
+      "weight": 3,
+      "pattern": "AUTH-A7[\\s\\S]{0,120}AUTH-7A|AUTH-7A[\\s\\S]{0,120}AUTH-A7"
+    },
+    {
+      "id": "distinct-pack",
+      "weight": 3,
+      "pattern": "PACK-3L[\\s\\S]{0,120}PACK-L3|PACK-L3[\\s\\S]{0,120}PACK-3L"
+    },
+    {
+      "id": "distinct-qa",
+      "weight": 3,
+      "pattern": "QA-20[\\s\\S]{0,120}QA-02|QA-02[\\s\\S]{0,120}QA-20"
+    },
+    {
+      "id": "no-block-auth7a",
+      "weight": 2,
+      "mustNotPattern": "AUTH-7A[^\\n]{0,80}blocked|blocked[^\\n]{0,80}AUTH-7A"
+    },
+    {
+      "id": "no-block-packl3",
+      "weight": 2,
+      "mustNotPattern": "PACK-L3[^\\n]{0,80}blocked|blocked[^\\n]{0,80}PACK-L3"
+    },
+    {
+      "id": "no-block-qa02",
+      "weight": 2,
+      "mustNotPattern": "QA-02[^\\n]{0,80}blocked|blocked[^\\n]{0,80}QA-02"
+    },
+    {
+      "id": "action-generic",
+      "weight": 1,
+      "pattern": "Use the selected route shown in the diagram"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "caseId": "011-two-column-stream-order",
+  "model": "vertex-gemini-3.1-flash-lite",
+  "provider": "google-vertex",
+  "modelName": "gemini-3.1-flash-lite",
+  "reasoning": "minimal",
+  "elapsedMs": 2853,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 600,
+    "inputTokenDetails": {
+      "noCacheTokens": 600,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 330,
+    "outputTokenDetails": {
+      "textTokens": 330,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 930
+  },
+  "estimatedCostUsd": 0.000645
+}

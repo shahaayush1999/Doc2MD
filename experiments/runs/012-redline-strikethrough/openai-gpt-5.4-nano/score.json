@@ -1,0 +1,115 @@
+{
+  "caseId": "012-redline-strikethrough",
+  "modelId": "openai-gpt-5.4-nano",
+  "score": 1,
+  "percentage": 100,
+  "earned": 49,
+  "possible": 49,
+  "estimatedCostUsd": 0.0002564,
+  "elapsedMs": 7256,
+  "usage": {
+    "inputTokens": 232,
+    "inputTokenDetails": {
+      "noCacheTokens": 232,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 168,
+    "outputTokenDetails": {
+      "textTokens": 168,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 400
+  },
+  "details": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "L12-REDLINE-STATES",
+      "matched": true
+    },
+    {
+      "id": "heading",
+      "weight": 1,
+      "pattern": "Contract Revision Sheet",
+      "matched": true
+    },
+    {
+      "id": "base-fee-content",
+      "weight": 2,
+      "pattern": "Base fee[\\s\\S]{0,120}\\$12,400[\\s\\S]{0,120}\\$14,200[\\s\\S]{0,80}July 15",
+      "matched": true
+    },
+    {
+      "id": "service-window-content",
+      "weight": 2,
+      "pattern": "Service window[\\s\\S]{0,120}30 days[\\s\\S]{0,120}45 days[\\s\\S]{0,80}kickoff",
+      "matched": true
+    },
+    {
+      "id": "support-tier-content",
+      "weight": 2,
+      "pattern": "Support tier[\\s\\S]{0,120}Standard[\\s\\S]{0,120}Premium[\\s\\S]{0,80}weekend coverage",
+      "matched": true
+    },
+    {
+      "id": "notice-period-content",
+      "weight": 2,
+      "pattern": "Notice period[\\s\\S]{0,120}10 business days[\\s\\S]{0,120}15 business days",
+      "matched": true
+    },
+    {
+      "id": "queue-content",
+      "weight": 2,
+      "pattern": "Governing queue[\\s\\S]{0,120}East-4[\\s\\S]{0,120}North-7[\\s\\S]{0,80}escalation queue",
+      "matched": true
+    },
+    {
+      "id": "base-fee-strike",
+      "weight": 5,
+      "pattern": "~~\\s*\\$12,400\\s*~~|struck[^\\n]{0,80}\\$12,400|\\$12,400[^\\n]{0,80}(struck|deleted|crossed out)",
+      "matched": true
+    },
+    {
+      "id": "service-window-strike",
+      "weight": 5,
+      "pattern": "~~\\s*30 days\\s*~~|struck[^\\n]{0,80}30 days|30 days[^\\n]{0,80}(struck|deleted|crossed out)",
+      "matched": true
+    },
+    {
+      "id": "support-tier-strike",
+      "weight": 5,
+      "pattern": "~~\\s*Standard\\s*~~|struck[^\\n]{0,80}Standard|Standard[^\\n]{0,80}(struck|deleted|crossed out)",
+      "matched": true
+    },
+    {
+      "id": "notice-period-strike",
+      "weight": 5,
+      "pattern": "~~\\s*10 business days\\s*~~|struck[^\\n]{0,80}10 business days|10 business days[^\\n]{0,80}(struck|deleted|crossed out)",
+      "matched": true
+    },
+    {
+      "id": "queue-strike",
+      "weight": 5,
+      "pattern": "~~\\s*East-4\\s*~~|struck[^\\n]{0,80}East-4|East-4[^\\n]{0,80}(struck|deleted|crossed out)",
+      "matched": true
+    },
+    {
+      "id": "replacement-current",
+      "weight": 5,
+      "pattern": "(current|replacement|non-struck)[\\s\\S]{0,180}\\$14,200[\\s\\S]{0,120}45 days[\\s\\S]{0,120}Premium[\\s\\S]{0,120}15 business days[\\s\\S]{0,120}North-7|\\$14,200[\\s\\S]{0,120}45 days[\\s\\S]{0,120}Premium[\\s\\S]{0,120}15 business days[\\s\\S]{0,120}North-7[\\s\\S]{0,180}(current|replacement|non-struck)",
+      "matched": true
+    },
+    {
+      "id": "approval-note",
+      "weight": 2,
+      "pattern": "Current terms[\\s\\S]{0,120}non-struck replacement values[\\s\\S]{0,120}strikethrough",
+      "matched": true
+    },
+    {
+      "id": "not-old-current",
+      "weight": 5,
+      "mustNotPattern": "(current|replacement|new)[^.\\n]{0,80}\\$12,400|(current|replacement|new)[^.\\n]{0,80}30 days|(current|replacement|new)[^.\\n]{0,80}Standard|(current|replacement|new)[^.\\n]{0,80}10 business days|(current|replacement|new)[^.\\n]{0,80}East-4",
+      "matched": true
+    }
+  ]
+}

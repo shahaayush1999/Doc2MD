@@ -1,0 +1,23 @@
+{
+  "caseId": "045-rasterized-rota-table",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 8125,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 1086,
+    "inputTokenDetails": {
+      "noCacheTokens": 1086,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 351,
+    "outputTokenDetails": {
+      "textTokens": 351,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1437
+  },
+  "estimatedCostUsd": 0.00065595
+}

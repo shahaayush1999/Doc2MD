@@ -1,0 +1,23 @@
+{
+  "caseId": "021-cropbox-hidden-margin",
+  "model": "vertex-gemini-3.1-flash-lite",
+  "provider": "google-vertex",
+  "modelName": "gemini-3.1-flash-lite",
+  "reasoning": "minimal",
+  "elapsedMs": 2281,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 620,
+    "inputTokenDetails": {
+      "noCacheTokens": 620,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 147,
+    "outputTokenDetails": {
+      "textTokens": 147,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 767
+  },
+  "estimatedCostUsd": 0.00037549999999999997
+}

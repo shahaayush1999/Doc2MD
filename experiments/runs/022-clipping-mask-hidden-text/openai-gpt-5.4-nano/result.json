@@ -1,0 +1,23 @@
+{
+  "caseId": "022-clipping-mask-hidden-text",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 7386,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 230,
+    "inputTokenDetails": {
+      "noCacheTokens": 230,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 164,
+    "outputTokenDetails": {
+      "textTokens": 164,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 394
+  },
+  "estimatedCostUsd": 0.00025100000000000003
+}

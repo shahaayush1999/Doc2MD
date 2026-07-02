@@ -1,0 +1,73 @@
+{
+  "caseId": "038-visible-artifact-stamp",
+  "modelId": "openai-gpt-5.4-nano",
+  "score": 1,
+  "percentage": 100,
+  "earned": 44,
+  "possible": 44,
+  "estimatedCostUsd": 0.00014250000000000002,
+  "elapsedMs": 3981,
+  "usage": {
+    "inputTokens": 175,
+    "inputTokenDetails": {
+      "noCacheTokens": 175,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 86,
+    "outputTokenDetails": {
+      "textTokens": 86,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 261
+  },
+  "details": [
+    {
+      "id": "doc-id",
+      "weight": 2,
+      "pattern": "AL38-VISIBLE-ARTIFACT",
+      "matched": true
+    },
+    {
+      "id": "heading",
+      "weight": 2,
+      "pattern": "Invoice Memo",
+      "matched": true
+    },
+    {
+      "id": "invoice",
+      "weight": 5,
+      "pattern": "INV-2048",
+      "matched": true
+    },
+    {
+      "id": "base-amount",
+      "weight": 5,
+      "pattern": "\\$42,?000",
+      "matched": true
+    },
+    {
+      "id": "corrected-total",
+      "weight": 14,
+      "pattern": "CORRECTED TOTAL[^\\n]{0,40}\\$47,?200|\\$47,?200[^\\n]{0,40}CORRECTED TOTAL",
+      "matched": true
+    },
+    {
+      "id": "reviewer",
+      "weight": 5,
+      "pattern": "Sana Iqbal",
+      "matched": true
+    },
+    {
+      "id": "action",
+      "weight": 3,
+      "pattern": "visible correction stamp|tagged as an artifact|artifact",
+      "matched": true
+    },
+    {
+      "id": "no-only-base",
+      "weight": 8,
+      "mustNotPattern": "final total[^\\n]{0,60}\\$42,?000|total due[^\\n]{0,60}\\$42,?000",
+      "matched": true
+    }
+  ]
+}

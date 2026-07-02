@@ -1,0 +1,23 @@
+{
+  "caseId": "046-merged-cell-rota-table",
+  "model": "vertex-gemini-3.1-flash-lite",
+  "provider": "google-vertex",
+  "modelName": "gemini-3.1-flash-lite",
+  "reasoning": "minimal",
+  "elapsedMs": 2945,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 600,
+    "inputTokenDetails": {
+      "noCacheTokens": 600,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 340,
+    "outputTokenDetails": {
+      "textTokens": 340,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 940
+  },
+  "estimatedCostUsd": 0.00066
+}

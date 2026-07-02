@@ -1,0 +1,23 @@
+{
+  "caseId": "037-stale-figure-alt-text",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 5385,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 1080,
+    "inputTokenDetails": {
+      "noCacheTokens": 1080,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 147,
+    "outputTokenDetails": {
+      "textTokens": 147,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1227
+  },
+  "estimatedCostUsd": 0.00039975000000000004
+}

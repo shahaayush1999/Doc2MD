@@ -1,0 +1,114 @@
+{
+  "id": "007-dependency-map",
+  "title": "Dependency Map",
+  "source": "source.pdf",
+  "reference": "reference.md",
+  "checks": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "G7-DEP-MAP"
+    },
+    {
+      "id": "map-id",
+      "weight": 3,
+      "pattern": "DEP-44"
+    },
+    {
+      "id": "node-req",
+      "weight": 1,
+      "pattern": "REQ-014"
+    },
+    {
+      "id": "node-val08b",
+      "weight": 2,
+      "pattern": "VAL-08B"
+    },
+    {
+      "id": "node-val0b8",
+      "weight": 2,
+      "pattern": "VAL-0B8"
+    },
+    {
+      "id": "node-map713",
+      "weight": 2,
+      "pattern": "MAP-713"
+    },
+    {
+      "id": "node-map731",
+      "weight": 2,
+      "pattern": "MAP-731"
+    },
+    {
+      "id": "node-ship",
+      "weight": 1,
+      "pattern": "SHIP-22"
+    },
+    {
+      "id": "node-hold",
+      "weight": 1,
+      "pattern": "HOLD-22"
+    },
+    {
+      "id": "selected-path",
+      "weight": 6,
+      "pattern": "REQ-014[\\s\\S]{0,120}VAL-0B8[\\s\\S]{0,120}MAP-731[\\s\\S]{0,120}SHIP-22"
+    },
+    {
+      "id": "blocked-val08b",
+      "weight": 4,
+      "patterns": [
+        "blocked[^\\n]{0,80}VAL-08B",
+        "VAL-08B[^\\n]{0,80}blocked"
+      ]
+    },
+    {
+      "id": "blocked-hold22",
+      "weight": 4,
+      "patterns": [
+        "blocked[^\\n]{0,80}HOLD-22",
+        "HOLD-22[^\\n]{0,80}blocked"
+      ]
+    },
+    {
+      "id": "fallback-dashed",
+      "weight": 4,
+      "pattern": "MAP-713[\\s\\S]{0,100}HOLD-22[\\s\\S]{0,100}(dashed|fallback|not selected)|(dashed|fallback|not selected)[\\s\\S]{0,100}MAP-713[\\s\\S]{0,100}HOLD-22"
+    },
+    {
+      "id": "nonselected-val08b-map713",
+      "weight": 2,
+      "pattern": "VAL-08B[\\s\\S]{0,100}MAP-713"
+    },
+    {
+      "id": "nonselected-val0b8-map713",
+      "weight": 2,
+      "pattern": "VAL-0B8[\\s\\S]{0,100}MAP-713"
+    },
+    {
+      "id": "distinct-val-codes",
+      "weight": 3,
+      "pattern": "VAL-08B[\\s\\S]{0,100}VAL-0B8|VAL-0B8[\\s\\S]{0,100}VAL-08B"
+    },
+    {
+      "id": "distinct-map-codes",
+      "weight": 3,
+      "pattern": "MAP-713[\\s\\S]{0,100}MAP-731|MAP-731[\\s\\S]{0,100}MAP-713"
+    },
+    {
+      "id": "no-block-val0b8",
+      "weight": 2,
+      "mustNotPattern": "VAL-0B8[^\\n]{0,80}blocked|blocked[^\\n]{0,80}VAL-0B8"
+    },
+    {
+      "id": "no-block-map731",
+      "weight": 2,
+      "mustNotPattern": "MAP-731[^\\n]{0,80}blocked|blocked[^\\n]{0,80}MAP-731"
+    },
+    {
+      "id": "action",
+      "weight": 1,
+      "pattern": "Proceed on[\\s\\S]{0,220}REQ-014[\\s\\S]{0,120}VAL-0B8[\\s\\S]{0,120}MAP-731[\\s\\S]{0,120}SHIP-22"
+    }
+  ]
+}

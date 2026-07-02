@@ -1,0 +1,68 @@
+{
+  "id": "018-raster-callout-card",
+  "title": "Raster Callout Card",
+  "source": "source.pdf",
+  "reference": "reference.md",
+  "checks": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "R18-RASTER-CALLOUTS"
+    },
+    {
+      "id": "photo-title",
+      "weight": 2,
+      "pattern": "PHOTO-CALLOUT-18"
+    },
+    {
+      "id": "pallet",
+      "weight": 4,
+      "pattern": "Pallet[\\s\\S]{0,80}PAL-204|PAL-204[\\s\\S]{0,80}Pallet"
+    },
+    {
+      "id": "zone",
+      "weight": 3,
+      "pattern": "Zone[\\s\\S]{0,80}Cold-3|Cold-3[\\s\\S]{0,80}Zone"
+    },
+    {
+      "id": "owner",
+      "weight": 3,
+      "pattern": "Owner[\\s\\S]{0,80}Iris Shah|Iris Shah[\\s\\S]{0,80}Owner"
+    },
+    {
+      "id": "seal",
+      "weight": 3,
+      "pattern": "Seal[\\s\\S]{0,80}SL-88Q|SL-88Q[\\s\\S]{0,80}Seal"
+    },
+    {
+      "id": "do-not-ship",
+      "weight": 8,
+      "pattern": "DO NOT SHIP|do not release|not ship"
+    },
+    {
+      "id": "hold-retest",
+      "weight": 4,
+      "pattern": "hold pending retest|pending retest"
+    },
+    {
+      "id": "retest-bay",
+      "weight": 8,
+      "pattern": "RETEST BAY C|Retest in Bay C|Bay C"
+    },
+    {
+      "id": "temp-cap",
+      "weight": 8,
+      "pattern": "TEMP CAP 4C|temperature[\\s\\S]{0,60}4C|4C[\\s\\S]{0,60}(cap|temperature)"
+    },
+    {
+      "id": "inspector",
+      "weight": 8,
+      "pattern": "INSPECTOR N-17|inspector N-17|N-17"
+    },
+    {
+      "id": "action",
+      "weight": 3,
+      "pattern": "Follow the visible callouts on the inspection photo"
+    }
+  ]
+}

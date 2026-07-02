@@ -1,0 +1,91 @@
+{
+  "caseId": "037-stale-figure-alt-text",
+  "modelId": "openai-gpt-5.4-nano",
+  "score": 1,
+  "percentage": 100,
+  "earned": 78,
+  "possible": 78,
+  "estimatedCostUsd": 0.00039975000000000004,
+  "elapsedMs": 5385,
+  "usage": {
+    "inputTokens": 1080,
+    "inputTokenDetails": {
+      "noCacheTokens": 1080,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 147,
+    "outputTokenDetails": {
+      "textTokens": 147,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1227
+  },
+  "details": [
+    {
+      "id": "doc-id",
+      "weight": 2,
+      "pattern": "AK37-FIGURE-ALT-STALE",
+      "matched": true
+    },
+    {
+      "id": "figure-id",
+      "weight": 3,
+      "pattern": "FIGALT-37|Visible release card",
+      "matched": true
+    },
+    {
+      "id": "visible-decision",
+      "weight": 10,
+      "pattern": "SHIP BATCH C-71|ship batch C-71",
+      "matched": true
+    },
+    {
+      "id": "visible-owner",
+      "weight": 8,
+      "pattern": "Noor Vale",
+      "matched": true
+    },
+    {
+      "id": "visible-temperature",
+      "weight": 8,
+      "pattern": "4\\s*C|4 C cold chain",
+      "matched": true
+    },
+    {
+      "id": "visible-queue",
+      "weight": 8,
+      "pattern": "Green lane|green-lane",
+      "matched": true
+    },
+    {
+      "id": "action",
+      "weight": 3,
+      "pattern": "visible figure content|not hidden figure alternate text|visible raster figure",
+      "matched": true
+    },
+    {
+      "id": "no-stale-decision",
+      "weight": 12,
+      "mustNotPattern": "SCRAP BATCH X-09|scrap batch X-09",
+      "matched": true
+    },
+    {
+      "id": "no-stale-owner",
+      "weight": 8,
+      "mustNotPattern": "Mira Chen",
+      "matched": true
+    },
+    {
+      "id": "no-stale-temperature",
+      "weight": 8,
+      "mustNotPattern": "22\\s*C|22 C ambient",
+      "matched": true
+    },
+    {
+      "id": "no-stale-queue",
+      "weight": 8,
+      "mustNotPattern": "Red lane|red-lane",
+      "matched": true
+    }
+  ]
+}

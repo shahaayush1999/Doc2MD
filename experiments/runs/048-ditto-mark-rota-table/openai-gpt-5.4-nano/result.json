@@ -1,0 +1,23 @@
+{
+  "caseId": "048-ditto-mark-rota-table",
+  "model": "openai-gpt-5.4-nano",
+  "provider": "openai",
+  "modelName": "gpt-5.4-nano",
+  "reasoning": "none",
+  "elapsedMs": 6519,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 1086,
+    "inputTokenDetails": {
+      "noCacheTokens": 1086,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 313,
+    "outputTokenDetails": {
+      "textTokens": 313,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 1399
+  },
+  "estimatedCostUsd": 0.00060845
+}

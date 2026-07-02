@@ -1,0 +1,23 @@
+{
+  "caseId": "033-action-ledger-stamps",
+  "model": "vertex-gemini-3.1-flash-lite",
+  "provider": "google-vertex",
+  "modelName": "gemini-3.1-flash-lite",
+  "reasoning": "minimal",
+  "elapsedMs": 2177,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 600,
+    "inputTokenDetails": {
+      "noCacheTokens": 600,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 160,
+    "outputTokenDetails": {
+      "textTokens": 160,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 760
+  },
+  "estimatedCostUsd": 0.00039000000000000005
+}

@@ -1,0 +1,93 @@
+{
+  "id": "046-merged-cell-rota-table",
+  "title": "Merged-Cell Rota Table",
+  "source": "source.pdf",
+  "reference": "reference.md",
+  "checks": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "AT46-MERGED-CELL-ROTA"
+    },
+    {
+      "id": "board-id",
+      "weight": 2,
+      "pattern": "MERGE-46"
+    },
+    {
+      "id": "table-header",
+      "weight": 3,
+      "pattern": "Resource[^\\n]{0,40}Assignment[^\\n]{0,40}Start[^\\n]{0,40}End|resource repeated on every assignment row"
+    },
+    {
+      "id": "merged-cell-cue",
+      "weight": 2,
+      "pattern": "merged cells|Resource cells span|resource repeated"
+    },
+    {
+      "id": "nova-labels",
+      "weight": 5,
+      "pattern": "\\|\\s*Nova Ops\\s*\\|\\s*dock A1\\s*\\|[\\s\\S]{0,700}\\|\\s*Nova Ops\\s*\\|\\s*kit R7\\s*\\|"
+    },
+    {
+      "id": "quarry-labels",
+      "weight": 5,
+      "pattern": "\\|\\s*Quarry Desk\\s*\\|\\s*audit Q1\\s*\\|[\\s\\S]{0,700}\\|\\s*Quarry Desk\\s*\\|\\s*swap N5\\s*\\|[\\s\\S]{0,700}\\|\\s*Quarry Desk\\s*\\|\\s*seal L8\\s*\\|"
+    },
+    {
+      "id": "rift-labels",
+      "weight": 5,
+      "pattern": "\\|\\s*Rift QA\\s*\\|\\s*case T2\\s*\\|[\\s\\S]{0,700}\\|\\s*Rift QA\\s*\\|\\s*review D6\\s*\\|[\\s\\S]{0,700}\\|\\s*Rift QA\\s*\\|\\s*close X4\\s*\\|"
+    },
+    {
+      "id": "nova-dock-mon-early",
+      "weight": 6,
+      "pattern": "\\|\\s*Nova Ops\\s*\\|\\s*dock A1\\s*\\|\\s*Mon 06 Early\\s*\\|\\s*Mon 06 Early\\s*\\|"
+    },
+    {
+      "id": "nova-kit-tue-late-wed-early",
+      "weight": 8,
+      "pattern": "\\|\\s*Nova Ops\\s*\\|\\s*kit R7\\s*\\|\\s*Tue 07 Late\\s*\\|\\s*Wed 08 Early\\s*\\|"
+    },
+    {
+      "id": "quarry-audit-mon-early-late",
+      "weight": 8,
+      "pattern": "\\|\\s*Quarry Desk\\s*\\|\\s*audit Q1\\s*\\|\\s*Mon 06 Early\\s*\\|\\s*Mon 06 Late\\s*\\|"
+    },
+    {
+      "id": "quarry-swap-tue-late",
+      "weight": 6,
+      "pattern": "\\|\\s*Quarry Desk\\s*\\|\\s*swap N5\\s*\\|\\s*Tue 07 Late\\s*\\|\\s*Tue 07 Late\\s*\\|"
+    },
+    {
+      "id": "quarry-seal-wed-late",
+      "weight": 6,
+      "pattern": "\\|\\s*Quarry Desk\\s*\\|\\s*seal L8\\s*\\|\\s*Wed 08 Late\\s*\\|\\s*Wed 08 Late\\s*\\|"
+    },
+    {
+      "id": "rift-case-mon-late",
+      "weight": 6,
+      "pattern": "\\|\\s*Rift QA\\s*\\|\\s*case T2\\s*\\|\\s*Mon 06 Late\\s*\\|\\s*Mon 06 Late\\s*\\|"
+    },
+    {
+      "id": "rift-review-tue-early-late",
+      "weight": 8,
+      "pattern": "\\|\\s*Rift QA\\s*\\|\\s*review D6\\s*\\|\\s*Tue 07 Early\\s*\\|\\s*Tue 07 Late\\s*\\|"
+    },
+    {
+      "id": "rift-close-wed-late",
+      "weight": 6,
+      "pattern": "\\|\\s*Rift QA\\s*\\|\\s*close X4\\s*\\|\\s*Wed 08 Late\\s*\\|\\s*Wed 08 Late\\s*\\|"
+    },
+    {
+      "id": "no-kit-tue-early",
+      "weight": 5,
+      "mustNotPattern": "\\|\\s*Nova Ops\\s*\\|\\s*kit R7\\s*\\|\\s*Tue 07 Early"
+    },
+    {
+      "id": "no-case-t2-mon-early",
+      "weight": 5,
+      "mustNotPattern": "\\|\\s*Rift QA\\s*\\|\\s*case T2\\s*\\|\\s*Mon 06 Early"
+    }
+  ]
+}

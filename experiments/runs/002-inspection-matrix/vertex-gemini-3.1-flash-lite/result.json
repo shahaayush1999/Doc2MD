@@ -1,0 +1,23 @@
+{
+  "caseId": "002-inspection-matrix",
+  "model": "vertex-gemini-3.1-flash-lite",
+  "provider": "google-vertex",
+  "modelName": "gemini-3.1-flash-lite",
+  "reasoning": "minimal",
+  "elapsedMs": 3015,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 600,
+    "inputTokenDetails": {
+      "noCacheTokens": 600,
+      "cacheReadTokens": 0
+    },
+    "outputTokens": 346,
+    "outputTokenDetails": {
+      "textTokens": 346,
+      "reasoningTokens": 0
+    },
+    "totalTokens": 946
+  },
+  "estimatedCostUsd": 0.000669
+}

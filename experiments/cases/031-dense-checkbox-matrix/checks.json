@@ -1,0 +1,106 @@
+{
+  "id": "031-dense-checkbox-matrix",
+  "title": "Dense Checkbox Matrix",
+  "source": "source.pdf",
+  "reference": "reference.md",
+  "checks": [
+    {
+      "id": "doc-id",
+      "weight": 1,
+      "pattern": "AE31-CHECKBOX-MATRIX"
+    },
+    {
+      "id": "matrix-id",
+      "weight": 2,
+      "pattern": "CHECK-31"
+    },
+    {
+      "id": "t221-row",
+      "weight": 8,
+      "patterns": [
+        "T-221[^\\n]{0,260}Aster Lab[^\\n]{0,260}temp drift[^\\n]{0,260}(?:unchecked|not checked|not selected|unselected|\\[ \\]|\u2610|\u2b1c|no)[^\\n]{0,160}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)[^\\n]{0,160}(?:unchecked|not checked|not selected|unselected|\\[ \\]|\u2610|\u2b1c|no)[^\\n]{0,160}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)",
+        "T-221\\s*\\|\\s*Aster Lab\\s*\\|\\s*temp drift\\s*\\|\\s*\\|\\s*(\u2611|\u2713|\\[x\\])\\s*\\|\\s*\\|\\s*(\u2611|\u2713|\\[x\\])"
+      ]
+    },
+    {
+      "id": "t212-row",
+      "weight": 8,
+      "patterns": [
+        "T-212[^\\n]{0,260}Aster Labs[^\\n]{0,260}temp draft[^\\n]{0,260}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)[^\\n]{0,160}(?:unchecked|not checked|not selected|unselected|\\[ \\]|\u2610|\u2b1c|no)[^\\n]{0,160}(?:unchecked|not checked|not selected|unselected|\\[ \\]|\u2610|\u2b1c|no)[^\\n]{0,160}(?:unchecked|not checked|not selected|unselected|\\[ \\]|\u2610|\u2b1c|no)",
+        "T-212\\s*\\|\\s*Aster Labs\\s*\\|\\s*temp draft\\s*\\|\\s*(\u2611|\u2713|\\[x\\])\\s*\\|\\s*\\|\\s*\\|\\s*\\|"
+      ]
+    },
+    {
+      "id": "t122-row",
+      "weight": 8,
+      "patterns": [
+        "T-122[^\\n]{0,260}Beryl Ops[^\\n]{0,260}seal gap[^\\n]{0,260}(?:unchecked|not checked|not selected|unselected|\\[ \\]|\u2610|\u2b1c|no)[^\\n]{0,160}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)[^\\n]{0,160}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)[^\\n]{0,160}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)",
+        "T-122\\s*\\|\\s*Beryl Ops\\s*\\|\\s*seal gap\\s*\\|\\s*\\|\\s*(\u2611|\u2713|\\[x\\])\\s*\\|\\s*(\u2611|\u2713|\\[x\\])\\s*\\|\\s*(\u2611|\u2713|\\[x\\])"
+      ]
+    },
+    {
+      "id": "t121-row",
+      "weight": 8,
+      "patterns": [
+        "T-121[^\\n]{0,260}Beryl Ops[^\\n]{0,260}seal cap[^\\n]{0,260}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)[^\\n]{0,160}(?:unchecked|not checked|not selected|unselected|\\[ \\]|\u2610|\u2b1c|no)[^\\n]{0,160}(?:unchecked|not checked|not selected|unselected|\\[ \\]|\u2610|\u2b1c|no)[^\\n]{0,160}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)",
+        "T-121\\s*\\|\\s*Beryl Ops\\s*\\|\\s*seal cap\\s*\\|\\s*(\u2611|\u2713|\\[x\\])\\s*\\|\\s*\\|\\s*\\|\\s*(\u2611|\u2713|\\[x\\])"
+      ]
+    },
+    {
+      "id": "t312-row",
+      "weight": 8,
+      "patterns": [
+        "T-312[^\\n]{0,260}Cinder QA[^\\n]{0,260}label tear[^\\n]{0,260}(?:unchecked|not checked|not selected|unselected|\\[ \\]|\u2610|\u2b1c|no)[^\\n]{0,160}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)[^\\n]{0,160}(?:unchecked|not checked|not selected|unselected|\\[ \\]|\u2610|\u2b1c|no)[^\\n]{0,160}(?:unchecked|not checked|not selected|unselected|\\[ \\]|\u2610|\u2b1c|no)",
+        "T-312\\s*\\|\\s*Cinder QA\\s*\\|\\s*label tear\\s*\\|\\s*\\|\\s*(\u2611|\u2713|\\[x\\])\\s*\\|\\s*\\|\\s*\\|"
+      ]
+    },
+    {
+      "id": "t321-row",
+      "weight": 8,
+      "patterns": [
+        "T-321[^\\n]{0,260}Cinder AQ[^\\n]{0,260}label year[^\\n]{0,260}(?:unchecked|not checked|not selected|unselected|\\[ \\]|\u2610|\u2b1c|no)[^\\n]{0,160}(?:unchecked|not checked|not selected|unselected|\\[ \\]|\u2610|\u2b1c|no)[^\\n]{0,160}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)[^\\n]{0,160}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)",
+        "T-321\\s*\\|\\s*Cinder AQ\\s*\\|\\s*label year\\s*\\|\\s*\\|\\s*\\|\\s*(\u2611|\u2713|\\[x\\])\\s*\\|\\s*(\u2611|\u2713|\\[x\\])"
+      ]
+    },
+    {
+      "id": "action",
+      "weight": 2,
+      "pattern": "checked and unchecked states|checked states|unchecked states"
+    },
+    {
+      "id": "no-t221-approve-checked",
+      "weight": 5,
+      "mustNotPattern": "T-221[^\\n]{0,240}Approve[^\\n]{0,80}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)"
+    },
+    {
+      "id": "no-t212-hold-checked",
+      "weight": 5,
+      "mustNotPattern": "T-212[^\\n]{0,240}Hold[^\\n]{0,80}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)"
+    },
+    {
+      "id": "no-t122-approve-checked",
+      "weight": 5,
+      "mustNotPattern": "T-122[^\\n]{0,240}Approve[^\\n]{0,80}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)"
+    },
+    {
+      "id": "no-t121-escalate-checked",
+      "weight": 5,
+      "mustNotPattern": "T-121[^\\n]{0,240}Escalate[^\\n]{0,80}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)"
+    },
+    {
+      "id": "no-t312-notify-checked",
+      "weight": 5,
+      "mustNotPattern": "T-312[^\\n]{0,240}Notify[^\\n]{0,80}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)"
+    },
+    {
+      "id": "no-t321-hold-checked",
+      "weight": 5,
+      "mustNotPattern": "T-321[^\\n]{0,240}Hold[^\\n]{0,80}(?:\\bchecked\\b|selected|marked|\\[x\\]|\u2611|\u2705|\u2713|yes)"
+    },
+    {
+      "id": "no-external-image-url",
+      "weight": 4,
+      "mustNotPattern": "https?://"
+    }
+  ]
+}

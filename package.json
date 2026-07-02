@@ -1,0 +1,34 @@
+{
+  "name": "doc2md",
+  "version": "1.0.0",
+  "description": "Doc2MD is a benchmark for evaluating how accurately AI models convert documents into faithful Markdown. Given a document as input, the model should reconstruct its contents as a single Markdown document, preserving all textual information, document structure, tables, lists, headings, and other formatting where possible. Non-textual elements such as images, figures, diagrams, charts, and illustrations should be described in natural language and inserted inline at their appropriate locations. The objective is faithful reconstruction of the original document's information and reading experience, not summarization, interpretation, citation, or source attribution.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "generate:cases": "/Users/aayush/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/generate_cases.py",
+    "run:case": "node --env-file=.env.local --import tsx src/run_case.ts",
+    "score": "tsx src/score.ts",
+    "summary": "tsx src/summary.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shahaayush1999/Doc2MD.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shahaayush1999/Doc2MD/issues"
+  },
+  "homepage": "https://github.com/shahaayush1999/Doc2MD#readme",
+  "dependencies": {
+    "@ai-sdk/google-vertex": "^5.0.7",
+    "@ai-sdk/openai": "^4.0.5",
+    "ai": "^7.0.11"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
