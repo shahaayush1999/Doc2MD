@@ -1,0 +1,135 @@
+{
+  "id": "P07-launch-readiness-dossier",
+  "title": "Launch Readiness Dossier",
+  "family": "packet",
+  "tags": [
+    "multi-page",
+    "dashboard",
+    "dependency-map",
+    "readiness-table",
+    "heatmap",
+    "ledger",
+    "source-precedence"
+  ],
+  "facts": [
+    {
+      "id": "p07.memo.decision",
+      "category": "text",
+      "weight": 5,
+      "expectation": "Steering decision is CONDITIONAL GO, and hold criteria are Bend POS open after 2026-08-12 17:00, payment-switch error rate above 1.2%, or Tier 2 backlog above 22.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.decision.table",
+      "category": "table_cell",
+      "weight": 5,
+      "expectation": "Decision table preserves gateway freight reserve/Iris/2026-08-11/Approved/$18.4k cap; Bend POS exception/Mateo/2026-08-12 17:00/Open; Service desk staffing/Priya/Conditional; Signage reprint/Noah/deferred/Not funded.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.activations",
+      "category": "visual_relation",
+      "weight": 5,
+      "expectation": "Device activation chart values are Mon 920, Tue 1280, Wed 1740, Thu 2510, Fri 3220.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.backlog",
+      "category": "visual_relation",
+      "weight": 5,
+      "expectation": "Backlog stacked bars preserve Tier 1 31 open/12 blocked, Tier 2 19 open/8 blocked, Partner 9 open/4 blocked, Fraud 6 open/2 blocked.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.guardrails",
+      "category": "table_cell",
+      "weight": 6,
+      "expectation": "Guardrail table preserves payment-switch 0.9% OK, Tier 2 backlog 27 At risk, gateway inventory 126 Breach, training completion 92% At risk.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.warning",
+      "category": "cross_page_binding",
+      "weight": 5,
+      "expectation": "Dashboard warning points to the guardrail table; the table shows gateway inventory buffer breached at 126 and Tier 2 backlog at risk at 27. Go remains conditional until Bend closes and service-desk load returns inside threshold.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.map.required",
+      "category": "visual_relation",
+      "weight": 6,
+      "expectation": "Dependency map required arrows: POS and Handheld to Edge gateway, Edge gateway to Payment switch, Payment switch to Acquirer A, Risk rules, and Settlement ledger, and Risk rules to Fraud desk.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.map.fallback",
+      "category": "visual_relation",
+      "weight": 5,
+      "expectation": "Dashed fallback path is Handheld scanners to Settlement ledger and does not satisfy payment authorization; Bend POS exception is on POS terminals to Edge gateway.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.readiness.bend",
+      "category": "table_cell",
+      "weight": 6,
+      "expectation": "Readiness row for BND-01 Bend has Mateo, training OK, gateways 126, signage OK, POS BLK, staffing OK, open issue gateway exception.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.readiness.training",
+      "category": "table_cell",
+      "weight": 5,
+      "expectation": "PDX-05 East and SPK-03 North are training at risk; SEA-04 Ballard staffing is at risk but training is OK.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.matrix.legend",
+      "category": "visual_relation",
+      "weight": 4,
+      "expectation": "Escalation matrix legend: G green clear, Y yellow watch, R red blocked, slash executive escalation, dot external partner required.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.matrix.bend",
+      "category": "visual_relation",
+      "weight": 7,
+      "expectation": "BND-01 escalation matrix has Gateway R, POS R with slash, Staffing Y, and Partner R with slash and dot.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.matrix.exceptions",
+      "category": "visual_relation",
+      "weight": 5,
+      "expectation": "PDX-05 Gateway is Y with slash, not red; PDX-02 Partner is Y with dot.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.ledger.rows",
+      "category": "table_cell",
+      "weight": 6,
+      "expectation": "Ledger preserves LumenWorks $12,640 eligible unpaid, FieldBridge $5,760 eligible partial $2,000, SignPro $3,480 not eligible, SwitchOps $2,900 eligible, Northstar Print $740 not eligible paid.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.reserve",
+      "category": "table_cell",
+      "weight": 5,
+      "expectation": "Reserve subtotal before payment is $21,300, FieldBridge partial payment is -$2,000, remaining eligible reserve exposure is $19,300, and PARTIAL PAID applies only to FieldBridge.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.superseded",
+      "category": "forbidden_text",
+      "weight": 7,
+      "expectation": "Draft appendix values GO, Tier 2 backlog 18, gateway inventory 158, Bend POS OK, and reserve exposure $17,300 are superseded and not treated as final.",
+      "guidance": ""
+    },
+    {
+      "id": "p07.page_order",
+      "category": "structure",
+      "weight": 4,
+      "expectation": "Output preserves packet order: memo, dashboard, dependency map, store readiness, escalation matrix, procurement ledger, draft appendix.",
+      "guidance": ""
+    }
+  ]
+}

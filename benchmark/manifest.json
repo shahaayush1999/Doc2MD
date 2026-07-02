@@ -1,9 +1,9 @@
 {
-  "name": "Doc2MD-LongPackets-3",
+  "name": "Doc2MD-LongPackets-4",
   "version": "0.6.0-experimental",
   "description": "Experimental multi-page realistic packet benchmark focused on charts, dense visual matrices, spatial timelines, continuations, borderless layouts, and cross-page conflicts.",
-  "caseCount": 3,
-  "pageCount": 14,
+  "caseCount": 4,
+  "pageCount": 21,
   "cases": [
     {
       "id": "P01-board-ops-packet",
@@ -59,6 +59,26 @@
       "spec": "benchmark/cases/P06-noc-handover-packet/spec.md",
       "checks": "benchmark/cases/P06-noc-handover-packet/checks.json",
       "facts": "benchmark/cases/P06-noc-handover-packet/facts.json"
+    },
+    {
+      "id": "P07-launch-readiness-dossier",
+      "title": "Launch Readiness Dossier",
+      "family": "packet",
+      "tags": [
+        "multi-page",
+        "dashboard",
+        "dependency-map",
+        "readiness-table",
+        "heatmap",
+        "ledger",
+        "source-precedence"
+      ],
+      "pages": 7,
+      "pdf": "benchmark/cases/P07-launch-readiness-dossier/source.pdf",
+      "gold": "benchmark/cases/P07-launch-readiness-dossier/gold.md",
+      "spec": "benchmark/cases/P07-launch-readiness-dossier/spec.md",
+      "checks": "benchmark/cases/P07-launch-readiness-dossier/checks.json",
+      "facts": "benchmark/cases/P07-launch-readiness-dossier/facts.json"
     }
   ]
 }

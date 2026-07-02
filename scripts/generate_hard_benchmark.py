@@ -292,7 +292,7 @@ def h03() -> Case:
         d.text((90, y + 52), owner, fill="#475569", font=F["tiny"])
         d.rounded_rectangle((left + int(start * 210), y, left + int(end * 210), y + 72), radius=12, fill=color)
         d.text((left + int(start * 210) + 20, y + 20), label, fill="white", font=F["small"])
-    d.text((90, 960), "Gold must normalize each bar into task, owner, start, end, and label rows.", fill="#7f1d1d", font=F["small"])
+    d.text((90, 960), "Supervisor note: normalize each bar into task, owner, start, end, and label rows before Monday standup.", fill="#7f1d1d", font=F["small"])
     return Case(
         "H03-raster-gantt",
         "Raster Gantt Shift Schedule",
@@ -477,7 +477,7 @@ def h07() -> Case:
     d.rounded_rectangle((1030, 1225, 1510, 1410), radius=16, fill="#fef3c7", outline="#92400e", width=4)
     d.text((1060, 1260), "October dependency", fill="#92400e", font=F["h2"])
     draw_text(d, (1060, 1310), "HIPAA BAA belongs to Security, not Product. Enterprise pilots depend on BAA legal review.", F["small"], fill="#92400e", width=33, leading=28)
-    d.text((100, 1350), "Footer: Board packet GTM-09. Preserve lane, month span, owner, and dependency.", fill="#475569", font=F["small"])
+    d.text((100, 1350), "Footer: Board packet GTM-09. Lane ownership, month span, owner, and dependency drive staffing plan.", fill="#475569", font=F["small"])
     return Case(
         "H07-broken-pitch-slide",
         "Overlapping GTM Timeline Slide",
@@ -894,7 +894,7 @@ def h15() -> Case:
     d.rounded_rectangle((105, 880, 600, 1110), radius=14, fill="#f8fafc", outline="#334155", width=3)
     draw_text(d, (135, 915), "Legend: G green normal; Y yellow watch; R red escalation. Diagonal slash means owner must page incident lead.", F["small"], width=34, leading=29)
     d.rounded_rectangle((710, 880, 1510, 1110), radius=14, fill="#fff7ed", outline="#c2410c", width=3)
-    draw_text(d, (740, 915), "Reviewer instruction: derive the red slash cells from the matrix itself. Do not infer severity from row totals. Export Friday must be read directly from its cell.", F["small"], width=58, leading=29)
+    draw_text(d, (740, 915), "Operations note: red slash cells are reviewed from the matrix itself, not from row totals. Export Friday must be read directly from its cell.", F["small"], width=58, leading=29)
     d.text((105, 1240), "Note: weekend columns are part of the table and must not be dropped.", fill="#111827", font=F["small"])
     return Case(
         "H15-landscape-heatmap",
@@ -1955,7 +1955,325 @@ The packet contains a cover page, raster shift Gantt, overlapping GTM timeline, 
     )
 
 
-CASES = [packet_ops_board(), packet_scientific_supplement(), packet_noc_handover()]
+def packet_launch_readiness() -> Case:
+    pages: list[Image.Image] = []
+
+    p1 = base_page("Northwest Pilot Launch Dossier")
+    d = ImageDraw.Draw(p1)
+    d.text((100, 150), "Prepared for: Retail Operations Steering Committee | Packet date: 2026-08-10 | Status: conditional go", fill="#475569", font=F["small"])
+    d.text((100, 230), "Executive memo", fill="#111827", font=F["h1"])
+    left_memo = (
+        "The Northwest pilot can proceed only if store enablement, gateway inventory, and payment-switch monitoring stay inside the launch guardrails. "
+        "The program remains a conditional go because Spokane North cleared training late, Bend has one unresolved POS gateway exception, and the Portland service desk still has elevated Tier 2 backlog after the weekend migration. "
+        "The visible decision log below supersedes the draft appendix included at the end of this packet."
+    )
+    right_memo = (
+        "Launch scope covers six stores, two fulfillment nodes, and three payment partners. The activation target is 4,850 devices by Friday close. "
+        "Finance approved the reserve draw only for gateway freight and temporary floor support; signage reprint remains unfunded. "
+        "Operations must preserve the Monday risk snapshot, chart values, and dependency diagram because several values are not repeated in body text."
+    )
+    draw_text(d, (100, 295), left_memo, F["small"], width=52, leading=31)
+    draw_text(d, (910, 295), right_memo, F["small"], width=50, leading=31)
+    d.rounded_rectangle((100, 690, 1540, 910), radius=14, fill="#fff7ed", outline="#c2410c", width=4)
+    draw_text(d, (130, 725), "Visible steering decision: CONDITIONAL GO. Hold criteria: Bend POS exception open after 2026-08-12 17:00, payment-switch error rate above 1.2%, or Tier 2 backlog above 22 at launch review.", F["small"], fill="#9a3412", width=100, leading=31)
+    rows = [
+        ["Decision item", "Owner", "Due", "State", "Condition"],
+        ["Gateway freight reserve", "Iris", "2026-08-11", "Approved", "$18.4k cap"],
+        ["Bend POS exception", "Mateo", "2026-08-12 17:00", "Open", "must close before go"],
+        ["Service desk staffing", "Priya", "2026-08-13 09:00", "Conditional", "Tier 2 backlog <= 22"],
+        ["Signage reprint", "Noah", "deferred", "Not funded", "do not include in reserve"],
+    ]
+    draw_table(d, 100, 1010, [330, 190, 240, 220, 430], rows, 72)
+    d.text((100, 1475), "Packet order: memo, dashboard, dependency map, store readiness, escalation heatmap, procurement, draft appendix.", fill="#475569", font=F["small"])
+    pages.append(p1)
+
+    p2 = base_page("Launch Metrics Dashboard")
+    d = ImageDraw.Draw(p2)
+    d.text((100, 150), "All panels are visible dashboard exports. Values in charts are part of the launch record.", fill="#7f1d1d", font=F["small"])
+    d.rounded_rectangle((80, 240, 820, 780), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    d.text((115, 275), "Device activations by day", fill="#111827", font=F["h2"])
+    x_axis, y_axis = 160, 690
+    d.line((x_axis, y_axis, 760, y_axis), fill="#111827", width=3)
+    d.line((x_axis, y_axis, x_axis, 360), fill="#111827", width=3)
+    pts = [(185, 642), (300, 595), (415, 535), (530, 445), (645, 390)]
+    values = [920, 1280, 1740, 2510, 3220]
+    days = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+    for a, b in zip(pts, pts[1:]):
+        d.line((*a, *b), fill="#2563eb", width=5)
+    for p, day, value in zip(pts, days, values):
+        d.ellipse((p[0] - 7, p[1] - 7, p[0] + 7, p[1] + 7), fill="#2563eb")
+        d.text((p[0] - 25, p[1] - 35), str(value), fill="#111827", font=F["tiny"])
+        d.text((p[0] - 20, 710), day, fill="#111827", font=F["tiny"])
+    d.rounded_rectangle((900, 240, 1590, 780), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    d.text((930, 275), "Backlog by queue", fill="#111827", font=F["h2"])
+    queues = [("Tier 1", 31, 12), ("Tier 2", 19, 8), ("Partner", 9, 4), ("Fraud", 6, 2)]
+    for i, (name, open_, blocked) in enumerate(queues):
+        x = 970 + i * 145
+        yb = 690
+        d.rectangle((x, yb - open_ * 8, x + 58, yb), fill="#93c5fd", outline="#1d4ed8", width=2)
+        d.rectangle((x, yb - (open_ + blocked) * 8, x + 58, yb - open_ * 8), fill="#fca5a5", outline="#b91c1c", width=2)
+        d.text((x - 8, yb + 22), name, fill="#111827", font=F["tiny"])
+        d.text((x, yb - (open_ + blocked) * 8 - 32), f"{open_}+{blocked}", fill="#111827", font=F["tiny"])
+    d.text((930, 730), "blue=open, red=blocked", fill="#475569", font=F["tiny"])
+    rows = [
+        ["Guardrail", "Limit", "Current", "State"],
+        ["Payment-switch error rate", "<=1.2%", "0.9%", "OK"],
+        ["Tier 2 backlog", "<=22", "27", "At risk"],
+        ["Gateway inventory buffer", ">=140", "126", "Breach"],
+        ["Store training completion", ">=95%", "92%", "At risk"],
+    ]
+    draw_table(d, 105, 910, [430, 260, 240, 260], rows, 76)
+    d.rounded_rectangle((100, 1380, 1545, 1600), radius=14, fill="#fee2e2", outline="#991b1b", width=4)
+    draw_text(d, (130, 1415), "Dashboard warning: review the guardrail table before launch review. Conditional go does not become final until the Bend exception is closed and service-desk load is back inside threshold.", F["small"], fill="#991b1b", width=100, leading=31)
+    pages.append(p2)
+
+    p3 = base_page("Dependency Map - Payment Activation Path")
+    d = ImageDraw.Draw(p3)
+    d.text((100, 150), "Solid arrows are required launch dependencies. Dashed arrows are fallback paths.", fill="#475569", font=F["small"])
+    lanes = [("Store", 265, "#eef2ff"), ("Edge", 610, "#ecfeff"), ("Cloud", 955, "#f8fafc"), ("Partners", 1300, "#fff7ed")]
+    for label, x, fill in lanes:
+        d.rounded_rectangle((x, 250, x + 260, 1490), radius=18, fill=fill, outline="#cbd5e1", width=3)
+        d.text((x + 70, 280), label, fill="#111827", font=F["h2"])
+    nodes = {
+        "POS": (300, 470, "POS terminals"),
+        "Handheld": (300, 760, "Handheld scanners"),
+        "EdgeGW": (645, 610, "Edge gateway"),
+        "Switch": (990, 610, "Payment switch"),
+        "Risk": (990, 900, "Risk rules"),
+        "Acquirer": (1335, 560, "Acquirer A"),
+        "Fraud": (1335, 900, "Fraud desk"),
+        "Ledger": (990, 1210, "Settlement ledger"),
+    }
+    for key, (x, y, label) in nodes.items():
+        d.rounded_rectangle((x, y, x + 205, y + 82), radius=12, fill="white", outline="#111827", width=3)
+        draw_text(d, (x + 16, y + 18), label, F["tiny"], width=16, leading=23)
+    arrows = [("POS", "EdgeGW"), ("Handheld", "EdgeGW"), ("EdgeGW", "Switch"), ("Switch", "Acquirer"), ("Switch", "Risk"), ("Risk", "Fraud"), ("Switch", "Ledger")]
+    for a, b in arrows:
+        ax, ay, _ = nodes[a]
+        bx, by, _ = nodes[b]
+        d.line((ax + 205, ay + 41, bx, by + 41), fill="#111827", width=4)
+        d.polygon([(bx, by + 41), (bx - 14, by + 31), (bx - 14, by + 51)], fill="#111827")
+    d.line((300 + 205, 760 + 82, 990, 1210), fill="#64748b", width=3)
+    for off in range(0, 520, 28):
+        d.line((505 + off, 842 + int(off * 0.7), 515 + off, 849 + int(off * 0.7)), fill="#64748b", width=3)
+    d.rounded_rectangle((100, 1620, 1510, 1850), radius=14, fill="#fff7ed", outline="#c2410c", width=3)
+    draw_text(d, (130, 1655), "Map note: Bend POS exception is on the POS terminals to Edge gateway dependency. Fallback handheld-to-ledger path exists but does not satisfy payment authorization.", F["small"], fill="#9a3412", width=98, leading=31)
+    pages.append(p3)
+
+    p4 = base_page("Store Readiness Register")
+    d = ImageDraw.Draw(p4)
+    d.text((100, 150), "Status register exported from the launch tracker. Abbreviations: OK, AR=at risk, BLK=blocked.", fill="#475569", font=F["small"])
+    rows = [
+        ["Store", "Mgr", "Training", "Gateways", "Signage", "POS", "Staffing", "Open issue"],
+        ["SEA-01 Pike", "Mina", "OK", "148", "OK", "OK", "OK", "none"],
+        ["SEA-04 Ballard", "Ravi", "OK", "136", "OK", "OK", "AR", "temp floor support"],
+        ["PDX-02 Pearl", "Jon", "OK", "142", "OK", "OK", "OK", "none"],
+        ["PDX-05 East", "Lena", "AR", "131", "OK", "OK", "OK", "training makeup Thu"],
+        ["BND-01 Bend", "Mateo", "OK", "126", "OK", "BLK", "OK", "gateway exception"],
+        ["SPK-03 North", "Asha", "AR", "144", "OK", "OK", "AR", "late completion"],
+    ]
+    draw_table(d, 60, 250, [190, 130, 150, 150, 145, 115, 145, 395], rows, 72)
+    d.rounded_rectangle((95, 850, 760, 1150), radius=14, fill="#fee2e2", outline="#991b1b", width=3)
+    draw_text(d, (125, 885), "Exception: BND-01 Bend is the only blocked POS row. It also has the lowest gateway count at 126.", F["small"], fill="#991b1b", width=44, leading=30)
+    d.rounded_rectangle((855, 850, 1525, 1150), radius=14, fill="#fef3c7", outline="#92400e", width=3)
+    draw_text(d, (885, 885), "Training risk: PDX-05 East and SPK-03 North are at risk. SEA-04 Ballard staffing is at risk but training is OK.", F["small"], fill="#92400e", width=45, leading=30)
+    pages.append(p4)
+
+    p5 = base_page("Escalation Matrix - Store x Workstream")
+    d = ImageDraw.Draw(p5)
+    d.text((100, 150), "Color, letter, and slash all carry status. Dot means external partner is required.", fill="#7f1d1d", font=F["small"])
+    stores = ["SEA-01", "SEA-04", "PDX-02", "PDX-05", "BND-01", "SPK-03"]
+    streams = ["Training", "Gateway", "POS", "Staffing", "Partner"]
+    matrix = [
+        ["G", "G", "G", "G", "G"],
+        ["G", "Y", "G", "Y", "G"],
+        ["G", "G", "G", "G", "Y"],
+        ["Y", "Y", "G", "G", "G"],
+        ["G", "R", "R", "Y", "R"],
+        ["Y", "G", "G", "Y", "G"],
+    ]
+    slash = {("BND-01", "POS"), ("BND-01", "Partner"), ("PDX-05", "Gateway")}
+    dot = {("BND-01", "Partner"), ("PDX-02", "Partner")}
+    colors = {"G": "#dcfce7", "Y": "#fef3c7", "R": "#fee2e2"}
+    x0, y0 = 285, 330
+    for c, stream in enumerate(streams):
+        d.text((x0 + c * 205 + 12, y0 - 52), stream, fill="#111827", font=F["small"])
+    for r, store in enumerate(stores):
+        y = y0 + r * 115
+        d.text((95, y + 32), store, fill="#111827", font=F["small"])
+        for c, stream in enumerate(streams):
+            value = matrix[r][c]
+            x = x0 + c * 205
+            d.rectangle((x, y, x + 145, y + 82), fill=colors[value], outline="#111827", width=3)
+            d.text((x + 58, y + 26), value, fill="#111827", font=F["small"])
+            if (store, stream) in slash:
+                d.line((x + 10, y + 8, x + 135, y + 74), fill="#991b1b", width=4)
+            if (store, stream) in dot:
+                d.ellipse((x + 112, y + 12, x + 128, y + 28), fill="#111827")
+    d.rounded_rectangle((90, 1130, 650, 1375), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    draw_text(d, (120, 1165), "Legend: G green clear; Y yellow watch; R red blocked. Slash means executive escalation. Dot means external partner required.", F["small"], width=39, leading=30)
+    d.rounded_rectangle((770, 1130, 1540, 1375), radius=14, fill="#fff7ed", outline="#c2410c", width=3)
+    draw_text(d, (800, 1165), "Matrix readout: marked red cells require owner escalation. Dots indicate partner follow-up. Read the row and column labels directly before updating the launch log.", F["small"], fill="#9a3412", width=55, leading=30)
+    pages.append(p5)
+
+    p6 = base_page("Procurement and Reserve Ledger")
+    d = ImageDraw.Draw(p6)
+    rows = [
+        ["Line", "Vendor", "Purpose", "Amount", "Reserve eligible", "Paid"],
+        ["1", "LumenWorks", "gateway freight expedite", "$12,640", "Yes", "No"],
+        ["2", "FieldBridge", "temporary floor support", "$5,760", "Yes", "Partial $2,000"],
+        ["3", "SignPro", "signage reprint", "$3,480", "No", "No"],
+        ["4", "SwitchOps", "payment monitor extension", "$2,900", "Yes", "No"],
+        ["5", "Northstar Print", "training packet reprint", "$740", "No", "Paid"],
+    ]
+    draw_table(d, 70, 245, [110, 220, 390, 180, 240, 240], rows, 78)
+    d.rounded_rectangle((100, 830, 720, 1090), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    draw_text(d, (130, 865), "Reserve subtotal before payment: $21,300. FieldBridge partial payment: -$2,000. Remaining eligible reserve exposure: $19,300.", F["small"], width=42, leading=30)
+    d.rounded_rectangle((875, 830, 1510, 1090), radius=14, fill="#fee2e2", outline="#991b1b", width=4)
+    draw_text(d, (905, 865), "Stamp nuance: PARTIAL PAID applies only to FieldBridge, not to the whole ledger. Signage reprint is not reserve eligible.", F["small"], fill="#991b1b", width=43, leading=30)
+    d.line((980, 1020, 1410, 870), fill="#991b1b", width=8)
+    d.text((1115, 920), "PARTIAL PAID", fill="#991b1b", font=F["stamp"])
+    pages.append(p6)
+
+    p7 = base_page("Draft Appendix - Superseded Values")
+    d = ImageDraw.Draw(p7)
+    d.text((100, 155), "DRAFT APPENDIX - retained for audit context only", fill="#991b1b", font=F["h1"])
+    rows = [
+        ["Draft field", "Draft value", "Visible final value", "Disposition"],
+        ["Launch decision", "GO", "CONDITIONAL GO", "superseded"],
+        ["Tier 2 backlog", "18", "27", "superseded"],
+        ["Gateway inventory buffer", "158", "126", "superseded"],
+        ["Bend POS", "OK", "BLK/open exception", "superseded"],
+        ["Reserve exposure", "$17,300", "$19,300", "superseded"],
+    ]
+    draw_table(d, 90, 300, [330, 260, 330, 250], rows, 82)
+    draw_text(d, (100, 870), "Audit note: do not replace final dashboard or ledger values with this draft appendix. It exists to show why the steering decision changed after Monday risk review.", F["small"], fill="#7f1d1d", width=90, leading=31)
+    pages.append(p7)
+
+    gold = """# Northwest Pilot Launch Dossier
+
+Prepared for the Retail Operations Steering Committee. Packet date: 2026-08-10. Status: conditional go.
+
+## Executive Memo
+
+The Northwest pilot is a conditional go. The visible steering decision supersedes the draft appendix. Hold criteria are: Bend POS exception open after 2026-08-12 17:00, payment-switch error rate above 1.2%, or Tier 2 backlog above 22 at launch review.
+
+| Decision item | Owner | Due | State | Condition |
+| --- | --- | --- | --- | --- |
+| Gateway freight reserve | Iris | 2026-08-11 | Approved | $18.4k cap |
+| Bend POS exception | Mateo | 2026-08-12 17:00 | Open | must close before go |
+| Service desk staffing | Priya | 2026-08-13 09:00 | Conditional | Tier 2 backlog <= 22 |
+| Signage reprint | Noah | deferred | Not funded | do not include in reserve |
+
+## Launch Metrics Dashboard
+
+Device activations by day: Monday 920, Tuesday 1280, Wednesday 1740, Thursday 2510, Friday 3220.
+
+Backlog by queue: Tier 1 has 31 open and 12 blocked; Tier 2 has 19 open and 8 blocked; Partner has 9 open and 4 blocked; Fraud has 6 open and 2 blocked.
+
+| Guardrail | Limit | Current | State |
+| --- | --- | --- | --- |
+| Payment-switch error rate | <=1.2% | 0.9% | OK |
+| Tier 2 backlog | <=22 | 27 | At risk |
+| Gateway inventory buffer | >=140 | 126 | Breach |
+| Store training completion | >=95% | 92% | At risk |
+
+Dashboard warning: review the guardrail table before launch review. From the guardrail table, gateway inventory buffer is breached at 126 and Tier 2 backlog is at risk at 27. Conditional go remains valid only if Bend POS closes and service-desk load returns inside threshold.
+
+## Dependency Map
+
+Required solid dependencies: POS terminals to Edge gateway; Handheld scanners to Edge gateway; Edge gateway to Payment switch; Payment switch to Acquirer A; Payment switch to Risk rules; Risk rules to Fraud desk; Payment switch to Settlement ledger. A dashed fallback path runs from Handheld scanners to Settlement ledger, but it does not satisfy payment authorization.
+
+Bend POS exception is on the POS terminals to Edge gateway dependency.
+
+## Store Readiness Register
+
+| Store | Mgr | Training | Gateways | Signage | POS | Staffing | Open issue |
+| --- | --- | --- | ---: | --- | --- | --- | --- |
+| SEA-01 Pike | Mina | OK | 148 | OK | OK | OK | none |
+| SEA-04 Ballard | Ravi | OK | 136 | OK | OK | AR | temp floor support |
+| PDX-02 Pearl | Jon | OK | 142 | OK | OK | OK | none |
+| PDX-05 East | Lena | AR | 131 | OK | OK | OK | training makeup Thu |
+| BND-01 Bend | Mateo | OK | 126 | OK | BLK | OK | gateway exception |
+| SPK-03 North | Asha | AR | 144 | OK | OK | AR | late completion |
+
+BND-01 Bend is the only blocked POS row and has the lowest gateway count at 126. PDX-05 East and SPK-03 North are training risks. SEA-04 Ballard has staffing risk but training is OK.
+
+## Escalation Matrix
+
+Legend: G green clear; Y yellow watch; R red blocked. Slash means executive escalation. Dot means external partner required.
+
+| Store | Training | Gateway | POS | Staffing | Partner |
+| --- | --- | --- | --- | --- | --- |
+| SEA-01 | G | G | G | G | G |
+| SEA-04 | G | Y | G | Y | G |
+| PDX-02 | G | G | G | G | Y with dot |
+| PDX-05 | Y | Y with slash | G | G | G |
+| BND-01 | G | R | R with slash | Y | R with slash and dot |
+| SPK-03 | Y | G | G | Y | G |
+
+Matrix reconstruction: BND-01 has red Gateway, red POS with slash, and red Partner with slash and dot. PDX-05 Gateway is yellow with slash, not red.
+
+## Procurement and Reserve Ledger
+
+| Line | Vendor | Purpose | Amount | Reserve eligible | Paid |
+| --- | --- | --- | ---: | --- | --- |
+| 1 | LumenWorks | gateway freight expedite | $12,640 | Yes | No |
+| 2 | FieldBridge | temporary floor support | $5,760 | Yes | Partial $2,000 |
+| 3 | SignPro | signage reprint | $3,480 | No | No |
+| 4 | SwitchOps | payment monitor extension | $2,900 | Yes | No |
+| 5 | Northstar Print | training packet reprint | $740 | No | Paid |
+
+Reserve subtotal before payment is $21,300. FieldBridge partial payment is -$2,000. Remaining eligible reserve exposure is $19,300. PARTIAL PAID applies only to FieldBridge, not to the whole ledger. Signage reprint is not reserve eligible.
+
+## Draft Appendix
+
+The draft appendix is superseded and retained only for audit context. Draft GO, Tier 2 backlog 18, gateway inventory 158, Bend POS OK, and reserve exposure $17,300 must not replace final visible values: CONDITIONAL GO, Tier 2 backlog 27, gateway inventory 126, Bend POS BLK/open exception, and reserve exposure $19,300.
+"""
+    return Case(
+        "P07-launch-readiness-dossier",
+        "Launch Readiness Dossier",
+        "packet",
+        ["multi-page", "dashboard", "dependency-map", "readiness-table", "heatmap", "ledger", "source-precedence"],
+        "Stress a dense realistic launch dossier with mixed memo text, chart values, map relationships, wide tables, visual status matrices, procurement nuance, and superseded appendix values.",
+        "Seven-page raster-heavy launch dossier with charts, tables, diagram, heatmap, ledger, and draft appendix.",
+        ["decision memo", "dashboard", "dependency map", "readiness register", "escalation matrix", "ledger", "draft appendix precedence"],
+        ["Preserve dense page order and all major sections.", "Bind visual statuses to the correct row/column.", "Keep draft appendix values superseded."],
+        gold,
+        [near_check("launch-bend", "visual", ["BND-01", "Mateo", "126", "BLK", "gateway exception"], 4, 520)],
+        pages,
+        facts=[
+            fact("p07.memo.decision", "text", 5, "Steering decision is CONDITIONAL GO, and hold criteria are Bend POS open after 2026-08-12 17:00, payment-switch error rate above 1.2%, or Tier 2 backlog above 22."),
+            fact("p07.decision.table", "table_cell", 5, "Decision table preserves gateway freight reserve/Iris/2026-08-11/Approved/$18.4k cap; Bend POS exception/Mateo/2026-08-12 17:00/Open; Service desk staffing/Priya/Conditional; Signage reprint/Noah/deferred/Not funded."),
+            fact("p07.activations", "visual_relation", 5, "Device activation chart values are Mon 920, Tue 1280, Wed 1740, Thu 2510, Fri 3220."),
+            fact("p07.backlog", "visual_relation", 5, "Backlog stacked bars preserve Tier 1 31 open/12 blocked, Tier 2 19 open/8 blocked, Partner 9 open/4 blocked, Fraud 6 open/2 blocked."),
+            fact("p07.guardrails", "table_cell", 6, "Guardrail table preserves payment-switch 0.9% OK, Tier 2 backlog 27 At risk, gateway inventory 126 Breach, training completion 92% At risk."),
+            fact("p07.warning", "cross_page_binding", 5, "Dashboard warning points to the guardrail table; the table shows gateway inventory buffer breached at 126 and Tier 2 backlog at risk at 27. Go remains conditional until Bend closes and service-desk load returns inside threshold."),
+            fact("p07.map.required", "visual_relation", 6, "Dependency map required arrows: POS and Handheld to Edge gateway, Edge gateway to Payment switch, Payment switch to Acquirer A, Risk rules, and Settlement ledger, and Risk rules to Fraud desk."),
+            fact("p07.map.fallback", "visual_relation", 5, "Dashed fallback path is Handheld scanners to Settlement ledger and does not satisfy payment authorization; Bend POS exception is on POS terminals to Edge gateway."),
+            fact("p07.readiness.bend", "table_cell", 6, "Readiness row for BND-01 Bend has Mateo, training OK, gateways 126, signage OK, POS BLK, staffing OK, open issue gateway exception."),
+            fact("p07.readiness.training", "table_cell", 5, "PDX-05 East and SPK-03 North are training at risk; SEA-04 Ballard staffing is at risk but training is OK."),
+            fact("p07.matrix.legend", "visual_relation", 4, "Escalation matrix legend: G green clear, Y yellow watch, R red blocked, slash executive escalation, dot external partner required."),
+            fact("p07.matrix.bend", "visual_relation", 7, "BND-01 escalation matrix has Gateway R, POS R with slash, Staffing Y, and Partner R with slash and dot."),
+            fact("p07.matrix.exceptions", "visual_relation", 5, "PDX-05 Gateway is Y with slash, not red; PDX-02 Partner is Y with dot."),
+            fact("p07.ledger.rows", "table_cell", 6, "Ledger preserves LumenWorks $12,640 eligible unpaid, FieldBridge $5,760 eligible partial $2,000, SignPro $3,480 not eligible, SwitchOps $2,900 eligible, Northstar Print $740 not eligible paid."),
+            fact("p07.reserve", "table_cell", 5, "Reserve subtotal before payment is $21,300, FieldBridge partial payment is -$2,000, remaining eligible reserve exposure is $19,300, and PARTIAL PAID applies only to FieldBridge."),
+            fact("p07.superseded", "forbidden_text", 7, "Draft appendix values GO, Tier 2 backlog 18, gateway inventory 158, Bend POS OK, and reserve exposure $17,300 are superseded and not treated as final."),
+            fact("p07.page_order", "structure", 4, "Output preserves packet order: memo, dashboard, dependency map, store readiness, escalation matrix, procurement ledger, draft appendix."),
+        ],
+        extractable_text_pages=[
+            overlays(["Northwest Pilot Launch Dossier", "Status: conditional go", "Packet date: 2026-08-10"], 100, 100),
+            [],
+            [],
+            [],
+            [],
+            [],
+            overlays(["DRAFT APPENDIX - retained for audit context only", "Do not replace final dashboard or ledger values with this draft appendix."], 100, 150),
+        ],
+    )
+
+
+CASES = [packet_ops_board(), packet_scientific_supplement(), packet_noc_handover(), packet_launch_readiness()]
 
 
 def write_pdf(case: Case, path: Path) -> None:
@@ -1968,15 +2286,15 @@ def write_pdf(case: Case, path: Path) -> None:
             c.drawString(72, y, line)
             y -= 18
     for i, page in enumerate(case.pages):
-        buffer = BytesIO()
-        page.save(buffer, format="PNG")
-        buffer.seek(0)
-        c.drawImage(ImageReader(buffer), 0, 0, width=letter[0], height=letter[1])
         if case.extractable_text_pages and i < len(case.extractable_text_pages):
             c.setFont("Helvetica", 9)
             c.setFillColorRGB(0, 0, 0)
             for px, py, line in case.extractable_text_pages[i]:
                 c.drawString(px / PAGE_W * letter[0], letter[1] - py / PAGE_H * letter[1], line)
+        buffer = BytesIO()
+        page.save(buffer, format="PNG")
+        buffer.seek(0)
+        c.drawImage(ImageReader(buffer), 0, 0, width=letter[0], height=letter[1])
         c.showPage()
     if case.hidden_text:
         # Add invisible-looking white text on a fresh overlay page location before final save.
@@ -2063,7 +2381,7 @@ def main() -> None:
         shutil.rmtree(BENCHMARK_ROOT)
     CASE_ROOT.mkdir(parents=True, exist_ok=True)
     manifest = {
-        "name": "Doc2MD-LongPackets-3",
+        "name": "Doc2MD-LongPackets-4",
         "version": "0.6.0-experimental",
         "description": "Experimental multi-page realistic packet benchmark focused on charts, dense visual matrices, spatial timelines, continuations, borderless layouts, and cross-page conflicts.",
         "caseCount": len(CASES),

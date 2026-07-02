@@ -1,0 +1,32 @@
+{
+  "id": "P07-launch-readiness-dossier",
+  "title": "Launch Readiness Dossier",
+  "family": "packet",
+  "tags": [
+    "multi-page",
+    "dashboard",
+    "dependency-map",
+    "readiness-table",
+    "heatmap",
+    "ledger",
+    "source-precedence"
+  ],
+  "checks": [
+    {
+      "id": "launch-bend",
+      "category": "visual",
+      "weight": 4,
+      "description": "launch-bend",
+      "near": {
+        "terms": [
+          "BND-01",
+          "Mateo",
+          "126",
+          "BLK",
+          "gateway exception"
+        ],
+        "window": 520
+      }
+    }
+  ]
+}
