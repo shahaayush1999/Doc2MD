@@ -47,10 +47,6 @@ npm run summary -- openai-gpt-5.4-nano
 npm run run -- --model openai-gpt-5-nano
 npm run score -- openai-gpt-5-nano
 npm run summary -- openai-gpt-5-nano
-
-npm run run -- --model openai-gpt-4o-mini
-npm run score -- openai-gpt-4o-mini
-npm run summary -- openai-gpt-4o-mini
 ```
 
 Generated cases live under `benchmark/cases/`. Local run outputs and rendered inspection artifacts are ignored.

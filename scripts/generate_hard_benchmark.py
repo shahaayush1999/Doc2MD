@@ -52,7 +52,9 @@ F = {
     "h2": font(28, True),
     "body": font(25),
     "small": font(21),
+    "small_bold": font(21, True),
     "tiny": font(18),
+    "tiny_bold": font(18, True),
     "mono": font(22),
     "italic": font(24, italic=True),
     "stamp": font(32, True),
@@ -102,25 +104,32 @@ def draw_text(d: ImageDraw.ImageDraw, xy: tuple[int, int], text: str, fnt=F["bod
 
 
 def draw_card(d: ImageDraw.ImageDraw, box: tuple[int, int, int, int], title: str, lines: list[str], fill="#f8fafc", outline="#334155") -> None:
-    d.rounded_rectangle(box, radius=24, fill=fill, outline=outline, width=4)
     x1, y1, _, _ = box
-    d.text((x1 + 32, y1 + 24), title, fill="#111827", font=F["h2"])
-    y = y1 + 78
+    x2, y2 = box[2], box[3]
+    d.line((x1, y1, x2, y1), fill=outline, width=3)
+    d.line((x1, y1, x1, y2), fill=outline, width=5)
+    d.text((x1 + 24, y1 + 22), title, fill="#111827", font=F["h2"])
+    y = y1 + 72
     for line in lines:
-        d.text((x1 + 32, y), line, fill="#111827", font=F["body"])
-        y += 42
+        d.text((x1 + 24, y), line, fill="#111827", font=F["small"])
+        y += 34
 
 
 def draw_table(d: ImageDraw.ImageDraw, x: int, y: int, widths: list[int], rows: list[list[str]], row_h: int = 66) -> int:
+    table_w = sum(widths)
+    header_h = row_h
+    d.line((x, y, x + table_w, y), fill="#111827", width=3)
     for r, row in enumerate(rows):
-        fill = "#e5e7eb" if r == 0 else "#ffffff"
         cx = x
+        fnt = F["small_bold"] if r == 0 else F["tiny"]
+        fill = "#111827" if r == 0 else "#1f2937"
         for c, w in enumerate(widths):
-            d.rectangle((cx, y, cx + w, y + row_h), fill=fill, outline="#111827", width=3)
             text = row[c] if c < len(row) else ""
-            fnt = F["small"] if r else F["small"]
-            d.multiline_text((cx + 12, y + 14), text, fill="#111827", font=fnt, spacing=4)
+            d.multiline_text((cx + 8, y + 12), text, fill=fill, font=fnt, spacing=3)
             cx += w
+        line_fill = "#111827" if r == 0 else "#d1d5db"
+        line_width = 2 if r == 0 else 1
+        d.line((x, y + row_h, x + table_w, y + row_h), fill=line_fill, width=line_width)
         y += row_h
     return y
 

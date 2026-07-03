@@ -59,13 +59,6 @@ const models: Record<string, ModelSpec> = {
     inputPerMillion: 0.05,
     outputPerMillion: 0.4,
   },
-  "openai-gpt-4o-mini": {
-    id: "openai-gpt-4o-mini",
-    modelName: "gpt-4o-mini",
-    provider: "openai",
-    inputPerMillion: 0.15,
-    outputPerMillion: 0.6,
-  },
 };
 
 const prompt = `Convert the attached PDF into one faithful Markdown document.
