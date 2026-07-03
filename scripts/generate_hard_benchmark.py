@@ -103,6 +103,73 @@ def draw_text(d: ImageDraw.ImageDraw, xy: tuple[int, int], text: str, fnt=F["bod
     return y
 
 
+def draw_section(d: ImageDraw.ImageDraw, x: int, y: int, title: str, w: int = 1400, color: str = "#111827") -> int:
+    d.text((x, y), title.upper(), fill=color, font=F["small_bold"])
+    d.line((x, y + 34, x + w, y + 34), fill="#9ca3af", width=1)
+    return y + 52
+
+
+def draw_two_columns(
+    d: ImageDraw.ImageDraw,
+    x: int,
+    y: int,
+    left: str,
+    right: str,
+    col_w_chars: int = 49,
+    gap: int = 80,
+    leading: int = 27,
+    fnt=F["tiny"],
+) -> int:
+    y1 = draw_text(d, (x, y), left, fnt, width=col_w_chars, leading=leading)
+    y2 = draw_text(d, (x + 690 + gap, y), right, fnt, width=col_w_chars, leading=leading)
+    return max(y1, y2)
+
+
+def draw_note(d: ImageDraw.ImageDraw, box: tuple[int, int, int, int], title: str, text: str, color: str = "#9a3412") -> None:
+    x1, y1, x2, y2 = box
+    d.line((x1, y1, x2, y1), fill=color, width=3)
+    d.text((x1, y1 + 18), title, fill=color, font=F["small_bold"])
+    draw_text(d, (x1, y1 + 52), text, F["tiny"], fill="#1f2937", width=max(22, int((x2 - x1) / 15)), leading=24)
+
+
+def draw_kv_band(d: ImageDraw.ImageDraw, x: int, y: int, pairs: list[tuple[str, str]], widths: list[int] | None = None) -> int:
+    widths = widths or [260] * len(pairs)
+    cx = x
+    d.line((x, y, x + sum(widths), y), fill="#111827", width=2)
+    for (label, value), w in zip(pairs, widths):
+        d.text((cx, y + 18), label.upper(), fill="#6b7280", font=F["tiny_bold"])
+        d.text((cx, y + 48), value, fill="#111827", font=F["small"])
+        cx += w
+    d.line((x, y + 86, x + sum(widths), y + 86), fill="#d1d5db", width=1)
+    return y + 105
+
+
+def draw_redline_text(d: ImageDraw.ImageDraw, x: int, y: int, chunks: list[tuple[str, str]], width: int = 1040) -> int:
+    cx, cy = x, y
+    line_h = 30
+    max_x = x + width
+    for kind, text in chunks:
+        for word in text.split(" "):
+            token = word + " "
+            bbox = d.textbbox((0, 0), token, font=F["small"])
+            tw = bbox[2] - bbox[0]
+            if cx + tw > max_x:
+                cx = x
+                cy += line_h
+            fill = "#111827"
+            if kind == "delete":
+                fill = "#991b1b"
+            elif kind == "insert":
+                fill = "#166534"
+            d.text((cx, cy), token, fill=fill, font=F["small"])
+            if kind == "delete":
+                d.line((cx, cy + 16, cx + tw - 5, cy + 16), fill="#991b1b", width=2)
+            if kind == "insert":
+                d.line((cx, cy + 27, cx + tw - 5, cy + 27), fill="#166534", width=2)
+            cx += tw
+    return cy + line_h + 12
+
+
 def draw_card(d: ImageDraw.ImageDraw, box: tuple[int, int, int, int], title: str, lines: list[str], fill="#f8fafc", outline="#334155") -> None:
     x1, y1, _, _ = box
     x2, y2 = box[2], box[3]
@@ -2525,7 +2592,854 @@ Draft footer from 08:15 said cardiology in 2 weeks and resume home blood pressur
     )
 
 
-CASES = [packet_ops_board(), packet_scientific_supplement(), packet_noc_handover(), packet_launch_readiness(), packet_hospital_discharge()]
+def packet_loan_amendment_closing() -> Case:
+    pages: list[Image.Image] = []
+
+    p1 = base_page("Project Helios Closing Packet")
+    d = ImageDraw.Draw(p1)
+    d.text((100, 142), "Second Amendment to Loan and Security Agreement | Closing memo | June 30, 2026", fill="#475569", font=F["small"])
+    y = draw_kv_band(
+        d,
+        92,
+        218,
+        [
+            ("Borrower", "Northstar Robotics, Inc."),
+            ("Agent", "Meridian Bank, N.A."),
+            ("Effective", "June 28, 2026"),
+            ("Closing", "June 30, 2026"),
+            ("Facility", "$27,000,000"),
+        ],
+        [360, 310, 230, 230, 240],
+    )
+    left = (
+        "This closing packet assembles the executed Second Amendment, blackline pages, certificate extracts, funds flow, lien evidence, "
+        "and post-closing undertaking register for Project Helios. The original Loan and Security Agreement is dated March 15, 2024. "
+        "The amendment increases the commitment from $18,500,000 to $27,000,000 through an $8,500,000 Tranche B advance. "
+        "The memo workstream still shows a $3,250,000 liquidity covenant in one paragraph; the executed amendment and final compliance certificate rider control at $3,500,000."
+    )
+    right = (
+        "Borrower counsel is Klein & Arroyo LLP. Lender counsel is Frost Bellwick LLP. Closing deliverables are held in the v12 packet circulated "
+        "06/27/26 11:48 PM ET. Funding is targeted for June 30, 2026. The authorized borrower signer is Maya Chen, Chief Financial Officer. "
+        "A checklist later says Priya Raman only, but the officer certificate and board consent authorize Maya Chen."
+    )
+    draw_two_columns(d, 100, y + 15, left, right, col_w_chars=52, gap=85, leading=28, fnt=F["small"])
+    draw_section(d, 100, 660, "Closing timeline", w=1390)
+    timeline = [("Original LSA", "03/15/2024"), ("First Amend.", "11/22/2025"), ("Board consent", "06/24/2026"), ("UCC refresh", "06/26/2026"), ("Target funding", "06/30/2026")]
+    x0, ty = 150, 760
+    d.line((x0 + 70, ty + 35, x0 + 1210, ty + 35), fill="#111827", width=3)
+    for i, (label, date) in enumerate(timeline):
+        x = x0 + i * 285
+        d.ellipse((x + 58, ty + 23, x + 82, ty + 47), fill="#111827")
+        d.text((x, ty + 75), label, fill="#111827", font=F["tiny_bold"])
+        d.text((x, ty + 102), date, fill="#475569", font=F["tiny"])
+    draw_section(d, 100, 940, "Use of Tranche B proceeds", w=1390)
+    proceeds = [
+        ("Existing revolver payoff", 3200000, "#64748b"),
+        ("Equipment deposits", 4150000, "#2563eb"),
+        ("Closing fees", 685000, "#c2410c"),
+        ("Working capital", 465000, "#0f766e"),
+    ]
+    bx, by = 145, 1070
+    scale = 0.000115
+    for label, amount, color in proceeds:
+        w = int(amount * scale)
+        d.rectangle((bx, by, bx + w, by + 72), fill=color)
+        d.text((bx + 10, by + 18), f"${amount/1000000:.3f}M", fill="white", font=F["tiny_bold"])
+        d.text((bx, by + 94), label, fill="#111827", font=F["tiny"])
+        bx += w + 8
+    draw_section(d, 100, 1290, "Source-state notes", w=1390, color="#9a3412")
+    draw_text(
+        d,
+        (100, 1350),
+        "Executed amendment controls final operative terms. Blacklines preserve deleted and inserted text. The checklist is an operational tracker and may be stale where later filing receipts or funds-flow instructions conflict with it.",
+        F["small"],
+        fill="#7f1d1d",
+        width=100,
+        leading=31,
+    )
+    pages.append(p1)
+
+    p2 = base_page("Second Amendment - Blackline Against v11")
+    d = ImageDraw.Draw(p2)
+    d.text((100, 150), "Sections 1-3. Preserve deleted text as deleted and inserted text as inserted.", fill="#7f1d1d", font=F["small"])
+    y = draw_section(d, 100, 230, "1. Commitment", w=1010)
+    y = draw_redline_text(
+        d,
+        125,
+        y,
+        [
+            ("normal", 'The definition of "Commitment" is amended by replacing '),
+            ("delete", "$18,500,000"),
+            ("normal", " with "),
+            ("insert", "$27,000,000"),
+            ("normal", " for all purposes under the Loan and Security Agreement."),
+        ],
+        width=1050,
+    )
+    y = draw_section(d, 100, y + 35, "2. Tranche B Advance", w=1010)
+    y = draw_redline_text(
+        d,
+        125,
+        y,
+        [
+            ("insert", "A new Tranche B Advance in the principal amount of $8,500,000 is available only on the Closing Date."),
+            ("normal", " No unused availability remains after funding."),
+        ],
+        width=1050,
+    )
+    y = draw_section(d, 100, y + 35, "3. Interest Rate", w=1010)
+    y = draw_redline_text(
+        d,
+        125,
+        y,
+        [
+            ("normal", "Loans bear interest at "),
+            ("delete", "SOFR + 5.25%"),
+            ("normal", " "),
+            ("insert", "Adjusted Term SOFR + 5.75%"),
+            ("normal", ". The SOFR floor remains "),
+            ("insert", "2.00%"),
+            ("normal", ". Deleted borrower footnote referred to a "),
+            ("delete", "SOFR floor of 1.50%"),
+            ("normal", "."),
+        ],
+        width=1050,
+    )
+    draw_note(d, (1235, 290, 1575, 470), "C-14 Frost Bellwick", "Confirm SOFR floor remains 2.00%; borrower draft had 1.50%.", "#92400e")
+    draw_note(d, (1235, 505, 1575, 665), "Footnote", "Conforming changes required in Exhibit B compliance certificate.", "#1d4ed8")
+    draw_section(d, 100, 1120, "Rate bridge", w=1010)
+    rate_parts = [("SOFR floor", "2.00%"), ("Spread", "5.75%"), ("Default incr.", "2.00%"), ("Max default", "9.75%")]
+    for i, (label, val) in enumerate(rate_parts):
+        x = 135 + i * 260
+        d.line((x, 1205, x + 190, 1205), fill="#111827", width=2)
+        d.text((x, 1230), label, fill="#6b7280", font=F["tiny_bold"])
+        d.text((x, 1263), val, fill="#111827", font=F["h2"])
+    pages.append(p2)
+
+    p3 = base_page("Covenants and Fee Grid")
+    d = ImageDraw.Draw(p3)
+    d.text((100, 150), "Blackline page with covenant matrix embedded in the contract body.", fill="#475569", font=F["small"])
+    y = draw_section(d, 100, 230, "4.2 Liquidity Covenant", w=1010)
+    y = draw_redline_text(
+        d,
+        125,
+        y,
+        [
+            ("normal", "Borrower shall maintain unrestricted cash and cash equivalents of not less than "),
+            ("delete", "$3,250,000"),
+            ("normal", " "),
+            ("insert", "$3,500,000"),
+            ("normal", ", tested monthly, commencing with the test date ending July 31, 2026."),
+        ],
+        width=1050,
+    )
+    y = draw_section(d, 100, y + 25, "4.4 Revenue Reporting", w=1010)
+    y = draw_text(d, (125, y), "Monthly ARR reporting package is due 15 business days after month-end. Borrower request for 20 business days was rejected.", F["small"], width=76, leading=30)
+    y = draw_section(d, 100, y + 25, "5. Fees", w=1010)
+    fee_text = (
+        "The amendment fee equals 0.75% of the incremental commitment. Calculation: 0.75% x $8,500,000 = $63,750. "
+        "The unused line fee is 0.35% per annum. The exit fee is 1.25% of aggregate commitments."
+    )
+    y = draw_text(d, (125, y), fee_text, F["small"], width=76, leading=30)
+    draw_section(d, 100, 930, "Covenant heat strip", w=1010)
+    chips = [("Liquidity", "$3.50M", "#dcfce7"), ("ARR reporting", "15 BD", "#fef3c7"), ("Insurance", "5 BD", "#fee2e2"), ("IP schedule", "10 BD", "#fef3c7")]
+    for i, (name, val, color) in enumerate(chips):
+        x = 125 + i * 245
+        d.rectangle((x, 1015, x + 190, 1095), fill=color, outline="#111827", width=2)
+        d.text((x + 12, 1030), name, fill="#111827", font=F["tiny_bold"])
+        d.text((x + 12, 1060), val, fill="#111827", font=F["tiny"])
+    draw_note(d, (1235, 250, 1575, 435), "C-19", "Checklist still shows 1.00% amendment fee; update before funding.", "#92400e")
+    draw_note(d, (1235, 475, 1575, 645), "C-21", "Borrower requested 20 BD for ARR package; rejected.", "#92400e")
+    draw_note(d, (1235, 700, 1575, 950), "Margin fee table", "Stale margin table: amendment fee 1.00% / $85,000. Body text controls: 0.75% / $63,750.", "#991b1b")
+    pages.append(p3)
+
+    p4 = base_page("Signature Packet and Certificates")
+    d = ImageDraw.Draw(p4)
+    d.text((100, 150), "Composite executed blocks, officer certificate excerpt, board consent, and notary venue.", fill="#475569", font=F["small"])
+    draw_section(d, 100, 230, "Executed signature blocks", w=1390)
+    sig_rows = [
+        ["Party", "Signer", "Title", "Date"],
+        ["Northstar Robotics, Inc.", "Maya Chen", "Chief Financial Officer", "June 30, 2026"],
+        ["Northstar Automation Holdings LLC", "Daniel Ruiz", "President", "June 30, 2026"],
+        ["Meridian Bank, N.A.", "S. Patel", "Authorized Officer", "June 30, 2026"],
+    ]
+    draw_table(d, 100, 310, [420, 270, 380, 230], sig_rows, 74)
+    draw_section(d, 100, 720, "Officer certificate excerpt", w=1390)
+    draw_text(d, (100, 780), "Maya Chen is the duly appointed Chief Financial Officer and is authorized to execute the Amendment on behalf of Northstar Robotics, Inc.", F["small"], width=98, leading=31)
+    draw_section(d, 100, 920, "Board consent excerpt", w=1390)
+    draw_text(d, (100, 980), "Resolved, that either Priya Raman, Chief Executive Officer, or Maya Chen, Chief Financial Officer, may execute and deliver the Second Amendment and related certificates.", F["small"], width=98, leading=31)
+    d.line((960, 1230, 1480, 1130), fill="#0f766e", width=7)
+    d.text((1030, 1160), "Approved for Release - Frost Bellwick LLP - 06/30/26 9:12 AM ET", fill="#0f766e", font=F["stamp"])
+    draw_note(d, (100, 1290, 650, 1505), "Notary venue", "San Mateo County, California. Certificate address block lists Austin, Texas.", "#1d4ed8")
+    draw_note(d, (820, 1290, 1510, 1505), "Checklist conflict", "Later checklist says required signer is Priya Raman, CEO only. Certificate and consent authorize Maya Chen, CFO.", "#991b1b")
+    pages.append(p4)
+
+    p5 = base_page("Closing Checklist and Document Status Matrix")
+    d = ImageDraw.Draw(p5)
+    d.text((100, 150), "Checklist is dense and operational; later filing receipts and funds-flow values may supersede it.", fill="#7f1d1d", font=F["small"])
+    # progress donut approximation
+    d.ellipse((1270, 210, 1500, 440), outline="#d1d5db", width=28)
+    d.arc((1270, 210, 1500, 440), 90, 420, fill="#0f766e", width=28)
+    d.text((1310, 288), "12/13", fill="#111827", font=F["h1"])
+    d.text((1288, 350), "funding conditions", fill="#475569", font=F["tiny_bold"])
+    d.text((1295, 390), "3/7 post-closing", fill="#475569", font=F["tiny"])
+    rows = [
+        ["Item", "Responsible", "Status", "Before funding?", "Evidence", "Comments"],
+        ["Executed Amendment", "Klein", "Complete", "Yes", "DocuSign 8274-6119", ""],
+        ["Officer Certificate", "Borrower", "Complete", "Yes", "OC-Helios-063026.pdf", ""],
+        ["Board Consent", "Borrower", "Complete", "Yes", "Minutes extract 06/24/26", ""],
+        ["Good standing Delaware", "Klein", "Complete", "Yes", "cert 7381194 / 06/25/26", ""],
+        ["UCC-3 amendment Delaware", "Frost", "Pending", "Yes", "awaiting receipt", "page 7 later shows filed"],
+        ["Insurance endorsement", "Borrower", "Post-closing", "No", "due 07/07/26", "loss payable"],
+        ["IP schedule supplement", "GC", "Post-closing", "No", "due 07/14/26", ""],
+        ["Landlord waiver, Fremont", "Ops", "Waived", "No", "waiver letter", "expires if lease amendment not delivered by 08/15/26"],
+    ]
+    draw_table(d, 55, 500, [285, 160, 170, 185, 300, 360], rows, 62)
+    draw_section(d, 100, 1195, "Version sparkline", w=720)
+    pts = [(135, 1340), (255, 1290), (375, 1325), (495, 1240)]
+    for a, b in zip(pts, pts[1:]):
+        d.line((*a, *b), fill="#2563eb", width=5)
+    for p, label in zip(pts, ["v9", "v10", "v11", "v12"]):
+        d.ellipse((p[0] - 8, p[1] - 8, p[0] + 8, p[1] + 8), fill="#2563eb")
+        d.text((p[0] - 12, p[1] + 24), label, fill="#111827", font=F["tiny"])
+    draw_note(d, (900, 1215, 1540, 1465), "Stale checklist values", "Checklist says amendment fee $85,000 and UCC-3 pending. Funds flow and lien exhibit control with $63,750 and filed receipt 2026-7741203.", "#991b1b")
+    pages.append(p5)
+
+    p6 = base_page("Funds Flow and Escrow Instructions")
+    d = ImageDraw.Draw(p6)
+    d.text((100, 150), "Wire letter. Numbers in the waterfall are embedded beside the instruction paragraphs.", fill="#475569", font=F["small"])
+    y = draw_kv_band(
+        d,
+        100,
+        230,
+        [
+            ("Incoming", "$8,500,000"),
+            ("Escrow acct", "ending 4412"),
+            ("Borrower acct", "ending 9081"),
+            ("Funding date", "June 30, 2026"),
+        ],
+        [270, 300, 330, 320],
+    )
+    draw_text(
+        d,
+        (100, y + 15),
+        "Meridian Bank shall wire the Tranche B advance from escrow account ending 4412 to Northstar Robotics' operating account at Pacific Commercial Bank ending 9081. Instruction paragraph requests release no later than 2:00 PM Eastern. Footer approval note says release approved after 2:30 PM Eastern.",
+        F["small"],
+        width=86,
+        leading=31,
+    )
+    rows = [
+        ["Deduction", "Amount"],
+        ["Amendment fee", "$63,750"],
+        ["Lender counsel fees", "$188,400"],
+        ["Borrower counsel fees paid from proceeds", "$142,600"],
+        ["UCC/search/filing charges", "$18,000"],
+        ["Existing revolver cleanup payoff", "$336,000"],
+        ["Net borrower proceeds", "$7,751,250"],
+    ]
+    draw_table(d, 100, 590, [520, 230], rows, 68)
+    draw_section(d, 900, 570, "Waterfall", w=610)
+    bars = [("$8.500M gross", 380, "#64748b"), ("-$0.064M fee", 48, "#dc2626"), ("-$0.188M lender", 88, "#dc2626"), ("-$0.143M borrower", 75, "#dc2626"), ("-$0.018M filings", 30, "#dc2626"), ("-$0.336M payoff", 125, "#dc2626"), ("$7.751M net", 340, "#0f766e")]
+    bx, by = 920, 680
+    for label, w, color in bars:
+        d.rectangle((bx, by, bx + w, by + 42), fill=color)
+        d.text((bx, by + 55), label, fill="#111827", font=F["tiny"])
+        by += 95
+    draw_note(d, (100, 1245, 760, 1515), "Account confirmation conflict", "A small confirmation box says borrower account ending 9801. Main wire instruction controls with borrower account ending 9081.", "#991b1b")
+    draw_note(d, (900, 1245, 1510, 1515), "Release timing conflict", "Instruction says no later than 2:00 PM Eastern; approval footer says release approved after 2:30 PM Eastern.", "#92400e")
+    pages.append(p6)
+
+    p7 = base_page("UCC / Lien / Insurance / IP Exhibit")
+    d = ImageDraw.Draw(p7)
+    d.text((100, 150), "Lien evidence, insurance exceptions, and IP supplement. Later evidence supersedes checklist status.", fill="#7f1d1d", font=F["small"])
+    rows = [
+        ["Search / filing", "Result"],
+        ["Delaware original UCC-1", "file no. 2024-1459821, filed 03/18/2024"],
+        ["Delaware UCC-3 amendment", "file no. 2026-7741203, filed 06/29/2026 4:41 PM ET"],
+        ["California fixture filing search", "No active fixture filings found"],
+        ["Texas SOS search", "terminated file 23-8841107; Vector Equipment Finance LLC; terminated 05/09/2025"],
+    ]
+    draw_table(d, 80, 245, [420, 850], rows, 72)
+    draw_section(d, 100, 725, "Priority stack", w=600)
+    stack = [
+        "1. Meridian Bank blanket lien",
+        "2. Permitted purchase-money equipment lien capped at $900,000",
+        "3. Statutory liens not yet due",
+        "4. Excluded Fremont landlord interest",
+    ]
+    for i, label in enumerate(stack):
+        d.rectangle((120, 800 + i * 80, 760, 852 + i * 80), fill=["#dbeafe", "#ecfeff", "#f8fafc", "#fff7ed"][i], outline="#111827", width=2)
+        d.text((138, 814 + i * 80), label, fill="#111827", font=F["tiny"])
+    draw_section(d, 870, 725, "Insurance and IP exceptions", w=650)
+    rows2 = [
+        ["Item", "Value / status"],
+        ["Cyber liability", "$5,000,000"],
+        ["General liability", "$2,000,000 per occurrence"],
+        ["Property coverage", "$18,200,000"],
+        ["Missing endorsement", "lender loss payable due 07/07/2026"],
+        ["Patent application", "US 18/771,204 Robotic Arm Calibration Using Visual Feedback"],
+        ["Trademark", "NORTHSTAR ORBIT serial 98441120"],
+        ["IP supplement", "due 07/14/2026"],
+    ]
+    draw_table(d, 870, 800, [270, 520], rows2, 58)
+    draw_note(d, (100, 1415, 1510, 1585), "Status conflict resolved", "Checklist page says Delaware UCC-3 pending. This exhibit shows it was filed as 2026-7741203 on 06/29/2026 at 4:41 PM ET.", "#0f766e")
+    pages.append(p7)
+
+    p8 = base_page("Post-Closing Undertakings and Exceptions Register")
+    d = ImageDraw.Draw(p8)
+    d.text((100, 150), "Final undertakings register. Includes due-date Gantt strip, exception notes, and counsel comments.", fill="#475569", font=F["small"])
+    rows = [
+        ["Obligation", "Source", "Owner", "Due date", "Evidence required", "Consequence", "Status"],
+        ["Loss payable endorsement", "6.12(b)", "Maya Chen", "July 7, 2026", "endorsement copy", "default after 3 BD cure", "Open"],
+        ["IP schedule supplement", "4.4(c)", "Evan Brooks, GC", "July 14, 2026", "updated schedule", "post-closing default", "Open"],
+        ["July compliance certificate", "Exhibit B", "Maya Chen", "August 21, 2026", "certify liquidity $3,500,000", "reporting default", "Open"],
+        ["Fremont lease amendment", "Waiver letter", "Ops", "August 15, 2026", "signed lease amendment", "landlord waiver reinstated", "Open"],
+    ]
+    draw_table(d, 40, 260, [320, 145, 180, 205, 270, 260, 120], rows, 66)
+    draw_section(d, 100, 780, "Post-closing Gantt strip", w=1380)
+    d.line((170, 900, 1420, 900), fill="#111827", width=3)
+    gantt_items = [("Insurance", "07/07", 280, "#dc2626"), ("IP", "07/14", 470, "#c2410c"), ("Lease", "08/15", 1030, "#92400e"), ("Compliance cert", "08/21", 1210, "#2563eb")]
+    for label, date, x, color in gantt_items:
+        d.line((x, 860, x, 940), fill=color, width=6)
+        d.text((x - 35, 955), date, fill="#111827", font=F["tiny"])
+        d.text((x - 60, 985), label, fill=color, font=F["tiny_bold"])
+    draw_note(d, (100, 1160, 740, 1415), "Frost Bellwick note", "Funding may proceed if Delaware UCC-3 filing receipt 2026-7741203 is attached to final packet.", "#0f766e")
+    draw_note(d, (860, 1160, 1510, 1415), "Klein & Arroyo note", "Borrower disputes 3 BD cure for insurance endorsement; business team accepted for closing.", "#92400e")
+    pages.append(p8)
+
+    gold = """# Project Helios Closing Packet: Second Amendment to Loan and Security Agreement
+
+## Closing Memo
+
+Borrower: Northstar Robotics, Inc. Parent guarantor: Northstar Automation Holdings LLC. Agent/lender: Meridian Bank, N.A. Borrower counsel: Klein & Arroyo LLP. Lender counsel: Frost Bellwick LLP.
+
+Original Loan and Security Agreement date: March 15, 2024. Amendment effective date: June 28, 2026. Closing/funding target: June 30, 2026. This is the Second Amendment.
+
+The amendment increases the commitment from $18,500,000 to $27,000,000 through a new $8,500,000 Tranche B advance. The memo paragraph showing $3,250,000 liquidity is stale; the final liquidity covenant is $3,500,000. The authorized borrower signer includes Maya Chen, Chief Financial Officer.
+
+Closing timeline: Original LSA 03/15/2024; First Amendment 11/22/2025; Board consent 06/24/2026; UCC search refresh 06/26/2026; target funding 06/30/2026.
+
+Use of Tranche B proceeds: existing revolver payoff $3,200,000; equipment deposits $4,150,000; closing fees $685,000; working capital $465,000.
+
+## Blackline Sections 1-3
+
+Section 1 changes Commitment from deleted $18,500,000 to inserted $27,000,000.
+
+Section 2 inserts a Tranche B Advance in the principal amount of $8,500,000, available only on the Closing Date.
+
+Section 3 changes interest from deleted SOFR + 5.25% to inserted Adjusted Term SOFR + 5.75%. The SOFR floor is 2.00%; deleted borrower draft text referred to a SOFR floor of 1.50%. Comment C-14 from Frost Bellwick says to confirm the SOFR floor remains 2.00% because the borrower draft had 1.50%. A footnote says conforming changes are required in Exhibit B compliance certificate.
+
+Rate bridge: SOFR floor 2.00%, spread 5.75%, default increment 2.00%, maximum default margin display 9.75%.
+
+## Covenants and Fees
+
+Section 4.2 changes the minimum liquidity covenant from deleted $3,250,000 to inserted $3,500,000, tested monthly beginning July 31, 2026.
+
+Monthly ARR reporting is due 15 business days after month-end. Comment C-21 says the borrower requested 20 business days and that request was rejected.
+
+Amendment fee is 0.75% of the incremental commitment: 0.75% x $8,500,000 = $63,750. The unused line fee is 0.35% per annum. The exit fee is 1.25% of aggregate commitments. Comment C-19 says the checklist still shows 1.00% amendment fee and must be updated before funding. The margin fee table showing 1.00% / $85,000 is stale; body text controls.
+
+Covenant heat strip: liquidity green threshold $3.50M; ARR reporting amber due 15 BD; insurance endorsement red due 5 BD; IP schedule amber due 10 BD.
+
+## Signature Packet and Certificates
+
+Executed signature blocks:
+
+| Party | Signer | Title | Date |
+| --- | --- | --- | --- |
+| Northstar Robotics, Inc. | Maya Chen | Chief Financial Officer | June 30, 2026 |
+| Northstar Automation Holdings LLC | Daniel Ruiz | President | June 30, 2026 |
+| Meridian Bank, N.A. | S. Patel | Authorized Officer | June 30, 2026 |
+
+Officer certificate: Maya Chen is the duly appointed Chief Financial Officer and is authorized to execute the Amendment. Board consent dated June 24, 2026 says either Priya Raman, Chief Executive Officer, or Maya Chen, Chief Financial Officer, may execute. Approval stamp: Approved for Release - Frost Bellwick LLP - 06/30/26 9:12 AM ET. Notary venue is San Mateo County, California, while the certificate address block lists Austin, Texas.
+
+## Closing Checklist
+
+Funding conditions are 12/13 complete; post-closing items are 3/7 complete.
+
+| Item | Responsible | Status | Before funding? | Evidence | Comments |
+| --- | --- | --- | --- | --- | --- |
+| Executed Amendment | Klein | Complete | Yes | DocuSign 8274-6119 | |
+| Officer Certificate | Borrower | Complete | Yes | OC-Helios-063026.pdf | |
+| Board Consent | Borrower | Complete | Yes | Minutes extract 06/24/26 | |
+| Good standing Delaware | Klein | Complete | Yes | cert 7381194 / 06/25/26 | |
+| UCC-3 amendment Delaware | Frost | Pending on checklist | Yes | awaiting receipt | later exhibit shows filed |
+| Insurance endorsement | Borrower | Post-closing | No | due 07/07/26 | loss payable |
+| IP schedule supplement | GC | Post-closing | No | due 07/14/26 | |
+| Landlord waiver, Fremont | Ops | Waived | No | waiver letter | expires if lease amendment not delivered by 08/15/26 |
+
+The checklist values saying amendment fee $85,000 and Delaware UCC-3 pending are stale where later funds-flow and lien evidence conflict with them.
+
+## Funds Flow and Escrow Instructions
+
+Incoming Tranche B advance: $8,500,000. Wire from Meridian Bank escrow account ending 4412 to Northstar Robotics operating account at Pacific Commercial Bank ending 9081. Funding date: June 30, 2026.
+
+| Deduction | Amount |
+| --- | ---: |
+| Amendment fee | $63,750 |
+| Lender counsel fees | $188,400 |
+| Borrower counsel fees paid from proceeds | $142,600 |
+| UCC/search/filing charges | $18,000 |
+| Existing revolver cleanup payoff | $336,000 |
+| Net borrower proceeds | $7,751,250 |
+
+Waterfall: $8.500M gross, -$0.064M amendment fee, -$0.188M lender counsel, -$0.143M borrower counsel, -$0.018M filings, -$0.336M payoff, $7.751M net.
+
+The small confirmation box saying borrower account ending 9801 is not final; the main wire instruction controls with account ending 9081. Instruction paragraph says release no later than 2:00 PM Eastern, while footer approval says release approved after 2:30 PM Eastern.
+
+## UCC / Lien / Insurance / IP Exhibit
+
+| Search / filing | Result |
+| --- | --- |
+| Delaware original UCC-1 | file no. 2024-1459821, filed 03/18/2024 |
+| Delaware UCC-3 amendment | file no. 2026-7741203, filed 06/29/2026 4:41 PM ET |
+| California fixture filing search | No active fixture filings found |
+| Texas SOS search | terminated file 23-8841107; Vector Equipment Finance LLC; terminated 05/09/2025 |
+
+Priority stack: 1. Meridian Bank blanket lien; 2. permitted purchase-money equipment lien capped at $900,000; 3. statutory liens not yet due; 4. excluded Fremont landlord interest.
+
+Insurance: cyber liability $5,000,000; general liability $2,000,000 per occurrence; property coverage $18,200,000; missing lender loss payable endorsement due 07/07/2026.
+
+IP: patent application US 18/771,204, "Robotic Arm Calibration Using Visual Feedback"; trademark NORTHSTAR ORBIT serial 98441120; IP supplement due 07/14/2026.
+
+The Delaware UCC-3 status is filed, not pending, because this exhibit shows filing receipt 2026-7741203.
+
+## Post-Closing Undertakings and Exceptions Register
+
+| Obligation | Source | Owner | Due date | Evidence required | Consequence | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| Deliver lender loss payable endorsement | 6.12(b) | Maya Chen | July 7, 2026 | endorsement copy | default after 3 business day cure | Open |
+| Deliver IP schedule supplement | 4.4(c) | Evan Brooks, GC | July 14, 2026 | updated schedule | post-closing default | Open |
+| Provide July compliance certificate | Exhibit B | Maya Chen | August 21, 2026 | certify liquidity $3,500,000 | reporting default | Open |
+| Deliver Fremont lease amendment | Waiver letter | Ops | August 15, 2026 | signed lease amendment | landlord waiver condition reinstated | Open |
+
+Gantt strip due dates: Insurance 07/07, IP 07/14, Lease 08/15, Compliance certificate 08/21. Frost Bellwick note: funding may proceed if Delaware UCC-3 filing receipt 2026-7741203 is attached to final packet. Klein & Arroyo note: borrower disputes 3 BD cure for insurance endorsement; business team accepted for closing.
+"""
+
+    return Case(
+        "P09-loan-amendment-closing",
+        "Loan Amendment Closing Packet",
+        "legal",
+        ["multi-page", "legal", "redline", "finance", "source-precedence", "signatures", "ucc", "post-closing"],
+        "Stress a realistic legal closing packet with dense text, redlines, stale checklist values, funds flow, lien evidence, signatures, and post-closing obligations.",
+        "Eight-page raster-heavy legal packet with extractable memo overlays, redline pages, tables, charts, stamps, and conflicting source states.",
+        ["closing memo", "redlines", "covenants", "fees", "signatures", "checklist", "funds flow", "UCC exhibit", "undertakings"],
+        ["Preserve deleted and inserted text distinctly.", "Use final executed/funds-flow/lien evidence over stale checklist values.", "Bind amounts, dates, parties, and obligations to the right source sections."],
+        gold,
+        [near_check("p09-amendment-fee", "finance", ["0.75%", "$8,500,000", "$63,750"], 5, 520)],
+        pages,
+        facts=[
+            fact("p09.parties", "text", 4, "Borrower Northstar Robotics, Inc.; parent guarantor Northstar Automation Holdings LLC; agent/lender Meridian Bank, N.A.; counsel Klein & Arroyo LLP and Frost Bellwick LLP."),
+            fact("p09.dates.facility", "text", 6, "Original LSA March 15, 2024; effective date June 28, 2026; funding/closing June 30, 2026; prior commitment $18,500,000; amended commitment $27,000,000; Tranche B $8,500,000."),
+            fact("p09.redline.commitment", "redline", 5, "Blackline preserves deleted $18,500,000 and inserted $27,000,000 for Commitment."),
+            fact("p09.redline.interest", "redline", 6, "Interest changes from deleted SOFR + 5.25% to inserted Adjusted Term SOFR + 5.75%; SOFR floor final is 2.00%, not deleted 1.50%; C-14 is preserved."),
+            fact("p09.liquidity", "source_state", 6, "Final minimum liquidity covenant is $3,500,000, tested monthly from July 31, 2026; $3,250,000 is deleted/stale."),
+            fact("p09.reporting", "text", 4, "Monthly ARR reporting is due 15 business days after month-end; 20 business days request was rejected."),
+            fact("p09.fees", "source_state", 7, "Final amendment fee is 0.75% x $8,500,000 = $63,750; unused line fee 0.35% per annum; exit fee 1.25%; stale 1.00%/$85,000 checklist/margin fee value is not final."),
+            fact("p09.signature", "source_state", 6, "Maya Chen, CFO, signed for Northstar Robotics on June 30, 2026 and is authorized by officer certificate and board consent; checklist saying Priya Raman CEO only is stale/wrong."),
+            fact("p09.checklist", "table_cell", 5, "Checklist preserves DocuSign 8274-6119, officer certificate OC-Helios-063026.pdf, board consent 06/24/26, Delaware good standing cert 7381194 dated 06/25/26, post-closing insurance due 07/07/26, IP due 07/14/26, Fremont waiver expiry 08/15/26."),
+            fact("p09.funds.flow", "table_cell", 7, "Funds flow preserves $8,500,000 incoming, deductions $63,750, $188,400, $142,600, $18,000, $336,000, and net borrower proceeds $7,751,250."),
+            fact("p09.account", "source_state", 5, "Borrower operating account ending is 9081, not conflicting 9801; escrow account ends 4412."),
+            fact("p09.ucc", "source_state", 7, "Delaware UCC-3 status is filed with file no. 2026-7741203 on 06/29/2026 4:41 PM ET, overriding checklist pending status; original UCC-1 is 2024-1459821."),
+            fact("p09.insurance.ip", "table_cell", 5, "Insurance values: cyber $5,000,000, GL $2,000,000 per occurrence, property $18,200,000, missing lender loss payable endorsement due 07/07/2026; patent US 18/771,204 and trademark NORTHSTAR ORBIT serial 98441120; IP supplement due 07/14/2026."),
+            fact("p09.undertakings", "table_cell", 7, "Post-closing register preserves insurance endorsement 6.12(b)/Maya Chen/July 7/default after 3 BD cure; IP supplement 4.4(c)/Evan Brooks/July 14; July compliance certificate Exhibit B/August 21/certify $3,500,000 liquidity; Fremont lease amendment/August 15/waiver reinstated."),
+            fact("p09.counsel.notes", "text", 4, "Frost Bellwick note allows funding if UCC-3 receipt 2026-7741203 attached; Klein & Arroyo note says borrower disputes 3 BD cure but business team accepted."),
+            fact("p09.page_order", "structure", 4, "Output preserves packet order: closing memo, blackline, covenants/fees, signature packet, checklist, funds flow, UCC/lien/IP exhibit, post-closing register."),
+        ],
+        extractable_text_pages=[
+            overlays(["Project Helios Closing Packet", "Northstar Robotics, Inc.", "Meridian Bank, N.A.", "Facility $27,000,000"], 100, 110),
+            [],
+            [],
+            overlays(["Approved for Release - Frost Bellwick LLP - 06/30/26 9:12 AM ET"], 100, 1250),
+            [],
+            overlays(["Borrower account ending 9081", "Net borrower proceeds $7,751,250"], 100, 230),
+            [],
+            [],
+        ],
+    )
+
+
+def packet_library_permit() -> Case:
+    pages: list[Image.Image] = []
+    footer = "RCL-FAC-26-0418 | Permit Packet | Not for Construction until AHJ Approval"
+
+    def stamp(d: ImageDraw.ImageDraw, x: int, y: int, text: str, color: str = "#991b1b") -> None:
+        d.rectangle((x, y, x + 420, y + 90), outline=color, width=4)
+        d.text((x + 18, y + 20), text, fill=color, font=F["small_bold"])
+
+    def page(title: str, subtitle: str = "") -> Image.Image:
+        img = base_page(title)
+        dd = ImageDraw.Draw(img)
+        if subtitle:
+            dd.text((100, 138), subtitle, fill="#475569", font=F["small"])
+        dd.text((100, 2050), footer, fill="#64748b", font=F["tiny"])
+        dd.line((100, 2026, 1580, 2026), fill="#cbd5e1", width=1)
+        return img
+
+    p1 = page("Riverside Community Library - Facilities Permit Packet", "Permit Application + Intake Cover | Rev 2 resubmittal 2026-06-11")
+    d = ImageDraw.Draw(p1)
+    stamp(d, 1030, 205, "RECEIVED JUN 12 2026\nBUILDING SAFETY")
+    draw_kv_band(
+        d,
+        92,
+        320,
+        [
+            ("Permit no.", "PR-26-18422"),
+            ("Parcel", "073W22AB-04400"),
+            ("Zoning", "PS - Public Service"),
+            ("Occupancy", "A-3 Library"),
+            ("Type", "II-B"),
+        ],
+        [240, 300, 320, 260, 170],
+    )
+    rows = [
+        ["Field", "Application value", "Reviewer / intake mark"],
+        ["Applicant / GC", "Northbank Builders LLC | CCB 218774 | (503) 555-0186", "accepted"],
+        ["Owner", "City of Salem Facilities Division", "municipal"],
+        ["Scope", "Replace 4 rooftop units; restroom accessibility upgrades; breakroom sink relocation", "Verify: submittal shows 5 RTUs?"],
+        ["Work area", "3,860 sq ft", "matches code matrix"],
+        ["Construction valuation", "$486,750", "CO-02 later revises contract to $512,430"],
+        ["Sprinklered", "Yes - NFPA 13", "fire review routed"],
+        ["Structural work", "No structural work checked", "roof curb detail appears later"],
+    ]
+    draw_table(d, 70, 500, [270, 690, 430], rows, 70)
+    d.text((1040, 1085), "Review routing", fill="#111827", font=F["h2"])
+    for i, (label, checked) in enumerate([("Building", True), ("Fire", True), ("Mechanical", True), ("Electrical", True), ("Plumbing", True), ("Planning", False)]):
+        checkbox(d, 1045, 1143 + i * 48, label, checked, F["tiny"])
+    draw_section(d, 90, 1090, "Requested inspections", w=830)
+    draw_text(d, (90, 1145), "framing above ceiling; mechanical final; electrical rough-in; plumbing final; accessibility final.", F["small"], width=62, leading=30)
+    draw_section(d, 90, 1325, "Mini fee bar", w=830)
+    fees = [("Plan Review", 2840, "#64748b"), ("MEP", 1615, "#2563eb"), ("Technology Fee", 145, "#c2410c")]
+    bx, by = 115, 1415
+    for label, amt, color in fees:
+        w = max(45, int(amt / 6))
+        d.rectangle((bx, by, bx + w, by + 52), fill=color)
+        d.text((bx, by + 68), f"{label} ${amt}", fill="#111827", font=F["tiny"])
+        bx += w + 14
+    draw_note(d, (1030, 1490, 1560, 1715), "Intake conflict", "Typed scope says 4 rooftop units. Reviewer note asks whether submittal shows 5 RTUs. Do not collapse this into a single final count.", "#92400e")
+    pages.append(p1)
+
+    p2 = page("Code Summary + Occupant Load / Egress Plan", "Dense code matrix with embedded egress plan and photo placard")
+    d = ImageDraw.Draw(p2)
+    rows = [
+        ["Area / item", "Factor", "Calculation", "Occupants / value"],
+        ["Building gross area", "", "", "18,240 sq ft"],
+        ["Permit work area", "", "", "3,860 sq ft"],
+        ["Community meeting room", "15 net", "1,185 sq ft / 15", "79 occupants"],
+        ["Reading room affected area", "50 gross", "1,420 sq ft / 50", "29 occupants"],
+        ["Staff/break/admin", "150 gross", "610 sq ft / 150", "5 occupants"],
+        ["Restrooms/circulation/mech", "accessory", "645 sq ft", "not counted"],
+        ["Calculated subtotal", "", "", "113 occupants"],
+        ["Existing posted placard", "photo inset", "", "92 occupants"],
+        ["Common path / travel", "", "48 ft / 137 ft", "2 exits req; 3 provided"],
+        ["Door widths", "", "Door 103 = 34 in; Door 117 = 32 in", "maintain route"],
+    ]
+    draw_table(d, 65, 235, [330, 170, 430, 310], rows, 58)
+    # Egress plan
+    d.rectangle((980, 245, 1570, 980), outline="#111827", width=4)
+    for x in [1180, 1370]:
+        d.line((x, 245, x, 980), fill="#111827", width=2)
+    d.line((980, 580, 1570, 580), fill="#111827", width=2)
+    d.text((1025, 370), "Meeting", fill="#111827", font=F["tiny_bold"])
+    d.text((1215, 370), "Reading", fill="#111827", font=F["tiny_bold"])
+    d.text((1410, 370), "Stacks", fill="#111827", font=F["tiny_bold"])
+    d.line((1045, 790, 1510, 300), fill="#2563eb", width=5)
+    d.line((1220, 900, 1510, 900), fill="#0f766e", width=5)
+    d.polygon([(1510, 300), (1488, 306), (1504, 325)], fill="#2563eb")
+    d.polygon([(1510, 900), (1490, 888), (1490, 912)], fill="#0f766e")
+    d.text((1010, 1015), "Egress path: common path 48 ft; longest exit access 137 ft.", fill="#111827", font=F["tiny"])
+    draw_note(d, (980, 1115, 1570, 1300), "Fire marshal", "OL calc must include community room storage overflow. Cover note 'no change to occupant load' conflicts with calculated OL=113 and placard=92.", "#991b1b")
+    # occupant pie/donut approximation
+    d.ellipse((160, 1095, 385, 1320), outline="#111827", width=2)
+    d.pieslice((160, 1095, 385, 1320), 0, 252, fill="#2563eb")
+    d.pieslice((160, 1095, 385, 1320), 252, 346, fill="#0f766e")
+    d.pieslice((160, 1095, 385, 1320), 346, 360, fill="#c2410c")
+    d.text((225, 1180), "OL=113", fill="white", font=F["small_bold"])
+    d.text((430, 1135), "Meeting 70% | Reading 26% | Staff 4%", fill="#111827", font=F["small"])
+    d.text((90, 1445), "Accessibility note: Maintain 44 in min accessible route except at existing stacks pinch point noted.", fill="#7f1d1d", font=F["small"])
+    pages.append(p2)
+
+    p3 = page("Site Plan / Logistics / Fire Access", "Plan overlay with fire lane, crane pick zone, utility callouts, and hydrant conflict")
+    d = ImageDraw.Draw(p3)
+    d.text((100, 210), "Scale: 1\" = 30'-0\". North arrow points 18 degrees west of sheet up.", fill="#475569", font=F["small"])
+    d.rectangle((120, 300, 1240, 1250), fill="#f8fafc", outline="#111827", width=4)
+    d.rectangle((470, 520, 900, 900), fill="#e5e7eb", outline="#111827", width=3)
+    d.text((560, 680), "LIBRARY", fill="#111827", font=F["h2"])
+    d.rectangle((150, 1030, 1180, 1125), fill="#fee2e2", outline="#991b1b", width=3)
+    d.text((170, 1060), "Fire lane 26 ft provided (20 ft minimum required)", fill="#991b1b", font=F["small"])
+    d.rectangle((925, 330, 1135, 500), fill="#fef3c7", outline="#92400e", width=3)
+    d.text((940, 380), "Crane pick\n42 ft x 28 ft\n07/08-07/10", fill="#111827", font=F["tiny"])
+    d.rectangle((210, 330, 330, 430), fill="#e2e8f0", outline="#111827", width=2)
+    d.text((212, 445), "20 yd roll-off", fill="#111827", font=F["tiny"])
+    d.ellipse((360, 345, 390, 375), fill="#dc2626")
+    d.text((393, 345), "H-2", fill="#dc2626", font=F["tiny_bold"])
+    d.line((330, 380, 360, 360), fill="#111827", width=2)
+    d.text((305, 386), "16'-0\"", fill="#111827", font=F["tiny_bold"])
+    d.text((170, 1180), "Blue dashed route: ADA temporary route 48 in min. East entry remains open per plan.", fill="#1d4ed8", font=F["small"])
+    d.line((820, 905, 1120, 1170), fill="#2563eb", width=4)
+    for off in range(0, 300, 34):
+        d.line((820 + off, 905 + int(off * .88), 835 + off, 918 + int(off * .88)), fill="white", width=2)
+    draw_note(d, (1300, 310, 1580, 520), "Utilities", "Gas shutoff: south wall, grid C/2. Electrical service: 800A, 120/208V, 3-phase.", "#1d4ed8")
+    draw_note(d, (1300, 570, 1580, 780), "Work hours", "7:00 AM - 5:30 PM weekdays. Public entrance to remain open: East entry only.", "#334155")
+    draw_note(d, (1300, 830, 1580, 1070), "Conflict", "Fire access markup says do not stage within 20 ft of hydrant. Dimension string shows dumpster 16 ft from H-2.", "#991b1b")
+    draw_note(d, (1300, 1125, 1580, 1350), "Site quantities", "Fence 146 LF. Staging area 1,120 sq ft. Tree protection 12 ft radius around oak T-3.", "#0f766e")
+    pages.append(p3)
+
+    p4 = page("A2.1 Enlarged Floor Plan / Restroom + Breakroom Alteration", "Architectural plan with RFI references, fixture schedule, and accessibility conflicts")
+    d = ImageDraw.Draw(p4)
+    d.rectangle((90, 250, 1180, 1370), outline="#111827", width=4)
+    d.line((90, 610, 1180, 610), fill="#111827", width=3)
+    d.line((455, 250, 455, 1370), fill="#111827", width=3)
+    d.line((820, 250, 820, 1370), fill="#111827", width=3)
+    labels = [("112 Women RR", 140, 405), ("113 Men RR", 505, 405), ("114 Single-user RR", 870, 405), ("118 Staff Break", 500, 900), ("Stacks pinch point 39 in", 145, 900)]
+    for label, x, y in labels:
+        d.text((x, y), label, fill="#111827", font=F["small"])
+    d.ellipse((905, 520, 1065, 680), outline="#2563eb", width=4)
+    d.text((910, 700), "60 in turning circle", fill="#2563eb", font=F["tiny_bold"])
+    d.line((890, 380, 1065, 380), fill="#111827", width=2)
+    d.text((910, 350), "chase 2'-8\"", fill="#111827", font=F["tiny_bold"])
+    d.text((900, 455), "WC CL 17 in", fill="#111827", font=F["tiny"])
+    d.text((900, 485), "Lav CL 18 in", fill="#111827", font=F["tiny"])
+    d.rectangle((482, 850, 720, 950), outline="#0f766e", width=3)
+    d.text((485, 970), "sink moved 6'-4\" east", fill="#0f766e", font=F["tiny_bold"])
+    d.text((1220, 250), "Fixture / wall schedule", fill="#111827", font=F["h2"])
+    rows = [
+        ["Tag", "Value"],
+        ["W3", "3 5/8 in metal stud; 5/8 in GWB each side"],
+        ["Door 114", "34 in clear width"],
+        ["Rear grab bar", "36 in"],
+        ["Side grab bar", "42 in"],
+        ["Casework C-12", "8'-6\" length"],
+    ]
+    draw_table(d, 1220, 310, [120, 320], rows, 56)
+    draw_note(d, (1220, 760, 1570, 980), "RFI-07", "Revises chase from 2'-8\" to 3'-2\"; maintain 60\" turning circle; shift lav 4\" east.", "#991b1b")
+    draw_note(d, (1220, 1040, 1570, 1260), "Existing condition", "Stacks aisle pinch point is 39 in clear, tagged EXISTING NONCONFORMING - DO NOT REDUCE.", "#92400e")
+    pages.append(p4)
+
+    p5 = page("M1.3 / E1.2 Mechanical + Electrical Coordination Overlay", "RTU schedule, electrical breakers, duct notes, reviewer stamp, and curb conflict")
+    d = ImageDraw.Draw(p5)
+    d.text((100, 205), "Overlay sheet combines rooftop equipment, reflected ceiling access, disconnects, smoke detector tie-ins, and panel schedule fragments.", fill="#475569", font=F["small"])
+    rows = [
+        ["Equip", "Tons", "Serves", "MCA", "MOCP", "Breaker"],
+        ["RTU-1", "7.5", "Reading Room", "38A", "50A", "2P-50"],
+        ["RTU-2", "5", "Staff/Admin", "27A", "35A", "2P-35"],
+        ["RTU-3", "10", "Community Room", "52A", "70A", "2P-70"],
+        ["RTU-4", "3", "Restrooms/Storage", "18A", "25A", "2P-25"],
+        ["Total scheduled", "25.5", "", "", "", ""],
+    ]
+    draw_table(d, 65, 280, [150, 120, 300, 130, 140, 150], rows, 66)
+    stamp(d, 1080, 405, "REVIEW\nFIELD VERIFY", "#991b1b")
+    d.rectangle((80, 850, 1010, 1320), outline="#111827", width=3)
+    for x in [180, 340, 510, 690, 860]:
+        d.line((x, 850, x + 80, 1320), fill="#94a3b8", width=4)
+    d.text((120, 900), "10 in clear below beam B-4", fill="#111827", font=F["tiny_bold"])
+    d.text((120, 970), "AP-7 24\" x 24\"", fill="#111827", font=F["tiny"])
+    d.text((120, 1030), "Condensate slope 1/8\" per ft min", fill="#111827", font=F["tiny"])
+    d.text((120, 1090), "Smoke detector tie-in: FACP zone 4", fill="#111827", font=F["tiny"])
+    draw_note(d, (1110, 850, 1570, 1070), "Curb openings", "Mechanical C-3 opening: 54\" x 78\". Structural curb detail / CO-02 later requires 58\" x 80\".", "#991b1b")
+    draw_note(d, (1110, 1135, 1570, 1375), "Schedule state", "This sheet lists 4 RTUs totaling 25.5 tons. Do not add ERV-1 to the original mechanical schedule; CO-02 adds it later.", "#92400e")
+    pages.append(p5)
+
+    p6 = page("RFI Log + Selected RFI Responses", "Layered scanned-email cards with handwritten field note")
+    d = ImageDraw.Draw(p6)
+    rows = [
+        ["RFI", "Submitted", "Question / response", "Impact"],
+        ["RFI-07", "2026-06-03", "Cleanout conflicts with 2'-8\" chase; response 2026-06-06: revise chase to 3'-2\", maintain 60\" turn, shift lav 4\" east.", "cost potential; 0 days"],
+        ["RFI-08", "2026-06-04", "Beam B-4 reduces duct clearance; response: flatten duct to 12\" x 34\" for 9'-0\" run; keep 350 CFM to D-7.", "1 day"],
+        ["RFI-09", "2026-06-07", "East entry cannot remain open during crane pick; response: use west entry during crane pick only; provide 48\" route and signage.", "permit impact yes"],
+        ["RFI-10", "2026-06-08", "RTU-3 submitted model exceeds basis of design capacity. Formal status pending.", "see handwritten note"],
+    ]
+    draw_table(d, 50, 245, [120, 170, 760, 250], rows, 82)
+    draw_note(d, (120, 930, 690, 1195), "Architect response box", "RFI-07 response dated 2026-06-06. Revise chase to 3'-2\". Maintain 60\" turning circle in Room 114. Shift lav 4\" east.", "#0f766e")
+    draw_note(d, (760, 930, 1330, 1195), "Blue field note", "RFI-10 resolved by CO-02, see 6/18 email. Formal log on this page still says pending.", "#1d4ed8")
+    draw_section(d, 120, 1320, "Impact matrix chips", w=1040)
+    for i, (name, color) in enumerate([("cost potential", "#fef3c7"), ("schedule 1 day", "#fee2e2"), ("permit yes", "#dbeafe"), ("inspection note", "#ecfeff")]):
+        x = 130 + i * 260
+        d.rectangle((x, 1405, x + 210, 1465), fill=color, outline="#111827", width=2)
+        d.text((x + 14, 1423), name, fill="#111827", font=F["tiny_bold"])
+    pages.append(p6)
+
+    p7 = page("Change Order CO-02 + Cost / Schedule Summary", "Formal CO with signatures, waterfall, schedule strip, and backup quote conflict")
+    d = ImageDraw.Draw(p7)
+    rows = [
+        ["Field", "Value"],
+        ["Change order", "CO-02 dated 2026-06-18"],
+        ["Original contract", "$486,750"],
+        ["Prior approved changes", "$0"],
+        ["CO-02 amount", "$25,680"],
+        ["Revised contract", "$512,430"],
+        ["Original substantial completion", "2026-08-21"],
+        ["Added days", "3 calendar days"],
+        ["Revised substantial completion", "2026-08-24"],
+    ]
+    draw_table(d, 70, 245, [360, 420], rows, 66)
+    draw_section(d, 890, 245, "CO scope", w=650)
+    draw_text(d, (890, 300), "Upsize RTU-3 from 10 tons to 12.5 tons. Add ERV-1 with 450 CFM outside air. Modify curb C-3 to 58\" x 80\". Add electrical breaker 3P-80A in panel MDP.", F["small"], width=45, leading=30)
+    draw_section(d, 890, 575, "Cost waterfall", w=650)
+    co_costs = [("Mech equip", 14900, "#64748b"), ("Electrical", 4860, "#2563eb"), ("Roof/curb", 3420, "#0f766e"), ("OH&P", 2500, "#c2410c")]
+    bx, by = 900, 675
+    for label, amt, color in co_costs:
+        d.rectangle((bx, by, bx + int(amt / 70), by + 42), fill=color)
+        d.text((bx, by + 58), f"{label} ${amt:,}", fill="#111827", font=F["tiny"])
+        by += 92
+    draw_section(d, 70, 925, "Signatures", w=760)
+    rows2 = [["Signer", "Role", "Date"], ["Dana Hu", "Owner Facilities Manager", "2026-06-19"], ["Leo Martinez", "Contractor", "2026-06-18"], ["Priya Soto", "Architect", "2026-06-20"]]
+    draw_table(d, 70, 990, [220, 320, 190], rows2, 58)
+    draw_note(d, (70, 1340, 790, 1560), "Schedule ambiguity", "CO-02 adds 3 calendar days. RFI-08 separately notes 1 day, but packet does not prove the days are additive.", "#92400e")
+    stamp(d, 950, 1290, "OWNER APPROVED\nSUBJECT TO PERMIT REVIEWER ACCEPTANCE", "#0f766e")
+    pages.append(p7)
+
+    p8 = page("Photo Observation Sheet + Punch / Inspector Notes", "Six-photo grid with embedded tape dimensions, arrows, and inspector observations")
+    d = ImageDraw.Draw(p8)
+    photos = [
+        ("Photo 1", "2026-06-27 08:42", "East entry staging condition", "36\" clear at door, not 48\"", "#fee2e2"),
+        ("Photo 2", "2026-06-27 09:05", "Hydrant H-2 and dumpster", "16'-0\" tape; relocate before crane pick", "#fff7ed"),
+        ("Photo 3", "2026-06-28 13:18", "Room 114 chase mockup", "3'-2\"; RFI-07 incorporated", "#ecfeff"),
+        ("Photo 4", "2026-06-28 14:10", "Existing stacks aisle", "39\"; existing nonconforming", "#f8fafc"),
+        ("Photo 5", "2026-06-29 10:22", "Roof curb C-3 layout", "58\" x 80\"; matches CO-02, not M1.3", "#e0f2fe"),
+        ("Photo 6", "2026-06-29 11:47", "Temporary west entry signage", "Accessible Entrance During Crane Pick July 8-10", "#fef3c7"),
+    ]
+    for i, (label, ts, cap, note, fill) in enumerate(photos):
+        x = 80 + (i % 2) * 720
+        y = 245 + (i // 2) * 360
+        d.rectangle((x, y, x + 630, y + 270), fill=fill, outline="#111827", width=3)
+        d.text((x + 16, y + 18), f"{label} | {ts}", fill="#111827", font=F["tiny_bold"])
+        d.text((x + 16, y + 56), cap, fill="#111827", font=F["small_bold"])
+        d.line((x + 60, y + 145, x + 280, y + 105), fill="#991b1b", width=5)
+        d.text((x + 16, y + 190), note, fill="#991b1b", font=F["tiny_bold"])
+    draw_section(d, 80, 1390, "Inspector observations", w=1360)
+    obs = [
+        "OBS-14: East entry route shown on logistics plan not maintained on 06/27; corrected route required before public opening.",
+        "OBS-15: Dumpster within 20 ft hydrant clearance; move minimum 4 ft west.",
+        "OBS-16: Room 114 chase revised per RFI-07; verify turning circle after lav shift.",
+        "OBS-17: Curb C-3 field layout follows CO-02; confirm permit resubmittal reflects structural opening.",
+    ]
+    draw_text(d, (80, 1450), "\n".join(obs), F["small"], width=100, leading=31)
+    pages.append(p8)
+
+    gold = """# Riverside Community Library - Facilities Permit Packet
+
+Project address: 418 W Harbor Ave, Salem, OR 97301. Owner: City of Salem Facilities Division. Applicant/GC: Northbank Builders LLC. Architect: Kline + Soto Architects. Permit target: commercial alteration, no change of use. Drawing date: 2026-05-14. Revision set: Rev 2 / Permit Resubmittal / 2026-06-11.
+
+## Permit Application + Intake Cover
+
+Permit number PR-26-18422. Parcel 073W22AB-04400. Zoning PS - Public Service. Existing occupancy A-3 Library. Construction type II-B. Sprinklered: Yes - NFPA 13. Applicant Northbank Builders LLC, CCB 218774, phone (503) 555-0186.
+
+Application work area is 3,860 sq ft. Application valuation is $486,750. Typed scope says replace 4 rooftop units, restroom accessibility upgrades, and breakroom sink relocation. Handwritten intake note asks: "Verify: submittal shows 5 RTUs?" Application checkbox says No structural work, but later roof curb detail and CO-02 show curb work.
+
+Requested inspections: framing above ceiling, mechanical final, electrical rough-in, plumbing final, accessibility final. Review routing checked: Building, Fire, Mechanical, Electrical, Plumbing; Planning is unchecked.
+
+## Code Summary + Egress
+
+Building gross area is 18,240 sq ft and permit work area is 3,860 sq ft. Community meeting room is 1,185 sq ft at 15 net = 79 occupants. Reading room affected area is 1,420 sq ft at 50 gross = 29 occupants. Staff/break/admin area is 610 sq ft at 150 gross = 5 occupants. Restrooms/circulation/mechanical area is 645 sq ft accessory. Calculated occupant load subtotal is 113. Existing placard photo shows 92 occupants.
+
+Longest common path is 48 ft. Longest exit access travel distance is 137 ft. Required exits from affected area: 2. Provided exits: 3. Door 103 clear width is 34 in. Door 117 clear width is 32 in. Accessibility note says maintain 44 in min accessible route except at existing stacks pinch point noted.
+
+There is an unresolved conflict between cover wording saying no change to occupant load, the existing 92-person placard, the calculated 113-person occupant load, and the fire marshal comment requiring revision.
+
+## Site Plan / Logistics / Fire Access
+
+Scale is 1\" = 30'-0\". North arrow points 18 degrees west of sheet up. Fire lane provided is 26 ft, with 20 ft minimum required. Temporary construction fence is 146 linear ft. Dumpster is a 20 yd roll-off. Crane pick zone is 42 ft x 28 ft with crane window 2026-07-08 to 2026-07-10. Work hours are 7:00 AM - 5:30 PM weekdays. Site plan says public entrance remains open at East entry only. Temporary ADA route width is 48 in min. Staging area is 1,120 sq ft. Tree protection radius is 12 ft around oak T-3. Gas shutoff is south wall grid C/2. Electrical service is 800A, 120/208V, 3-phase.
+
+Hydrant conflict: the fire access markup says do not stage within 20 ft of hydrant, but the plan dimension shows dumpster 16 ft from hydrant H-2.
+
+## A2.1 Enlarged Floor Plan
+
+Room 112 is Women RR, Room 113 is Men RR, Room 114 is Single-user RR, and Room 118 is Staff Break. New wall type W3 is 3 5/8 in metal stud with 5/8 in GWB each side. Plan shows restroom chase depth 2'-8\". RFI-07 revises chase to 3'-2\". Room 114 clear turning circle is 60 in diameter. Lavatory centerline on plan is 18 in from side wall. WC centerline is 17 in from side wall. Rear grab bar is 36 in and side grab bar is 42 in. Breakroom sink moves 6'-4\" east from existing. Door 114 clear width is 34 in. Casework C-12 length is 8'-6\". Existing stacks aisle pinch point is 39 in clear and tagged EXISTING NONCONFORMING - DO NOT REDUCE.
+
+## M1.3 / E1.2 Mechanical + Electrical Coordination
+
+Original mechanical schedule:
+
+| Equipment | Tons | Serves | MCA | MOCP | Breaker |
+| --- | ---: | --- | ---: | ---: | --- |
+| RTU-1 | 7.5 | Reading Room | 38A | 50A | 2P-50 |
+| RTU-2 | 5 | Staff/Admin | 27A | 35A | 2P-35 |
+| RTU-3 | 10 | Community Room | 52A | 70A | 2P-70 |
+| RTU-4 | 3 | Restrooms/Storage | 18A | 25A | 2P-25 |
+
+Total scheduled RTU capacity is 25.5 tons. Existing panel is LP-2. Condensate slope is 1/8 in per ft minimum. Smoke detector tie-in is FACP zone 4. Ceiling access panel AP-7 is 24 in x 24 in. Duct note says maintain 10 in clearance below existing beam B-4. Mechanical sheet says curb C-3 opening is 54 in x 78 in and curb C-4 opening is 38 in x 46 in. Structural/CO-02 later changes C-3 to 58 in x 80 in.
+
+## RFI Log
+
+RFI-07 submitted 2026-06-03: cleanout conflicts with 2'-8\" chase shown on A2.1. Response on 2026-06-06 revises chase to 3'-2\", maintains the 60 in turning circle in Room 114, and shifts lav 4 in east. Cost impact potential; schedule impact 0 days.
+
+RFI-08 submitted 2026-06-04: existing beam B-4 reduces duct clearance at Community Room. Response on 2026-06-09 flattens duct to 12 in x 34 in for a 9'-0\" run and maintains 350 CFM branch to diffuser D-7. Schedule impact 1 day.
+
+RFI-09 submitted 2026-06-07: existing east entry cannot remain open during crane pick. Response on 2026-06-10 uses west entry during crane pick only and requires 48 in temporary accessible route and signage. Permit impact: Yes, logistics plan clouded.
+
+RFI-10 submitted 2026-06-08: RTU-3 submitted model exceeds basis of design capacity. Formal status on the RFI sheet is pending, but a handwritten note says resolved by CO-02, see 6/18 email.
+
+## Change Order CO-02
+
+CO-02 is dated 2026-06-18. Original contract amount is $486,750. Prior approved changes are $0. CO-02 amount is $25,680. Revised contract amount is $512,430. Original substantial completion was 2026-08-21. CO-02 adds 3 calendar days. Revised substantial completion is 2026-08-24.
+
+Added scope: upsize RTU-3 from 10 tons to 12.5 tons; add ERV-1 with 450 CFM outside air; modify curb C-3 to 58 in x 80 in; add electrical breaker 3P-80A in panel MDP. Cost breakdown: mechanical equipment $14,900; electrical labor/material $4,860; roofing/curb work $3,420; OH&P $2,500.
+
+Signatures: Dana Hu, Facilities Manager, signed 2026-06-19 for owner; Leo Martinez signed 2026-06-18 for contractor; Priya Soto signed 2026-06-20 for architect. Approval stamp: Owner approved subject to permit reviewer acceptance. CO-02 adds 3 calendar days; RFI-08 separately notes 1 day, but the packet does not prove these days are additive.
+
+## Photo Observation Sheet
+
+Photo 1 timestamp 2026-06-27 08:42 shows east entry staging condition with pallets blocking the east entry door and a red arrow label "36 in clear at door, not 48 in." Photo 2 timestamp 2026-06-27 09:05 shows hydrant H-2 and dumpster with tape dimension 16'-0\" and note to relocate dumpster before crane pick. Photo 3 timestamp 2026-06-28 13:18 shows Room 114 chase mockup at 3'-2\" with note RFI-07 incorporated. Photo 4 timestamp 2026-06-28 14:10 shows existing stacks aisle at 39 in and notes existing nonconforming. Photo 5 timestamp 2026-06-29 10:22 shows roof curb C-3 field layout at 58 in x 80 in and says it matches CO-02, not M1.3. Photo 6 timestamp 2026-06-29 11:47 shows temporary west entry signage: Accessible Entrance During Crane Pick July 8-10.
+
+Inspector observations: OBS-14 says east entry route shown on logistics plan was not maintained on 06/27 and corrected route is required before public opening. OBS-15 says dumpster is within 20 ft hydrant clearance and must move at least 4 ft west. OBS-16 says Room 114 chase was revised per RFI-07 and turning circle must be verified after lav shift. OBS-17 says curb C-3 field layout follows CO-02 and permit resubmittal must reflect structural opening.
+
+## Cross-Document Source State
+
+Original application/mechanical drawings have 4 RTUs totaling 25.5 tons. CO-02 upsizes RTU-3 to 12.5 tons and adds ERV-1. Application/original contract value is $486,750; revised contract value after CO-02 is $512,430. Occupant load is unresolved: cover says no change, placard says 92, code calculation says 113, and fire marshal requests revision. Restroom chase final field state is 3'-2\" because RFI-07 and photo confirm it. Curb C-3 final documented field state is 58 in x 80 in because CO-02 and photo confirm it. West entry is temporary during crane pick July 8-10 only; east entry was not maintained on 06/27.
+"""
+
+    return Case(
+        "P10-library-permit-packet",
+        "Library Facilities Permit Packet",
+        "construction",
+        ["multi-page", "permit", "floor-plan", "site-plan", "rfi", "change-order", "photo-observations", "source-precedence"],
+        "Stress a realistic municipal permit packet with forms, plan sheets, egress, logistics, RFI revisions, mechanical schedules, change order, and photo evidence.",
+        "Eight-page raster-heavy permit packet with form fields, plans, schedules, stamps, annotations, and photo observation grids.",
+        ["permit form", "code summary", "site plan", "architectural plan", "mechanical schedule", "RFIs", "change order", "photo observations"],
+        ["Preserve original vs revised values.", "Bind plan dimensions and photo observations to the right objects.", "Flag unresolved source-state conflicts without inventing resolution."],
+        gold,
+        [near_check("p10-permit", "text", ["PR-26-18422", "Northbank Builders", "3,860", "$486,750"], 4, 520)],
+        pages,
+        facts=[
+            fact("p10.application", "text", 6, "Permit PR-26-18422, applicant Northbank Builders LLC, work area 3,860 sq ft, valuation $486,750, typed scope replace 4 RTUs, reviewer note questions 5 RTUs, no structural work checked."),
+            fact("p10.code", "table_cell", 6, "Code summary preserves building gross 18,240 sq ft, work area 3,860 sq ft, occupant load rows 79/29/5 and calculated subtotal 113; existing placard is 92."),
+            fact("p10.egress", "visual_relation", 5, "Common path 48 ft, exit access travel 137 ft, required exits 2, provided exits 3, Door 103 34 in, Door 117 32 in."),
+            fact("p10.occupant_conflict", "source_state", 5, "Occupant load is unresolved/conflicting: cover says no change, placard 92, calculation 113, fire marshal asks revision."),
+            fact("p10.site", "visual_relation", 6, "Site plan preserves scale 1 inch = 30 ft, north 18 degrees west of sheet up, fire lane 26 ft provided vs 20 ft required, fence 146 LF, crane window 2026-07-08 to 2026-07-10, ADA route 48 in min, staging 1,120 sq ft."),
+            fact("p10.hydrant", "visual_relation", 6, "Dumpster is 16 ft from hydrant H-2, conflicting with do-not-stage-within-20-ft note; later inspector says move at least 4 ft west."),
+            fact("p10.floorplan", "visual_relation", 7, "A2.1 room facts preserve Room 114 single-user RR, original chase 2'-8\", WC CL 17 in, lav CL 18 in, 60 in turning circle, breakroom sink moved 6'-4\" east, Door 114 34 in, stack pinch point 39 in."),
+            fact("p10.rfi07", "source_state", 6, "RFI-07 revises chase to 3'-2\", maintains 60 in turning circle, and shifts lav 4 in east; final field photo confirms 3'-2\"."),
+            fact("p10.mechanical", "table_cell", 7, "Mechanical schedule preserves RTU-1 7.5 tons/38A/50A, RTU-2 5 tons/27A/35A, RTU-3 10 tons/52A/70A, RTU-4 3 tons/18A/25A, total 25.5 tons, FACP zone 4."),
+            fact("p10.curb_conflict", "source_state", 6, "Curb C-3 is 54 x 78 on mechanical sheet but final CO-02/photo state is 58 x 80."),
+            fact("p10.rfis", "table_cell", 7, "RFI-08 flattens duct to 12 x 34 for 9 ft and preserves 350 CFM to D-7; RFI-09 allows west entry during crane pick only with 48 in route; RFI-10 formally pending but handwritten note says resolved by CO-02."),
+            fact("p10.co02", "source_state", 8, "CO-02 dated 2026-06-18 changes original $486,750 contract by $25,680 to revised $512,430, adds 3 calendar days, revised completion 2026-08-24, upsizes RTU-3 to 12.5 tons, adds ERV-1 450 CFM, C-3 58 x 80, and breaker 3P-80A in MDP."),
+            fact("p10.photo_obs", "visual_relation", 8, "Photo sheet preserves east entry 36 in clear on 2026-06-27, dumpster 16 ft from H-2, Room 114 chase 3'-2\", stacks aisle 39 in, C-3 layout 58 x 80, and west entry signage applies July 8-10."),
+            fact("p10.source_state", "source_state", 7, "Output distinguishes original/mechanical state from revised/current field state: 4 original RTUs vs CO adds ERV-1 and RTU-3 12.5 tons; original $486,750 vs revised $512,430; west entry temporary only during crane pick."),
+            fact("p10.page_order", "structure", 4, "Output preserves packet order: permit application, code/egress, site logistics, A2.1 floor plan, M/E coordination, RFI log, CO-02, photo observations."),
+        ],
+        extractable_text_pages=[
+            overlays(["PR-26-18422", "Northbank Builders LLC", "Work area 3,860 sq ft", "Valuation $486,750"], 100, 300),
+            [],
+            [],
+            [],
+            [],
+            [],
+            overlays(["CO-02", "Revised contract $512,430", "Revised substantial completion 2026-08-24"], 100, 240),
+            [],
+        ],
+    )
+
+
+CASES = [
+    packet_ops_board(),
+    packet_scientific_supplement(),
+    packet_noc_handover(),
+    packet_launch_readiness(),
+    packet_hospital_discharge(),
+    packet_loan_amendment_closing(),
+    packet_library_permit(),
+]
 
 
 def write_pdf(case: Case, path: Path) -> None:
@@ -2633,7 +3547,7 @@ def main() -> None:
         shutil.rmtree(BENCHMARK_ROOT)
     CASE_ROOT.mkdir(parents=True, exist_ok=True)
     manifest = {
-        "name": "Doc2MD-LongPackets-5",
+        "name": "Doc2MD-LongPackets-7",
         "version": "0.6.0-experimental",
         "description": "Experimental multi-page realistic packet benchmark focused on charts, dense visual matrices, spatial timelines, continuations, borderless layouts, and cross-page conflicts.",
         "caseCount": len(CASES),

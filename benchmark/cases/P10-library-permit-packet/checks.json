@@ -1,0 +1,32 @@
+{
+  "id": "P10-library-permit-packet",
+  "title": "Library Facilities Permit Packet",
+  "family": "construction",
+  "tags": [
+    "multi-page",
+    "permit",
+    "floor-plan",
+    "site-plan",
+    "rfi",
+    "change-order",
+    "photo-observations",
+    "source-precedence"
+  ],
+  "checks": [
+    {
+      "id": "p10-permit",
+      "category": "text",
+      "weight": 4,
+      "description": "p10-permit",
+      "near": {
+        "terms": [
+          "PR-26-18422",
+          "Northbank Builders",
+          "3,860",
+          "\\$486,750"
+        ],
+        "window": 520
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "P09-loan-amendment-closing",
+  "title": "Loan Amendment Closing Packet",
+  "family": "legal",
+  "tags": [
+    "multi-page",
+    "legal",
+    "redline",
+    "finance",
+    "source-precedence",
+    "signatures",
+    "ucc",
+    "post-closing"
+  ],
+  "checks": [
+    {
+      "id": "p09-amendment-fee",
+      "category": "finance",
+      "weight": 5,
+      "description": "p09-amendment-fee",
+      "near": {
+        "terms": [
+          "0\\.75%",
+          "\\$8,500,000",
+          "\\$63,750"
+        ],
+        "window": 520
+      }
+    }
+  ]
+}
