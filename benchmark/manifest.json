@@ -1,7 +1,7 @@
 {
-  "name": "Doc2MD-LongPackets-7",
-  "version": "0.6.0-experimental",
-  "description": "Experimental multi-page realistic packet benchmark focused on charts, dense visual matrices, spatial timelines, continuations, borderless layouts, and cross-page conflicts.",
+  "name": "Doc2MD",
+  "version": "0.1.0",
+  "description": "Benchmark for faithful document-to-Markdown reconstruction across realistic multi-page documents with dense layouts, charts, tables, forms, diagrams, annotations, and source-state conflicts.",
   "caseCount": 7,
   "pageCount": 42,
   "cases": [

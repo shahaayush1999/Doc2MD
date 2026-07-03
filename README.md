@@ -2,13 +2,7 @@
 
 Doc2MD is a benchmark for evaluating how accurately AI models convert documents into faithful Markdown. Given a document as input, the model should reconstruct its contents as a single Markdown document, preserving all textual information, document structure, tables, lists, headings, and other formatting where possible. Non-textual elements such as images, figures, diagrams, charts, and illustrations should be described in natural language and inserted inline at their appropriate locations. The objective is faithful reconstruction of the original document's information and reading experience, not summarization, interpretation, citation, or source attribution.
 
-Current benchmark planning is in [docs/benchmark-design.md](docs/benchmark-design.md). Initial calibration results are in [docs/hard-suite-results.md](docs/hard-suite-results.md).
-
-## Current Status
-
-The current runnable suite, **Doc2MD-Hard-15**, is a failed calibration artifact. It is useful for development evidence, but it is not the release benchmark because weak models score too high.
-
-The release target is one consolidated scored suite: **Doc2MD-Core-16**. The target design is in [docs/benchmark-design.md](docs/benchmark-design.md).
+## Current Benchmark
 
 Each case includes a `gold.md` answer key and `facts.json` weighted fact obligations. `npm run score` uses a Gemini 3.1 Flash Lite judge to mark each fact as correct, partial, incorrect, or missing, then computes accuracy from those fact labels. Deterministic checks are retained as an audit signal in each `score.json`.
 
@@ -21,11 +15,11 @@ npm run generate
 Run one case:
 
 ```bash
-npm run run -- --model vertex-gemini-3.1-flash-lite --case H03-raster-gantt
+npm run run -- --model vertex-gemini-3.1-flash-lite --case P10-library-permit-packet
 npm run score -- vertex-gemini-3.1-flash-lite
 ```
 
-Run the full suite:
+Run the full benchmark:
 
 ```bash
 npm run run -- --model vertex-gemini-3.1-flash-lite

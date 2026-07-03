@@ -3547,9 +3547,9 @@ def main() -> None:
         shutil.rmtree(BENCHMARK_ROOT)
     CASE_ROOT.mkdir(parents=True, exist_ok=True)
     manifest = {
-        "name": "Doc2MD-LongPackets-7",
-        "version": "0.6.0-experimental",
-        "description": "Experimental multi-page realistic packet benchmark focused on charts, dense visual matrices, spatial timelines, continuations, borderless layouts, and cross-page conflicts.",
+        "name": "Doc2MD",
+        "version": "0.1.0",
+        "description": "Benchmark for faithful document-to-Markdown reconstruction across realistic multi-page documents with dense layouts, charts, tables, forms, diagrams, annotations, and source-state conflicts.",
         "caseCount": len(CASES),
         "pageCount": sum(len(case.pages) for case in CASES),
         "cases": [write_case(case) for case in CASES],
