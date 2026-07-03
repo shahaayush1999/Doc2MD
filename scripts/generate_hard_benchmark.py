@@ -2273,7 +2273,250 @@ The draft appendix is superseded and retained only for audit context. Draft GO, 
     )
 
 
-CASES = [packet_ops_board(), packet_scientific_supplement(), packet_noc_handover(), packet_launch_readiness()]
+def packet_hospital_discharge() -> Case:
+    pages: list[Image.Image] = []
+
+    p1 = base_page("Lakeview Medical Center - Discharge Packet")
+    d = ImageDraw.Draw(p1)
+    d.text((100, 150), "Patient: Ana Rivera | MRN: LMC-482913 | DOB: 1979-04-18 | Packet finalized: 2026-08-14 14:40", fill="#475569", font=F["small"])
+    d.text((100, 225), "Discharge summary", fill="#111827", font=F["h1"])
+    left = (
+        "Admission date: 2026-08-10. Discharge date: 2026-08-14. Primary diagnosis: community-acquired pneumonia with acute kidney injury, improving. "
+        "Secondary diagnoses: type 2 diabetes, hypertension, and medication-associated hyperkalemia. Allergy: penicillin - rash. "
+        "Pending test: blood culture final read expected 2026-08-16."
+    )
+    right = (
+        "Condition at discharge: stable on room air. Home health nurse visit is authorized for 2026-08-15. "
+        "Medication reconciliation on page 3 controls over the ED medication list and any draft discharge instruction footer. "
+        "Renal dosing should be reviewed again after the outpatient BMP."
+    )
+    draw_text(d, (100, 300), left, F["small"], width=53, leading=31)
+    draw_text(d, (910, 300), right, F["small"], width=50, leading=31)
+    d.rounded_rectangle((100, 690, 1540, 910), radius=14, fill="#fff7ed", outline="#c2410c", width=4)
+    draw_text(d, (130, 725), "Source-state notice: FINAL medication reconciliation signed 14:40 controls. ED medication list and draft footer are historical. Do not restart lisinopril until follow-up BMP is reviewed.", F["small"], fill="#9a3412", width=100, leading=31)
+    rows = [
+        ["Follow-up need", "Due", "Owner", "Status", "Instruction"],
+        ["BMP lab draw", "2026-08-17 08:00", "Home health", "Scheduled", "check K and creatinine"],
+        ["Primary care", "2026-08-19 10:30", "Dr. Shah", "Scheduled", "review antibiotics"],
+        ["Cardiology", "2026-08-25 09:00", "Dr. Kim", "Scheduled", "11 days after discharge"],
+        ["Blood culture final", "2026-08-16", "LMC lab", "Pending", "call if positive"],
+    ]
+    draw_table(d, 90, 1010, [280, 250, 220, 200, 430], rows, 72)
+    d.text((100, 1500), "Footer draft 08:15 said cardiology in 2 weeks; scheduled referral sheet controls with 2026-08-25.", fill="#7f1d1d", font=F["small"])
+    pages.append(p1)
+
+    p2 = base_page("Lab Trends - CBC / CMP / Coagulation")
+    d = ImageDraw.Draw(p2)
+    d.text((100, 150), "Flags and units are part of the record. Hemolyzed/canceled specimens are excluded from trend interpretation.", fill="#7f1d1d", font=F["small"])
+    rows = [
+        ["Analyte", "Ref range", "Unit", "08-10 06:20", "08-12 05:50", "08-14 06:05"],
+        ["WBC", "4.0-11.0", "K/uL", "14.2 H", "9.8", "7.6"],
+        ["Hemoglobin", "12.0-16.0", "g/dL", "10.8 L", "10.1 L", "10.4 L"],
+        ["Platelets", "150-400", "K/uL", "412 H", "390", "366"],
+        ["Creatinine", "0.6-1.2", "mg/dL", "1.9 H", "1.5 H", "1.2"],
+        ["Potassium", "3.5-5.1", "mmol/L", "5.8 H", "hemolyzed", "4.7"],
+        ["Glucose", "70-110", "mg/dL", "188 H", "142 H", "126 H"],
+        ["INR", "0.9-1.1", "ratio", "1.0", "canceled", "1.1"],
+    ]
+    draw_table(d, 55, 245, [190, 200, 140, 230, 230, 230], rows, 64)
+    d.rounded_rectangle((1015, 865, 1535, 1280), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    d.text((1045, 900), "Creatinine sparkline", fill="#111827", font=F["h2"])
+    pts = [(1080, 1190), (1220, 1110), (1360, 1030)]
+    labels = ["1.9", "1.5", "1.2"]
+    d.line((1070, 1210, 1420, 1210), fill="#111827", width=3)
+    d.line((1070, 1210, 1070, 980), fill="#111827", width=3)
+    for a, b in zip(pts, pts[1:]):
+        d.line((*a, *b), fill="#2563eb", width=5)
+    for p, label in zip(pts, labels):
+        d.ellipse((p[0] - 7, p[1] - 7, p[0] + 7, p[1] + 7), fill="#2563eb")
+        d.text((p[0] - 18, p[1] - 35), label, fill="#111827", font=F["tiny"])
+    d.rounded_rectangle((80, 870, 930, 1280), radius=14, fill="#fff7ed", outline="#c2410c", width=3)
+    draw_text(d, (110, 905), "Footnotes: 08-12 potassium is hemolyzed and excluded. 08-12 INR was canceled and should not be carried forward. Hemoglobin remains low at discharge.", F["small"], fill="#9a3412", width=58, leading=30)
+    pages.append(p2)
+
+    p3 = base_page("Final Medication Reconciliation")
+    d = ImageDraw.Draw(p3)
+    d.text((100, 150), "Signed by pharmacist M. Patel at 2026-08-14 14:40. This page controls over ED medication list.", fill="#7f1d1d", font=F["small"])
+    rows = [
+        ["Medication", "Home dose", "Discharge dose", "Route", "Frequency", "Action", "Note"],
+        ["Metformin", "500 mg", "500 mg", "PO", "twice daily", "continue", "take with meals"],
+        ["Lisinopril", "20 mg", "HOLD", "PO", "do not restart", "stop", "restart only after BMP"],
+        ["Azithromycin", "-", "250 mg", "PO", "daily x3 days", "new", "finish course"],
+        ["Insulin glargine", "18 units", "14 units", "SQ", "nightly", "change", "dose reduced"],
+        ["Ibuprofen", "400 mg", "STOP", "PO", "none", "stop", "avoid with kidney injury"],
+    ]
+    draw_table(d, 40, 245, [190, 160, 210, 115, 190, 145, 330], rows, 68)
+    checkbox(d, 95, 780, "Continue: Metformin", True, F["small"])
+    checkbox(d, 95, 835, "Change: Insulin glargine", True, F["small"])
+    checkbox(d, 95, 890, "Stop: Lisinopril", True, F["small"])
+    checkbox(d, 95, 945, "New: Azithromycin", True, F["small"])
+    checkbox(d, 95, 1000, "Restart lisinopril today", False, F["small"])
+    d.rounded_rectangle((830, 805, 1530, 1055), radius=14, fill="#fee2e2", outline="#991b1b", width=4)
+    draw_text(d, (860, 840), "Pharmacist note: ED list showed lisinopril 20 mg daily and ibuprofen PRN, but both are inactive at discharge. Do not copy ED list into final medication section.", F["small"], fill="#991b1b", width=48, leading=30)
+    d.line((1035, 855, 1165, 855), fill="#991b1b", width=4)
+    d.text((1038, 820), "20 mg daily", fill="#991b1b", font=F["tiny"])
+    pages.append(p3)
+
+    p4 = base_page("Nursing MAR and Vitals Timeline")
+    d = ImageDraw.Draw(p4)
+    d.text((100, 150), "Grid states: A=administered, H=held, R=refused, M=missed. Held doses are not administered.", fill="#7f1d1d", font=F["small"])
+    rows = [
+        ["Medication", "06:00", "12:00", "18:00", "22:00", "Comment"],
+        ["Azithromycin", "", "A", "", "", "given after lunch"],
+        ["Insulin lispro", "A", "H", "A", "", "12:00 held: glucose 88"],
+        ["Acetaminophen", "", "R", "", "A", "refused noon dose"],
+        ["Lisinopril", "H", "H", "H", "H", "held all day"],
+        ["Metformin", "A", "", "A", "", "continued"],
+    ]
+    draw_table(d, 70, 245, [230, 150, 150, 150, 150, 430], rows, 70)
+    d.rounded_rectangle((90, 800, 810, 1280), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    d.text((120, 835), "Oxygen saturation", fill="#111827", font=F["h2"])
+    pts = [(145, 1170), (270, 1115), (395, 1050), (520, 1008), (645, 985)]
+    vals = ["91", "93", "95", "96", "96"]
+    d.line((130, 1190, 720, 1190), fill="#111827", width=3)
+    d.line((130, 1190, 130, 930), fill="#111827", width=3)
+    d.line((130, 1075, 720, 1075), fill="#dc2626", width=3)
+    d.text((725, 1062), "94 threshold", fill="#dc2626", font=F["tiny"])
+    for a, b in zip(pts, pts[1:]):
+        d.line((*a, *b), fill="#2563eb", width=5)
+    for p, val in zip(pts, vals):
+        d.ellipse((p[0] - 7, p[1] - 7, p[0] + 7, p[1] + 7), fill="#2563eb")
+        d.text((p[0] - 12, p[1] - 33), val, fill="#111827", font=F["tiny"])
+    d.rounded_rectangle((905, 800, 1535, 1280), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    d.text((935, 835), "Blood pressure", fill="#111827", font=F["h2"])
+    bp_rows = [["Time", "BP", "Pulse"], ["06:00", "132/84", "88"], ["12:00", "118/72", "82"], ["18:00", "126/78", "80"], ["22:00", "124/76", "78"]]
+    draw_table(d, 935, 895, [150, 190, 130], bp_rows, 56)
+    pages.append(p4)
+
+    p5 = base_page("Referral Sheet and Draft Footer")
+    d = ImageDraw.Draw(p5)
+    d.text((100, 150), "Referral sheet signed 2026-08-14 14:46. These scheduled dates control over draft footer text.", fill="#7f1d1d", font=F["small"])
+    rows = [
+        ["Appointment", "Date/time", "Location", "Status", "Instruction"],
+        ["Home health nurse", "2026-08-15 09:00", "home", "authorized", "med check and vitals"],
+        ["BMP lab draw", "2026-08-17 08:00", "LMC Lab", "scheduled", "bring lab slip"],
+        ["Primary care", "2026-08-19 10:30", "Clinic A", "scheduled", "review antibiotics"],
+        ["Cardiology", "2026-08-25 09:00", "Heart Center", "scheduled", "11 days after discharge"],
+    ]
+    draw_table(d, 70, 245, [260, 250, 230, 190, 360], rows, 72)
+    d.rounded_rectangle((95, 700, 780, 985), radius=14, fill="#ecfeff", outline="#0f766e", width=3)
+    draw_text(d, (125, 735), "Authorization stamp: home health visit approved once for 2026-08-15. Additional visits require PCP order.", F["small"], fill="#0f766e", width=45, leading=30)
+    d.rounded_rectangle((880, 700, 1530, 985), radius=14, fill="#f8fafc", outline="#334155", width=3)
+    draw_text(d, (910, 735), "Draft footer from 08:15: cardiology in 2 weeks; resume home blood pressure pill. Superseded by final medication reconciliation and signed referral schedule.", F["small"], width=44, leading=30)
+    pages.append(p5)
+
+    gold = """# Lakeview Medical Center - Discharge Packet
+
+Patient: Ana Rivera. MRN: LMC-482913. DOB: 1979-04-18. Packet finalized 2026-08-14 14:40.
+
+## Discharge Summary
+
+Admission date: 2026-08-10. Discharge date: 2026-08-14. Primary diagnosis: community-acquired pneumonia with acute kidney injury, improving. Secondary diagnoses: type 2 diabetes, hypertension, and medication-associated hyperkalemia. Allergy: penicillin - rash. Pending test: blood culture final read expected 2026-08-16.
+
+Source-state notice: final medication reconciliation signed 14:40 controls. ED medication list and draft footer are historical. Do not restart lisinopril until follow-up BMP is reviewed.
+
+| Follow-up need | Due | Owner | Status | Instruction |
+| --- | --- | --- | --- | --- |
+| BMP lab draw | 2026-08-17 08:00 | Home health | Scheduled | check K and creatinine |
+| Primary care | 2026-08-19 10:30 | Dr. Shah | Scheduled | review antibiotics |
+| Cardiology | 2026-08-25 09:00 | Dr. Kim | Scheduled | 11 days after discharge |
+| Blood culture final | 2026-08-16 | LMC lab | Pending | call if positive |
+
+The draft footer said cardiology in 2 weeks, but the signed referral sheet controls with cardiology on 2026-08-25.
+
+## Lab Trends
+
+| Analyte | Ref range | Unit | 08-10 06:20 | 08-12 05:50 | 08-14 06:05 |
+| --- | --- | --- | --- | --- | --- |
+| WBC | 4.0-11.0 | K/uL | 14.2 H | 9.8 | 7.6 |
+| Hemoglobin | 12.0-16.0 | g/dL | 10.8 L | 10.1 L | 10.4 L |
+| Platelets | 150-400 | K/uL | 412 H | 390 | 366 |
+| Creatinine | 0.6-1.2 | mg/dL | 1.9 H | 1.5 H | 1.2 |
+| Potassium | 3.5-5.1 | mmol/L | 5.8 H | hemolyzed | 4.7 |
+| Glucose | 70-110 | mg/dL | 188 H | 142 H | 126 H |
+| INR | 0.9-1.1 | ratio | 1.0 | canceled | 1.1 |
+
+Footnotes: 08-12 potassium is hemolyzed and excluded. 08-12 INR was canceled and should not be carried forward. Hemoglobin remains low at discharge. Creatinine sparkline values are 1.9, 1.5, and 1.2.
+
+## Final Medication Reconciliation
+
+| Medication | Home dose | Discharge dose | Route | Frequency | Action | Note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Metformin | 500 mg | 500 mg | PO | twice daily | continue | take with meals |
+| Lisinopril | 20 mg | HOLD | PO | do not restart | stop | restart only after BMP |
+| Azithromycin | - | 250 mg | PO | daily x3 days | new | finish course |
+| Insulin glargine | 18 units | 14 units | SQ | nightly | change | dose reduced |
+| Ibuprofen | 400 mg | STOP | PO | none | stop | avoid with kidney injury |
+
+Checked actions: continue Metformin, change Insulin glargine, stop Lisinopril, new Azithromycin. Restart lisinopril today is unchecked. ED list showed lisinopril 20 mg daily and ibuprofen PRN, but both are inactive at discharge.
+
+## Nursing MAR and Vitals Timeline
+
+Grid states: A=administered, H=held, R=refused, M=missed. Held doses are not administered.
+
+| Medication | 06:00 | 12:00 | 18:00 | 22:00 | Comment |
+| --- | --- | --- | --- | --- | --- |
+| Azithromycin | | A | | | given after lunch |
+| Insulin lispro | A | H | A | | 12:00 held: glucose 88 |
+| Acetaminophen | | R | | A | refused noon dose |
+| Lisinopril | H | H | H | H | held all day |
+| Metformin | A | | A | | continued |
+
+Oxygen saturation values are 91, 93, 95, 96, and 96, with a 94 threshold; values cross above threshold after the second point. Blood pressure table: 06:00 132/84 pulse 88; 12:00 118/72 pulse 82; 18:00 126/78 pulse 80; 22:00 124/76 pulse 78.
+
+## Referral Sheet and Draft Footer
+
+| Appointment | Date/time | Location | Status | Instruction |
+| --- | --- | --- | --- | --- |
+| Home health nurse | 2026-08-15 09:00 | home | authorized | med check and vitals |
+| BMP lab draw | 2026-08-17 08:00 | LMC Lab | scheduled | bring lab slip |
+| Primary care | 2026-08-19 10:30 | Clinic A | scheduled | review antibiotics |
+| Cardiology | 2026-08-25 09:00 | Heart Center | scheduled | 11 days after discharge |
+
+Authorization stamp: home health visit approved once for 2026-08-15. Additional visits require PCP order.
+
+Draft footer from 08:15 said cardiology in 2 weeks and resume home blood pressure pill. It is superseded by final medication reconciliation and signed referral schedule.
+"""
+
+    return Case(
+        "P08-hospital-discharge-medrec",
+        "Hospital Discharge Medication Reconciliation",
+        "medical",
+        ["multi-page", "labs", "med-rec", "forms", "timeline", "source-precedence", "chart"],
+        "Stress a realistic discharge packet with lab units/flags, final-vs-draft medication state, selected actions, held/administered MAR states, visual vitals, and follow-up conflicts.",
+        "Five-page medical discharge packet with mixed memo text, tables, checkboxes, chart, and draft/source-state conflict.",
+        ["discharge summary", "lab trends", "medication reconciliation", "MAR grid", "referrals", "draft precedence"],
+        ["Preserve medication action state.", "Bind lab values to units, flags, and collection times.", "Do not treat held doses as administered.", "Keep draft footer superseded."],
+        gold,
+        [near_check("med-lisinopril", "forms", ["Lisinopril", "HOLD", "stop", "BMP"], 4, 520)],
+        pages,
+        facts=[
+            fact("p08.summary.state", "source_state", 6, "Final medication reconciliation signed 14:40 controls; ED medication list and draft footer are historical; do not restart lisinopril until follow-up BMP is reviewed."),
+            fact("p08.followup.table", "table_cell", 5, "Follow-up table preserves BMP 2026-08-17 08:00, primary care 2026-08-19 10:30, cardiology 2026-08-25 09:00, and blood culture final 2026-08-16."),
+            fact("p08.labs.cbc", "table_cell", 5, "CBC rows preserve WBC 14.2 H/9.8/7.6 K/uL, hemoglobin 10.8 L/10.1 L/10.4 L g/dL, platelets 412 H/390/366 K/uL."),
+            fact("p08.labs.cmp", "table_cell", 6, "CMP/coag rows preserve creatinine 1.9 H/1.5 H/1.2 mg/dL, potassium 5.8 H/hemolyzed/4.7 mmol/L, glucose 188 H/142 H/126 H mg/dL, INR 1.0/canceled/1.1."),
+            fact("p08.labs.exclusions", "source_state", 5, "08-12 potassium is hemolyzed and excluded, 08-12 INR is canceled and not carried forward, and hemoglobin remains low at discharge."),
+            fact("p08.creatinine.sparkline", "visual_relation", 4, "Creatinine sparkline values are 1.9, 1.5, and 1.2, showing improvement."),
+            fact("p08.med.table", "table_cell", 8, "Medication table preserves Metformin 500 mg continue, Lisinopril HOLD/stop/do not restart, Azithromycin 250 mg daily x3 days/new, Insulin glargine 14 units/change, Ibuprofen STOP/stop."),
+            fact("p08.med.checkboxes", "form_state", 6, "Checked actions are continue Metformin, change Insulin glargine, stop Lisinopril, new Azithromycin; restart lisinopril today is unchecked."),
+            fact("p08.med.superseded", "source_state", 6, "ED list showed lisinopril 20 mg daily and ibuprofen PRN, but both are inactive at discharge and must not be treated as active discharge medications."),
+            fact("p08.mar.grid", "table_cell", 7, "MAR grid preserves Azithromycin administered at 12:00, Insulin lispro administered 06:00 and 18:00 but held at 12:00, Acetaminophen refused 12:00 and administered 22:00, Lisinopril held all day, Metformin administered 06:00 and 18:00."),
+            fact("p08.vitals", "visual_relation", 5, "Oxygen saturation chart values are 91, 93, 95, 96, 96 with threshold 94; BP table preserves 132/84 pulse 88, 118/72 pulse 82, 126/78 pulse 80, 124/76 pulse 78."),
+            fact("p08.referrals", "table_cell", 5, "Referral sheet preserves home health 2026-08-15 09:00 authorized once, BMP 2026-08-17 08:00, primary care 2026-08-19 10:30, cardiology 2026-08-25 09:00."),
+            fact("p08.draft.footer", "source_state", 6, "Draft footer said cardiology in 2 weeks and resume home blood pressure pill, but it is superseded by the signed referral schedule and final medication reconciliation."),
+            fact("p08.page_order", "structure", 4, "Output preserves packet order: discharge summary, lab trends, final medication reconciliation, nursing MAR/vitals, referral sheet/draft footer."),
+        ],
+        extractable_text_pages=[
+            overlays(["Lakeview Medical Center - Discharge Packet", "Patient: Ana Rivera", "MRN: LMC-482913"], 100, 100),
+            [],
+            [],
+            [],
+            overlays(["Draft footer from 08:15 is superseded by final medication reconciliation and signed referral schedule."], 880, 730),
+        ],
+    )
+
+
+CASES = [packet_ops_board(), packet_scientific_supplement(), packet_noc_handover(), packet_launch_readiness(), packet_hospital_discharge()]
 
 
 def write_pdf(case: Case, path: Path) -> None:
@@ -2381,7 +2624,7 @@ def main() -> None:
         shutil.rmtree(BENCHMARK_ROOT)
     CASE_ROOT.mkdir(parents=True, exist_ok=True)
     manifest = {
-        "name": "Doc2MD-LongPackets-4",
+        "name": "Doc2MD-LongPackets-5",
         "version": "0.6.0-experimental",
         "description": "Experimental multi-page realistic packet benchmark focused on charts, dense visual matrices, spatial timelines, continuations, borderless layouts, and cross-page conflicts.",
         "caseCount": len(CASES),

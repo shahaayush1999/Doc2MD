@@ -1,9 +1,9 @@
 {
-  "name": "Doc2MD-LongPackets-4",
+  "name": "Doc2MD-LongPackets-5",
   "version": "0.6.0-experimental",
   "description": "Experimental multi-page realistic packet benchmark focused on charts, dense visual matrices, spatial timelines, continuations, borderless layouts, and cross-page conflicts.",
-  "caseCount": 4,
-  "pageCount": 21,
+  "caseCount": 5,
+  "pageCount": 26,
   "cases": [
     {
       "id": "P01-board-ops-packet",
@@ -79,6 +79,26 @@
       "spec": "benchmark/cases/P07-launch-readiness-dossier/spec.md",
       "checks": "benchmark/cases/P07-launch-readiness-dossier/checks.json",
       "facts": "benchmark/cases/P07-launch-readiness-dossier/facts.json"
+    },
+    {
+      "id": "P08-hospital-discharge-medrec",
+      "title": "Hospital Discharge Medication Reconciliation",
+      "family": "medical",
+      "tags": [
+        "multi-page",
+        "labs",
+        "med-rec",
+        "forms",
+        "timeline",
+        "source-precedence",
+        "chart"
+      ],
+      "pages": 5,
+      "pdf": "benchmark/cases/P08-hospital-discharge-medrec/source.pdf",
+      "gold": "benchmark/cases/P08-hospital-discharge-medrec/gold.md",
+      "spec": "benchmark/cases/P08-hospital-discharge-medrec/spec.md",
+      "checks": "benchmark/cases/P08-hospital-discharge-medrec/checks.json",
+      "facts": "benchmark/cases/P08-hospital-discharge-medrec/facts.json"
     }
   ]
 }

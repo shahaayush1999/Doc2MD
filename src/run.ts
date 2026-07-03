@@ -159,6 +159,18 @@ async function runCase(testCase: ManifestCase, spec: ModelSpec) {
   }
 }
 
+async function runWithConcurrency<T>(items: T[], concurrency: number, worker: (item: T) => Promise<void>) {
+  const limit = Math.max(1, Math.min(concurrency, items.length));
+  let next = 0;
+  const workers = Array.from({ length: limit }, async () => {
+    while (next < items.length) {
+      const item = items[next++];
+      await worker(item);
+    }
+  });
+  await Promise.all(workers);
+}
+
 const args = parseArgs();
 const modelId = args.get("model") ?? "vertex-gemini-3.1-flash-lite";
 const spec = models[modelId];
@@ -168,8 +180,8 @@ const manifest = JSON.parse(await readFile("benchmark/manifest.json", "utf-8")) 
 const caseArg = args.get("case");
 const selected = caseArg ? manifest.cases.filter((testCase) => testCase.id === caseArg) : manifest.cases;
 if (selected.length === 0) throw new Error(`No selected cases. Use one of: ${manifest.cases.map((testCase) => testCase.id).join(", ")}`);
+const concurrency = Number(args.get("concurrency") ?? "3");
+if (!Number.isFinite(concurrency) || concurrency < 1) throw new Error(`Invalid --concurrency ${args.get("concurrency")}`);
 
-console.log(`Running ${selected.length} case(s) from ${manifest.name} with ${spec.id}`);
-for (const testCase of selected) {
-  await runCase(testCase, spec);
-}
+console.log(`Running ${selected.length} case(s) from ${manifest.name} with ${spec.id} at concurrency ${Math.min(concurrency, selected.length)}`);
+await runWithConcurrency(selected, concurrency, (testCase) => runCase(testCase, spec));
