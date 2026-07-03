@@ -18,7 +18,21 @@ Run the full benchmark:
 npm run bench -- --model vertex-gemini-3.1-flash-lite --concurrency 3
 ```
 
-The command runs model inference for every case, evaluates the outputs, and writes `runs/<model>/summary.json`. The summary is deterministic: it averages the case scores and sums cost, time, and token counts from the run metadata. It does not use an AI model.
+The command runs model inference for every case, evaluates the outputs, and writes `runs/<model>/summary.json`. It is idempotent: unchanged model/case predictions and unchanged scores are skipped automatically. If one benchmark case changes, only that case is rerun. If a new model is added, only that model is run.
+
+The summary is deterministic: it averages the case scores and sums cost, time, and token counts from the run metadata. It does not use an AI model.
+
+Run all configured models:
+
+```bash
+npm run bench -- --model all --concurrency 3
+```
+
+Force a clean rerun:
+
+```bash
+npm run bench -- --model vertex-gemini-3.1-flash-lite --force
+```
 
 The individual `run`, `score`, and `summary` scripts are kept for debugging a failed run.
 

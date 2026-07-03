@@ -1,10 +1,11 @@
-import { readFile, readdir, writeFile } from "node:fs/promises";
+import { access, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { fileURLToPath } from "node:url";
 import { generateObject } from "ai";
 import { googleVertex } from "@ai-sdk/google-vertex";
 import { z } from "zod";
+import { fileSha256, hashObject, sha256 } from "./cache.js";
 
 type Check = {
   id: string;
@@ -95,6 +96,9 @@ const weights = {
   markdownQuality: 0.05,
 };
 
+const scoringVersion = "fact-judge-v1";
+const judgeMaxOutputTokens = 3000;
+
 const scoreField = z.number().min(0).max(100);
 
 const judgeSchema = z.object({
@@ -142,6 +146,15 @@ function cost(usage: any): number {
   const input = usage?.inputTokens ?? 0;
   const output = usage?.outputTokens ?? 0;
   return (input / 1_000_000) * evaluator.inputPerMillion + (output / 1_000_000) * evaluator.outputPerMillion;
+}
+
+async function exists(filePath: string) {
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function normalize(text: string): string {
@@ -329,7 +342,7 @@ async function judgeWithGemini(testCase: ManifestCase, gold: string, facts: Fact
     schema: judgeSchema,
     prompt: judgePrompt(testCase, gold, facts, prediction),
     reasoning: evaluator.reasoning,
-    maxOutputTokens: 3000,
+    maxOutputTokens: judgeMaxOutputTokens,
   });
   const elapsedMs = Math.round(performance.now() - started);
   return {
@@ -340,13 +353,54 @@ async function judgeWithGemini(testCase: ManifestCase, gold: string, facts: Fact
   };
 }
 
-export async function scoreCase(modelId: string, testCase: ManifestCase) {
+async function scoringCacheKey(testCase: ManifestCase, predictionPath: string) {
+  const predictionHash = await fileSha256(predictionPath);
+  const goldHash = await fileSha256(testCase.gold);
+  const checksHash = await fileSha256(testCase.checks);
+  const factsHash = testCase.facts ? await fileSha256(testCase.facts) : null;
+  const evaluatorConfigHash = hashObject({
+    scoringVersion,
+    evaluator,
+    weights,
+    judgeMaxOutputTokens,
+    judgePromptHash: sha256(judgePrompt.toString()),
+    judgeSchemaHash: hashObject(judgeSchema.toJSONSchema()),
+  });
+  return {
+    scoreKey: hashObject({
+      caseId: testCase.id,
+      predictionHash,
+      goldHash,
+      checksHash,
+      factsHash,
+      evaluatorConfigHash,
+    }),
+    predictionHash,
+    goldHash,
+    checksHash,
+    factsHash,
+    evaluatorConfigHash,
+  };
+}
+
+export async function scoreCase(modelId: string, testCase: ManifestCase, options: { force?: boolean } = {}) {
   const checkFile = JSON.parse(await readFile(testCase.checks, "utf-8")) as CheckFile;
   const factFile = testCase.facts
     ? (JSON.parse(await readFile(testCase.facts, "utf-8")) as FactFile)
     : ({ facts: [] } as unknown as FactFile);
   const runDir = path.join("runs", modelId, testCase.id);
-  const rawPrediction = await readFile(path.join(runDir, "prediction.md"), "utf-8");
+  const predictionPath = path.join(runDir, "prediction.md");
+  const scorePath = path.join(runDir, "score.json");
+  const scoreCache = await scoringCacheKey(testCase, predictionPath);
+  if (!options.force && (await exists(scorePath))) {
+    const previous = JSON.parse(await readFile(scorePath, "utf-8")) as any;
+    if (previous.scorer?.cache?.scoreKey === scoreCache.scoreKey && !previous.scorer.error) {
+      console.log(`${modelId} ${testCase.id}: score skip unchanged`);
+      return previous;
+    }
+  }
+
+  const rawPrediction = await readFile(predictionPath, "utf-8");
   const prediction = normalize(rawPrediction);
   const gold = await readFile(testCase.gold, "utf-8");
   const result = JSON.parse(await readFile(path.join(runDir, "result.json"), "utf-8"));
@@ -421,6 +475,7 @@ export async function scoreCase(modelId: string, testCase: ManifestCase) {
       usage: judgeUsage,
       estimatedCostUsd: judgeCostUsd,
       error: judgeError,
+      cache: scoreCache,
     },
     dimensions: dimensionScores,
     factScore,
@@ -439,7 +494,7 @@ export async function scoreCase(modelId: string, testCase: ManifestCase) {
   return scored;
 }
 
-export async function scoreModel(modelId: string) {
+export async function scoreModel(modelId: string, options: { force?: boolean } = {}) {
   const manifest = JSON.parse(await readFile("benchmark/manifest.json", "utf-8")) as Manifest;
   const existing = new Set(await readdir(path.join("runs", modelId)));
   const cases = manifest.cases.filter((testCase) => existing.has(testCase.id));
@@ -447,7 +502,7 @@ export async function scoreModel(modelId: string) {
 
   const scores = [];
   for (const testCase of cases) {
-    const scored = await scoreCase(modelId, testCase);
+    const scored = await scoreCase(modelId, testCase, { force: options.force });
     scores.push(scored);
     console.log(
       `${modelId} ${testCase.id}: ${scored.score.toFixed(1)} ` +
@@ -472,5 +527,5 @@ export async function scoreModel(modelId: string) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const modelId = process.argv[2] ?? "vertex-gemini-3.1-flash-lite";
-  await scoreModel(modelId);
+  await scoreModel(modelId, { force: process.argv.includes("--force") });
 }
