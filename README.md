@@ -12,35 +12,22 @@ Generate the benchmark:
 npm run generate
 ```
 
-Run one case:
-
-```bash
-npm run run -- --model vertex-gemini-3.1-flash-lite --case P10-library-permit-packet
-npm run score -- vertex-gemini-3.1-flash-lite
-```
-
 Run the full benchmark:
 
 ```bash
-npm run run -- --model vertex-gemini-3.1-flash-lite
-npm run score -- vertex-gemini-3.1-flash-lite
-npm run summary -- vertex-gemini-3.1-flash-lite
+npm run bench -- --model vertex-gemini-3.1-flash-lite --concurrency 3
 ```
+
+The command runs model inference for every case, evaluates the outputs, and writes `runs/<model>/summary.json`. The summary is deterministic: it averages the case scores and sums cost, time, and token counts from the run metadata. It does not use an AI model.
+
+The individual `run`, `score`, and `summary` scripts are kept for debugging a failed run.
 
 Run the comparison set:
 
 ```bash
-npm run run -- --model vertex-gemini-3.5-flash
-npm run score -- vertex-gemini-3.5-flash
-npm run summary -- vertex-gemini-3.5-flash
-
-npm run run -- --model openai-gpt-5.4-nano
-npm run score -- openai-gpt-5.4-nano
-npm run summary -- openai-gpt-5.4-nano
-
-npm run run -- --model openai-gpt-5-nano
-npm run score -- openai-gpt-5-nano
-npm run summary -- openai-gpt-5-nano
+npm run bench -- --model vertex-gemini-3.5-flash --concurrency 3
+npm run bench -- --model openai-gpt-5.4-nano --concurrency 3
+npm run bench -- --model openai-gpt-5-nano --concurrency 3
 ```
 
 Generated cases live under `benchmark/cases/`. Local run outputs and rendered inspection artifacts are ignored.

@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "generate": "/Users/aayush/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/generate_benchmark.py",
+    "bench": "node --env-file=.env.local --import tsx src/bench.ts",
     "run": "node --env-file=.env.local --import tsx src/run.ts",
     "score": "node --env-file=.env.local --import tsx src/score.ts",
     "summary": "tsx src/summary.ts",
@@ -25,7 +26,8 @@
   "dependencies": {
     "@ai-sdk/google-vertex": "^5.0.7",
     "@ai-sdk/openai": "^4.0.5",
-    "ai": "^7.0.11"
+    "ai": "^7.0.11",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^25.0.2",

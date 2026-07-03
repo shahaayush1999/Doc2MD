@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
+import { fileURLToPath } from "node:url";
 import { generateText } from "ai";
 import { googleVertex } from "@ai-sdk/google-vertex";
 import { openai } from "@ai-sdk/openai";
@@ -26,7 +27,7 @@ type ModelSpec = {
   outputPerMillion: number;
 };
 
-const models: Record<string, ModelSpec> = {
+export const models: Record<string, ModelSpec> = {
   "vertex-gemini-3.1-flash-lite": {
     id: "vertex-gemini-3.1-flash-lite",
     modelName: "gemini-3.1-flash-lite",
@@ -164,17 +165,24 @@ async function runWithConcurrency<T>(items: T[], concurrency: number, worker: (i
   await Promise.all(workers);
 }
 
-const args = parseArgs();
-const modelId = args.get("model") ?? "vertex-gemini-3.1-flash-lite";
-const spec = models[modelId];
-if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
+export async function runModel(modelId: string, options: { caseId?: string; concurrency?: number } = {}) {
+  const spec = models[modelId];
+  if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
 
-const manifest = JSON.parse(await readFile("benchmark/manifest.json", "utf-8")) as Manifest;
-const caseArg = args.get("case");
-const selected = caseArg ? manifest.cases.filter((testCase) => testCase.id === caseArg) : manifest.cases;
-if (selected.length === 0) throw new Error(`No selected cases. Use one of: ${manifest.cases.map((testCase) => testCase.id).join(", ")}`);
-const concurrency = Number(args.get("concurrency") ?? "3");
-if (!Number.isFinite(concurrency) || concurrency < 1) throw new Error(`Invalid --concurrency ${args.get("concurrency")}`);
+  const manifest = JSON.parse(await readFile("benchmark/manifest.json", "utf-8")) as Manifest;
+  const selected = options.caseId ? manifest.cases.filter((testCase) => testCase.id === options.caseId) : manifest.cases;
+  if (selected.length === 0) throw new Error(`No selected cases. Use one of: ${manifest.cases.map((testCase) => testCase.id).join(", ")}`);
+  const concurrency = options.concurrency ?? 3;
+  if (!Number.isFinite(concurrency) || concurrency < 1) throw new Error(`Invalid --concurrency ${concurrency}`);
 
-console.log(`Running ${selected.length} case(s) from ${manifest.name} with ${spec.id} at concurrency ${Math.min(concurrency, selected.length)}`);
-await runWithConcurrency(selected, concurrency, (testCase) => runCase(testCase, spec));
+  console.log(`Running ${selected.length} case(s) from ${manifest.name} with ${spec.id} at concurrency ${Math.min(concurrency, selected.length)}`);
+  await runWithConcurrency(selected, concurrency, (testCase) => runCase(testCase, spec));
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const args = parseArgs();
+  await runModel(args.get("model") ?? "vertex-gemini-3.1-flash-lite", {
+    caseId: args.get("case"),
+    concurrency: Number(args.get("concurrency") ?? "3"),
+  });
+}

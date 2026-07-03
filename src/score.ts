@@ -1,8 +1,10 @@
 import { readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
-import { generateObject, jsonSchema } from "ai";
+import { fileURLToPath } from "node:url";
+import { generateObject } from "ai";
 import { googleVertex } from "@ai-sdk/google-vertex";
+import { z } from "zod";
 
 type Check = {
   id: string;
@@ -93,71 +95,36 @@ const weights = {
   markdownQuality: 0.05,
 };
 
-const judgeSchema = jsonSchema<JudgeResult>({
-  type: "object",
-  additionalProperties: false,
-  required: ["accuracy", "completeness", "structure", "markdownQuality", "factResults", "findings", "rationale"],
-  properties: {
-    accuracy: {
-      type: "number",
-      minimum: 0,
-      maximum: 100,
-      description:
-        "Semantic correctness of represented facts, values, labels, state, and bindings. Penalize contradictions and wrong values heavily, but do not lower accuracy for formatting-only issues.",
-    },
-    completeness: {
-      type: "number",
-      minimum: 0,
-      maximum: 100,
-      description: "Coverage of all information in the gold answer key.",
-    },
-    structure: {
-      type: "number",
-      minimum: 0,
-      maximum: 100,
-      description: "Preservation of reading order, grouping, table/list/form structure, and visual-to-text bindings.",
-    },
-    markdownQuality: {
-      type: "number",
-      minimum: 0,
-      maximum: 100,
-      description: "Usefulness and clarity of Markdown representation. Do not penalize harmless formatting differences.",
-    },
-    factResults: {
-      type: "array",
-      description: "Per-fact judgments for every listed fact obligation.",
-      items: {
-        type: "object",
-        additionalProperties: false,
-        required: ["id", "status", "rationale"],
-        properties: {
-          id: { type: "string" },
-          status: { type: "string", enum: ["correct", "partial", "incorrect", "missing"] },
-          rationale: { type: "string" },
-        },
-      },
-    },
-    findings: {
-      type: "array",
-      maxItems: 12,
-      items: {
-        type: "object",
-        additionalProperties: false,
-        required: ["severity", "type", "explanation"],
-        properties: {
-          severity: { type: "string", enum: ["critical", "major", "minor"] },
-          type: { type: "string", enum: ["missing", "incorrect", "extra", "structure", "format"] },
-          explanation: { type: "string" },
-          expected: { type: "string" },
-          actual: { type: "string" },
-        },
-      },
-    },
-    rationale: {
-      type: "string",
-      description: "Brief explanation of the score in one or two sentences.",
-    },
-  },
+const scoreField = z.number().min(0).max(100);
+
+const judgeSchema = z.object({
+  accuracy: scoreField.describe(
+    "Semantic correctness of represented facts, values, labels, state, and bindings. Penalize contradictions and wrong values heavily, but do not lower accuracy for formatting-only issues.",
+  ),
+  completeness: scoreField.describe("Coverage of all information in the gold answer key."),
+  structure: scoreField.describe("Preservation of reading order, grouping, table/list/form structure, and visual-to-text bindings."),
+  markdownQuality: scoreField.describe("Usefulness and clarity of Markdown representation. Do not penalize harmless formatting differences."),
+  factResults: z
+    .array(
+      z.object({
+        id: z.string(),
+        status: z.enum(["correct", "partial", "incorrect", "missing"]),
+        rationale: z.string(),
+      }),
+    )
+    .describe("Per-fact judgments for every listed fact obligation."),
+  findings: z
+    .array(
+      z.object({
+        severity: z.enum(["critical", "major", "minor"]),
+        type: z.enum(["missing", "incorrect", "extra", "structure", "format"]),
+        explanation: z.string(),
+        expected: z.string().optional(),
+        actual: z.string().optional(),
+      }),
+    )
+    .max(12),
+  rationale: z.string().describe("Brief explanation of the score in one or two sentences."),
 });
 
 function clampScore(value: number): number {
@@ -373,7 +340,7 @@ async function judgeWithGemini(testCase: ManifestCase, gold: string, facts: Fact
   };
 }
 
-async function scoreCase(modelId: string, testCase: ManifestCase) {
+export async function scoreCase(modelId: string, testCase: ManifestCase) {
   const checkFile = JSON.parse(await readFile(testCase.checks, "utf-8")) as CheckFile;
   const factFile = testCase.facts
     ? (JSON.parse(await readFile(testCase.facts, "utf-8")) as FactFile)
@@ -472,31 +439,38 @@ async function scoreCase(modelId: string, testCase: ManifestCase) {
   return scored;
 }
 
-const modelId = process.argv[2] ?? "vertex-gemini-3.1-flash-lite";
-const manifest = JSON.parse(await readFile("benchmark/manifest.json", "utf-8")) as Manifest;
-const existing = new Set(await readdir(path.join("runs", modelId)));
-const cases = manifest.cases.filter((testCase) => existing.has(testCase.id));
-if (cases.length === 0) throw new Error(`No run outputs found for ${modelId}`);
+export async function scoreModel(modelId: string) {
+  const manifest = JSON.parse(await readFile("benchmark/manifest.json", "utf-8")) as Manifest;
+  const existing = new Set(await readdir(path.join("runs", modelId)));
+  const cases = manifest.cases.filter((testCase) => existing.has(testCase.id));
+  if (cases.length === 0) throw new Error(`No run outputs found for ${modelId}`);
 
-const scores = [];
-for (const testCase of cases) {
-  const scored = await scoreCase(modelId, testCase);
-  scores.push(scored);
-  console.log(
-    `${modelId} ${testCase.id}: ${scored.score.toFixed(1)} ` +
-      `(accuracy ${scored.dimensions.accuracy.toFixed(1)}, judge $${scored.scorer.estimatedCostUsd.toFixed(6)})`,
+  const scores = [];
+  for (const testCase of cases) {
+    const scored = await scoreCase(modelId, testCase);
+    scores.push(scored);
+    console.log(
+      `${modelId} ${testCase.id}: ${scored.score.toFixed(1)} ` +
+        `(accuracy ${scored.dimensions.accuracy.toFixed(1)}, judge $${scored.scorer.estimatedCostUsd.toFixed(6)})`,
+    );
+  }
+
+  console.table(
+    scores.map((score) => ({
+      case: score.caseId,
+      pct: score.score,
+      accuracy: score.dimensions.accuracy,
+      family: score.family,
+      finish: score.finishReason,
+      cost: Number(score.estimatedCostUsd.toFixed(6)),
+      judgeCost: Number(score.scorer.estimatedCostUsd.toFixed(6)),
+      ms: score.elapsedMs,
+    })),
   );
+  return scores;
 }
 
-console.table(
-  scores.map((score) => ({
-    case: score.caseId,
-    pct: score.score,
-    accuracy: score.dimensions.accuracy,
-    family: score.family,
-    finish: score.finishReason,
-    cost: Number(score.estimatedCostUsd.toFixed(6)),
-    judgeCost: Number(score.scorer.estimatedCostUsd.toFixed(6)),
-    ms: score.elapsedMs,
-  })),
-);
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const modelId = process.argv[2] ?? "vertex-gemini-3.1-flash-lite";
+  await scoreModel(modelId);
+}
