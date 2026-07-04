@@ -1,0 +1,145 @@
+{
+  "id": "P12-pfas-method-validation",
+  "title": "Regulatory PFAS Method Validation Supplement",
+  "family": "scientific-regulatory",
+  "tags": [
+    "multi-page",
+    "scientific",
+    "regulatory",
+    "tables",
+    "continuation",
+    "equations",
+    "chromatograms",
+    "qc"
+  ],
+  "facts": [
+    {
+      "id": "p12.method",
+      "category": "text",
+      "weight": 5,
+      "expectation": "Method metadata preserves lab, method basis EPA 533 modified, SCIEX 6500+ QTRAP, column, injection, mobile phases, and study dates.",
+      "guidance": "",
+      "severity": "major"
+    },
+    {
+      "id": "p12.manifest",
+      "category": "table_cell",
+      "weight": 7,
+      "expectation": "Manifest preserves sample IDs, matrix, collected/received times, pH, chlorine, volume, and condition for all eight rows.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p12.equations",
+      "category": "formula",
+      "weight": 6,
+      "expectation": "All four equations are preserved: R, C_sample, LOD, and U95 with k=2.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p12.calibration",
+      "category": "table_cell",
+      "weight": 10,
+      "expectation": "Calibration table preserves all 12 analytes with IS, quantifier, qualifier, RT, m, b, R2, range, LOD, and LOQ.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p12.curves",
+      "category": "chart",
+      "weight": 7,
+      "expectation": "Calibration curve data for PFOA, PFOS, and HFPO-DA are preserved with levels and response values.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p12.residuals",
+      "category": "table_cell",
+      "weight": 5,
+      "expectation": "Residual table preserves PFOA 7.8, PFOS 10.6, HFPO-DA 6.1, zero failing points, and reviewer notes.",
+      "guidance": "",
+      "severity": "major"
+    },
+    {
+      "id": "p12.table-s4-continuation",
+      "category": "structure",
+      "weight": 9,
+      "expectation": "Table S4 is preserved as one logical continuation table across pages 4 and 5, with repeated headers not treated as data.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p12.table-s4-values",
+      "category": "table_cell",
+      "weight": 10,
+      "expectation": "All Table S4 recovery/RSD/N/status values for PFBA through HFPO-DA are preserved.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p12.matrix-spike",
+      "category": "table_cell",
+      "weight": 8,
+      "expectation": "Matrix spike table preserves native/spike/MS/MSD/RPD/flag values, including PFOS J-native below 2x LOQ and 6:2 FTS low bias monitored.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p12.sequence",
+      "category": "source_state",
+      "weight": 8,
+      "expectation": "Sequence 18 DW-240409-04 is Reinject due to InternalStd_OK No; Seq 19 DW-240409-04-RI is Accepted and controls final results.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p12.review-trail",
+      "category": "text",
+      "weight": 4,
+      "expectation": "Review trail preserves M. Iyer 2024-04-19 14:05, L. Chen 2024-04-22 09:40, and R. Patel 2024-04-22 16:10.",
+      "guidance": "",
+      "severity": "major"
+    },
+    {
+      "id": "p12.chromatograms",
+      "category": "visual_relation",
+      "weight": 10,
+      "expectation": "All six chromatogram panels preserve panel labels, sample/channel, RT/area/concentration or IS recovery facts.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p12.retention",
+      "category": "table_cell",
+      "weight": 5,
+      "expectation": "Retention windows preserve PFOA 4.41 +/-0.08, PFHxS 4.63 +/-0.08, 6:2 FTS 5.19 +/-0.10, PFOS 5.64 +/-0.10.",
+      "guidance": "",
+      "severity": "major"
+    },
+    {
+      "id": "p12.final-results",
+      "category": "table_cell",
+      "weight": 10,
+      "expectation": "Final results table preserves sample/analyte/result/qualifier/U95/reference rows, including DW-240409-04 references Seq 19.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p12.uncertainty",
+      "category": "table_cell",
+      "weight": 6,
+      "expectation": "Uncertainty budget preserves all component percentages and expanded U k=2 values 15.4, 22.8, and 13.8.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p12.qualifiers",
+      "category": "text",
+      "weight": 4,
+      "expectation": "Qualifier meanings are preserved: U not detected, J estimated, RI reinjection, MS matrix spike, MSD matrix spike duplicate.",
+      "guidance": "",
+      "severity": "major"
+    }
+  ]
+}

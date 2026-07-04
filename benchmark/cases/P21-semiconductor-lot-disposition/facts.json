@@ -1,0 +1,150 @@
+{
+  "id": "P21-semiconductor-lot-disposition",
+  "title": "Semiconductor Lot Disposition File",
+  "family": "semiconductor-quality",
+  "tags": [
+    "multi-page",
+    "semiconductor",
+    "wafer-map",
+    "spc",
+    "source-precedence",
+    "visual-relation"
+  ],
+  "facts": [
+    {
+      "id": "p21.final.disposition",
+      "category": "source_state",
+      "weight": 14,
+      "expectation": "Final MRB state is release wafers 01,02,04,06,08,10,11; wafer 09 conditional pending REL-22-A; wafers 03,05,12 engineering hold; wafer 07 scrap and excluded from ship yield.",
+      "guidance": "",
+      "modality": "source-precedence",
+      "severity": "critical"
+    },
+    {
+      "id": "p21.wafer.summary",
+      "category": "table_cell",
+      "weight": 12,
+      "expectation": "Wafer summary preserves good die, defect %, probe yield, final state, and notes for all twelve wafers.",
+      "guidance": "",
+      "modality": "table",
+      "severity": "critical"
+    },
+    {
+      "id": "p21.route",
+      "category": "table_cell",
+      "weight": 7,
+      "expectation": "Traveler route preserves all six process steps/tools/recipes/times/states, including PVD-03 TIN_GATE_31 alarm at 09:18 and metrology reviewed.",
+      "guidance": "",
+      "modality": "table",
+      "severity": "major"
+    },
+    {
+      "id": "p21.recipe.conflict",
+      "category": "source_state",
+      "weight": 10,
+      "expectation": "Recipe conflict is resolved correctly: TIN_GATE_31 controls from traveler/MES; TIN_GATE_30 is a stale tool printout header; clamp purge change is future only.",
+      "guidance": "",
+      "modality": "source-precedence",
+      "severity": "critical"
+    },
+    {
+      "id": "p21.wafer.map",
+      "category": "visual_relation",
+      "weight": 14,
+      "expectation": "Wafer map coordinates and defect codes are preserved: W03 B4/C4/B5 C3, W05 E2/F2/E3 S2, W07 D5/D6/E5 M1, W09 F3 P4, W12 A6/B6 E1, W02 A1 edge.",
+      "guidance": "",
+      "modality": "visual",
+      "severity": "critical"
+    },
+    {
+      "id": "p21.metrology",
+      "category": "table_cell",
+      "weight": 10,
+      "expectation": "CD-SEM metrology preserves wafer/site/CD/delta/flag/reviewer notes for W03 B4/C4, W05 E2, W07 D5/D6, W09 F3, and W12 A6.",
+      "guidance": "",
+      "modality": "table",
+      "severity": "critical"
+    },
+    {
+      "id": "p21.spec.rule",
+      "category": "source_state",
+      "weight": 6,
+      "expectation": "CD target 24.9 nm and action limits -2.0/+2.5 nm are preserved, including rule that action-limit sites require MRB disposition even above 93% yield.",
+      "guidance": "",
+      "modality": "source-precedence",
+      "severity": "major"
+    },
+    {
+      "id": "p21.spc.chart",
+      "category": "chart",
+      "weight": 12,
+      "expectation": "SPC trend preserves R-2241 through R-2247 values and states, especially R-2245 47.4 above UCL, R-2244/R-2246 warning, and recovered R-2247 44.1.",
+      "guidance": "",
+      "modality": "chart",
+      "severity": "critical"
+    },
+    {
+      "id": "p21.defects",
+      "category": "table_cell",
+      "weight": 9,
+      "expectation": "Defect Pareto preserves codes/classes/counts/affected wafers/dispositions for M1, S2, E1, P4, and C3.",
+      "guidance": "",
+      "modality": "table",
+      "severity": "critical"
+    },
+    {
+      "id": "p21.photo.register",
+      "category": "visual_relation",
+      "weight": 9,
+      "expectation": "Photo review register binds frames to wafer/site/finding/disposition: IMG-221/222 W07 M1 scrap, IMG-223 W05 S2 hold, IMG-224 W12 E1 hold, IMG-225 W09 P4 conditional.",
+      "guidance": "",
+      "modality": "visual",
+      "severity": "critical"
+    },
+    {
+      "id": "p21.mrb",
+      "category": "source_state",
+      "weight": 12,
+      "expectation": "MRB matrix preserves decisions, reasons, and owners for W07 scrap, W05 hold, W03 hold, W12 hold, W09 conditional release, and release group 01/02/04/06/08/10/11.",
+      "guidance": "",
+      "modality": "source-precedence",
+      "severity": "critical"
+    },
+    {
+      "id": "p21.reliability",
+      "category": "table_cell",
+      "weight": 8,
+      "expectation": "Reliability plan preserves REL-22-A wafer 09 HTOL 168h pending as condition for release, REL-22-B/C pass references, and REL-22-D wafer 07 not built/scrap/no credit.",
+      "guidance": "",
+      "modality": "table",
+      "severity": "critical"
+    },
+    {
+      "id": "p21.shipping",
+      "category": "source_state",
+      "weight": 10,
+      "expectation": "Shipping allocation preserves release-now wafers and die count 127,759, conditional W09 17,880, engineering hold W03/W05/W12 52,144, and scrap W07 16,902 excluded.",
+      "guidance": "",
+      "modality": "source-precedence",
+      "severity": "critical"
+    },
+    {
+      "id": "p21.coa",
+      "category": "source_state",
+      "weight": 8,
+      "expectation": "COA holdback preserves that preliminary all-wafer draft is not shipping authority and signed COA must list released wafers plus conditional wafer separately.",
+      "guidance": "",
+      "modality": "source-precedence",
+      "severity": "critical"
+    },
+    {
+      "id": "p21.audit",
+      "category": "structure",
+      "weight": 6,
+      "expectation": "Audit trail preserves timestamp/actor/entry/effect sequence from PVD alarm through planning ship-bucket split.",
+      "guidance": "",
+      "modality": "structure",
+      "severity": "major"
+    }
+  ]
+}

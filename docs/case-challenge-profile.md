@@ -1,0 +1,17 @@
+# Doc2MD Case Challenge Profile
+
+This is an internal design profile for the consolidated benchmark suite. It is not part of the model input.
+
+| Case | Unique challenge profile | Main overlap to monitor |
+| --- | --- | --- |
+| P07 launch readiness dossier | Product operations packet: cross-functional launch readiness, dependency map, status heatmap, region decision log, customer roster, risk register, and draft/final source precedence. | P20 and P21 also test operational source precedence; keep P07 focused on product launch decisions and business-readiness synthesis across mixed tables/charts. |
+| P12 PFAS method validation | Scientific/regulatory supplement: equations, calibration tables, continuation tables, matrix spike duplicate, chromatogram panels, sequence/reinjection state, qualifiers, and uncertainty budget. | Minimal overlap; this is the main scientific/math/lab-instrument case and should preserve method-specific notation and table structure. |
+| P15 architecture floorplan diagrams | Technical diagram packet: floorplan rooms/callouts, rack U positions, patch/VLAN table, directed topology arrows, electrical panel schedule, and RFI markup/final answer. | P20 also uses network/utility topology; keep P15 focused on building/facilities spatial binding, arrows, racks, circuits, and engineering revision markup. |
+| P17 clinical trial site monitoring | Clinical operations binder: subject visit matrix, lab flags, adverse events, protocol deviations, investigational-product accountability, eCRF checkbox states, query log, and final clean-ready state. | P22 also covers regulated quality release; keep P17 focused on patient/site monitoring, visit chronology, clinical form states, and query resolution. |
+| P20 utility outage restoration | Utility incident packet: SCADA alarm order, feeder one-line diagram, switching log, restoration timeline chart, DER clearance, customer-impact map, and draft/final cause conflict. | P15 also has topology diagrams; keep P20 focused on event chronology, grid restoration dependencies, and incident-source precedence. |
+| P21 semiconductor lot disposition | Manufacturing quality packet: wafer-map coordinates, metrology tables, SPC exceptions, recipe conflict, MRB disposition decisions, reliability results, shipping hold/release, and certificate-of-analysis evidence. | P22 also tests regulated batch disposition; keep P21 focused on semiconductor spatial maps, process-control evidence, and lot-level release logic. |
+| P22 pharmaceutical stability release | Pharmaceutical quality file: stability continuation, dissolution chart, chromatogram panels, chamber tray map, hardness trend mini-charts, deviation/source conflicts, and final QA release state. | P17 and P21 also test regulated workflows; keep P22 focused on GMP stability/release documentation, visual analytical panels, and chamber/tray spatial evidence. |
+
+Coverage rule: a case should remain scored only if it contributes at least one challenge that no other scored case covers as the primary difficulty. If a future case duplicates a primary challenge without adding a new realistic document mode, merge or delete it.
+
+Current score-target gate: the suite is not complete unless the weak anchor lands at 20-30 overall, the good anchor lands at 60-80 overall, spread is at least 35 points, no weak-anchor case exceeds 50, and no more than two good-anchor cases exceed 90.

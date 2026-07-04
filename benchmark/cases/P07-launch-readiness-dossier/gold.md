@@ -60,7 +60,7 @@ Legend: G green clear; Y yellow watch; R red blocked. Slash means executive esca
 | BND-01 | G | R | R with slash | Y | R with slash and dot |
 | SPK-03 | Y | G | G | Y | G |
 
-Matrix reconstruction: BND-01 has red Gateway, red POS with slash, and red Partner with slash and dot. PDX-05 Gateway is yellow with slash, not red.
+Matrix reading: BND-01 has red Gateway, red POS with slash, and red Partner with slash and dot. PDX-05 Gateway is yellow with slash, not red.
 
 ## Procurement and Reserve Ledger
 

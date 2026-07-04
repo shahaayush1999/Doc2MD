@@ -1,4 +1,6 @@
-import { access, mkdir, readFile, writeFile } from "node:fs/promises";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+import { access, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { fileURLToPath } from "node:url";
@@ -6,6 +8,8 @@ import { generateText } from "ai";
 import { googleVertex } from "@ai-sdk/google-vertex";
 import { openai } from "@ai-sdk/openai";
 import { fileSha256, hashObject, sha256 } from "./cache.js";
+
+const execFileAsync = promisify(execFile);
 
 type ManifestCase = {
   id: string;
@@ -37,13 +41,13 @@ export const models: Record<string, ModelSpec> = {
     inputPerMillion: 0.25,
     outputPerMillion: 1.5,
   },
-  "vertex-gemini-3.5-flash": {
-    id: "vertex-gemini-3.5-flash",
-    modelName: "gemini-3.5-flash",
-    provider: "google-vertex",
+  "openai-gpt-5-nano": {
+    id: "openai-gpt-5-nano",
+    modelName: "gpt-5-nano",
+    provider: "openai",
     reasoning: "minimal",
-    inputPerMillion: 1.5,
-    outputPerMillion: 9,
+    inputPerMillion: 0.05,
+    outputPerMillion: 0.4,
   },
   "openai-gpt-5.4-nano": {
     id: "openai-gpt-5.4-nano",
@@ -53,19 +57,31 @@ export const models: Record<string, ModelSpec> = {
     inputPerMillion: 0.2,
     outputPerMillion: 1.25,
   },
-  "openai-gpt-5-nano": {
-    id: "openai-gpt-5-nano",
-    modelName: "gpt-5-nano",
-    provider: "openai",
+  "vertex-gemini-3.5-flash": {
+    id: "vertex-gemini-3.5-flash",
+    modelName: "gemini-3.5-flash",
+    provider: "google-vertex",
     reasoning: "minimal",
-    inputPerMillion: 0.05,
-    outputPerMillion: 0.4,
+    inputPerMillion: 0.3,
+    outputPerMillion: 2.5,
+  },
+  "openai-gpt-4o-mini": {
+    id: "openai-gpt-4o-mini",
+    modelName: "gpt-4o-mini",
+    provider: "openai",
+    inputPerMillion: 0.15,
+    outputPerMillion: 0.6,
   },
 };
 
-const maxOutputTokens = 12000;
+export const benchmarkModelIds = ["vertex-gemini-3.1-flash-lite", "openai-gpt-5-nano"] as const;
 
-export const prompt = `Convert the attached PDF into one faithful Markdown document.
+const maxOutputTokens = 24000;
+const inputMode = "page-images";
+const renderDpi = 170;
+const popplerBin = "/Users/aayush/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/pdftoppm";
+
+export const prompt = `Convert the attached document into one faithful Markdown document.
 
 Rules:
 - Return only Markdown.
@@ -74,6 +90,7 @@ Rules:
 - For charts, diagrams, schedules, raster tables, cards, and other non-text visual content, insert concise natural-language descriptions or Markdown tables inline at the original location.
 - Rendered visible content wins over hidden, stale, covered, or invisible PDF text.
 - Do not summarize, cite sources, add commentary, emit JSON, or wrap the Markdown.`;
+const requestPrompt = `${prompt}\n\nThe attached images are the rendered pages of the PDF, in page order.`;
 
 function providerModel(spec: ModelSpec) {
   if (spec.provider === "google-vertex") return googleVertex(spec.modelName);
@@ -108,19 +125,71 @@ async function exists(filePath: string) {
   }
 }
 
-async function runCacheKey(testCase: ManifestCase, spec: ModelSpec) {
+async function renderPageImages(testCase: ManifestCase) {
   const pdfHash = await fileSha256(testCase.pdf);
-  const promptHash = sha256(prompt);
+  const renderConfig = {
+    inputMode,
+    renderer: "pdftoppm",
+    dpi: renderDpi,
+    format: "png",
+  };
+  const renderKey = hashObject({ pdfHash, renderConfig });
+  const renderDir = path.join("benchmark", "rendered", testCase.id);
+  const manifestPath = path.join(renderDir, "manifest.json");
+
+  if (await exists(manifestPath)) {
+    const previous = JSON.parse(await readFile(manifestPath, "utf-8")) as {
+      renderKey?: string;
+      pages?: Array<{ path: string; sha256: string }>;
+    };
+    const previousPages = previous.pages ?? [];
+    const allPagesExist = previousPages.length ? (await Promise.all(previousPages.map((page) => exists(page.path)))).every(Boolean) : false;
+    if (previous.renderKey === renderKey && allPagesExist) {
+      return { pdfHash, renderKey, renderConfig, pages: previousPages };
+    }
+  }
+
+  await rm(renderDir, { recursive: true, force: true });
+  await mkdir(renderDir, { recursive: true });
+  const prefix = path.join(renderDir, "page");
+  await execFileAsync(popplerBin, ["-png", "-r", String(renderDpi), testCase.pdf, prefix]);
+  const files = (await readdir(renderDir))
+    .filter((file) => /^page-\d+\.png$/.test(file))
+    .sort((a, b) => Number(a.match(/\d+/)?.[0] ?? 0) - Number(b.match(/\d+/)?.[0] ?? 0));
+  const pages = await Promise.all(
+    files.map(async (file) => {
+      const pagePath = path.join(renderDir, file);
+      return { path: pagePath, sha256: await fileSha256(pagePath) };
+    }),
+  );
+  if (pages.length === 0) throw new Error(`No rendered pages produced for ${testCase.id}`);
+  await writeFile(manifestPath, JSON.stringify({ caseId: testCase.id, pdfHash, renderKey, renderConfig, pages }, null, 2) + "\n", "utf-8");
+  return { pdfHash, renderKey, renderConfig, pages };
+}
+
+async function runCacheKey(testCase: ManifestCase, spec: ModelSpec, rendered: Awaited<ReturnType<typeof renderPageImages>>) {
+  const promptHash = sha256(requestPrompt);
   const modelConfigHash = hashObject({
     id: spec.id,
     modelName: spec.modelName,
     provider: spec.provider,
     reasoning: spec.reasoning ?? null,
     maxOutputTokens,
+    inputMode,
   });
   return {
-    runKey: hashObject({ caseId: testCase.id, pdfHash, promptHash, modelConfigHash }),
-    pdfHash,
+    runKey: hashObject({
+      caseId: testCase.id,
+      pdfHash: rendered.pdfHash,
+      renderKey: rendered.renderKey,
+      pageHashes: rendered.pages.map((page) => page.sha256),
+      promptHash,
+      modelConfigHash,
+    }),
+    pdfHash: rendered.pdfHash,
+    renderKey: rendered.renderKey,
+    renderConfig: rendered.renderConfig,
+    pageCount: rendered.pages.length,
     promptHash,
     modelConfigHash,
   };
@@ -131,7 +200,8 @@ async function runCase(testCase: ManifestCase, spec: ModelSpec, options: { force
   await mkdir(outputDir, { recursive: true });
   const resultPath = path.join(outputDir, "result.json");
   const predictionPath = path.join(outputDir, "prediction.md");
-  const cache = await runCacheKey(testCase, spec);
+  const rendered = await renderPageImages(testCase);
+  const cache = await runCacheKey(testCase, spec, rendered);
   if (!options.force && (await exists(resultPath)) && (await exists(predictionPath))) {
     const previous = JSON.parse(await readFile(resultPath, "utf-8")) as { cache?: { runKey?: string }; error?: string; finishReason?: string };
     if (previous.cache?.runKey === cache.runKey && !previous.error && previous.finishReason !== "error") {
@@ -140,7 +210,14 @@ async function runCase(testCase: ManifestCase, spec: ModelSpec, options: { force
     }
   }
 
-  const pdf = await readFile(testCase.pdf);
+  const pageParts = await Promise.all(
+    rendered.pages.map(async (page, index) => ({
+      type: "file" as const,
+      data: await readFile(page.path),
+      mediaType: "image/png",
+      filename: `${testCase.id}-page-${String(index + 1).padStart(2, "0")}.png`,
+    })),
+  );
   const started = performance.now();
   try {
     const result = await generateText({
@@ -149,8 +226,8 @@ async function runCase(testCase: ManifestCase, spec: ModelSpec, options: { force
         {
           role: "user",
           content: [
-            { type: "text", text: prompt },
-            { type: "file", data: pdf, mediaType: "application/pdf", filename: `${testCase.id}.pdf` },
+            { type: "text", text: requestPrompt },
+            ...pageParts,
           ],
         },
       ],
@@ -170,6 +247,7 @@ async function runCase(testCase: ManifestCase, spec: ModelSpec, options: { force
       estimatedCostUsd: cost(spec, result.usage),
       outputLength: result.text.length,
       cache,
+      inputMode,
     };
     await writeFile(predictionPath, result.text, "utf-8");
     await writeFile(resultPath, JSON.stringify(summary, null, 2) + "\n", "utf-8");
@@ -190,6 +268,7 @@ async function runCase(testCase: ManifestCase, spec: ModelSpec, options: { force
       outputLength: 0,
       error: error instanceof Error ? error.message : String(error),
       cache,
+      inputMode,
     };
     await writeFile(predictionPath, "", "utf-8");
     await writeFile(resultPath, JSON.stringify(summary, null, 2) + "\n", "utf-8");
@@ -198,32 +277,16 @@ async function runCase(testCase: ManifestCase, spec: ModelSpec, options: { force
   }
 }
 
-async function runWithConcurrency<T, R>(items: T[], concurrency: number, worker: (item: T) => Promise<R>) {
-  const limit = Math.max(1, Math.min(concurrency, items.length));
-  let next = 0;
-  const results: R[] = [];
-  const workers = Array.from({ length: limit }, async () => {
-    while (next < items.length) {
-      const item = items[next++];
-      results.push(await worker(item));
-    }
-  });
-  await Promise.all(workers);
-  return results;
-}
-
-export async function runModel(modelId: string, options: { caseId?: string; concurrency?: number; force?: boolean } = {}) {
+export async function runModel(modelId: string, options: { caseId?: string; force?: boolean } = {}) {
   const spec = models[modelId];
   if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
 
   const manifest = JSON.parse(await readFile("benchmark/manifest.json", "utf-8")) as Manifest;
   const selected = options.caseId ? manifest.cases.filter((testCase) => testCase.id === options.caseId) : manifest.cases;
   if (selected.length === 0) throw new Error(`No selected cases. Use one of: ${manifest.cases.map((testCase) => testCase.id).join(", ")}`);
-  const concurrency = options.concurrency ?? 3;
-  if (!Number.isFinite(concurrency) || concurrency < 1) throw new Error(`Invalid --concurrency ${concurrency}`);
 
-  console.log(`Running ${selected.length} case(s) from ${manifest.name} with ${spec.id} at concurrency ${Math.min(concurrency, selected.length)}`);
-  const results = await runWithConcurrency(selected, concurrency, (testCase) => runCase(testCase, spec, { force: options.force }));
+  console.log(`Running ${selected.length} case(s) from ${manifest.name} with ${spec.id} in parallel`);
+  const results = await Promise.all(selected.map((testCase) => runCase(testCase, spec, { force: options.force })));
   const skipped = results.filter((result) => result.skipped).length;
   console.log(`${spec.id}: ${selected.length - skipped} run, ${skipped} skipped`);
 }
@@ -232,7 +295,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const args = parseArgs();
   await runModel(args.get("model") ?? "vertex-gemini-3.1-flash-lite", {
     caseId: args.get("case"),
-    concurrency: Number(args.get("concurrency") ?? "3"),
     force: args.has("force"),
   });
 }

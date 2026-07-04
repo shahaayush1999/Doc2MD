@@ -1,0 +1,31 @@
+{
+  "id": "P22-pharma-stability-release",
+  "title": "Pharmaceutical Stability Release File",
+  "family": "pharma-quality",
+  "tags": [
+    "multi-page",
+    "pharma",
+    "stability",
+    "dissolution",
+    "chromatograms",
+    "source-precedence"
+  ],
+  "checks": [
+    {
+      "id": "p22-final",
+      "category": "source_state",
+      "weight": 8,
+      "description": "p22-final",
+      "near": {
+        "terms": [
+          "G217-2403",
+          "hold",
+          "6M",
+          "G217-2404",
+          "conditional"
+        ],
+        "window": 900
+      }
+    }
+  ]
+}

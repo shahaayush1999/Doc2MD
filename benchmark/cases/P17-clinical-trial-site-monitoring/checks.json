@@ -1,0 +1,32 @@
+{
+  "id": "P17-clinical-trial-site-monitoring",
+  "title": "Clinical Trial Site Monitoring Binder",
+  "family": "clinical-trial",
+  "tags": [
+    "multi-page",
+    "clinical-trial",
+    "forms",
+    "labs",
+    "source-precedence",
+    "drug-accountability",
+    "queries"
+  ],
+  "checks": [
+    {
+      "id": "p17-final",
+      "category": "source_state",
+      "weight": 8,
+      "description": "p17-final",
+      "near": {
+        "terms": [
+          "not clean-ready",
+          "014-003",
+          "K-204-153",
+          "Q-77",
+          "Q-84"
+        ],
+        "window": 900
+      }
+    }
+  ]
+}

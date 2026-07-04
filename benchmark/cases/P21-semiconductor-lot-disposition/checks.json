@@ -1,0 +1,31 @@
+{
+  "id": "P21-semiconductor-lot-disposition",
+  "title": "Semiconductor Lot Disposition File",
+  "family": "semiconductor-quality",
+  "tags": [
+    "multi-page",
+    "semiconductor",
+    "wafer-map",
+    "spc",
+    "source-precedence",
+    "visual-relation"
+  ],
+  "checks": [
+    {
+      "id": "p21-final",
+      "category": "source_state",
+      "weight": 8,
+      "description": "p21-final",
+      "near": {
+        "terms": [
+          "wafer 09",
+          "REL-22-A",
+          "wafer 07",
+          "scrap",
+          "TIN_GATE_31"
+        ],
+        "window": 900
+      }
+    }
+  ]
+}

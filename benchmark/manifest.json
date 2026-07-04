@@ -3,63 +3,8 @@
   "version": "0.1.0",
   "description": "Benchmark for faithful document-to-Markdown reconstruction across realistic multi-page documents with dense layouts, charts, tables, forms, diagrams, annotations, and source-state conflicts.",
   "caseCount": 7,
-  "pageCount": 42,
+  "pageCount": 80,
   "cases": [
-    {
-      "id": "P01-board-ops-packet",
-      "title": "Board Operating Packet",
-      "family": "packet",
-      "tags": [
-        "multi-page",
-        "finance",
-        "dashboard",
-        "source-precedence",
-        "charts"
-      ],
-      "pages": 4,
-      "pdf": "benchmark/cases/P01-board-ops-packet/source.pdf",
-      "gold": "benchmark/cases/P01-board-ops-packet/gold.md",
-      "spec": "benchmark/cases/P01-board-ops-packet/spec.md",
-      "checks": "benchmark/cases/P01-board-ops-packet/checks.json",
-      "facts": "benchmark/cases/P01-board-ops-packet/facts.json"
-    },
-    {
-      "id": "P04-scientific-supplement",
-      "title": "Scientific Supplement Packet",
-      "family": "scientific",
-      "tags": [
-        "multi-page",
-        "equation",
-        "figure",
-        "continued-table",
-        "footnote"
-      ],
-      "pages": 5,
-      "pdf": "benchmark/cases/P04-scientific-supplement/source.pdf",
-      "gold": "benchmark/cases/P04-scientific-supplement/gold.md",
-      "spec": "benchmark/cases/P04-scientific-supplement/spec.md",
-      "checks": "benchmark/cases/P04-scientific-supplement/checks.json",
-      "facts": "benchmark/cases/P04-scientific-supplement/facts.json"
-    },
-    {
-      "id": "P06-noc-handover-packet",
-      "title": "NOC Handover Packet",
-      "family": "packet",
-      "tags": [
-        "multi-page",
-        "raster-gantt",
-        "timeline",
-        "borderless-table",
-        "heatmap",
-        "visual-binding"
-      ],
-      "pages": 5,
-      "pdf": "benchmark/cases/P06-noc-handover-packet/source.pdf",
-      "gold": "benchmark/cases/P06-noc-handover-packet/gold.md",
-      "spec": "benchmark/cases/P06-noc-handover-packet/spec.md",
-      "checks": "benchmark/cases/P06-noc-handover-packet/checks.json",
-      "facts": "benchmark/cases/P06-noc-handover-packet/facts.json"
-    },
     {
       "id": "P07-launch-readiness-dossier",
       "title": "Launch Readiness Dossier",
@@ -81,66 +26,123 @@
       "facts": "benchmark/cases/P07-launch-readiness-dossier/facts.json"
     },
     {
-      "id": "P08-hospital-discharge-medrec",
-      "title": "Hospital Discharge Medication Reconciliation",
-      "family": "medical",
+      "id": "P12-pfas-method-validation",
+      "title": "Regulatory PFAS Method Validation Supplement",
+      "family": "scientific-regulatory",
       "tags": [
         "multi-page",
-        "labs",
-        "med-rec",
-        "forms",
-        "timeline",
-        "source-precedence",
-        "chart"
-      ],
-      "pages": 5,
-      "pdf": "benchmark/cases/P08-hospital-discharge-medrec/source.pdf",
-      "gold": "benchmark/cases/P08-hospital-discharge-medrec/gold.md",
-      "spec": "benchmark/cases/P08-hospital-discharge-medrec/spec.md",
-      "checks": "benchmark/cases/P08-hospital-discharge-medrec/checks.json",
-      "facts": "benchmark/cases/P08-hospital-discharge-medrec/facts.json"
-    },
-    {
-      "id": "P09-loan-amendment-closing",
-      "title": "Loan Amendment Closing Packet",
-      "family": "legal",
-      "tags": [
-        "multi-page",
-        "legal",
-        "redline",
-        "finance",
-        "source-precedence",
-        "signatures",
-        "ucc",
-        "post-closing"
+        "scientific",
+        "regulatory",
+        "tables",
+        "continuation",
+        "equations",
+        "chromatograms",
+        "qc"
       ],
       "pages": 8,
-      "pdf": "benchmark/cases/P09-loan-amendment-closing/source.pdf",
-      "gold": "benchmark/cases/P09-loan-amendment-closing/gold.md",
-      "spec": "benchmark/cases/P09-loan-amendment-closing/spec.md",
-      "checks": "benchmark/cases/P09-loan-amendment-closing/checks.json",
-      "facts": "benchmark/cases/P09-loan-amendment-closing/facts.json"
+      "pdf": "benchmark/cases/P12-pfas-method-validation/source.pdf",
+      "gold": "benchmark/cases/P12-pfas-method-validation/gold.md",
+      "spec": "benchmark/cases/P12-pfas-method-validation/spec.md",
+      "checks": "benchmark/cases/P12-pfas-method-validation/checks.json",
+      "facts": "benchmark/cases/P12-pfas-method-validation/facts.json"
     },
     {
-      "id": "P10-library-permit-packet",
-      "title": "Library Facilities Permit Packet",
-      "family": "construction",
+      "id": "P15-architecture-floorplan-diagrams",
+      "title": "Architecture Floorplan Diagram Packet",
+      "family": "diagram",
       "tags": [
         "multi-page",
-        "permit",
-        "floor-plan",
-        "site-plan",
+        "floorplan",
+        "network",
+        "rack",
+        "panel-schedule",
         "rfi",
-        "change-order",
-        "photo-observations",
+        "visual-relations"
+      ],
+      "pages": 6,
+      "pdf": "benchmark/cases/P15-architecture-floorplan-diagrams/source.pdf",
+      "gold": "benchmark/cases/P15-architecture-floorplan-diagrams/gold.md",
+      "spec": "benchmark/cases/P15-architecture-floorplan-diagrams/spec.md",
+      "checks": "benchmark/cases/P15-architecture-floorplan-diagrams/checks.json",
+      "facts": "benchmark/cases/P15-architecture-floorplan-diagrams/facts.json"
+    },
+    {
+      "id": "P17-clinical-trial-site-monitoring",
+      "title": "Clinical Trial Site Monitoring Binder",
+      "family": "clinical-trial",
+      "tags": [
+        "multi-page",
+        "clinical-trial",
+        "forms",
+        "labs",
+        "source-precedence",
+        "drug-accountability",
+        "queries"
+      ],
+      "pages": 16,
+      "pdf": "benchmark/cases/P17-clinical-trial-site-monitoring/source.pdf",
+      "gold": "benchmark/cases/P17-clinical-trial-site-monitoring/gold.md",
+      "spec": "benchmark/cases/P17-clinical-trial-site-monitoring/spec.md",
+      "checks": "benchmark/cases/P17-clinical-trial-site-monitoring/checks.json",
+      "facts": "benchmark/cases/P17-clinical-trial-site-monitoring/facts.json"
+    },
+    {
+      "id": "P20-utility-outage-restoration",
+      "title": "Utility Outage Restoration Packet",
+      "family": "utility-incident",
+      "tags": [
+        "multi-page",
+        "utility",
+        "one-line-diagram",
+        "scada",
+        "crew-log",
+        "chart",
         "source-precedence"
       ],
-      "pages": 8,
-      "pdf": "benchmark/cases/P10-library-permit-packet/source.pdf",
-      "gold": "benchmark/cases/P10-library-permit-packet/gold.md",
-      "spec": "benchmark/cases/P10-library-permit-packet/spec.md",
-      "checks": "benchmark/cases/P10-library-permit-packet/checks.json",
-      "facts": "benchmark/cases/P10-library-permit-packet/facts.json"
+      "pages": 13,
+      "pdf": "benchmark/cases/P20-utility-outage-restoration/source.pdf",
+      "gold": "benchmark/cases/P20-utility-outage-restoration/gold.md",
+      "spec": "benchmark/cases/P20-utility-outage-restoration/spec.md",
+      "checks": "benchmark/cases/P20-utility-outage-restoration/checks.json",
+      "facts": "benchmark/cases/P20-utility-outage-restoration/facts.json"
+    },
+    {
+      "id": "P21-semiconductor-lot-disposition",
+      "title": "Semiconductor Lot Disposition File",
+      "family": "semiconductor-quality",
+      "tags": [
+        "multi-page",
+        "semiconductor",
+        "wafer-map",
+        "spc",
+        "source-precedence",
+        "visual-relation"
+      ],
+      "pages": 13,
+      "pdf": "benchmark/cases/P21-semiconductor-lot-disposition/source.pdf",
+      "gold": "benchmark/cases/P21-semiconductor-lot-disposition/gold.md",
+      "spec": "benchmark/cases/P21-semiconductor-lot-disposition/spec.md",
+      "checks": "benchmark/cases/P21-semiconductor-lot-disposition/checks.json",
+      "facts": "benchmark/cases/P21-semiconductor-lot-disposition/facts.json"
+    },
+    {
+      "id": "P22-pharma-stability-release",
+      "title": "Pharmaceutical Stability Release File",
+      "family": "pharma-quality",
+      "tags": [
+        "multi-page",
+        "pharma",
+        "stability",
+        "dissolution",
+        "chromatograms",
+        "source-precedence"
+      ],
+      "pages": 17,
+      "pdf": "benchmark/cases/P22-pharma-stability-release/source.pdf",
+      "gold": "benchmark/cases/P22-pharma-stability-release/gold.md",
+      "spec": "benchmark/cases/P22-pharma-stability-release/spec.md",
+      "checks": "benchmark/cases/P22-pharma-stability-release/checks.json",
+      "facts": "benchmark/cases/P22-pharma-stability-release/facts.json"
     }
   ]
 }

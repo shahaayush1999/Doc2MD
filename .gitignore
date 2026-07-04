@@ -1,6 +1,8 @@
 .env
 .env.*
+.DS_Store
 node_modules/
 tmp/
-benchmark/renders/
+benchmark/rendered/
+scripts/__pycache__/
 runs/

@@ -1,0 +1,128 @@
+{
+  "id": "P15-architecture-floorplan-diagrams",
+  "title": "Architecture Floorplan Diagram Packet",
+  "family": "diagram",
+  "tags": [
+    "multi-page",
+    "floorplan",
+    "network",
+    "rack",
+    "panel-schedule",
+    "rfi",
+    "visual-relations"
+  ],
+  "facts": [
+    {
+      "id": "p15.revision",
+      "category": "source_state",
+      "weight": 6,
+      "expectation": "Rev C dated 2026-06-12 controls; Rev B D-214A is superseded by D-214B and CR-6 corridor-side reader.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p15.rooms",
+      "category": "visual_relation",
+      "weight": 10,
+      "expectation": "Floor plan preserves room names and dimensions for 214 Clean Prep, 215 Lab B, 216 Freezer, 217 Wash, and 218 IT Closet, plus overall 45 ft 0 in width, 22 ft 0 in depth, and coordination schedule linking 214 to CS-2/01, D-214B to CR-6/L2-15, 216 to VLAN 240/L2-17, and 218 to rack R2/L2-19.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p15.egress",
+      "category": "visual_relation",
+      "weight": 5,
+      "expectation": "Egress arrow exits from Clean Prep toward C2 Corridor.",
+      "guidance": "",
+      "severity": "major"
+    },
+    {
+      "id": "p15.callouts",
+      "category": "visual_relation",
+      "weight": 8,
+      "expectation": "Callout 6 is CR-6 at Lab B corridor door; callout 9 is rack R2 in 218 IT Closet; callout 11 is freezer FZ-3 in 216 Freezer.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p15.rack.units",
+      "category": "visual_relation",
+      "weight": 10,
+      "expectation": "Rack elevation preserves CS-2 at U42-U43, PP-7 U36-U37, FW-02 U30-U31, UPS A U24-U26, GW-3 U18, NVR bridge U12-U13.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p15.patch.table",
+      "category": "table_cell",
+      "weight": 8,
+      "expectation": "Patch table preserves CS-2/01 D214-01 tablet dock VLAN 210, CS-2/07 D215-03 CR-6 VLAN 230, CS-2/12 D216-02 FZ-3 VLAN 240, CS-2/19 D218-01 FW-02 mgmt VLAN 99.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p15.network.arrows",
+      "category": "visual_relation",
+      "weight": 12,
+      "expectation": "Network topology preserves directed links FW-02 to CS-2 trunk, CS-2 to CR-6 VLAN 230, CS-2 to FZ-3 VLAN 240, CS-2 to QA subnet VLAN 210, CR-6 to NVR badge mirror, plus rule extract ACL-230-06, ACL-240-11, TRK-CS2-FW02, and OPT-CAM with source, destination, VLAN, and state.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p15.subnets",
+      "category": "visual_relation",
+      "weight": 8,
+      "expectation": "VLAN 240 maps to 10.42.40.0/24 freezer/camera telemetry; VLAN 230 is access control; VLAN 210 is QA devices; ACL-230-06 permits one-way CR-6 to NVR event mirror, and ACL-240-11 denies FZ-3 to QA telemetry except broker.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p15.optional.path",
+      "category": "visual_relation",
+      "weight": 4,
+      "expectation": "Dashed optional alert overlay runs from FZ-3 to NVR.",
+      "guidance": "",
+      "severity": "major"
+    },
+    {
+      "id": "p15.panel",
+      "category": "table_cell",
+      "weight": 12,
+      "expectation": "Panel LP-2 schedule preserves all circuits L2-11, L2-13, L2-15, L2-17, L2-19, L2-21 with loads, breakers, emergency states, rooms, notes, and load summary rows for normal receptacles 3.2/0.0 kVA, access control 0.4/0.4, cold storage 0.7/0.7, IT/UPS 1.1/1.1, spare capacity 2.6/- held for Rev D.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p15.emergency",
+      "category": "source_state",
+      "weight": 8,
+      "expectation": "Emergency circuits are L2-15, L2-17, and L2-19; L2-17 is Freezer FZ-3 and matches callout 11; emergency branch labels match floor plan callouts is checked, while L2-21 released for construction and freezer monitor moved to normal power are unchecked.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p15.rfi.answer",
+      "category": "source_state",
+      "weight": 8,
+      "expectation": "RFI final answer uses D-214B, adds CR-6 card reader on corridor side, updates access control schedule and LP-2 circuit L2-15.",
+      "guidance": "",
+      "severity": "critical"
+    },
+    {
+      "id": "p15.revision.cloud",
+      "category": "visual_relation",
+      "weight": 5,
+      "expectation": "Revision cloud text says D-214B + CR-6.",
+      "guidance": "",
+      "severity": "major"
+    },
+    {
+      "id": "p15.rev.table",
+      "category": "table_cell",
+      "weight": 6,
+      "expectation": "RFI field table preserves Door label D-214A to D-214B, Reader none to CR-6 corridor side, Circuit unassigned to L2-15, Schedule draft to issued.",
+      "guidance": "",
+      "severity": "critical"
+    }
+  ]
+}

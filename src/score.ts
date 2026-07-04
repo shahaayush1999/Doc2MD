@@ -31,6 +31,7 @@ type ManifestCase = {
   title: string;
   family: string;
   tags: string[];
+  pages?: number;
   gold: string;
   checks: string;
   facts?: string;
@@ -48,12 +49,20 @@ type JudgeFinding = {
   actual?: string;
 };
 
+type UnsupportedClaim = {
+  severity: "critical" | "major" | "minor";
+  claim: string;
+  reason: string;
+};
+
 type Fact = {
   id: string;
   category: string;
   weight: number;
   expectation: string;
   guidance?: string;
+  severity?: "critical" | "major" | "minor";
+  modality?: string;
 };
 
 type FactFile = {
@@ -76,6 +85,7 @@ type JudgeResult = {
   structure: number;
   markdownQuality: number;
   factResults: FactResult[];
+  unsupportedClaims: UnsupportedClaim[];
   findings: JudgeFinding[];
   rationale: string;
 };
@@ -90,24 +100,37 @@ const evaluator = {
 } as const;
 
 const weights = {
-  accuracy: 0.75,
-  completeness: 0.1,
-  structure: 0.1,
-  markdownQuality: 0.05,
+  accuracy: 0.96,
+  completeness: 0.03,
+  structure: 0.01,
+  markdownQuality: 0,
 };
 
-const scoringVersion = "fact-judge-v1";
-const judgeMaxOutputTokens = 3000;
+const scoringVersion = "fact-judge-v16-downstream-recoverability";
+const judgeMaxOutputTokens = 6000;
+
+const factStatusCredit = {
+  correct: 1,
+  partial: 0.5,
+  incorrect: -2,
+  missing: 0,
+} satisfies Record<FactResult["status"], number>;
+
+const unsupportedClaimPenalty = {
+  minor: 5,
+  major: 15,
+  critical: 30,
+} satisfies Record<UnsupportedClaim["severity"], number>;
 
 const scoreField = z.number().min(0).max(100);
 
 const judgeSchema = z.object({
   accuracy: scoreField.describe(
-    "Semantic correctness of represented facts, values, labels, state, and bindings. Penalize contradictions and wrong values heavily, but do not lower accuracy for formatting-only issues.",
+    "Downstream recoverability of represented facts, values, labels, states, and bindings. Penalize contradictions and wrong values heavily, but do not lower accuracy for formatting-only issues.",
   ),
-  completeness: scoreField.describe("Coverage of all information in the gold answer key."),
-  structure: scoreField.describe("Preservation of reading order, grouping, table/list/form structure, and visual-to-text bindings."),
-  markdownQuality: scoreField.describe("Usefulness and clarity of Markdown representation. Do not penalize harmless formatting differences."),
+  completeness: scoreField.describe("Coverage of answer-key information, regardless of whether it is represented as prose, lists, Markdown tables, or HTML tables."),
+  structure: scoreField.describe("Recoverability of grouping, locality, row/column relationships, source-state relationships, and visual-to-text bindings."),
+  markdownQuality: scoreField.describe("Machine-usable Markdown/plain text. Give high marks unless malformed output blocks downstream parsing."),
   factResults: z
     .array(
       z.object({
@@ -117,6 +140,16 @@ const judgeSchema = z.object({
       }),
     )
     .describe("Per-fact judgments for every listed fact obligation."),
+  unsupportedClaims: z
+    .array(
+      z.object({
+        severity: z.enum(["critical", "major", "minor"]),
+        claim: z.string().describe("A concise description or quote of unsupported content in the candidate."),
+        reason: z.string().describe("Why this claim is unsupported, hallucinated, or contradicted by the gold answer key."),
+      }),
+    )
+    .max(12)
+    .describe("Unsupported, hallucinated, or contradicted candidate claims. Leave empty only if there are no substantive unsupported claims."),
   findings: z
     .array(
       z.object({
@@ -169,6 +202,36 @@ function normalize(text: string): string {
     .replace(/[“”]/g, '"')
     .replace(/[‘’]/g, "'")
     .trim();
+}
+
+function reconstructionCoverage(testCase: ManifestCase, gold: string, prediction: string) {
+  const normalizedGold = normalize(gold);
+  const normalizedPrediction = normalize(prediction);
+  const goldLength = normalizedGold.length;
+  const predictionLength = normalizedPrediction.length;
+  if ((testCase.pages ?? 0) < 6 || goldLength < 3_000) return null;
+
+  const ratio = goldLength === 0 ? 0 : predictionLength / goldLength;
+  if (ratio >= 0.95) {
+    return {
+      goldLength,
+      predictionLength,
+      ratio: round(ratio, 3),
+      scoreCap: null,
+      completenessCap: 100,
+      reason: "Long-document reconstruction coverage is sufficient.",
+    };
+  }
+
+  const scoreCap = ratio < 0.25 ? 25 : ratio < 0.4 ? 40 : ratio < 0.55 ? 55 : ratio < 0.7 ? 70 : ratio < 0.85 ? 80 : 88;
+  return {
+    goldLength,
+    predictionLength,
+    ratio: round(ratio, 3),
+    scoreCap,
+    completenessCap: round(Math.min(100, (ratio / 0.85) * 100)),
+    reason: "Candidate is materially shorter than the long-document gold reference; Doc2MD requires reconstruction, not a selective summary.",
+  };
 }
 
 function regex(pattern: string): RegExp {
@@ -253,29 +316,195 @@ function deterministicAudit(checkFile: CheckFile, prediction: string, failed: bo
   };
 }
 
-function factStatusValue(status: FactResult["status"]): number {
-  if (status === "correct") return 1;
-  if (status === "partial") return 0.5;
-  return 0;
-}
-
 function scoreFacts(facts: Fact[], factResults: FactResult[]) {
   const byId = new Map(factResults.map((result) => [result.id, result]));
   let earned = 0;
   let possible = 0;
+  const statusWeights: Record<FactResult["status"], number> = {
+    correct: 0,
+    partial: 0,
+    incorrect: 0,
+    missing: 0,
+  };
+  const severityStatusWeights: Record<NonNullable<Fact["severity"]>, Record<FactResult["status"], number>> = {
+    critical: { correct: 0, partial: 0, incorrect: 0, missing: 0 },
+    major: { correct: 0, partial: 0, incorrect: 0, missing: 0 },
+    minor: { correct: 0, partial: 0, incorrect: 0, missing: 0 },
+  };
   const details = facts.map((fact) => {
     possible += fact.weight;
     const result = byId.get(fact.id) ?? { id: fact.id, status: "missing" as const, rationale: "The evaluator did not return a judgment for this fact." };
-    const credit = factStatusValue(result.status) * fact.weight;
+    statusWeights[result.status] += fact.weight;
+    severityStatusWeights[fact.severity ?? "major"][result.status] += fact.weight;
+    const credit = factStatusCredit[result.status] * fact.weight;
     earned += credit;
     return { ...fact, status: result.status, rationale: result.rationale, earned: round(credit, 2) };
   });
+  const rawScore = possible === 0 ? null : round((earned / possible) * 100);
   return {
-    score: possible === 0 ? null : round((earned / possible) * 100),
+    score: rawScore === null ? null : clampScore(rawScore),
+    rawScore,
     earned: round(earned, 2),
     possible: round(possible, 2),
+    statusWeights: Object.fromEntries(Object.entries(statusWeights).map(([status, value]) => [status, round(value, 2)])),
+    severityStatusWeights: Object.fromEntries(
+      Object.entries(severityStatusWeights).map(([severity, weights]) => [
+        severity,
+        Object.fromEntries(Object.entries(weights).map(([status, value]) => [status, round(value, 2)])),
+      ]),
+    ),
     details,
   };
+}
+
+function unsupportedAudit(judge: JudgeResult) {
+  const claims = judge.unsupportedClaims ?? [];
+  const fallbackClaims =
+    claims.length > 0
+      ? []
+      : (judge.findings ?? [])
+          .filter((finding) => finding.type === "extra")
+          .map((finding) => ({
+            severity: finding.severity,
+            claim: finding.actual ?? finding.explanation,
+            reason: finding.explanation,
+          }));
+  const auditedClaims = [...claims, ...fallbackClaims];
+  const penalty = auditedClaims.reduce((sum, claim) => sum + unsupportedClaimPenalty[claim.severity], 0);
+  const counts = auditedClaims.reduce(
+    (acc, claim) => {
+      acc[claim.severity] += 1;
+      return acc;
+    },
+    { critical: 0, major: 0, minor: 0 } as Record<UnsupportedClaim["severity"], number>,
+  );
+  return {
+    claims: auditedClaims,
+    counts,
+    penalty,
+  };
+}
+
+function scoreCaps(params: {
+  factScore: ReturnType<typeof scoreFacts>;
+  unsupported: ReturnType<typeof unsupportedAudit>;
+  coverage: ReturnType<typeof reconstructionCoverage>;
+}) {
+  const caps: Array<{ cap: number; reason: string }> = [];
+  const possible = params.factScore.possible || 0;
+  const statusWeights = params.factScore.statusWeights as Record<FactResult["status"], number>;
+  const partialWeight = statusWeights.partial ?? 0;
+  const missingWeight = statusWeights.missing ?? 0;
+  const incorrectWeight = statusWeights.incorrect ?? 0;
+  const partialPct = possible === 0 ? 0 : (partialWeight / possible) * 100;
+  const missingPct = possible === 0 ? 0 : (missingWeight / possible) * 100;
+  const incorrectPct = possible === 0 ? 0 : (incorrectWeight / possible) * 100;
+  const problemPct = partialPct + missingPct + incorrectPct;
+  const weightedProblemPct = partialPct * 0.5 + missingPct + incorrectPct * 1.5;
+  const severityStatusWeights = params.factScore.severityStatusWeights as Record<NonNullable<Fact["severity"]>, Record<FactResult["status"], number>>;
+  const criticalWeights = severityStatusWeights.critical;
+  const criticalPossible = Object.values(criticalWeights).reduce((sum, value) => sum + value, 0);
+  const criticalMissingWeight = criticalWeights.missing ?? 0;
+  const criticalIncorrectWeight = criticalWeights.incorrect ?? 0;
+  const criticalBadWeight = criticalMissingWeight + criticalIncorrectWeight;
+  const criticalMissingPct = criticalPossible === 0 ? 0 : ((criticalWeights.missing ?? 0) / criticalPossible) * 100;
+  const criticalIncorrectPct = criticalPossible === 0 ? 0 : ((criticalWeights.incorrect ?? 0) / criticalPossible) * 100;
+  const criticalBadPct = criticalMissingPct + criticalIncorrectPct;
+
+  if (partialPct >= 10) caps.push({ cap: 85, reason: `Material partial reconstruction: ${round(partialPct)}% of weighted facts are only partially correct.` });
+  if (partialPct >= 20) caps.push({ cap: 75, reason: `Broad partial reconstruction: ${round(partialPct)}% of weighted facts are only partially correct.` });
+  if (partialPct >= 30) caps.push({ cap: 65, reason: `Large partial reconstruction failure: ${round(partialPct)}% of weighted facts are only partially correct.` });
+  if (partialPct >= 40) caps.push({ cap: 55, reason: `Severe partial reconstruction failure: ${round(partialPct)}% of weighted facts are only partially correct.` });
+
+  if (missingWeight > 0) caps.push({ cap: 90, reason: `Visible fact omissions: ${round(missingPct)}% of weighted facts are missing.` });
+  if (missingPct >= 5) caps.push({ cap: 85, reason: `Meaningful omission: ${round(missingPct)}% of weighted facts are missing.` });
+  if (missingPct >= 10) caps.push({ cap: 75, reason: `Material omission: ${round(missingPct)}% of weighted facts are missing.` });
+  if (missingPct >= 20) caps.push({ cap: 60, reason: `Large omission: ${round(missingPct)}% of weighted facts are missing.` });
+  if (missingPct >= 30) caps.push({ cap: 45, reason: `Severe omission: ${round(missingPct)}% of weighted facts are missing.` });
+  if (missingPct >= 40) caps.push({ cap: 30, reason: `Critical omission: ${round(missingPct)}% of weighted facts are missing.` });
+
+  if (criticalMissingWeight > 0) caps.push({ cap: 85, reason: `Critical visible fact omissions: ${round(criticalMissingPct)}% of critical weighted facts are missing.` });
+  if (criticalMissingWeight >= 10) caps.push({ cap: 75, reason: `Meaningful critical omission: ${round(criticalMissingPct)}% of critical weighted facts are missing.` });
+  if (criticalMissingWeight >= 15) caps.push({ cap: 65, reason: `Material critical omission: ${round(criticalMissingPct)}% of critical weighted facts are missing.` });
+  if (criticalMissingWeight >= 25) caps.push({ cap: 45, reason: `Large critical omission: ${round(criticalMissingPct)}% of critical weighted facts are missing.` });
+  if (criticalMissingWeight >= 40) caps.push({ cap: 30, reason: `Severe critical omission: ${round(criticalMissingPct)}% of critical weighted facts are missing.` });
+
+  if (incorrectWeight > 0) caps.push({ cap: 90, reason: `Incorrect extraction: ${round(incorrectPct)}% of weighted facts are wrong.` });
+  if (incorrectPct >= 3) caps.push({ cap: 80, reason: `Meaningful misinformation: ${round(incorrectPct)}% of weighted facts are incorrect.` });
+  if (incorrectPct >= 5) caps.push({ cap: 70, reason: `Material misinformation: ${round(incorrectPct)}% of weighted facts are incorrect.` });
+  if (incorrectPct >= 10) caps.push({ cap: 50, reason: `Large misinformation failure: ${round(incorrectPct)}% of weighted facts are incorrect.` });
+  if (incorrectPct >= 15) caps.push({ cap: 35, reason: `Severe misinformation failure: ${round(incorrectPct)}% of weighted facts are incorrect.` });
+  if (incorrectPct >= 25) caps.push({ cap: 20, reason: `Critical misinformation failure: ${round(incorrectPct)}% of weighted facts are incorrect.` });
+
+  if (criticalIncorrectWeight > 0) caps.push({ cap: 85, reason: `Critical fact misinformation: ${round(criticalIncorrectPct)}% of critical weighted facts are incorrect.` });
+  if (criticalIncorrectWeight >= 10) caps.push({ cap: 65, reason: `Material critical misinformation: ${round(criticalIncorrectPct)}% of critical weighted facts are incorrect.` });
+  if (criticalIncorrectWeight >= 15) caps.push({ cap: 50, reason: `Large critical misinformation: ${round(criticalIncorrectPct)}% of critical weighted facts are incorrect.` });
+  if (criticalIncorrectWeight >= 25) caps.push({ cap: 30, reason: `Severe critical misinformation: ${round(criticalIncorrectPct)}% of critical weighted facts are incorrect.` });
+  if (criticalBadWeight >= 25) caps.push({ cap: 45, reason: `Large critical reliability failure: missing plus wrong critical facts are ${round(criticalBadPct)}% of critical weighted facts.` });
+  if (criticalBadWeight >= 40) caps.push({ cap: 30, reason: `Severe critical reliability failure: missing plus wrong critical facts are ${round(criticalBadPct)}% of critical weighted facts.` });
+
+  if (missingPct + incorrectPct >= 20) {
+    caps.push({ cap: 60, reason: `Large reliability failure: missing plus wrong facts are ${round(missingPct + incorrectPct)}% of weighted facts.` });
+  }
+  if (missingPct + incorrectPct >= 30) {
+    caps.push({ cap: 45, reason: `Severe reliability failure: missing plus wrong facts are ${round(missingPct + incorrectPct)}% of weighted facts.` });
+  }
+  if (missingPct + incorrectPct >= 40) {
+    caps.push({ cap: 30, reason: `Critical reliability failure: missing plus wrong facts are ${round(missingPct + incorrectPct)}% of weighted facts.` });
+  }
+  if (missingPct + incorrectPct >= 55) {
+    caps.push({ cap: 20, reason: `Benchmark-task failure: missing plus wrong facts are ${round(missingPct + incorrectPct)}% of weighted facts.` });
+  }
+  if (weightedProblemPct >= 25) {
+    caps.push({ cap: 55, reason: `Broad reconstruction failure: partial, missing, and wrong facts are ${round(problemPct)}% of weighted facts, with misinformation weighted more heavily.` });
+  }
+  if (weightedProblemPct >= 35) {
+    caps.push({ cap: 45, reason: `Severe reconstruction failure: partial, missing, and wrong facts are ${round(problemPct)}% of weighted facts, with misinformation weighted more heavily.` });
+  }
+  if (weightedProblemPct >= 45) {
+    caps.push({ cap: 35, reason: `Critical reconstruction failure: partial, missing, and wrong facts are ${round(problemPct)}% of weighted facts, with misinformation weighted more heavily.` });
+  }
+  if (weightedProblemPct >= 60) {
+    caps.push({ cap: 25, reason: `Benchmark-task failure: partial, missing, and wrong facts are ${round(problemPct)}% of weighted facts, with misinformation weighted more heavily.` });
+  }
+  const rawFactScore = params.factScore.rawScore ?? 100;
+  if (rawFactScore < 85) caps.push({ cap: 80, reason: "Raw signed fact score is below 85." });
+  if (rawFactScore < 70) caps.push({ cap: 65, reason: "Raw signed fact score is below 70." });
+  if (rawFactScore < 55) caps.push({ cap: 45, reason: "Raw signed fact score is below 55." });
+  if (rawFactScore < 40) caps.push({ cap: 30, reason: "Raw signed fact score is below 40." });
+  if (rawFactScore < 20) caps.push({ cap: 15, reason: "Raw signed fact score is below 20." });
+
+  if (params.unsupported.counts.minor > 0) caps.push({ cap: 95, reason: "Candidate includes unsupported minor content." });
+  if (params.unsupported.counts.major > 0) caps.push({ cap: 60, reason: "Candidate includes unsupported major content." });
+  if (params.unsupported.counts.critical > 0) caps.push({ cap: 35, reason: "Candidate includes unsupported critical content." });
+
+  if (params.coverage?.scoreCap) caps.push({ cap: params.coverage.scoreCap, reason: params.coverage.reason });
+
+  return {
+    appliedCap: caps.length === 0 ? null : Math.min(...caps.map((cap) => cap.cap)),
+    caps,
+    factWeightPercentages: {
+      partial: possible === 0 ? 0 : round(((statusWeights.partial ?? 0) / possible) * 100),
+      incorrect: round(incorrectPct),
+      missing: round(missingPct),
+    },
+  };
+}
+
+function deterministicCaseCaps(testCase: ManifestCase, deterministic: ReturnType<typeof deterministicAudit>) {
+  const failed = new Set(deterministic.details.filter((detail) => !detail.matched).map((detail) => detail.id));
+  const caps: Array<{ cap: number; reason: string }> = [];
+
+  if (testCase.id === "P07-scanned-claims-appeal") {
+    if (failed.has("p07-corrected-total")) {
+      caps.push({ cap: 60, reason: "Deterministic P07 check failed: corrected EOB total row is not locally reconstructed." });
+    }
+    if (failed.has("p07-form-correction")) {
+      caps.push({ cap: 70, reason: "Deterministic P07 check failed: crossed-out/voided member responsibility and blue correction are not locally bound." });
+    }
+  }
+
+  return caps;
 }
 
 function judgePrompt(testCase: ManifestCase, gold: string, facts: Fact[], prediction: string): string {
@@ -287,28 +516,38 @@ function judgePrompt(testCase: ManifestCase, gold: string, facts: Fact[], predic
 Compare the candidate Markdown against the gold answer key. The gold answer key is the authoritative representation of the original document.
 
 Score dimensions:
-- accuracy: highest importance. Correct facts, numbers, labels, checkbox states, redline/current-vs-deleted status, table bindings, chart/schedule bindings, and absence of contradictions.
-- completeness: whether the candidate preserves all information in the gold answer key.
-- structure: whether reading order, grouping, table/list/form structure, and visual-to-text relationships are faithfully represented.
-- markdownQuality: whether the Markdown is usable and clear.
+- accuracy: highest importance. A downstream AI should be able to recover the same facts, numbers, labels, checkbox states, redline/current-vs-deleted status, table bindings, chart/schedule bindings, source-state relationships, and absence of contradictions.
+- completeness: whether the candidate preserves the answer-key information, regardless of whether it uses prose, lists, Markdown tables, or HTML tables.
+- structure: whether grouping, locality, row/column relationships, source-state relationships, and visual-to-text relationships remain recoverable for downstream extraction.
+- markdownQuality: only whether the output is machine-usable Markdown/plain text. This is not an aesthetics score.
 
 All four score dimensions MUST be numeric scores from 0 to 100, where 100 is perfect. Do not use a 0 to 1 scale.
 
 Important judging rules:
 - Do not require identical wording or identical Markdown syntax.
-- Do not penalize harmless formatting differences, section title variants, or concise natural-language descriptions when the same information is faithfully represented.
-- Accuracy is semantic fidelity. Do not lower accuracy for malformed Markdown, raw HTML, table style, or representation choice unless it changes, hides, or makes ambiguous the actual document information.
+- Do not penalize harmless formatting differences, section title variants, table style, HTML tables, prose instead of tables, or concise natural-language descriptions when the same information and bindings are recoverable.
+- Accuracy is faithful visible-content reconstruction. Do not give credit merely because the candidate captures the gist or story of the document.
+- Do not lower accuracy for malformed Markdown, raw HTML, table style, or representation choice unless it changes, hides, or makes ambiguous the actual document information for downstream extraction.
 - Put representation-only problems in structure or markdownQuality, not accuracy.
+- Markdown is a carrier for downstream AI consumption, not a human-facing visual replica. Prefer information recoverability over visual similarity.
+- A table can be faithfully represented as a Markdown table, HTML table, bullet list, or key-value prose if row/column/label/value relationships remain unambiguous.
+- A candidate should not get extra credit for looking like the source document if the data bindings are wrong, and should not lose credit for looking different if the same data can be reliably extracted.
 - Penalize wrong information more than missing information.
-- Penalize false assertions, invented values, wrong checkbox states, wrong table row/column bindings, wrong timeline spans, or treating deleted/hidden/covered text as current.
+- Penalize false assertions, invented values, wrong checkbox states, wrong table row/column bindings, wrong timeline spans, wrong units, wrong IDs, wrong dates, or treating deleted/hidden/covered text as current.
+- For exact table cells, IDs, dates, units, checkbox/form states, redlines, source-state conflicts, and visible chart/panel values, mark the fact incorrect if the value or binding is wrong. Do not mark these as partial unless the mistake is truly minor and the document information remains usable.
+- Wrong is worse than missing. Hallucinated or unsupported content is worse than wrong extraction.
 - If the candidate is a summary rather than a reconstruction, score completeness and structure low even if some facts are correct.
+- Populate unsupportedClaims for candidate content that asserts visible facts, values, states, or relationships not supported by the gold answer key. Do not include harmless headings, table wrappers, boilerplate labels, or formatting choices unless they create a false document fact.
 - Findings should list only substantive issues.
 - You must judge every fact obligation listed below by id.
 - Fact status meanings:
   - correct: all required information is present and correctly bound.
-  - partial: some required information is present, but a minor value, binding, or context is missing.
+  - partial: a genuinely compound fact is partly present and the remaining mistake is minor enough that the represented document information is still mostly usable.
   - incorrect: the candidate asserts a contradictory or wrong value/binding/state.
   - missing: the information is absent or too vague to verify.
+- Visual facts do not need to be redrawn as images. Charts, diagrams, chromatograms, floorplans, cards, maps, and screenshots may be faithfully represented as prose, lists, Markdown tables, or HTML tables.
+- For a visual fact, mark correct when the candidate preserves the required labels, values, trends, thresholds, legends, spatial relations, and local meaning, even if the original visual form is not recreated.
+- Mark a visual fact partial only when a required visual value/relation/state is actually missing or ambiguous. Do not mark partial merely because the candidate uses text instead of a chart or image.
 
 Case: ${testCase.id} - ${testCase.title}
 Family: ${testCase.family}
@@ -358,28 +597,41 @@ async function scoringCacheKey(testCase: ManifestCase, predictionPath: string) {
   const goldHash = await fileSha256(testCase.gold);
   const checksHash = await fileSha256(testCase.checks);
   const factsHash = testCase.facts ? await fileSha256(testCase.facts) : null;
-  const evaluatorConfigHash = hashObject({
-    scoringVersion,
+  const judgeConfigHash = hashObject({
     evaluator,
-    weights,
     judgeMaxOutputTokens,
     judgePromptHash: sha256(judgePrompt.toString()),
     judgeSchemaHash: hashObject(judgeSchema.toJSONSchema()),
   });
+  const judgeKey = hashObject({
+    caseId: testCase.id,
+    predictionHash,
+    goldHash,
+    factsHash,
+    judgeConfigHash,
+  });
+  const scoringConfigHash = hashObject({
+    scoringVersion,
+    weights,
+    factStatusCredit,
+    unsupportedClaimPenalty,
+    scoreCapsHash: sha256(scoreCaps.toString()),
+    deterministicCaseCapsHash: sha256(deterministicCaseCaps.toString()),
+  });
   return {
     scoreKey: hashObject({
       caseId: testCase.id,
-      predictionHash,
-      goldHash,
       checksHash,
-      factsHash,
-      evaluatorConfigHash,
+      judgeKey,
+      scoringConfigHash,
     }),
+    judgeKey,
     predictionHash,
     goldHash,
     checksHash,
     factsHash,
-    evaluatorConfigHash,
+    judgeConfigHash,
+    scoringConfigHash,
   };
 }
 
@@ -412,6 +664,7 @@ export async function scoreCase(modelId: string, testCase: ManifestCase, options
   let judgeUsage: any = null;
   let judgeCostUsd = 0;
   let judgeError: string | undefined;
+  let judgeReused = false;
 
   if (failed) {
     judge = {
@@ -420,16 +673,23 @@ export async function scoreCase(modelId: string, testCase: ManifestCase, options
       structure: 0,
       markdownQuality: 0,
       factResults: factFile.facts.map((fact) => ({ id: fact.id, status: "missing", rationale: "Model run failed." })),
+      unsupportedClaims: [],
       findings: [{ severity: "critical", type: "missing", explanation: "Model run failed, so no faithful Markdown was produced." }],
       rationale: "The model run failed.",
     };
   } else {
     try {
-      const judged = await judgeWithGemini(testCase, gold, factFile.facts, rawPrediction);
-      judge = judged.result;
-      judgeElapsedMs = judged.elapsedMs;
-      judgeUsage = judged.usage;
-      judgeCostUsd = judged.estimatedCostUsd;
+      const previous = (await exists(scorePath)) ? (JSON.parse(await readFile(scorePath, "utf-8")) as any) : null;
+      if (!options.force && previous?.scorer?.cache?.judgeKey === scoreCache.judgeKey && previous.judgeResult) {
+        judge = previous.judgeResult as JudgeResult;
+        judgeReused = true;
+      } else {
+        const judged = await judgeWithGemini(testCase, gold, factFile.facts, rawPrediction);
+        judge = judged.result;
+        judgeElapsedMs = judged.elapsedMs;
+        judgeUsage = judged.usage;
+        judgeCostUsd = judged.estimatedCostUsd;
+      }
     } catch (error) {
       judgeError = error instanceof Error ? error.message : String(error);
       judge = {
@@ -438,6 +698,7 @@ export async function scoreCase(modelId: string, testCase: ManifestCase, options
         structure: 0,
         markdownQuality: 0,
         factResults: factFile.facts.map((fact) => ({ id: fact.id, status: "missing", rationale: `Evaluator failed: ${judgeError}` })),
+        unsupportedClaims: [],
         findings: [{ severity: "critical", type: "missing", explanation: `Evaluator failed: ${judgeError}` }],
         rationale: "The evaluator failed.",
       };
@@ -445,18 +706,26 @@ export async function scoreCase(modelId: string, testCase: ManifestCase, options
   }
 
   const factScore = scoreFacts(factFile.facts, judge.factResults ?? []);
+  const coverage = reconstructionCoverage(testCase, gold, rawPrediction);
+  const unsupported = unsupportedAudit(judge);
+  const factFidelity = factScore.score ?? clampScore(judge.accuracy);
+  const penalizedAccuracy = Math.max(0, factFidelity - unsupported.penalty);
   const dimensionScores = {
-    accuracy: factScore.score ?? clampScore(judge.accuracy),
-    completeness: clampScore(judge.completeness),
-    structure: clampScore(judge.structure),
-    markdownQuality: clampScore(judge.markdownQuality),
+    accuracy: penalizedAccuracy,
+    completeness: Math.min(clampScore(judge.completeness), coverage?.completenessCap ?? 100, factFidelity + 15),
+    structure: Math.min(clampScore(judge.structure), factFidelity + 20),
+    markdownQuality: Math.min(clampScore(judge.markdownQuality), factFidelity + 25),
   };
-  const score = round(
+  const caps = scoreCaps({ factScore, unsupported, coverage });
+  const caseCaps = deterministicCaseCaps(testCase, deterministic);
+  const appliedCap = Math.min(caps.appliedCap ?? 100, ...caseCaps.map((cap) => cap.cap), 100);
+  const uncappedScore = round(
     dimensionScores.accuracy * weights.accuracy +
       dimensionScores.completeness * weights.completeness +
       dimensionScores.structure * weights.structure +
       dimensionScores.markdownQuality * weights.markdownQuality,
   );
+  const score = round(Math.min(uncappedScore, appliedCap));
 
   const scored = {
     caseId: testCase.id,
@@ -465,6 +734,7 @@ export async function scoreCase(modelId: string, testCase: ManifestCase, options
     tags: checkFile.tags,
     modelId,
     score,
+    uncappedScore,
     scorer: {
       type: "llm-gold-comparison",
       evaluatorModelId: evaluator.id,
@@ -474,11 +744,20 @@ export async function scoreCase(modelId: string, testCase: ManifestCase, options
       elapsedMs: judgeElapsedMs,
       usage: judgeUsage,
       estimatedCostUsd: judgeCostUsd,
+      judgeReused,
       error: judgeError,
       cache: scoreCache,
     },
+    coverage,
+    caps: {
+      appliedCap: appliedCap === 100 ? null : appliedCap,
+      caps: [...caps.caps, ...caseCaps],
+      factWeightPercentages: caps.factWeightPercentages,
+    },
+    unsupported,
     dimensions: dimensionScores,
     factScore,
+    judgeResult: judge,
     findings: judge.findings,
     rationale: judge.rationale,
     deterministic,
@@ -500,12 +779,10 @@ export async function scoreModel(modelId: string, options: { force?: boolean } =
   const cases = manifest.cases.filter((testCase) => existing.has(testCase.id));
   if (cases.length === 0) throw new Error(`No run outputs found for ${modelId}`);
 
-  const scores = [];
-  for (const testCase of cases) {
-    const scored = await scoreCase(modelId, testCase, { force: options.force });
-    scores.push(scored);
+  const scores = await Promise.all(cases.map((testCase) => scoreCase(modelId, testCase, { force: options.force })));
+  for (const scored of scores) {
     console.log(
-      `${modelId} ${testCase.id}: ${scored.score.toFixed(1)} ` +
+      `${modelId} ${scored.caseId}: ${scored.score.toFixed(1)} ` +
         `(accuracy ${scored.dimensions.accuracy.toFixed(1)}, judge $${scored.scorer.estimatedCostUsd.toFixed(6)})`,
     );
   }

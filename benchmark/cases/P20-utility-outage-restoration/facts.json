@@ -1,0 +1,160 @@
+{
+  "id": "P20-utility-outage-restoration",
+  "title": "Utility Outage Restoration Packet",
+  "family": "utility-incident",
+  "tags": [
+    "multi-page",
+    "utility",
+    "one-line-diagram",
+    "scada",
+    "crew-log",
+    "chart",
+    "source-precedence"
+  ],
+  "facts": [
+    {
+      "id": "p20.final.cause",
+      "category": "source_state",
+      "weight": 12,
+      "expectation": "Final cause is failed polymer cutout F-12B on Maple lateral; draft tree-contact cause is superseded.",
+      "guidance": "",
+      "modality": "source-precedence",
+      "severity": "critical"
+    },
+    {
+      "id": "p20.scada.heading",
+      "category": "text",
+      "weight": 5,
+      "expectation": "The alarm section/page title is exactly SCADA Alarm Sequence; it must not be misquoted as SCALAR or another word.",
+      "guidance": "",
+      "modality": "text",
+      "severity": "major"
+    },
+    {
+      "id": "p20.alarms",
+      "category": "table_cell",
+      "weight": 8,
+      "expectation": "SCADA alarm sequence preserves all times/devices/states/notes from 15:42:11 R12 trip through 19:06:10 R12 breaker closed.",
+      "guidance": "",
+      "modality": "table",
+      "severity": "critical"
+    },
+    {
+      "id": "p20.oneline",
+      "category": "visual_relation",
+      "weight": 10,
+      "expectation": "One-line diagram preserves R12->S-18->F-12B->S-22/Riverside with T-7 tie to hospital loop and DER-44 PV backfeed risk.",
+      "guidance": "",
+      "modality": "visual",
+      "severity": "critical"
+    },
+    {
+      "id": "p20.switching",
+      "category": "table_cell",
+      "weight": 9,
+      "expectation": "Switching log preserves six steps, times, actions, crews, and restored customer counts, including T-7 close at 17:18 restoring 4,820.",
+      "guidance": "",
+      "modality": "table",
+      "severity": "critical"
+    },
+    {
+      "id": "p20.restoration.chart",
+      "category": "chart",
+      "weight": 8,
+      "expectation": "Restoration chart preserves customer counts by time: 0 at 15:42/16:31, 4,820 at 17:18, 6,140 at 18:05, 8,960 at 19:06/19:32.",
+      "guidance": "",
+      "modality": "chart",
+      "severity": "critical"
+    },
+    {
+      "id": "p20.customer.segments",
+      "category": "table_cell",
+      "weight": 8,
+      "expectation": "Customer impact preserves Maple lateral, hospital loop, Riverside apartments, and industrial park customer counts, critical statuses, and restoration times.",
+      "guidance": "",
+      "modality": "table",
+      "severity": "critical"
+    },
+    {
+      "id": "p20.photos",
+      "category": "visual_relation",
+      "weight": 7,
+      "expectation": "Patrol photo sheet preserves P1 F-12B char mark, P2 no tree contact, P3 S-18 open tag, and P4 T-7 closed tag.",
+      "guidance": "",
+      "modality": "visual",
+      "severity": "major"
+    },
+    {
+      "id": "p20.der",
+      "category": "source_state",
+      "weight": 8,
+      "expectation": "DER-44 was curtailed to 0 kW at 17:11 before T-7 close at 17:18; no reverse power alarm occurred.",
+      "guidance": "",
+      "modality": "source-precedence",
+      "severity": "critical"
+    },
+    {
+      "id": "p20.der.clearance.detail",
+      "category": "source_state",
+      "weight": 8,
+      "expectation": "DER clearance detail preserves DER-44 disconnect open 17:06, SCADA output 0 kW at 17:11 stable 5 min, relay 67P reverse-power clear, T-7 permission issued 17:16/close allowed 17:18, and DER restore deferred after normalize.",
+      "guidance": "",
+      "modality": "source-precedence",
+      "severity": "critical"
+    },
+    {
+      "id": "p20.draft.delta",
+      "category": "source_state",
+      "weight": 9,
+      "expectation": "Draft report excerpt preserves draft-to-final changes: tree contact crossed out to failed F-12B cutout, hospital restore 18:05 corrected to 17:18, DER status not mentioned corrected to curtailed 17:11, weather downgraded to context only, and photo P2 added as no tree contact.",
+      "guidance": "",
+      "modality": "source-precedence",
+      "severity": "critical"
+    },
+    {
+      "id": "p20.signoff",
+      "category": "form_state",
+      "weight": 6,
+      "expectation": "Final signoff preserves N. Ortega, R. Mehta, S. Kim signed timestamps and Tree crew not required/blank.",
+      "guidance": "",
+      "modality": "form",
+      "severity": "major"
+    },
+    {
+      "id": "p20.signoff.gates",
+      "category": "form_state",
+      "weight": 7,
+      "expectation": "Final review gates preserve Ops/Protection/Regulatory signed states, Tree crew blank/not required, and DER review initialed by A. Patel at 10:58 with restore after normalize.",
+      "guidance": "",
+      "modality": "form",
+      "severity": "major"
+    },
+    {
+      "id": "p20.regulatory",
+      "category": "source_state",
+      "weight": 7,
+      "expectation": "Regulatory notice preserves major event No, one critical customer hospital restored 17:18, notice due 2026-07-05 12:00, cause category equipment failure.",
+      "guidance": "",
+      "modality": "source-precedence",
+      "severity": "major"
+    },
+    {
+      "id": "p20.notice.routing",
+      "category": "source_state",
+      "weight": 6,
+      "expectation": "Regulatory notice routing preserves hospital liaison phone sent 17:21, City OEM email sent 18:12, State PUC portal due 2026-07-05 12:00, internal claims ticket sent 2026-07-03 08:40, and DER owner phone sent 19:34.",
+      "guidance": "",
+      "modality": "source-precedence",
+      "severity": "major"
+    },
+    {
+      "id": "p20.final.recap.kpi",
+      "category": "source_state",
+      "weight": 8,
+      "expectation": "Final recap preserves CAIDI window 3h 24m excluding 19:32 normalize, critical restoration 95 minutes, 8,960 customers interrupted, cause code equipment failure/not weather, and follow-up WO-7714.",
+      "guidance": "",
+      "modality": "source-precedence",
+      "severity": "critical"
+    }
+  ]
+}
