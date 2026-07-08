@@ -14,41 +14,46 @@
       "id": "p23.memo",
       "category": "native_text_layer",
       "weight": 8,
-      "severity": "critical",
       "expectation": "The memo preserves OR-7712, West Region Logistics, prepared 2026-07-05, owner Lena Ortiz, final recommendation to hold Reno outbound consolidation, exception owner Ravi Mehta, and review deadline 2026-07-12 16:00 PT.",
-      "modality": "native_pdf_text_layer"
+      "guidance": "",
+      "modality": "native_pdf_text_layer",
+      "severity": "critical"
     },
     {
       "id": "p23.decisions",
       "category": "table_cell",
       "weight": 10,
-      "severity": "critical",
       "expectation": "Decision register preserves D-17 Reno consolidation hold pending dock staffing exception/Ravi/2026-07-12 16:00 PT, D-18 Boise overflow approve temporary cross-dock slot B7/Lena/2026-07-09, and D-19 Tacoma weekend linehaul keep existing carrier allocation/Mira/2026-07-11.",
-      "modality": "native_pdf_text_layer"
+      "guidance": "",
+      "modality": "native_pdf_text_layer",
+      "severity": "critical"
     },
     {
       "id": "p23.lanes",
       "category": "table_cell",
       "weight": 10,
-      "severity": "critical",
       "expectation": "Lane risk register preserves Reno -> SFO 41 pallets blocked dock crew short by 3, Boise -> SEA 18 pallets approved overflow slot B7, Tacoma -> PDX 27 pallets watch carrier capacity tight, and Spokane -> SEA 12 pallets clear.",
-      "modality": "native_pdf_text_layer"
+      "guidance": "",
+      "modality": "native_pdf_text_layer",
+      "severity": "critical"
     },
     {
       "id": "p23.reserve",
       "category": "table_cell",
       "weight": 8,
-      "severity": "critical",
       "expectation": "Cost reserve preserves temporary slot B7 $2,400 eligible, Reno labor standby $3,850 eligible if hold extends, Tacoma weekend premium $1,175 not eligible, reserve $6,250 if hold extends and $2,400 if closes on time.",
-      "modality": "native_pdf_text_layer"
+      "guidance": "",
+      "modality": "native_pdf_text_layer",
+      "severity": "critical"
     },
     {
       "id": "p23.final",
       "category": "source_state",
       "weight": 8,
-      "severity": "critical",
       "expectation": "Final controlling statement is that Reno outbound consolidation remains ON HOLD until Ravi Mehta closes the dock staffing exception.",
-      "modality": "native_pdf_text_layer"
+      "guidance": "",
+      "modality": "native_pdf_text_layer",
+      "severity": "critical"
     }
   ]
 }

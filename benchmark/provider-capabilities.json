@@ -3,7 +3,7 @@
   "lastReviewed": "2026-07-07",
   "notes": [
     "This file records documented provider ingestion behavior for interpreting Doc2MD results. It is not a scoring file.",
-    "Official Doc2MD runs send native PDFs to the provider. Capability gates diagnose provider/document handling separately from the official score."
+    "Official Doc2MD runs send native PDFs to the provider. Provider ingestion mode is reported as context, not used as a scoring gate."
   ],
   "providers": {
     "openai": {

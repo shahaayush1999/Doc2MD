@@ -1,4 +1,4 @@
-import { access, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { fileURLToPath } from "node:url";
@@ -210,43 +210,22 @@ async function readJsonIfExists(filePath: string) {
   return JSON.parse(await readFile(filePath, "utf-8")) as any;
 }
 
-async function attemptIds(outputDir: string) {
-  const root = path.join(outputDir, "attempts");
-  if (!(await exists(root))) return [];
-  return (await readdir(root, { withFileTypes: true }))
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .sort();
+async function currentSuccessfulRunExists(resultPath: string, runKey: string) {
+  const result = await readJsonIfExists(resultPath);
+  return Boolean(result?.cache?.runKey === runKey && !result.error && result.finishReason !== "error");
 }
 
-async function nextAttemptId(outputDir: string) {
-  const ids = await attemptIds(outputDir);
-  const numeric = ids.map((id) => Number(id)).filter((id) => Number.isInteger(id) && id > 0);
-  return String((numeric.length === 0 ? 0 : Math.max(...numeric)) + 1).padStart(3, "0");
-}
-
-async function currentSuccessfulRunExists(outputDir: string, runKey: string) {
-  for (const attemptId of await attemptIds(outputDir)) {
-    const result = await readJsonIfExists(path.join(outputDir, "attempts", attemptId, "result.json"));
-    if (result?.cache?.runKey === runKey && !result.error && result.finishReason !== "error") return true;
-  }
-  return false;
-}
-
-async function runCase(testCase: ManifestCase, spec: ModelSpec, context: RunContext, options: { repeat?: boolean } = {}) {
+async function runCase(testCase: ManifestCase, spec: ModelSpec, context: RunContext, options: { force?: boolean } = {}) {
   const outputDir = path.join("runs", spec.id, testCase.id);
   await mkdir(outputDir, { recursive: true });
   const cache = await runCacheKey(testCase, spec, context);
-  if (!options.repeat && (await currentSuccessfulRunExists(outputDir, cache.runKey))) {
-    console.log(`${spec.id} ${testCase.id}: skip current attempt exists`);
+  const resultPath = path.join(outputDir, "result.json");
+  const predictionPath = path.join(outputDir, "prediction.md");
+  if (!options.force && (await currentSuccessfulRunExists(resultPath, cache.runKey))) {
+    console.log(`${spec.id} ${testCase.id}: skip cached`);
     return { skipped: true, caseId: testCase.id };
   }
 
-  const attemptId = await nextAttemptId(outputDir);
-  const attemptDir = path.join(outputDir, "attempts", attemptId);
-  await mkdir(attemptDir, { recursive: true });
-  const resultPath = path.join(attemptDir, "result.json");
-  const predictionPath = path.join(attemptDir, "prediction.md");
   const pdf = await readFile(testCase.pdf);
   const started = performance.now();
   try {
@@ -280,13 +259,12 @@ async function runCase(testCase: ManifestCase, spec: ModelSpec, context: RunCont
       usage: result.usage,
       estimatedCostUsd: cost(spec, result.usage),
       outputLength: result.text.length,
-      attemptId,
       cache,
       inputMode,
     };
     await writeFile(predictionPath, result.text, "utf-8");
     await writeFile(resultPath, JSON.stringify(summary, null, 2) + "\n", "utf-8");
-    console.log(`${spec.id} ${testCase.id}#${attemptId}: ${summary.finishReason} ${elapsedMs}ms $${summary.estimatedCostUsd.toFixed(6)}`);
+    console.log(`${spec.id} ${testCase.id}: ${summary.finishReason} ${elapsedMs}ms $${summary.estimatedCostUsd.toFixed(6)}`);
     return { skipped: false, caseId: testCase.id };
   } catch (error) {
     const elapsedMs = Math.round(performance.now() - started);
@@ -305,19 +283,18 @@ async function runCase(testCase: ManifestCase, spec: ModelSpec, context: RunCont
       usage: null,
       estimatedCostUsd: 0,
       outputLength: 0,
-      attemptId,
       error: error instanceof Error ? error.message : String(error),
       cache,
       inputMode,
     };
     await writeFile(predictionPath, "", "utf-8");
     await writeFile(resultPath, JSON.stringify(summary, null, 2) + "\n", "utf-8");
-    console.error(`${spec.id} ${testCase.id}#${attemptId}: ERROR ${summary.error}`);
+    console.error(`${spec.id} ${testCase.id}: ERROR ${summary.error}`);
     return { skipped: false, caseId: testCase.id };
   }
 }
 
-export async function runModel(modelId: string, options: { caseId?: string; repeat?: boolean; manifestPath?: string } = {}) {
+export async function runModel(modelId: string, options: { caseId?: string; force?: boolean; manifestPath?: string } = {}) {
   const spec = models[modelId];
   if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
 
@@ -331,17 +308,17 @@ export async function runModel(modelId: string, options: { caseId?: string; repe
     `Running ${selected.length} case(s) from ${manifest.name} (${manifestPath}) with ${spec.id} in parallel ` +
       `[suite=${context.suite}, protocol=${context.inputProtocol}, providerFileMode=${context.providerFileMode}]`,
   );
-  const results = await Promise.all(selected.map((testCase) => runCase(testCase, spec, context, { repeat: options.repeat })));
+  const results = await Promise.all(selected.map((testCase) => runCase(testCase, spec, context, { force: options.force })));
   const skipped = results.filter((result) => result.skipped).length;
   console.log(`${spec.id}: ${selected.length - skipped} run, ${skipped} skipped`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const args = parseArgs();
-  rejectUnknownArgs(args, ["model", "case", "repeat", "manifest"]);
+  rejectUnknownArgs(args, ["model", "case", "force", "manifest"]);
   await runModel(args.get("model") ?? "vertex-gemini-3.1-flash-lite", {
     caseId: args.get("case"),
-    repeat: args.has("repeat"),
+    force: args.has("force"),
     manifestPath: args.get("manifest"),
   });
 }

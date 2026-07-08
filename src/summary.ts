@@ -7,6 +7,7 @@ type Score = {
   caseId: string;
   title?: string;
   family?: string;
+  tags?: string[];
   score: number;
   uncappedScore?: number;
   dimensions?: {
@@ -24,44 +25,26 @@ type Score = {
   };
   unsupported?: {
     penalty?: number;
-    counts?: Record<string, number>;
   };
   estimatedCostUsd: number;
   elapsedMs: number;
   usage: { inputTokens?: number; outputTokens?: number; totalTokens?: number } | null;
   finishReason: string;
-  attemptId?: string | null;
   runCache?: { runKey?: string };
   error?: string;
-};
-
-type CapabilityGate = {
-  id: string;
-  title: string;
-  caseId: string;
-  description?: string;
-  passThreshold?: number;
 };
 
 type ManifestCase = {
   id: string;
   title?: string;
   family?: string;
-  role?: "gate" | "depth";
-  gateId?: string;
-  requiredGates?: string[];
+  tags?: string[];
   pages?: number;
   pdf: string;
 };
 
 function mean(values: number[]) {
   return values.length === 0 ? 0 : values.reduce((sum, value) => sum + value, 0) / values.length;
-}
-
-function stddev(values: number[]) {
-  if (values.length <= 1) return 0;
-  const avg = mean(values);
-  return Math.sqrt(mean(values.map((value) => (value - avg) ** 2)));
 }
 
 function weightedMean(values: Array<{ value: number; weight: number }>) {
@@ -87,26 +70,6 @@ async function exists(filePath: string) {
 async function readJsonIfExists(filePath: string) {
   if (!(await exists(filePath))) return null;
   return JSON.parse(await readFile(filePath, "utf-8")) as any;
-}
-
-async function attemptIds(runDir: string) {
-  const root = path.join(runDir, "attempts");
-  if (!(await exists(root))) return [];
-  return (await readdir(root, { withFileTypes: true }))
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .sort();
-}
-
-async function currentScoresForCase(modelId: string, testCase: { id: string; pdf: string }, activeRunKey: string) {
-  const runDir = path.join("runs", modelId, testCase.id);
-  const scores: Score[] = [];
-  for (const attemptId of await attemptIds(runDir)) {
-    const scorePath = path.join(runDir, "attempts", attemptId, "score.json");
-    const score = (await readJsonIfExists(scorePath)) as Score | null;
-    if (score?.runCache?.runKey === activeRunKey) scores.push(score);
-  }
-  return scores;
 }
 
 function parseArgs() {
@@ -139,165 +102,77 @@ export async function summarizeModel(modelId: string, options: { manifestPath?: 
     suite?: string;
     scoreName?: string;
     inputProtocol?: string;
-    capabilityGates?: CapabilityGate[];
     cases: ManifestCase[];
   };
   const spec = models[modelId];
   if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
   const context = await buildRunContext(spec, manifest as any, manifestPath);
   const suite = manifest.suite ?? "official";
-  const manifestCaseIds = new Set(manifest.cases.map((testCase) => testCase.id));
-  const casesById = new Map(manifest.cases.map((testCase) => [testCase.id, testCase]));
-  const pagesByCaseId = new Map(manifest.cases.map((testCase) => [testCase.id, testCase.pages ?? 1]));
-  const expectedCaseIds = manifest.cases.map((testCase) => testCase.id);
-  const caseIds = (await readdir(runRoot)).filter((name) => manifestCaseIds.has(name));
-  const scoresByCaseId = new Map<string, Score[]>();
-  for (const testCase of manifest.cases.filter((candidate) => caseIds.includes(candidate.id))) {
+  const existing = new Set((await exists(runRoot)) ? await readdir(runRoot) : []);
+  const caseScores = [];
+
+  for (const testCase of manifest.cases) {
+    if (!existing.has(testCase.id)) continue;
     const activeRun = await runCacheKey(testCase as any, spec, context);
-    const caseScores = await currentScoresForCase(modelId, testCase, activeRun.runKey);
-    if (caseScores.length > 0) scoresByCaseId.set(testCase.id, caseScores);
-  }
-  const scores = [...scoresByCaseId.values()].flat().sort((a, b) => a.caseId.localeCompare(b.caseId));
-  const scoredCaseIds = new Set(scoresByCaseId.keys());
-  const missingCaseIds = expectedCaseIds.filter((caseId) => !scoredCaseIds.has(caseId));
-
-  const failed = scores.filter((score) => score.error || score.finishReason === "error");
-  const totalCostUsd = scores.reduce((sum, score) => sum + score.estimatedCostUsd, 0);
-  const totalElapsedMs = scores.reduce((sum, score) => sum + score.elapsedMs, 0);
-  const totalInputTokens = scores.reduce((sum, score) => sum + (score.usage?.inputTokens ?? 0), 0);
-  const totalOutputTokens = scores.reduce((sum, score) => sum + (score.usage?.outputTokens ?? 0), 0);
-  const rawCaseScores = [...scoresByCaseId.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([caseId, attempts]) => {
-      const latest = attempts.at(-1)!;
-      const values = attempts.map((score) => score.score);
-      const manifestCase = casesById.get(caseId);
-      return {
-        caseId,
-        title: latest.title,
-        family: latest.family,
-        role: manifestCase?.role ?? (manifestCase?.gateId ? "gate" : "depth"),
-        gateId: manifestCase?.gateId ?? null,
-        requiredGates: manifestCase?.requiredGates ?? [],
-        pages: pagesByCaseId.get(caseId) ?? 1,
-        attempts: attempts.length,
-        rawScore: round(mean(values)),
-        scoreMin: round(Math.min(...values)),
-        scoreMax: round(Math.max(...values)),
-        scoreStddev: round(stddev(values), 2),
-        latestScore: latest.score,
-        uncappedScore: round(mean(attempts.map((score) => score.uncappedScore ?? score.score))),
-        accuracy: round(mean(attempts.map((score) => score.dimensions?.accuracy ?? 0))),
-        completeness: round(mean(attempts.map((score) => score.dimensions?.completeness ?? 0))),
-        structure: round(mean(attempts.map((score) => score.dimensions?.structure ?? 0))),
-        markdownQuality: round(mean(attempts.map((score) => score.dimensions?.markdownQuality ?? 0))),
-        rawFactScore: round(mean(attempts.map((score) => score.factScore?.rawScore ?? 0))),
-        appliedCap: latest.caps?.appliedCap ?? null,
-        missingWeight: round(mean(attempts.map((score) => score.factScore?.statusWeights?.missing ?? 0))),
-        incorrectWeight: round(mean(attempts.map((score) => score.factScore?.statusWeights?.incorrect ?? 0))),
-        unsupportedPenalty: round(mean(attempts.map((score) => score.unsupported?.penalty ?? 0))),
-        elapsedMs: Math.round(mean(attempts.map((score) => score.elapsedMs))),
-        costUsd: round(mean(attempts.map((score) => score.estimatedCostUsd)), 6),
-        outputTokens: Math.round(mean(attempts.map((score) => score.usage?.outputTokens ?? 0))),
-        attemptIds: attempts.map((score) => score.attemptId),
-      };
+    const score = (await readJsonIfExists(path.join(runRoot, testCase.id, "score.json"))) as Score | null;
+    if (!score || score.runCache?.runKey !== activeRun.runKey) continue;
+    caseScores.push({
+      caseId: testCase.id,
+      title: score.title ?? testCase.title,
+      family: score.family ?? testCase.family,
+      tags: testCase.tags ?? score.tags ?? [],
+      pages: testCase.pages ?? 1,
+      score: score.score,
+      uncappedScore: score.uncappedScore ?? score.score,
+      accuracy: score.dimensions?.accuracy ?? 0,
+      completeness: score.dimensions?.completeness ?? 0,
+      structure: score.dimensions?.structure ?? 0,
+      markdownQuality: score.dimensions?.markdownQuality ?? 0,
+      rawFactScore: score.factScore?.rawScore ?? null,
+      appliedCap: score.caps?.appliedCap ?? null,
+      missingWeight: score.factScore?.statusWeights?.missing ?? 0,
+      incorrectWeight: score.factScore?.statusWeights?.incorrect ?? 0,
+      unsupportedPenalty: score.unsupported?.penalty ?? 0,
+      elapsedMs: score.elapsedMs,
+      costUsd: score.estimatedCostUsd,
+      inputTokens: score.usage?.inputTokens ?? 0,
+      outputTokens: score.usage?.outputTokens ?? 0,
+      finishReason: score.finishReason,
+      error: score.error,
     });
+  }
 
-  const gateDefinitions = manifest.capabilityGates ?? [];
-  const gateCaseScores = new Map(rawCaseScores.filter((score) => score.role === "gate" && score.gateId).map((score) => [score.gateId!, score]));
-  const gateResults = gateDefinitions.map((gate) => {
-    const caseScore = gateCaseScores.get(gate.id);
-    const threshold = gate.passThreshold ?? 80;
-    const passed = Boolean(caseScore && caseScore.rawScore >= threshold && caseScore.attempts > 0);
-    return {
-      id: gate.id,
-      title: gate.title,
-      caseId: gate.caseId,
-      passThreshold: threshold,
-      passed,
-      score: caseScore?.rawScore ?? null,
-      attempts: caseScore?.attempts ?? 0,
-      reason: caseScore ? `${caseScore.rawScore} ${passed ? ">=" : "<"} ${threshold}` : "No current gate score found.",
-    };
-  });
-  const passedGateIds = new Set(gateResults.filter((gate) => gate.passed).map((gate) => gate.id));
-  const gateResultById = new Map(gateResults.map((gate) => [gate.id, gate]));
-
-  const caseScores = rawCaseScores.map((score) => {
-    if (score.role === "gate") {
-      const gate = score.gateId ? gateResultById.get(score.gateId) : null;
-      return {
-        ...score,
-        score: score.rawScore,
-        finalScore: score.rawScore,
-        gatePassed: gate?.passed ?? false,
-        gatePassThreshold: gate?.passThreshold ?? null,
-        blockedByGates: [] as string[],
-      };
-    }
-    const blockedByGates = score.requiredGates.filter((gateId) => !passedGateIds.has(gateId));
-    const finalScore = blockedByGates.length === 0 ? score.rawScore : 0;
-    return {
-      ...score,
-      score: finalScore,
-      finalScore,
-      gatePassed: null,
-      gatePassThreshold: null,
-      blockedByGates,
-    };
-  });
-  const depthCaseScores = caseScores.filter((score) => score.role !== "gate");
-  const gateOnlyScores = caseScores.filter((score) => score.role === "gate");
-
-  const groupScores = gateDefinitions.map((gate) => {
-    const dependent = depthCaseScores.filter((score) => score.requiredGates.includes(gate.id));
-    const weights = dependent.map((score) => ({ value: score.finalScore, weight: pagesByCaseId.get(score.caseId) ?? 1 }));
-    const rawWeights = dependent.map((score) => ({ value: score.rawScore, weight: pagesByCaseId.get(score.caseId) ?? 1 }));
-    const gateResult = gateResultById.get(gate.id);
-    return {
-      gateId: gate.id,
-      title: gate.title,
-      passed: gateResult?.passed ?? false,
-      dependentCaseCount: dependent.length,
-      score: dependent.length === 0 ? null : round(weightedMean(weights)),
-      rawScore: dependent.length === 0 ? null : round(weightedMean(rawWeights)),
-      qualifiedScore: gateResult?.passed && dependent.length > 0 ? round(weightedMean(rawWeights)) : null,
-      blockedCaseIds: dependent.filter((score) => score.blockedByGates.includes(gate.id)).map((score) => score.caseId),
-    };
-  });
+  caseScores.sort((a, b) => a.caseId.localeCompare(b.caseId));
+  const scoredCaseIds = new Set(caseScores.map((score) => score.caseId));
+  const missingCaseIds = manifest.cases.map((testCase) => testCase.id).filter((caseId) => !scoredCaseIds.has(caseId));
+  const failed = caseScores.filter((score) => score.error || score.finishReason === "error");
+  const totalCostUsd = caseScores.reduce((sum, score) => sum + score.costUsd, 0);
+  const totalElapsedMs = caseScores.reduce((sum, score) => sum + score.elapsedMs, 0);
+  const totalInputTokens = caseScores.reduce((sum, score) => sum + score.inputTokens, 0);
+  const totalOutputTokens = caseScores.reduce((sum, score) => sum + score.outputTokens, 0);
 
   const summary = {
     modelId,
     suite,
     manifestPath,
     benchmarkName: manifest.name ?? "Doc2MD",
-    scoreName: manifest.scoreName ?? (suite === "official" ? "Doc2MD Native PDF Score" : "Doc2MD Capability Gate Score"),
+    scoreName: manifest.scoreName ?? "Doc2MD Native PDF Score",
     inputProtocol: manifest.inputProtocol ?? "native_pdf",
     caseCount: caseScores.length,
-    gateCount: gateOnlyScores.length,
-    depthCaseCount: depthCaseScores.length,
-    expectedCaseCount: expectedCaseIds.length,
+    expectedCaseCount: manifest.cases.length,
     complete: missingCaseIds.length === 0,
     missingCaseIds,
-    score: round(weightedMean(depthCaseScores.map((score) => ({ value: score.finalScore, weight: pagesByCaseId.get(score.caseId) ?? 1 })))),
-    rawDepthScore: round(weightedMean(depthCaseScores.map((score) => ({ value: score.rawScore, weight: pagesByCaseId.get(score.caseId) ?? 1 })))),
-    scoreCaseMean: round(mean(depthCaseScores.map((score) => score.finalScore))),
-    rawDepthCaseMean: round(mean(depthCaseScores.map((score) => score.rawScore))),
-    scoreAggregation: "page_weighted_depth_cases_after_gate_zeroing",
-    gateScoreContribution: "reported_not_in_official_denominator",
-    gateResults,
-    groupScores,
+    score: round(weightedMean(caseScores.map((score) => ({ value: score.score, weight: score.pages })))),
+    scoreCaseMean: round(mean(caseScores.map((score) => score.score))),
+    scoreAggregation: "page_weighted_case_scores",
     costUsd: round(totalCostUsd, 6),
-    meanCostUsdPerCaseAttempt: round(mean(scores.map((score) => score.estimatedCostUsd)), 6),
+    meanCostUsdPerCase: round(mean(caseScores.map((score) => score.costUsd)), 6),
     totalElapsedMs,
-    meanElapsedMsPerCaseAttempt: Math.round(mean(scores.map((score) => score.elapsedMs))),
+    meanElapsedMsPerCase: Math.round(mean(caseScores.map((score) => score.elapsedMs))),
     totalInputTokens,
     totalOutputTokens,
-    meanOutputTokensPerCaseAttempt: Math.round(mean(scores.map((score) => score.usage?.outputTokens ?? 0))),
-    attemptCount: scores.length,
-    minAttemptsPerCase: caseScores.length === 0 ? 0 : Math.min(...caseScores.map((score) => score.attempts)),
-    maxAttemptsPerCase: caseScores.length === 0 ? 0 : Math.max(...caseScores.map((score) => score.attempts)),
-    failureRate: scores.length === 0 ? 0 : round((failed.length / scores.length) * 100),
+    meanOutputTokensPerCase: Math.round(mean(caseScores.map((score) => score.outputTokens))),
+    failureRate: caseScores.length === 0 ? 0 : round((failed.length / caseScores.length) * 100),
     caseScores,
   };
 

@@ -1,150 +1,14 @@
 {
   "name": "Doc2MD",
   "suite": "official",
-  "scoreName": "Doc2MD Gated Native PDF Score",
+  "scoreName": "Doc2MD Native PDF Score",
   "inputProtocol": "native_pdf",
   "providerFileModePolicy": "Send the native PDF file to the provider and record the provider's documented PDF ingestion mode separately. Do not convert official inputs to page images in the harness.",
   "version": "0.1.0",
   "description": "Benchmark for faithful document-to-Markdown reconstruction across realistic multi-page documents with dense layouts, charts, tables, forms, diagrams, annotations, and source-state conflicts.",
-  "caseCount": 14,
-  "pageCount": 91,
+  "caseCount": 8,
+  "pageCount": 83,
   "cases": [
-    {
-      "id": "G01-native-pdf-text-layer",
-      "title": "Native PDF Text Layer Gate",
-      "family": "capability-gate",
-      "role": "gate",
-      "gateId": "native_pdf_text_layer",
-      "tags": [
-        "capability-gate",
-        "native_pdf_text_layer"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/G01-native-pdf-text-layer/source.pdf",
-      "gold": "benchmark/cases/G01-native-pdf-text-layer/gold.md",
-      "spec": "benchmark/cases/G01-native-pdf-text-layer/spec.md",
-      "checks": "benchmark/cases/G01-native-pdf-text-layer/checks.json",
-      "facts": "benchmark/cases/G01-native-pdf-text-layer/facts.json",
-      "probe": "benchmark/gates/G01-native-pdf-text-layer/probe.json",
-      "pdftotext": "benchmark/gates/G01-native-pdf-text-layer/pdftotext.txt"
-    },
-    {
-      "id": "G02-raster-visual-ocr",
-      "title": "Raster Visual OCR Gate",
-      "family": "capability-gate",
-      "role": "gate",
-      "gateId": "raster_visual_ocr",
-      "tags": [
-        "capability-gate",
-        "raster_visual_ocr"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/G02-raster-visual-ocr/source.pdf",
-      "gold": "benchmark/cases/G02-raster-visual-ocr/gold.md",
-      "spec": "benchmark/cases/G02-raster-visual-ocr/spec.md",
-      "checks": "benchmark/cases/G02-raster-visual-ocr/checks.json",
-      "facts": "benchmark/cases/G02-raster-visual-ocr/facts.json",
-      "probe": "benchmark/gates/G02-raster-visual-ocr/probe.json",
-      "pdftotext": "benchmark/gates/G02-raster-visual-ocr/pdftotext.txt"
-    },
-    {
-      "id": "G03-layout-reconstruction",
-      "title": "Layout Reconstruction Gate",
-      "family": "capability-gate",
-      "role": "gate",
-      "gateId": "layout_reconstruction",
-      "tags": [
-        "capability-gate",
-        "layout_reconstruction"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/G03-layout-reconstruction/source.pdf",
-      "gold": "benchmark/cases/G03-layout-reconstruction/gold.md",
-      "spec": "benchmark/cases/G03-layout-reconstruction/spec.md",
-      "checks": "benchmark/cases/G03-layout-reconstruction/checks.json",
-      "facts": "benchmark/cases/G03-layout-reconstruction/facts.json",
-      "probe": "benchmark/gates/G03-layout-reconstruction/probe.json",
-      "pdftotext": "benchmark/gates/G03-layout-reconstruction/pdftotext.txt"
-    },
-    {
-      "id": "G04-visual-semantics",
-      "title": "Visual Semantics Gate",
-      "family": "capability-gate",
-      "role": "gate",
-      "gateId": "visual_semantic",
-      "tags": [
-        "capability-gate",
-        "visual_semantic"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/G04-visual-semantics/source.pdf",
-      "gold": "benchmark/cases/G04-visual-semantics/gold.md",
-      "spec": "benchmark/cases/G04-visual-semantics/spec.md",
-      "checks": "benchmark/cases/G04-visual-semantics/checks.json",
-      "facts": "benchmark/cases/G04-visual-semantics/facts.json",
-      "probe": "benchmark/gates/G04-visual-semantics/probe.json",
-      "pdftotext": "benchmark/gates/G04-visual-semantics/pdftotext.txt"
-    },
-    {
-      "id": "G05-source-state-precedence",
-      "title": "Source State Precedence Gate",
-      "family": "capability-gate",
-      "role": "gate",
-      "gateId": "source_state_precedence",
-      "tags": [
-        "capability-gate",
-        "source_state_precedence"
-      ],
-      "pages": 1,
-      "pdf": "benchmark/cases/G05-source-state-precedence/source.pdf",
-      "gold": "benchmark/cases/G05-source-state-precedence/gold.md",
-      "spec": "benchmark/cases/G05-source-state-precedence/spec.md",
-      "checks": "benchmark/cases/G05-source-state-precedence/checks.json",
-      "facts": "benchmark/cases/G05-source-state-precedence/facts.json",
-      "probe": "benchmark/gates/G05-source-state-precedence/probe.json",
-      "pdftotext": "benchmark/gates/G05-source-state-precedence/pdftotext.txt"
-    },
-    {
-      "id": "G06-multi-page-continuity",
-      "title": "Multi Page Continuity Gate",
-      "family": "capability-gate",
-      "role": "gate",
-      "gateId": "multi_page_continuity",
-      "tags": [
-        "capability-gate",
-        "multi_page_continuity"
-      ],
-      "pages": 3,
-      "pdf": "benchmark/cases/G06-multi-page-continuity/source.pdf",
-      "gold": "benchmark/cases/G06-multi-page-continuity/gold.md",
-      "spec": "benchmark/cases/G06-multi-page-continuity/spec.md",
-      "checks": "benchmark/cases/G06-multi-page-continuity/checks.json",
-      "facts": "benchmark/cases/G06-multi-page-continuity/facts.json",
-      "probe": "benchmark/gates/G06-multi-page-continuity/probe.json",
-      "pdftotext": "benchmark/gates/G06-multi-page-continuity/pdftotext.txt"
-    },
-    {
-      "id": "P23-native-text-layer-recovery",
-      "title": "Bad Export Native Text Recovery Packet",
-      "family": "native-text-recovery",
-      "role": "depth",
-      "requiredGates": [
-        "native_pdf_text_layer"
-      ],
-      "tags": [
-        "multi-page",
-        "native-text-layer",
-        "bad-export",
-        "tables",
-        "source-recovery"
-      ],
-      "pages": 3,
-      "pdf": "benchmark/cases/P23-native-text-layer-recovery/source.pdf",
-      "gold": "benchmark/cases/P23-native-text-layer-recovery/gold.md",
-      "spec": "benchmark/cases/P23-native-text-layer-recovery/spec.md",
-      "checks": "benchmark/cases/P23-native-text-layer-recovery/checks.json",
-      "facts": "benchmark/cases/P23-native-text-layer-recovery/facts.json"
-    },
     {
       "id": "P07-launch-readiness-dossier",
       "title": "Launch Readiness Dossier",
@@ -163,15 +27,7 @@
       "gold": "benchmark/cases/P07-launch-readiness-dossier/gold.md",
       "spec": "benchmark/cases/P07-launch-readiness-dossier/spec.md",
       "checks": "benchmark/cases/P07-launch-readiness-dossier/checks.json",
-      "facts": "benchmark/cases/P07-launch-readiness-dossier/facts.json",
-      "role": "depth",
-      "requiredGates": [
-        "raster_visual_ocr",
-        "layout_reconstruction",
-        "visual_semantic",
-        "source_state_precedence",
-        "multi_page_continuity"
-      ]
+      "facts": "benchmark/cases/P07-launch-readiness-dossier/facts.json"
     },
     {
       "id": "P12-pfas-method-validation",
@@ -192,14 +48,7 @@
       "gold": "benchmark/cases/P12-pfas-method-validation/gold.md",
       "spec": "benchmark/cases/P12-pfas-method-validation/spec.md",
       "checks": "benchmark/cases/P12-pfas-method-validation/checks.json",
-      "facts": "benchmark/cases/P12-pfas-method-validation/facts.json",
-      "role": "depth",
-      "requiredGates": [
-        "raster_visual_ocr",
-        "layout_reconstruction",
-        "visual_semantic",
-        "multi_page_continuity"
-      ]
+      "facts": "benchmark/cases/P12-pfas-method-validation/facts.json"
     },
     {
       "id": "P15-architecture-floorplan-diagrams",
@@ -219,15 +68,7 @@
       "gold": "benchmark/cases/P15-architecture-floorplan-diagrams/gold.md",
       "spec": "benchmark/cases/P15-architecture-floorplan-diagrams/spec.md",
       "checks": "benchmark/cases/P15-architecture-floorplan-diagrams/checks.json",
-      "facts": "benchmark/cases/P15-architecture-floorplan-diagrams/facts.json",
-      "role": "depth",
-      "requiredGates": [
-        "raster_visual_ocr",
-        "layout_reconstruction",
-        "visual_semantic",
-        "source_state_precedence",
-        "multi_page_continuity"
-      ]
+      "facts": "benchmark/cases/P15-architecture-floorplan-diagrams/facts.json"
     },
     {
       "id": "P17-clinical-trial-site-monitoring",
@@ -247,15 +88,7 @@
       "gold": "benchmark/cases/P17-clinical-trial-site-monitoring/gold.md",
       "spec": "benchmark/cases/P17-clinical-trial-site-monitoring/spec.md",
       "checks": "benchmark/cases/P17-clinical-trial-site-monitoring/checks.json",
-      "facts": "benchmark/cases/P17-clinical-trial-site-monitoring/facts.json",
-      "role": "depth",
-      "requiredGates": [
-        "raster_visual_ocr",
-        "layout_reconstruction",
-        "visual_semantic",
-        "source_state_precedence",
-        "multi_page_continuity"
-      ]
+      "facts": "benchmark/cases/P17-clinical-trial-site-monitoring/facts.json"
     },
     {
       "id": "P20-utility-outage-restoration",
@@ -275,15 +108,7 @@
       "gold": "benchmark/cases/P20-utility-outage-restoration/gold.md",
       "spec": "benchmark/cases/P20-utility-outage-restoration/spec.md",
       "checks": "benchmark/cases/P20-utility-outage-restoration/checks.json",
-      "facts": "benchmark/cases/P20-utility-outage-restoration/facts.json",
-      "role": "depth",
-      "requiredGates": [
-        "raster_visual_ocr",
-        "layout_reconstruction",
-        "visual_semantic",
-        "source_state_precedence",
-        "multi_page_continuity"
-      ]
+      "facts": "benchmark/cases/P20-utility-outage-restoration/facts.json"
     },
     {
       "id": "P21-semiconductor-lot-disposition",
@@ -302,15 +127,7 @@
       "gold": "benchmark/cases/P21-semiconductor-lot-disposition/gold.md",
       "spec": "benchmark/cases/P21-semiconductor-lot-disposition/spec.md",
       "checks": "benchmark/cases/P21-semiconductor-lot-disposition/checks.json",
-      "facts": "benchmark/cases/P21-semiconductor-lot-disposition/facts.json",
-      "role": "depth",
-      "requiredGates": [
-        "raster_visual_ocr",
-        "layout_reconstruction",
-        "visual_semantic",
-        "source_state_precedence",
-        "multi_page_continuity"
-      ]
+      "facts": "benchmark/cases/P21-semiconductor-lot-disposition/facts.json"
     },
     {
       "id": "P22-pharma-stability-release",
@@ -329,66 +146,25 @@
       "gold": "benchmark/cases/P22-pharma-stability-release/gold.md",
       "spec": "benchmark/cases/P22-pharma-stability-release/spec.md",
       "checks": "benchmark/cases/P22-pharma-stability-release/checks.json",
-      "facts": "benchmark/cases/P22-pharma-stability-release/facts.json",
-      "role": "depth",
-      "requiredGates": [
-        "raster_visual_ocr",
-        "layout_reconstruction",
-        "visual_semantic",
-        "source_state_precedence",
-        "multi_page_continuity"
-      ]
+      "facts": "benchmark/cases/P22-pharma-stability-release/facts.json"
+    },
+    {
+      "id": "P23-native-text-layer-recovery",
+      "title": "Bad Export Native Text Recovery Packet",
+      "family": "native-text-recovery",
+      "tags": [
+        "multi-page",
+        "native-text-layer",
+        "bad-export",
+        "tables",
+        "source-recovery"
+      ],
+      "pages": 3,
+      "pdf": "benchmark/cases/P23-native-text-layer-recovery/source.pdf",
+      "gold": "benchmark/cases/P23-native-text-layer-recovery/gold.md",
+      "spec": "benchmark/cases/P23-native-text-layer-recovery/spec.md",
+      "checks": "benchmark/cases/P23-native-text-layer-recovery/checks.json",
+      "facts": "benchmark/cases/P23-native-text-layer-recovery/facts.json"
     }
-  ],
-  "capabilityGates": [
-    {
-      "id": "native_pdf_text_layer",
-      "title": "Native PDF Text Layer Gate",
-      "caseId": "G01-native-pdf-text-layer",
-      "description": "Recover legitimate extractable PDF text when the rendered page image carries no visible text.",
-      "passThreshold": 80
-    },
-    {
-      "id": "raster_visual_ocr",
-      "title": "Raster Visual OCR Gate",
-      "caseId": "G02-raster-visual-ocr",
-      "description": "Read document text that exists only as visible raster content inside the PDF.",
-      "passThreshold": 80
-    },
-    {
-      "id": "layout_reconstruction",
-      "title": "Layout Reconstruction Gate",
-      "caseId": "G03-layout-reconstruction",
-      "description": "Recover reading order and grouping from a realistically drifted slide export.",
-      "passThreshold": 80
-    },
-    {
-      "id": "visual_semantic",
-      "title": "Visual Semantics Gate",
-      "caseId": "G04-visual-semantics",
-      "description": "Extract meaning from checkboxes, radio buttons, strike-through corrections, and local notes.",
-      "passThreshold": 80
-    },
-    {
-      "id": "source_state_precedence",
-      "title": "Source State Precedence Gate",
-      "caseId": "G05-source-state-precedence",
-      "description": "Prefer visible current document state over stale hidden PDF text when they conflict.",
-      "passThreshold": 80
-    },
-    {
-      "id": "multi_page_continuity",
-      "title": "Multi Page Continuity Gate",
-      "caseId": "G06-multi-page-continuity",
-      "description": "Preserve packet order and final state across multiple related pages.",
-      "passThreshold": 80
-    }
-  ],
-  "gatePolicy": {
-    "officialScoreUses": "depth_cases_after_gate_zeroing",
-    "gateScoreContribution": "reported_not_in_official_denominator",
-    "failedGateBehavior": "dependent depth cases receive finalScore 0 while rawScore is still reported"
-  },
-  "gateCount": 6,
-  "depthCaseCount": 8
+  ]
 }

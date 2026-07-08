@@ -709,7 +709,6 @@ export async function scoreCase(
     suite?: string;
     manifestPath?: string;
     inputProtocol?: string;
-    attemptId: string;
     predictionPath: string;
     resultPath: string;
     scorePath: string;
@@ -815,7 +814,6 @@ export async function scoreCase(
     suite: options.suite ?? "official",
     manifestPath: options.manifestPath ?? "benchmark/manifest.json",
     inputProtocol: options.inputProtocol ?? "native_pdf",
-    attemptId: options.attemptId ?? result.attemptId ?? null,
     runCache: result.cache ?? null,
     score,
     uncappedScore,
@@ -857,32 +855,16 @@ export async function scoreCase(
   return scored;
 }
 
-async function attemptIds(runDir: string) {
-  const root = path.join(runDir, "attempts");
-  if (!(await exists(root))) return [];
-  return (await readdir(root, { withFileTypes: true }))
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .sort();
-}
-
-async function currentAttemptTargets(modelId: string, testCase: ManifestCase, activeRunKey: string) {
+async function currentTarget(modelId: string, testCase: ManifestCase, activeRunKey: string) {
   const runDir = path.join("runs", modelId, testCase.id);
-  const targets: Array<{ attemptId: string; predictionPath: string; resultPath: string; scorePath: string }> = [];
-  const attempts = await attemptIds(runDir);
-  for (const attemptId of attempts) {
-    const resultPath = path.join(runDir, "attempts", attemptId, "result.json");
-    const result = await readJsonIfExists(resultPath);
-    if (result?.cache?.runKey === activeRunKey) {
-      targets.push({
-        attemptId,
-        predictionPath: path.join(runDir, "attempts", attemptId, "prediction.md"),
-        resultPath,
-        scorePath: path.join(runDir, "attempts", attemptId, "score.json"),
-      });
-    }
-  }
-  return targets;
+  const resultPath = path.join(runDir, "result.json");
+  const result = await readJsonIfExists(resultPath);
+  if (result?.cache?.runKey !== activeRunKey) return null;
+  return {
+    predictionPath: path.join(runDir, "prediction.md"),
+    resultPath,
+    scorePath: path.join(runDir, "score.json"),
+  };
 }
 
 export async function scoreModel(modelId: string, options: { manifestPath?: string } = {}) {
@@ -899,8 +881,8 @@ export async function scoreModel(modelId: string, options: { manifestPath?: stri
     await Promise.all(
       cases.map(async (testCase) => {
         const activeRun = await runCacheKey(testCase as any, spec, context);
-        const attemptTargets = await currentAttemptTargets(modelId, testCase, activeRun.runKey);
-        return attemptTargets.map((target) => ({ testCase, target }));
+        const target = await currentTarget(modelId, testCase, activeRun.runKey);
+        return target ? [{ testCase, target }] : [];
       }),
     )
   ).flat();
@@ -918,7 +900,7 @@ export async function scoreModel(modelId: string, options: { manifestPath?: stri
   );
   for (const scored of scores) {
     console.log(
-      `${modelId} ${scored.caseId}${scored.attemptId ? `#${scored.attemptId}` : ""}: ${scored.score.toFixed(1)} ` +
+      `${modelId} ${scored.caseId}: ${scored.score.toFixed(1)} ` +
         `(accuracy ${scored.dimensions.accuracy.toFixed(1)}, judge $${scored.scorer.estimatedCostUsd.toFixed(6)})`,
     );
   }

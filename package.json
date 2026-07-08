@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "generate": "/Users/aayush/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/generate_benchmark.py && /Users/aayush/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/generate_gates.py",
+    "generate": "/Users/aayush/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/generate_benchmark.py",
     "bench": "node --env-file=.env.local --import tsx src/bench.ts",
     "run": "node --env-file=.env.local --import tsx src/run.ts",
     "score": "node --env-file=.env.local --import tsx src/score.ts",

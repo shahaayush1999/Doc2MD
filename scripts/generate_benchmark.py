@@ -9976,6 +9976,117 @@ def packet_pharma_stability_release() -> Case:
     return Case("P22-pharma-stability-release", "Pharmaceutical Stability Release File", "pharma-quality", ["multi-page", "pharma", "stability", "dissolution", "chromatograms", "source-precedence"], "Stress pharmaceutical release reconstruction with stability continuation, dissolution chart semantics, chromatogram panels, deviations, and source conflicts.", "Seventeen-page pharmaceutical stability and release packet with assay, dissolution, stability continuation, chromatograms, packaging reconciliation, tray map, hardness trends, deviations, regulatory commitments, and final QA disposition.", ["stability matrix", "dissolution chart", "chromatograms", "deviations", "source conflicts"], ["Bind release state to stability evidence, chart thresholds, and current QA source."], gold, [near_check("p22-final", "source_state", ["G217-2403", "hold", "6M", "G217-2404", "conditional"], 8, 900)], pages, facts=facts)
 
 
+NATIVE_RECOVERY_PAGES = [
+    [
+        "# Ops Review Export Recovery",
+        "",
+        "Document: OR-7712",
+        "Department: West Region Logistics",
+        "Prepared: 2026-07-05",
+        "Owner: Lena Ortiz",
+        "",
+        "## Executive Memo",
+        "The July export from the presentation system rendered with missing glyphs and collapsed text boxes, but the archived copy retains the intended memo content.",
+        "Final recommendation: hold the Reno outbound consolidation until the dock staffing exception closes.",
+        "Exception owner: Ravi Mehta.",
+        "Review deadline: 2026-07-12 16:00 PT.",
+        "",
+        "## Decision Register",
+        "| ID | Topic | Decision | Owner | Due |",
+        "| D-17 | Reno consolidation | Hold pending dock staffing exception | Ravi Mehta | 2026-07-12 16:00 PT |",
+        "| D-18 | Boise overflow | Approve temporary cross-dock slot B7 | Lena Ortiz | 2026-07-09 |",
+        "| D-19 | Tacoma weekend linehaul | Keep existing carrier allocation | Mira Chen | 2026-07-11 |",
+    ],
+    [
+        "# Operations Table Continuation",
+        "",
+        "## Lane Risk Register",
+        "| Lane | Volume | Constraint | Status | Action |",
+        "| Reno -> SFO | 41 pallets | Dock crew short by 3 | Blocked | Wait for staffing exception close |",
+        "| Boise -> SEA | 18 pallets | Overflow slot needed | Approved | Use temporary cross-dock slot B7 |",
+        "| Tacoma -> PDX | 27 pallets | Carrier capacity tight | Watch | Keep current allocation and monitor tender rejects |",
+        "| Spokane -> SEA | 12 pallets | None | Clear | No action |",
+        "",
+        "The blocked Reno lane is the controlling constraint. The Boise overflow action does not release the Reno hold.",
+    ],
+    [
+        "# Final Reconciliation",
+        "",
+        "## Cost Reserve",
+        "| Item | Amount | Reserve treatment |",
+        "| Temporary slot B7 | $2,400 | Eligible |",
+        "| Reno labor standby | $3,850 | Eligible if hold extends past 2026-07-12 |",
+        "| Tacoma weekend premium | $1,175 | Not eligible |",
+        "",
+        "Eligible reserve if Reno hold extends: $6,250.",
+        "Eligible reserve if Reno hold closes on time: $2,400.",
+        "Final controlling statement: Reno outbound consolidation remains ON HOLD until Ravi Mehta closes the dock staffing exception.",
+    ],
+]
+
+
+def visible_fragment(line: str) -> str:
+    text = line.strip().lstrip("#").strip()
+    if text.startswith("|") and text.endswith("|"):
+        cells = [cell.strip() for cell in text.strip("|").split("|")]
+        return " / ".join(cell for cell in cells if cell)
+    return text
+
+
+def packet_native_text_layer_recovery() -> Case:
+    pages: list[Image.Image] = []
+    extractable_pages: list[list[tuple[int, int, str]]] = []
+    for index, lines in enumerate(NATIVE_RECOVERY_PAGES, start=1):
+        img = Image.new("RGB", (PAGE_W, PAGE_H), "white")
+        d = ImageDraw.Draw(img)
+        d.text((150, 145), f"West Region Logistics - Export Page {index}", fill="#2f343b", font=F["h1"])
+        d.rectangle((140, 225, PAGE_W - 140, PAGE_H - 290), fill="#e5e7eb")
+        fragments = [visible_fragment(line) for line in lines if line and not line.startswith("| ---")]
+        for i, line in enumerate(fragments[:18]):
+            y_img = 305 + i * 62
+            x_img = 165 + (i % 4) * 34
+            visible = line.replace("|", "  ")[:78]
+            d.text((x_img, y_img), visible, fill="#30343a", font=F["small"])
+            if i % 4 == 2:
+                d.rectangle((x_img + 180, y_img - 3, min(PAGE_W - 180, x_img + 890), y_img + 27), fill="#d1d5db")
+            if i % 7 == 0:
+                d.line((160, y_img + 32, PAGE_W - 320, y_img + 20), fill="#9ca3af", width=2)
+        d.text((150, PAGE_H - 210), "Export preview retained for audit; text boxes were damaged in presentation export.", fill="#6b7280", font=F["tiny"])
+        pages.append(img)
+
+        y = 90
+        page_text = []
+        for line in lines:
+            for wrapped in (wrap(line, width=105) if line else [""]):
+                page_text.append((56, y, wrapped))
+                y += 24
+        extractable_pages.append(page_text)
+
+    gold = "\n\n".join("\n".join(page) for page in NATIVE_RECOVERY_PAGES) + "\n"
+    facts = [
+        fact("p23.memo", "native_text_layer", 8, "The memo preserves OR-7712, West Region Logistics, prepared 2026-07-05, owner Lena Ortiz, final recommendation to hold Reno outbound consolidation, exception owner Ravi Mehta, and review deadline 2026-07-12 16:00 PT.", modality="native_pdf_text_layer"),
+        fact("p23.decisions", "table_cell", 10, "Decision register preserves D-17 Reno consolidation hold pending dock staffing exception/Ravi/2026-07-12 16:00 PT, D-18 Boise overflow approve temporary cross-dock slot B7/Lena/2026-07-09, and D-19 Tacoma weekend linehaul keep existing carrier allocation/Mira/2026-07-11.", modality="native_pdf_text_layer"),
+        fact("p23.lanes", "table_cell", 10, "Lane risk register preserves Reno -> SFO 41 pallets blocked dock crew short by 3, Boise -> SEA 18 pallets approved overflow slot B7, Tacoma -> PDX 27 pallets watch carrier capacity tight, and Spokane -> SEA 12 pallets clear.", modality="native_pdf_text_layer"),
+        fact("p23.reserve", "table_cell", 8, "Cost reserve preserves temporary slot B7 $2,400 eligible, Reno labor standby $3,850 eligible if hold extends, Tacoma weekend premium $1,175 not eligible, reserve $6,250 if hold extends and $2,400 if closes on time.", modality="native_pdf_text_layer"),
+        fact("p23.final", "source_state", 8, "Final controlling statement is that Reno outbound consolidation remains ON HOLD until Ravi Mehta closes the dock staffing exception.", modality="native_pdf_text_layer"),
+    ]
+    return Case(
+        "P23-native-text-layer-recovery",
+        "Bad Export Native Text Recovery Packet",
+        "native-text-recovery",
+        ["multi-page", "native-text-layer", "bad-export", "tables", "source-recovery"],
+        "Recover business-document content from a legitimate native PDF text layer when the rendered export is visually damaged.",
+        "Three-page logistics packet with corrupted visible rendering and recoverable native PDF text.",
+        ["native PDF text layer", "table reconstruction", "final controlling statement"],
+        ["Use the recoverable PDF text layer while preserving tables and final state."],
+        gold,
+        [],
+        pages,
+        facts=facts,
+        extractable_text_pages=extractable_pages,
+    )
+
+
 CASES = [
     packet_launch_readiness(),
     packet_pfas_validation(),
@@ -9984,6 +10095,7 @@ CASES = [
     packet_utility_outage_restoration(),
     packet_semiconductor_lot_disposition(),
     packet_pharma_stability_release(),
+    packet_native_text_layer_recovery(),
 ]
 
 
@@ -10113,7 +10225,7 @@ def write_provider_capabilities() -> None:
         "lastReviewed": "2026-07-07",
         "notes": [
             "This file records documented provider ingestion behavior for interpreting Doc2MD results. It is not a scoring file.",
-            "Official Doc2MD runs send native PDFs to the provider. Capability gates diagnose provider/document handling separately from the official score.",
+            "Official Doc2MD runs send native PDFs to the provider. Provider ingestion mode is reported as context, not used as a scoring gate.",
         ],
         "providers": {
             "openai": {

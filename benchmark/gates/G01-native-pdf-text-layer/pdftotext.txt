@@ -1,3 +1,0 @@
-TEXT_LAYER_PROBE_7F3A: The shipment hold code is QX-914.
-Facility: Delta Cold Chain, Door 12.
-Release instruction: keep pallet P-882 on hold until QA signs FORM-19.
