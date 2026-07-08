@@ -16,7 +16,7 @@
       "id": "p17.final.state",
       "category": "source_state",
       "weight": 14,
-      "expectation": "Final monitor state is not clean-ready; blockers are DEV-014-03 missed W2 ECG for 014-003, K-204-153 temperature excursion/do not dose, central lab pending for 014-008, open queries Q-77 and Q-84.",
+      "expectation": "Final monitor state is not clean-ready; blockers include DEV-014-03 missed W2 ECG for 014-003, K-204-153 temperature excursion/do not dose, central lab issues for 014-008/014-011/014-016, visit-window query Q-86, repeat-lab query Q-88, masking query Q-93, and open queries Q-77/Q-84/Q-86/Q-88/Q-93.",
       "guidance": "",
       "modality": "source-precedence",
       "severity": "critical"
@@ -43,7 +43,16 @@
       "id": "p17.enrollment.randomized",
       "category": "table_cell",
       "weight": 10,
-      "expectation": "Enrollment log preserves randomized subjects 014-002 Arm B completed W4, 014-003 Arm A missed W2 ECG, 014-005 Arm A completed W4, 014-007 Arm B IP temperature excursion, and 014-008 Arm A central lab pending.",
+      "expectation": "Enrollment log preserves randomized subjects 014-002 Arm B completed W4, 014-003 Arm A missed W2 ECG, 014-005 Arm A completed W4, 014-007 Arm B IP temperature excursion, 014-008 Arm A central lab pending, 014-009 Arm B W2 diary window late, 014-011 Arm A central lab repeat pending, 014-012 Arm B waiver W-14, 014-014 Arm A ePRO not activated, and 014-016 Arm B unblinded pharmacist note.",
+      "guidance": "",
+      "modality": "table",
+      "severity": "critical"
+    },
+    {
+      "id": "p17.enrollment.additional",
+      "category": "table_cell",
+      "weight": 10,
+      "expectation": "Enrollment log preserves added screen/withdrawal states: 014-010 screen fail QTc 486 ms, 014-015 screen fail BP 168/98, 014-013 withdrawn/lost to follow-up before W4, and 014-012 eligible with waiver W-14.",
       "guidance": "",
       "modality": "table",
       "severity": "critical"
@@ -52,7 +61,7 @@
       "id": "p17.enrollment.withdrawn",
       "category": "table_cell",
       "weight": 8,
-      "expectation": "Enrollment log preserves 014-004 withdrawn on 2026-04-10 from Arm B due AE dizziness.",
+      "expectation": "Enrollment log preserves 014-004 withdrawn on 2026-04-10 from Arm B due AE dizziness and 014-013 withdrawn/lost to follow-up before W4.",
       "guidance": "",
       "modality": "table",
       "severity": "critical"
@@ -70,7 +79,7 @@
       "id": "p17.visit.problem.rows",
       "category": "table_cell",
       "weight": 10,
-      "expectation": "Visit grid preserves 014-003 W2 partial kit K-204-146 ECG not done, 014-004 W2 withdrawn with no kit/early termination, and 014-007 V1 kit K-204-153 temp excursion.",
+      "expectation": "Visit grid preserves 014-003 W2 partial kit K-204-146 ECG not done, 014-004 W2 withdrawn with no kit/early termination, 014-007 V1 kit K-204-153 temp excursion, 014-007 W2 hold/repeat lab required, 014-009 W2 late outside +2 day window, 014-014 V1 ePRO not activated, and 014-016 V1 pharmacist note sealed.",
       "guidance": "",
       "modality": "table",
       "severity": "critical"
@@ -79,7 +88,7 @@
       "id": "p17.labs.flags",
       "category": "table_cell",
       "weight": 10,
-      "expectation": "Lab table preserves abnormal flags and units: 014-003 ALT 67 H U/L and eGFR 58 L mL/min, 014-004 hemoglobin 10.8 L g/dL, 014-007 potassium 5.6 H mmol/L.",
+      "expectation": "Lab table preserves abnormal flags and units: 014-003 ALT 67 H U/L and eGFR 58 L mL/min, 014-004 hemoglobin 10.8 L g/dL, 014-007 potassium 5.6 H mmol/L, 014-009 ALT 49 H U/L, 014-011 creatinine 1.34 H mg/dL, 014-013 hemoglobin 11.7 L g/dL, and 014-016 glucose 62 L mg/dL.",
       "guidance": "",
       "modality": "table",
       "severity": "critical"
@@ -97,7 +106,7 @@
       "id": "p17.aes",
       "category": "table_cell",
       "weight": 10,
-      "expectation": "AE log preserves AE IDs bound to subjects/terms: AE-014-01 014-004 dizziness moderate related withdrawn 2026-04-24; AE-014-02 014-002 nausea mild possibly related dose reduced W4; AE-014-03 014-007 hyperkalemia moderate unrelated repeat lab normal.",
+      "expectation": "AE log preserves AE IDs bound to subjects/terms: AE-014-01 014-004 dizziness moderate related withdrawn 2026-04-24; AE-014-02 014-002 nausea mild possibly related dose reduced W4; AE-014-03 014-007 hyperkalemia moderate unrelated repeat lab normal; AE-014-04 014-009 headache resolved; AE-014-05 014-011 creatinine increased repeat lab pending; AE-014-06 014-013 lost contact not AE; AE-014-07 014-016 hypoglycemia related safety call completed.",
       "guidance": "",
       "modality": "table",
       "severity": "critical"
@@ -106,7 +115,7 @@
       "id": "p17.deviations",
       "category": "source_state",
       "weight": 12,
-      "expectation": "Deviation log preserves DEV-014-03 W2 ECG missed major/open Q-77, DEV-014-07 IP temp 9.1C for 3h major/do not dose K-204-153, DEV-014-02 diary page late minor/resolved.",
+      "expectation": "Deviation log preserves DEV-014-03 W2 ECG missed major/open Q-77, DEV-014-07 IP temp 9.1C for 3h major/do not dose K-204-153, DEV-014-02 diary page late minor/resolved, DEV-014-08 W2 outside +2 day window open Q-86, DEV-014-09 repeat central lab not filed major/open Q-88, DEV-014-10 ePRO not activated/retrain coordinator, and DEV-014-11 unblinded pharmacist note major/masking review open.",
       "guidance": "",
       "modality": "source-precedence",
       "severity": "critical"
@@ -115,7 +124,7 @@
       "id": "p17.ip.accountability.returned",
       "category": "table_cell",
       "weight": 8,
-      "expectation": "IP accountability preserves returned counts for K-204-118 = 4, K-204-142 = 6, K-204-166 = 2, K-204-121 = 5, and K-204-146 = not returned/open.",
+      "expectation": "IP accountability preserves returned counts/states for K-204-118 = 4, K-204-142 = 6, K-204-166 = 2, K-204-121 = 5, K-204-146 = not returned/open, K-204-158 pending/reconcile after lab, K-204-160 returned 3/diary window late, K-204-171 pending/hold repeat lab, K-204-184 returned 0/ePRO activation open, and K-204-190 returned 2/masking review.",
       "guidance": "",
       "modality": "table",
       "severity": "critical"
@@ -133,7 +142,7 @@
       "id": "p17.temperature.timeline",
       "category": "table_cell",
       "weight": 8,
-      "expectation": "Temperature excursion source preserves 04-18 09:10 8.4C alarm, 10:10 9.1C quarantine K-204-153, 12:10 7.8C still above range, and 13:05 5.2C returned to range.",
+      "expectation": "Temperature excursion source preserves 04-18 09:10 8.4C alarm, 10:10 9.1C quarantine K-204-153, 11:10 8.8C pharmacy notified, 12:10 7.8C still above range, 13:05 5.2C returned to range, and 13:40 4.7C back in range while the kit remains quarantined.",
       "guidance": "",
       "modality": "table",
       "severity": "major"
@@ -151,7 +160,7 @@
       "id": "p17.conmed",
       "category": "table_cell",
       "weight": 7,
-      "expectation": "Concomitant medication review preserves metformin allowed for 014-002, meclizine 04-11 to 04-24 for 014-004 AE dizziness, and potassium supplement 04-01 to 04-19 for 014-007 hyperkalemia context.",
+      "expectation": "Concomitant medication review preserves metformin allowed for 014-002, meclizine 04-11 to 04-24 for 014-004 AE dizziness, potassium supplement 04-01 to 04-19 for 014-007 hyperkalemia context, ibuprofen 014-009 headache, lisinopril 014-011 renal context, and glipizide 014-016 hypoglycemia context.",
       "guidance": "",
       "modality": "table",
       "severity": "major"
@@ -160,7 +169,7 @@
       "id": "p17.query.log",
       "category": "source_state",
       "weight": 9,
-      "expectation": "Monitor query log preserves Q-74 answered, Q-77 open for 014-003 W2 ECG missing, Q-81 answered do not dose for 014-007 temperature excursion dosing, and Q-84 open for 014-008 central lab pending.",
+      "expectation": "Monitor query log preserves Q-74 answered, Q-77 open for 014-003 W2 ECG missing, Q-81 answered do not dose for 014-007 temperature excursion dosing, Q-84 open for 014-008 central lab pending, Q-86 open for 014-009 W2 visit outside window, Q-88 open for 014-011 repeat lab report missing, Q-91 answered retrained for 014-014 ePRO activation evidence, and Q-93 open for 014-016 pharmacist masking note.",
       "guidance": "",
       "modality": "source-precedence",
       "severity": "critical"
@@ -169,7 +178,7 @@
       "id": "p17.ecrf.checkboxes",
       "category": "form_state",
       "weight": 10,
-      "expectation": "eCRF checkbox audit preserves W2 ECG performed unchecked for 014-003, withdrawal due AE checked for 014-004, kit dispensed unchecked for 014-007, central lab reviewed unchecked for 014-008.",
+      "expectation": "eCRF checkbox audit preserves W2 ECG performed unchecked for 014-003, withdrawal due AE checked for 014-004, kit dispensed unchecked for 014-007, central lab reviewed unchecked for 014-008, visit in window unchecked for 014-009, repeat lab attached unchecked for 014-011, ePRO activated unchecked for 014-014, and masking reviewed unchecked for 014-016.",
       "guidance": "",
       "modality": "form",
       "severity": "critical"
@@ -178,7 +187,7 @@
       "id": "p17.shipments",
       "category": "table_cell",
       "weight": 9,
-      "expectation": "Shipment manifest preserves SH-204-44 accepted with received 04-20 09:02, SH-204-45 received 04-23 16:40 with temperature late state accepted/not rejected, and SH-204-46 pending/not reviewed.",
+      "expectation": "Shipment manifest preserves SH-204-44 accepted with received 04-20 09:02, SH-204-45 received 04-23 16:40 with temperature late state accepted/not rejected, SH-204-46 pending/not reviewed, SH-204-47 accepted late draw, SH-204-48 repeat requested, and SH-204-49 safety call done.",
       "guidance": "",
       "modality": "table",
       "severity": "major"
@@ -187,7 +196,7 @@
       "id": "p17.readiness",
       "category": "table_cell",
       "weight": 9,
-      "expectation": "Data cleaning readiness preserves Enrollment open 0 none, ECG open 1 Q-77/014-003, Drug accountability open 1 K-204-153 quarantine, Central lab open 1 014-008 pending, and AE open 0 none.",
+      "expectation": "Data cleaning readiness preserves Enrollment open 0 none, ECG open 1 Q-77/014-003, Drug accountability open 1 K-204-153 quarantine, Central lab open 3 for 014-008/014-011/014-016, AE open 1 AE-014-05 repeat lab pending, Visit windows open 1 Q-86/014-009, and Masking open 1 Q-93/014-016.",
       "guidance": "",
       "modality": "table",
       "severity": "critical"
@@ -196,7 +205,7 @@
       "id": "p17.pi.signoff",
       "category": "form_state",
       "weight": 8,
-      "expectation": "PI signoff preserves AE-014-01 checked, DEV-014-03 unchecked, DEV-014-07 checked, clean-ready attestation unchecked, signed Dr. Neha Rao 2026-05-08.",
+      "expectation": "PI signoff preserves AE-014-01 checked, DEV-014-03 unchecked, DEV-014-07 checked, DEV-014-09 unchecked, DEV-014-11 unchecked, clean-ready attestation unchecked, signed Dr. Neha Rao 2026-05-08.",
       "guidance": "",
       "modality": "form",
       "severity": "critical"
@@ -205,7 +214,7 @@
       "id": "p17.final.recap",
       "category": "source_state",
       "weight": 9,
-      "expectation": "Final monitor recap preserves site clean-ready No, critical subject 014-003, critical kit K-204-153, open queries Q-77 and Q-84, withdrawn subject 014-004 due related dizziness, and do not dose K-204-153.",
+      "expectation": "Final monitor recap preserves site clean-ready No, critical subject 014-003, critical kit K-204-153, open queries Q-77/Q-84/Q-86/Q-88/Q-93, withdrawn subjects 014-004 related dizziness and 014-013 lost to follow-up, do not dose K-204-153, masking review open for 014-016, and central lab repeats for 014-008/014-011/014-016.",
       "guidance": "",
       "modality": "source-precedence",
       "severity": "critical"

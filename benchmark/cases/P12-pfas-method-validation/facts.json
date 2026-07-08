@@ -89,7 +89,7 @@
       "id": "p12.sequence",
       "category": "source_state",
       "weight": 8,
-      "expectation": "Sequence 18 DW-240409-04 is Reinject due to InternalStd_OK No; Seq 19 DW-240409-04-RI is Accepted and controls final results.",
+      "expectation": "Full sequence table preserves Seq 1-20 with Type, Vial, SampleID, Time, IS OK, Carryover, and State; Seq 18 DW-240409-04 is Reinject due to InternalStd_OK No; Seq 19 DW-240409-04-RI is Accepted and controls final results.",
       "guidance": "",
       "severity": "critical"
     },

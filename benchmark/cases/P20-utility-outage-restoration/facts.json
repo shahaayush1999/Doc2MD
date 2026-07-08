@@ -33,8 +33,8 @@
     {
       "id": "p20.alarms",
       "category": "table_cell",
-      "weight": 8,
-      "expectation": "SCADA alarm sequence preserves all times/devices/states/notes from 15:42:11 R12 trip through 19:06:10 R12 breaker closed.",
+      "weight": 10,
+      "expectation": "SCADA alarm sequence preserves all times/devices/states/notes from 15:42:11 R12 trip, 15:42:14 12R-3 lockout, 15:42:19 relay 50G pickup 7.8 kA, 15:44:33 OMS 8,960 out, DER-44 0 kW at 17:11, T-7 closed 17:18:44, F-12B replaced 18:05:02, through 19:06:10 R12 breaker closed.",
       "guidance": "",
       "modality": "table",
       "severity": "critical"
@@ -51,8 +51,8 @@
     {
       "id": "p20.switching",
       "category": "table_cell",
-      "weight": 9,
-      "expectation": "Switching log preserves six steps, times, actions, crews, and restored customer counts, including T-7 close at 17:18 restoring 4,820.",
+      "weight": 10,
+      "expectation": "Switching log preserves nine steps, times, actions, crews, and restored customer counts, including Maple lateral test at 16:47, DER-44 verification at 17:11, T-7 close at 17:18 restoring 4,820, Riverside patrol at 18:42, R12 close at 19:06 restoring 8,960, and T-7 normalize at 19:32.",
       "guidance": "",
       "modality": "table",
       "severity": "critical"
@@ -69,10 +69,19 @@
     {
       "id": "p20.customer.segments",
       "category": "table_cell",
-      "weight": 8,
-      "expectation": "Customer impact preserves Maple lateral, hospital loop, Riverside apartments, and industrial park customer counts, critical statuses, and restoration times.",
+      "weight": 10,
+      "expectation": "Customer impact preserves Maple lateral 2,820 restored 18:05, Maple care home spur 86 assisted living restored 18:05, hospital loop 1,240/1 hospital restored 17:18, Riverside apartments 3,100/2 elevators restored 19:06, industrial park 1,800 restored 19:06, traffic signal cabinet TS-12 restored 17:18, and lift station LS-4 restored 19:06.",
       "guidance": "",
       "modality": "table",
+      "severity": "critical"
+    },
+    {
+      "id": "p20.customer.notifications",
+      "category": "source_state",
+      "weight": 8,
+      "expectation": "Critical customer notifications preserve hospital facility desk calls at 16:04 ETA pending and 17:21 restored via T-7, City traffic radio 17:25 signal power back, wastewater duty officer 18:18 awaiting feeder close, industrial park email 19:09 normal restored, and care home manager 18:08 restored after F-12B change.",
+      "guidance": "",
+      "modality": "source-precedence",
       "severity": "critical"
     },
     {
@@ -94,10 +103,19 @@
       "severity": "critical"
     },
     {
+      "id": "p20.cause.evidence.detail",
+      "category": "visual_relation",
+      "weight": 9,
+      "expectation": "Cause evidence preserves P1 F-12B char mark, P2 clear span/no branch contact, relay oscillography single phase-to-ground impulse not lightning signature, cutout tag F12B-882 polymer barrel split, Kearney 65K fuse link melt pattern consistent, crossarm no flashover trace, and no tree sample collected.",
+      "guidance": "",
+      "modality": "visual",
+      "severity": "critical"
+    },
+    {
       "id": "p20.der.clearance.detail",
       "category": "source_state",
-      "weight": 8,
-      "expectation": "DER clearance detail preserves DER-44 disconnect open 17:06, SCADA output 0 kW at 17:11 stable 5 min, relay 67P reverse-power clear, T-7 permission issued 17:16/close allowed 17:18, and DER restore deferred after normalize.",
+      "weight": 10,
+      "expectation": "DER clearance detail preserves DER-44 disconnect open 17:06, SCADA output 0 kW at 17:11 stable 5 min, feeder 9Q load 74% under emergency rating, relay 67P reverse-power clear, hospital ATS accepted T-7 source, T-7 permission issued 17:16/close allowed 17:18, DER restore deferred after normalize, and R. Valdez site acknowledgment at 19:36.",
       "guidance": "",
       "modality": "source-precedence",
       "severity": "critical"
@@ -141,8 +159,8 @@
     {
       "id": "p20.notice.routing",
       "category": "source_state",
-      "weight": 6,
-      "expectation": "Regulatory notice routing preserves hospital liaison phone sent 17:21, City OEM email sent 18:12, State PUC portal due 2026-07-05 12:00, internal claims ticket sent 2026-07-03 08:40, and DER owner phone sent 19:34.",
+      "weight": 7,
+      "expectation": "Regulatory notice routing preserves hospital liaison phone sent 17:21, City OEM email sent 18:12, State PUC portal due 2026-07-05 12:00, internal claims ticket sent 2026-07-03 08:40, DER owner phone sent 19:34, asset engineering work order sent 2026-07-03 09:05 for F12B-882 lab teardown, and vegetation contractor no-dispatch/not required because P2 ruled out tree contact.",
       "guidance": "",
       "modality": "source-precedence",
       "severity": "major"

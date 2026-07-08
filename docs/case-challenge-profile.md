@@ -14,4 +14,4 @@ This is an internal design profile for the consolidated benchmark suite. It is n
 
 Coverage rule: a case should remain scored only if it contributes at least one challenge that no other scored case covers as the primary difficulty. If a future case duplicates a primary challenge without adding a new realistic document mode, merge or delete it.
 
-Current score-target gate: the suite is not complete unless the weak anchor lands at 20-30 overall, the good anchor lands at 60-80 overall, spread is at least 35 points, no weak-anchor case exceeds 50, and no more than two good-anchor cases exceed 90.
+Calibration rule: do not force arbitrary target scores. If GPT-5 Nano scores above roughly 70 on the official suite, inspect whether the cases are too easy, the answer key is too forgiving, or the provider ingestion path solved the relevant difficulty. If multiple frontier models later saturate fair human-parseable documents, report saturation honestly and let cost, latency, output tokens, and reliability carry more of the benchmark interpretation.

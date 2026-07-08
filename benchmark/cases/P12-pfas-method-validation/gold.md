@@ -32,6 +32,8 @@ Matrix spike table for DW-240408-03: PFOA native 3.42, spike 10.00, MS 96, MSD 9
 
 ## Batch Sequence and Chromatograms
 
+{md_table(seq_rows[0], seq_rows[1:])}
+
 Sequence 18 DW-240409-04 at 11:51 has InternalStd_OK No, carryover Yes, state Reinject. Sequence 19 DW-240409-04-RI at 12:18 has InternalStd_OK Yes, carryover Yes, state Accepted and controls final results. Review trail: M. Iyer 2024-04-19 14:05, L. Chen 2024-04-22 09:40, R. Patel 2024-04-22 16:10.
 
 Chromatogram panel facts: A LRB blank PFOS has no peak and noise 41 cps. B CAL-0.5 PFOS has RT 5.64, area 4,572, S/N 12. C DW-240408-03 PFOA has RT 4.41, area 25,621, concentration 3.42 ng/L. D DW-240408-03 PFOS has RT 5.65, area 6,318, concentration 0.74 ng/L. E DW-240408-03-MS PFHxS has RT 4.63, area 98,114, concentration 11.36 ng/L. F DW-240409-04 original vs reinjection IS overlay has original IS recovery 38% and reinjection IS recovery 91%. Retention windows: PFOA 4.41 +/-0.08, PFHxS 4.63 +/-0.08, 6:2 FTS 5.19 +/-0.10, PFOS 5.64 +/-0.10.

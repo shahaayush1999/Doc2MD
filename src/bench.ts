@@ -2,7 +2,7 @@ import { benchmarkModelIds, runModel } from "./run.js";
 import { scoreModel } from "./score.js";
 import { summarizeModel } from "./summary.js";
 
-console.log(`Running full Doc2MD benchmark:
+console.log(`Running official Doc2MD native-PDF benchmark:
 1. model inference for every selected model/case in parallel
 2. evaluator scoring with structured Zod output in parallel per model
 3. deterministic summary aggregation

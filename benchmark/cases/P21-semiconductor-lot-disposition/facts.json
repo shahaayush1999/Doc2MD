@@ -84,12 +84,30 @@
       "severity": "critical"
     },
     {
+      "id": "p21.spc.interlocks",
+      "category": "table_cell",
+      "weight": 10,
+      "expectation": "SPC interlock table preserves chamber pressure 4.8 mTorr pass/not root cause, clamp purge 18.1 slm below >=19.0 fail/future purge increase only, Ti target age 81.4 kWh watch, thickness monitor residual +1.7 nm fail driving R-2245 review, and alarm acknowledgment 09:18 by J. Kwon complete/containment clock starts.",
+      "guidance": "",
+      "modality": "table",
+      "severity": "critical"
+    },
+    {
       "id": "p21.defects",
       "category": "table_cell",
       "weight": 9,
       "expectation": "Defect Pareto preserves codes/classes/counts/affected wafers/dispositions for M1, S2, E1, P4, and C3.",
       "guidance": "",
       "modality": "table",
+      "severity": "critical"
+    },
+    {
+      "id": "p21.defect.actions",
+      "category": "source_state",
+      "weight": 10,
+      "expectation": "Defect containment actions preserve DCT-1 M1 >20 W07 scrap/no REL sample, DCT-2 S2 W05 engineering hold and sister lot Q8R7-23 inspect, DCT-3 E1 W12 hold pending edge-bead review, DCT-4 P4 W09 conditional release requiring REL-22-A, and DCT-5 C3 W03 hold pending CD remeasure.",
+      "guidance": "",
+      "modality": "source-precedence",
       "severity": "critical"
     },
     {

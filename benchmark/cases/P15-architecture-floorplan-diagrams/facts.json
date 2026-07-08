@@ -64,7 +64,7 @@
       "id": "p15.network.arrows",
       "category": "visual_relation",
       "weight": 12,
-      "expectation": "Network topology preserves directed links FW-02 to CS-2 trunk, CS-2 to CR-6 VLAN 230, CS-2 to FZ-3 VLAN 240, CS-2 to QA subnet VLAN 210, CR-6 to NVR badge mirror, plus rule extract ACL-230-06, ACL-240-11, TRK-CS2-FW02, and OPT-CAM with source, destination, VLAN, and state.",
+      "expectation": "Network topology preserves directed links FW-02 to CS-2 trunk, CS-2 to CR-6 VLAN 230, CS-2 to FZ-3 VLAN 240, CS-2 to QA subnet VLAN 210, CR-6 to NVR badge mirror, dashed optional FZ-3 to NVR alert overlay, plus rule extract ACL-230-06, ACL-240-11, TRK-CS2-FW02, and OPT-CAM with source, destination, VLAN, and state.",
       "guidance": "",
       "severity": "critical"
     },

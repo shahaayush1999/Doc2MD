@@ -1,5 +1,9 @@
 {
   "name": "Doc2MD",
+  "suite": "official",
+  "scoreName": "Doc2MD Native PDF Score",
+  "inputProtocol": "native_pdf",
+  "providerFileModePolicy": "Send the native PDF file to the provider and record the provider's documented PDF ingestion mode separately. Do not convert official inputs to page images in the harness.",
   "version": "0.1.0",
   "description": "Benchmark for faithful document-to-Markdown reconstruction across realistic multi-page documents with dense layouts, charts, tables, forms, diagrams, annotations, and source-state conflicts.",
   "caseCount": 7,

@@ -65,6 +65,15 @@ Wafer 03 has C3 cluster at B4, C4, and B5. Wafer 05 has S2 scratch cells E2, F2,
 | R-2247 | 09:42 | 44.1 | inside | recovered |
 R-2245 is above UCL at 47.4 nm. R-2244 and R-2246 are warning-state points but not rejects by themselves.
 
+SPC alarm interlocks:
+| Interlock | Observed value | Threshold | State | Disposition |
+| --- | --- | --- | --- | --- |
+| PVD-03 chamber pressure | 4.8 mTorr | <=5.0 mTorr | pass | not root cause |
+| Clamp purge flow | 18.1 slm | >=19.0 slm | fail | future purge increase only |
+| Ti target age | 81.4 kWh | <=85 kWh | watch | continue after clean |
+| Thickness monitor residual | +1.7 nm | +/-1.0 nm | fail | drives R-2245 review |
+| Alarm acknowledgment | 09:18 by J. Kwon | required | complete | containment clock starts |
+
 ## Defects
 | Code | Class | Count | Affected wafer | Disposition |
 | --- | --- | --- | --- | --- |
@@ -73,6 +82,15 @@ R-2245 is above UCL at 47.4 nm. R-2244 and R-2246 are warning-state points but n
 | E1 | edge bead | 27 | 12 | hold |
 | P4 | parametric drift | 19 | 09 | conditional release |
 | C3 | center cluster | 16 | 03 | hold |
+
+Defect containment actions:
+| Gate | Trigger | Wafer/site | Required action | Owner |
+| --- | --- | --- | --- | --- |
+| DCT-1 | M1 count > 20 | W07 D5/D6/E5 | scrap wafer; do not sample for REL | MRB |
+| DCT-2 | S2 scratch crossing active cells | W05 E2/F2/E3 | engineering hold; inspect sister lot Q8R7-23 | Yield Eng |
+| DCT-3 | E1 edge bead two adjacent cells | W12 A6/B6 | hold pending edge-bead review | Process Eng |
+| DCT-4 | P4 drift with clean SEM image | W09 F3 | conditional release; REL-22-A required | Reliability |
+| DCT-5 | C3 high-CD cluster | W03 B4/C4/B5 | hold pending CD remeasure | Metrology |
 
 ## Photo Register
 IMG-221 W07 D5 and IMG-222 W07 D6 show M1 metal flakes and support scrap W07. IMG-223 W05 E2 shows S2 scratch and supports hold W05. IMG-224 W12 A6 shows E1 edge bead and supports hold W12. IMG-225 W09 F3 is clean visually but has P4 electrical drift and supports conditional W09.

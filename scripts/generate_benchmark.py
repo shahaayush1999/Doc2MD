@@ -11,7 +11,7 @@ from io import BytesIO
 from pathlib import Path
 from textwrap import wrap
 
-from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
+from PIL import Image, ImageColor, ImageDraw, ImageFilter, ImageFont, ImageOps
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
@@ -5452,6 +5452,8 @@ Matrix spike table for DW-240408-03: PFOA native 3.42, spike 10.00, MS 96, MSD 9
 
 ## Batch Sequence and Chromatograms
 
+{md_table(seq_rows[0], seq_rows[1:])}
+
 Sequence 18 DW-240409-04 at 11:51 has InternalStd_OK No, carryover Yes, state Reinject. Sequence 19 DW-240409-04-RI at 12:18 has InternalStd_OK Yes, carryover Yes, state Accepted and controls final results. Review trail: M. Iyer 2024-04-19 14:05, L. Chen 2024-04-22 09:40, R. Patel 2024-04-22 16:10.
 
 Chromatogram panel facts: A LRB blank PFOS has no peak and noise 41 cps. B CAL-0.5 PFOS has RT 5.64, area 4,572, S/N 12. C DW-240408-03 PFOA has RT 4.41, area 25,621, concentration 3.42 ng/L. D DW-240408-03 PFOS has RT 5.65, area 6,318, concentration 0.74 ng/L. E DW-240408-03-MS PFHxS has RT 4.63, area 98,114, concentration 11.36 ng/L. F DW-240409-04 original vs reinjection IS overlay has original IS recovery 38% and reinjection IS recovery 91%. Retention windows: PFOA 4.41 +/-0.08, PFHxS 4.63 +/-0.08, 6:2 FTS 5.19 +/-0.10, PFOS 5.64 +/-0.10.
@@ -5491,7 +5493,7 @@ Uncertainty budget: Calibration PFOA 5.2%, PFOS 7.4%, HFPO-DA 4.8%; repeatabilit
             fact("p12.table-s4-continuation", "structure", 9, "Table S4 is preserved as one logical continuation table across pages 4 and 5, with repeated headers not treated as data."),
             fact("p12.table-s4-values", "table_cell", 10, "All Table S4 recovery/RSD/N/status values for PFBA through HFPO-DA are preserved."),
             fact("p12.matrix-spike", "table_cell", 8, "Matrix spike table preserves native/spike/MS/MSD/RPD/flag values, including PFOS J-native below 2x LOQ and 6:2 FTS low bias monitored."),
-            fact("p12.sequence", "source_state", 8, "Sequence 18 DW-240409-04 is Reinject due to InternalStd_OK No; Seq 19 DW-240409-04-RI is Accepted and controls final results."),
+            fact("p12.sequence", "source_state", 8, "Full sequence table preserves Seq 1-20 with Type, Vial, SampleID, Time, IS OK, Carryover, and State; Seq 18 DW-240409-04 is Reinject due to InternalStd_OK No; Seq 19 DW-240409-04-RI is Accepted and controls final results."),
             fact("p12.review-trail", "text", 4, "Review trail preserves M. Iyer 2024-04-19 14:05, L. Chen 2024-04-22 09:40, and R. Patel 2024-04-22 16:10."),
             fact("p12.chromatograms", "visual_relation", 10, "All six chromatogram panels preserve panel labels, sample/channel, RT/area/concentration or IS recovery facts."),
             fact("p12.retention", "table_cell", 5, "Retention windows preserve PFOA 4.41 +/-0.08, PFHxS 4.63 +/-0.08, 6:2 FTS 5.19 +/-0.10, PFOS 5.64 +/-0.10."),
@@ -5624,7 +5626,7 @@ def packet_capa_quality_escape() -> Case:
         d.text((x + 96, y - 34), label, fill="#475569", font=F["tiny"])
         d.rectangle((x, y, x + 650, y + 360), outline="#334155", width=2)
         p4.paste(draw_defect_photo(i, 648, 358), (x + 1, y + 1))
-    draw_note(d, (90, 1340, 1525, 1565), "Disposition from photos", "Photos A and C are supplier burr evidence. Photo B is a fixture scratch observed after rework trial and should not be counted as incoming defect. Photo D is excluded handling damage but should still appear in the reconstructed Markdown.", "#334155")
+    draw_note(d, (90, 1340, 1525, 1565), "Disposition from photos", "Photos A and C are supplier burr evidence. Photo B is a fixture scratch observed after rework trial and should not be counted as incoming defect. Photo D is excluded handling damage and remains context for the supplier review only.", "#334155")
     pages.append(p4)
 
     # Page 5
@@ -6259,7 +6261,7 @@ def packet_noc_handover() -> Case:
     d.text((90, 230), "This packet is assembled from exported slides, status dashboards, and shift notes. Reconstruct each artifact; do not summarize.", fill="#f8fafc", font=F["h2"])
     deck_card(d, (90, 420, 610, 715), "Primary risks", "Release gate spans 10:00-16:30.\nHIPAA BAA is Security, not Product.\nExport Friday is yellow, not red.", True)
     deck_card(d, (680, 420, 1200, 715), "Artifacts", "Raster Gantt\nOverlapping GTM timeline\nBorderless team matrix\nEscalation heatmap\nPager rota", True)
-    deck_card(d, (1270, 420, 2030, 715), "Output shape", "Markdown should preserve page order, tables where useful, and natural-language descriptions for chart-only or diagram-only regions.", True)
+    deck_card(d, (1270, 420, 2030, 715), "Handoff notes", "Page order follows the operations packet.\nTables are working notes.\nChart-only regions record visual status.\nDiagram regions show operational flow.", True)
     pages.append(p1)
 
     # Gantt slide
@@ -7188,7 +7190,7 @@ def packet_finance_covenant_reforecast() -> Case:
         ["Amendment needed", "No", "Likely for Oct liquidity", "superseded"],
     ]
     draw_ledger(d, 90, 260, [300, 260, 340, 260], rows, 70)
-    draw_note(d, (95, 760, 1510, 980), "Audit warning", "Do not use this page as current forecast. Final pages 1-7 control all public benchmark facts.", "#991b1b")
+    draw_note(d, (95, 760, 1510, 980), "Audit warning", "Do not use this page as the current forecast. The signed pages in this packet supersede this draft insert for launch decisions.", "#991b1b")
     pages.append(p8)
 
     p9 = page("Lender Model Covenant Worksheet", "Exact covenant math; lender model controls covenant calculations")
@@ -7532,38 +7534,46 @@ def packet_architecture_floorplan_diagrams() -> Case:
     for name, (x, y) in nodes.items():
         d.rounded_rectangle((x, y, x + 210, y + 90), radius=10, fill="#f8fafc", outline="#334155", width=3)
         d.text((x + 20, y + 24), name, fill="#111827", font=F["small_bold"])
-    arrows = [
-        ("FW-02", "CS-2", "trunk VLAN 99/210/230/240"),
-        ("CS-2", "CR-6", "VLAN 230 access control"),
-        ("CS-2", "FZ-3", "VLAN 240 10.42.40.0/24"),
-        ("CS-2", "QA subnet", "VLAN 210 10.42.10.0/24"),
-        ("CR-6", "NVR", "badge event mirror"),
+    def routed_arrow(points: list[tuple[int, int]], color: str = "#2563eb", dashed: bool = False) -> None:
+        for start, end in zip(points, points[1:]):
+            x1, y1 = start
+            x2, y2 = end
+            if dashed:
+                steps = max(1, int(((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5 // 22))
+                for step in range(0, steps, 2):
+                    xa = x1 + (x2 - x1) * step / steps
+                    ya = y1 + (y2 - y1) * step / steps
+                    xb = x1 + (x2 - x1) * min(step + 1, steps) / steps
+                    yb = y1 + (y2 - y1) * min(step + 1, steps) / steps
+                    d.line((xa, ya, xb, yb), fill=color, width=3)
+            else:
+                d.line((x1, y1, x2, y2), fill=color, width=4)
+        x2, y2 = points[-1]
+        x1, y1 = points[-2]
+        if abs(x2 - x1) >= abs(y2 - y1):
+            if x2 >= x1:
+                d.polygon([(x2, y2), (x2 - 18, y2 - 8), (x2 - 18, y2 + 8)], fill=color)
+            else:
+                d.polygon([(x2, y2), (x2 + 18, y2 - 8), (x2 + 18, y2 + 8)], fill=color)
+        else:
+            if y2 >= y1:
+                d.polygon([(x2, y2), (x2 - 8, y2 - 18), (x2 + 8, y2 - 18)], fill=color)
+            else:
+                d.polygon([(x2, y2), (x2 - 8, y2 + 18), (x2 + 8, y2 + 18)], fill=color)
+
+    routes = [
+        ("trunk VLAN 99/210/230/240", [(360, 560), (485, 560)], (275, 450), "#2563eb", False),
+        ("VLAN 230 access control", [(695, 548), (760, 548), (760, 345), (835, 345)], (600, 360), "#2563eb", False),
+        ("VLAN 240 10.42.40.0/24", [(695, 582), (760, 582), (760, 755), (835, 755)], (600, 665), "#2563eb", False),
+        ("VLAN 210 10.42.10.0/24", [(695, 610), (1185, 610), (1185, 755), (1255, 755)], (860, 615), "#2563eb", False),
+        ("badge event mirror", [(1045, 345), (1255, 345)], (1070, 245), "#2563eb", False),
+        ("dashed optional alert overlay", [(1045, 755), (1165, 755), (1165, 410), (1255, 410)], (1010, 575), "#64748b", True),
     ]
-    label_boxes = [
-        (285, 450),
-        (610, 350),
-        (610, 660),
-        (785, 600),
-        (1040, 245),
-    ]
-    for idx, (a, b, label) in enumerate(arrows):
-        ax, ay = nodes[a]
-        bx, by = nodes[b]
-        y1 = ay + 45
-        y2 = by + 45
-        d.line((ax + 210, y1, bx, y2), fill="#2563eb", width=4)
-        d.polygon([(bx, y2), (bx - 18, y2 - 8), (bx - 18, y2 + 8)], fill="#2563eb")
-        lx, ly = label_boxes[idx]
+    for label, points, label_xy, color, dashed in routes:
+        routed_arrow(points, color=color, dashed=dashed)
+        lx, ly = label_xy
         d.rounded_rectangle((lx, ly, lx + 260, ly + 42), radius=5, fill="white", outline="#93c5fd", width=2)
-        d.text((lx + 10, ly + 10), label, fill="#1d4ed8", font=F["tiny_bold"])
-    fx, fy = nodes["FZ-3"]
-    nx, ny = nodes["NVR"]
-    for t in range(0, 10):
-        x1 = fx + 210 + t * 38
-        y1 = fy + 80 - t * 36
-        d.line((x1, y1, x1 + 22, y1 - 22), fill="#64748b", width=3)
-    d.rounded_rectangle((1010, 575, 1325, 620), radius=5, fill="white", outline="#94a3b8", width=2)
-    d.text((1022, 587), "dashed optional alert overlay", fill="#64748b", font=F["tiny_bold"])
+        d.text((lx + 10, ly + 10), label, fill=color, font=F["tiny_bold"])
     draw_note(d, (140, 1015, 1510, 1205), "Subnet note", "VLAN 240 maps to freezer and camera telemetry subnet 10.42.40.0/24. VLAN 230 is access control. VLAN 210 is QA devices.", "#334155")
     draw_section(d, 110, 1340, "Port and firewall rule extract", w=1380)
     port_rows = [
@@ -7729,7 +7739,7 @@ Revision cloud text: D-214B + CR-6.
         fact("p15.callouts", "visual_relation", 8, "Callout 6 is CR-6 at Lab B corridor door; callout 9 is rack R2 in 218 IT Closet; callout 11 is freezer FZ-3 in 216 Freezer."),
         fact("p15.rack.units", "visual_relation", 10, "Rack elevation preserves CS-2 at U42-U43, PP-7 U36-U37, FW-02 U30-U31, UPS A U24-U26, GW-3 U18, NVR bridge U12-U13."),
         fact("p15.patch.table", "table_cell", 8, "Patch table preserves CS-2/01 D214-01 tablet dock VLAN 210, CS-2/07 D215-03 CR-6 VLAN 230, CS-2/12 D216-02 FZ-3 VLAN 240, CS-2/19 D218-01 FW-02 mgmt VLAN 99."),
-        fact("p15.network.arrows", "visual_relation", 12, "Network topology preserves directed links FW-02 to CS-2 trunk, CS-2 to CR-6 VLAN 230, CS-2 to FZ-3 VLAN 240, CS-2 to QA subnet VLAN 210, CR-6 to NVR badge mirror, plus rule extract ACL-230-06, ACL-240-11, TRK-CS2-FW02, and OPT-CAM with source, destination, VLAN, and state."),
+        fact("p15.network.arrows", "visual_relation", 12, "Network topology preserves directed links FW-02 to CS-2 trunk, CS-2 to CR-6 VLAN 230, CS-2 to FZ-3 VLAN 240, CS-2 to QA subnet VLAN 210, CR-6 to NVR badge mirror, dashed optional FZ-3 to NVR alert overlay, plus rule extract ACL-230-06, ACL-240-11, TRK-CS2-FW02, and OPT-CAM with source, destination, VLAN, and state."),
         fact("p15.subnets", "visual_relation", 8, "VLAN 240 maps to 10.42.40.0/24 freezer/camera telemetry; VLAN 230 is access control; VLAN 210 is QA devices; ACL-230-06 permits one-way CR-6 to NVR event mirror, and ACL-240-11 denies FZ-3 to QA telemetry except broker."),
         fact("p15.optional.path", "visual_relation", 4, "Dashed optional alert overlay runs from FZ-3 to NVR."),
         fact("p15.panel", "table_cell", 12, "Panel LP-2 schedule preserves all circuits L2-11, L2-13, L2-15, L2-17, L2-19, L2-21 with loads, breakers, emergency states, rooms, notes, and load summary rows for normal receptacles 3.2/0.0 kVA, access control 0.4/0.4, cold storage 0.7/0.7, IT/UPS 1.1/1.1, spare capacity 2.6/- held for Rev D."),
@@ -8661,6 +8671,14 @@ def packet_clinical_trial_site_binder() -> Case:
         ["014-006", "screen fail", "2026-04-15", "eGFR 42", "not randomized"],
         ["014-007", "randomized", "2026-04-18", "Arm B", "IP temperature excursion"],
         ["014-008", "randomized", "2026-04-20", "Arm A", "central lab pending"],
+        ["014-009", "randomized", "2026-04-22", "Arm B", "W2 diary window late"],
+        ["014-010", "screen fail", "2026-04-23", "QTc 486 ms", "not randomized"],
+        ["014-011", "randomized", "2026-04-26", "Arm A", "central lab repeat pending"],
+        ["014-012", "randomized", "2026-04-28", "Arm B", "eligible with waiver W-14"],
+        ["014-013", "withdrawn", "2026-04-29", "Arm A", "lost to follow-up before W4"],
+        ["014-014", "randomized", "2026-05-01", "Arm A", "ePRO device not activated"],
+        ["014-015", "screen fail", "2026-05-02", "BP 168/98", "not randomized"],
+        ["014-016", "randomized", "2026-05-04", "Arm B", "unblinded pharmacist note"],
     ]
     visits = [
         ["014-002", "V1", "04-05", "done", "kit K-204-118", "ECG normal"],
@@ -8671,6 +8689,15 @@ def packet_clinical_trial_site_binder() -> Case:
         ["014-004", "V1", "04-10", "done", "kit K-204-128", "AE onset"],
         ["014-004", "W2", "04-24", "withdrawn", "-", "early termination"],
         ["014-007", "V1", "04-18", "done", "kit K-204-153", "temp excursion"],
+        ["014-007", "W2", "05-02", "hold", "-", "repeat lab required"],
+        ["014-008", "V1", "04-20", "done", "kit K-204-158", "central lab pending"],
+        ["014-009", "V1", "04-22", "done", "kit K-204-160", "diary issued"],
+        ["014-009", "W2", "05-07", "late", "kit K-204-181", "outside +2 day window"],
+        ["014-011", "V1", "04-26", "done", "kit K-204-171", "lab repeat ordered"],
+        ["014-012", "V1", "04-28", "done", "kit K-204-174", "waiver W-14 filed"],
+        ["014-013", "V1", "04-29", "done", "kit K-204-177", "phone disconnected"],
+        ["014-014", "V1", "05-01", "done", "kit K-204-184", "ePRO not activated"],
+        ["014-016", "V1", "05-04", "done", "kit K-204-190", "pharmacist note sealed"],
     ]
     labs = [
         ["014-002", "ALT", "38", "", "0-45", "U/L"],
@@ -8679,16 +8706,33 @@ def packet_clinical_trial_site_binder() -> Case:
         ["014-003", "eGFR", "58", "L", ">=60", "mL/min"],
         ["014-004", "Hemoglobin", "10.8", "L", "12.0-16.0", "g/dL"],
         ["014-007", "Potassium", "5.6", "H", "3.5-5.1", "mmol/L"],
+        ["014-008", "HbA1c", "7.2", "", "6.5-9.0", "%"],
+        ["014-009", "ALT", "49", "H", "0-45", "U/L"],
+        ["014-009", "Potassium", "4.8", "", "3.5-5.1", "mmol/L"],
+        ["014-011", "Creatinine", "1.34", "H", "0.60-1.30", "mg/dL"],
+        ["014-011", "eGFR", "61", "", ">=60", "mL/min"],
+        ["014-012", "QTc", "452", "", "<470", "ms"],
+        ["014-013", "Hemoglobin", "11.7", "L", "12.0-16.0", "g/dL"],
+        ["014-014", "ALT", "42", "", "0-45", "U/L"],
+        ["014-016", "Glucose", "62", "L", "70-110", "mg/dL"],
     ]
     aes = [
         ["AE-014-01", "014-004", "dizziness", "moderate", "related", "withdrawn 2026-04-24"],
         ["AE-014-02", "014-002", "nausea", "mild", "possibly related", "dose reduced W4"],
         ["AE-014-03", "014-007", "hyperkalemia", "moderate", "unrelated", "repeat lab normal"],
+        ["AE-014-04", "014-009", "headache", "mild", "unrelated", "resolved without action"],
+        ["AE-014-05", "014-011", "creatinine increased", "mild", "possibly related", "repeat lab pending"],
+        ["AE-014-06", "014-013", "lost contact", "not AE", "not related", "withdrawal follow-up open"],
+        ["AE-014-07", "014-016", "hypoglycemia", "moderate", "related", "safety call completed"],
     ]
     deviations = [
         ["DEV-014-03", "014-003", "W2 ECG missed", "major", "open query Q-77"],
         ["DEV-014-07", "014-007", "IP temp 9.1C for 3h", "major", "do not dose kit K-204-153"],
         ["DEV-014-02", "014-002", "diary page late", "minor", "resolved"],
+        ["DEV-014-08", "014-009", "W2 visit outside +2 day window", "minor", "open query Q-86"],
+        ["DEV-014-09", "014-011", "repeat central lab not filed", "major", "open query Q-88"],
+        ["DEV-014-10", "014-014", "ePRO device not activated at V1", "minor", "retrain coordinator"],
+        ["DEV-014-11", "014-016", "unblinded pharmacist note in source", "major", "masking review open"],
     ]
     ip_rows = [
         ["Kit", "Subject", "Dispensed", "Returned", "Temp flag", "Final state"],
@@ -8698,16 +8742,21 @@ def packet_clinical_trial_site_binder() -> Case:
         ["K-204-121", "014-003", "30", "5", "none", "accounted"],
         ["K-204-146", "014-003", "30", "not returned", "none", "open"],
         ["K-204-153", "014-007", "0", "quarantined", "9.1C for 3h", "do not dose"],
+        ["K-204-158", "014-008", "30", "pending", "none", "reconcile after lab"],
+        ["K-204-160", "014-009", "30", "3", "none", "diary window late"],
+        ["K-204-171", "014-011", "30", "pending", "none", "hold repeat lab"],
+        ["K-204-184", "014-014", "30", "0", "none", "ePRO activation open"],
+        ["K-204-190", "014-016", "30", "2", "none", "masking review"],
     ]
-    temp_rows = [["Time", "Temp", "Action"], ["04-18 09:10", "8.4C", "alarm"], ["04-18 10:10", "9.1C", "quarantine K-204-153"], ["04-18 12:10", "7.8C", "still above range"], ["04-18 13:05", "5.2C", "returned to range"]]
+    temp_rows = [["Time", "Temp", "Action"], ["04-18 09:10", "8.4C", "alarm"], ["04-18 10:10", "9.1C", "quarantine K-204-153"], ["04-18 11:10", "8.8C", "pharmacy notified"], ["04-18 12:10", "7.8C", "still above range"], ["04-18 13:05", "5.2C", "returned to range"], ["04-18 13:40", "4.7C", "back in range; kit remains quarantined"]]
     ecg_rows = [["Field", "Visible state"], ["Subject", "014-003"], ["Visit", "W2 / 2026-04-21"], ["ECG checkbox", "unchecked"], ["Reason", "machine unavailable"], ["Query", "Q-77 open; PI response pending"]]
-    med_rows = [["Subject", "Medication", "Start", "Stop", "Relevance"], ["014-002", "metformin", "baseline", "ongoing", "allowed"], ["014-004", "meclizine", "04-11", "04-24", "AE dizziness"], ["014-007", "potassium supplement", "04-01", "04-19", "hyperkalemia context"]]
-    query_rows = [["Query", "Subject", "Issue", "State"], ["Q-74", "014-004", "AE stop date", "answered"], ["Q-77", "014-003", "W2 ECG missing", "open"], ["Q-81", "014-007", "temperature excursion dosing", "answered: do not dose"], ["Q-84", "014-008", "central lab pending", "open"]]
-    ecrf_rows = [["Subject", "Field", "Visible state", "Data entry"], ["014-003", "W2 ECG performed", "unchecked", "blank"], ["014-004", "Withdrawal due to AE", "checked", "dizziness"], ["014-007", "Kit dispensed", "unchecked", "quarantined"], ["014-008", "Central lab reviewed", "unchecked", "pending"]]
-    shipment_rows = [["Shipment", "Subject", "Tube", "Drawn", "Received", "State"], ["SH-204-44", "014-002", "PK-2", "04-19 08:12", "04-20 09:02", "accepted"], ["SH-204-45", "014-003", "PK-2", "04-21 08:44", "04-23 16:40", "temperature late"], ["SH-204-46", "014-008", "central lab", "04-20 09:15", "pending", "not reviewed"]]
-    readiness_rows = [["Domain", "Open", "Critical blocker"], ["Enrollment", "0", "none"], ["ECG", "1", "Q-77 / 014-003"], ["Drug accountability", "1", "K-204-153 quarantine"], ["Central lab", "1", "014-008 pending"], ["AE", "0", "none"]]
-    pi_rows = [["Statement", "Visible state"], ["PI reviewed AE-014-01", "checked"], ["PI reviewed DEV-014-03", "unchecked"], ["PI reviewed DEV-014-07", "checked"], ["Clean-ready attestation", "unchecked"], ["Signed by", "Dr. Neha Rao / 2026-05-08"]]
-    final_rows = [["Control item", "Final state"], ["Site clean-ready", "No"], ["Critical subject", "014-003"], ["Critical kit", "K-204-153"], ["Open queries", "Q-77 and Q-84"], ["Withdrawn subject", "014-004 due related dizziness"], ["Do not dose", "K-204-153"]]
+    med_rows = [["Subject", "Medication", "Start", "Stop", "Relevance"], ["014-002", "metformin", "baseline", "ongoing", "allowed"], ["014-004", "meclizine", "04-11", "04-24", "AE dizziness"], ["014-007", "potassium supplement", "04-01", "04-19", "hyperkalemia context"], ["014-009", "ibuprofen", "04-30", "05-01", "headache"], ["014-011", "lisinopril", "baseline", "ongoing", "renal context"], ["014-016", "glipizide", "baseline", "ongoing", "hypoglycemia context"]]
+    query_rows = [["Query", "Subject", "Issue", "State"], ["Q-74", "014-004", "AE stop date", "answered"], ["Q-77", "014-003", "W2 ECG missing", "open"], ["Q-81", "014-007", "temperature excursion dosing", "answered: do not dose"], ["Q-84", "014-008", "central lab pending", "open"], ["Q-86", "014-009", "W2 visit outside window", "open"], ["Q-88", "014-011", "repeat lab report missing", "open"], ["Q-91", "014-014", "ePRO activation evidence", "answered: retrained"], ["Q-93", "014-016", "pharmacist masking note", "open"]]
+    ecrf_rows = [["Subject", "Field", "Visible state", "Data entry"], ["014-003", "W2 ECG performed", "unchecked", "blank"], ["014-004", "Withdrawal due to AE", "checked", "dizziness"], ["014-007", "Kit dispensed", "unchecked", "quarantined"], ["014-008", "Central lab reviewed", "unchecked", "pending"], ["014-009", "Visit in window", "unchecked", "late"], ["014-011", "Repeat lab attached", "unchecked", "pending"], ["014-014", "ePRO activated", "unchecked", "training complete"], ["014-016", "Masking reviewed", "unchecked", "open"]]
+    shipment_rows = [["Shipment", "Subject", "Tube", "Drawn", "Received", "State"], ["SH-204-44", "014-002", "PK-2", "04-19 08:12", "04-20 09:02", "accepted"], ["SH-204-45", "014-003", "PK-2", "04-21 08:44", "04-23 16:40", "temperature late"], ["SH-204-46", "014-008", "central lab", "04-20 09:15", "pending", "not reviewed"], ["SH-204-47", "014-009", "PK-2", "05-07 09:04", "05-08 11:20", "accepted late draw"], ["SH-204-48", "014-011", "chemistry", "04-26 08:52", "04-27 10:05", "repeat requested"], ["SH-204-49", "014-016", "glucose", "05-04 07:58", "05-05 09:44", "safety call done"]]
+    readiness_rows = [["Domain", "Open", "Critical blocker"], ["Enrollment", "0", "none"], ["ECG", "1", "Q-77 / 014-003"], ["Drug accountability", "1", "K-204-153 quarantine"], ["Central lab", "3", "014-008, 014-011, 014-016"], ["AE", "1", "AE-014-05 repeat lab pending"], ["Visit windows", "1", "Q-86 / 014-009"], ["Masking", "1", "Q-93 / 014-016"]]
+    pi_rows = [["Statement", "Visible state"], ["PI reviewed AE-014-01", "checked"], ["PI reviewed DEV-014-03", "unchecked"], ["PI reviewed DEV-014-07", "checked"], ["PI reviewed DEV-014-09", "unchecked"], ["PI reviewed DEV-014-11", "unchecked"], ["Clean-ready attestation", "unchecked"], ["Signed by", "Dr. Neha Rao / 2026-05-08"]]
+    final_rows = [["Control item", "Final state"], ["Site clean-ready", "No"], ["Critical subject", "014-003"], ["Critical kit", "K-204-153"], ["Open queries", "Q-77, Q-84, Q-86, Q-88, Q-93"], ["Withdrawn subjects", "014-004 related dizziness; 014-013 lost to follow-up"], ["Do not dose", "K-204-153"], ["Masking review", "open for 014-016"], ["Central lab repeats", "014-008, 014-011, 014-016"]]
 
     pages: list[Image.Image] = []
     p1 = page("Site 014 Monitoring Visit Packet")
@@ -8735,7 +8784,7 @@ def packet_clinical_trial_site_binder() -> Case:
             "Protocol Deviation Log": ["Deviation", "Subject", "Description", "Class", "Status/action"],
             "Investigational Product Accountability": ip_rows[0],
         }[title]
-        draw_ledger(d, 75, 235, widths, [headers] + rows, 58)
+        draw_ledger(d, 75, 235, widths, [headers] + rows, 46)
         pages.append(p)
 
     special_pages = [
@@ -8743,7 +8792,7 @@ def packet_clinical_trial_site_binder() -> Case:
         ("ECG Source and Query Q-77", ecg_rows, "The missed ECG is a major deviation and remains open."),
         ("Concomitant Medication Review", med_rows, "Potassium supplement context does not make AE-014-03 related to study drug."),
         ("Monitor Query Log", query_rows, "Open queries are Q-77 and Q-84; Q-81 is answered."),
-        ("eCRF Checkbox Audit", ecrf_rows, "Unchecked boxes must not be treated as blank text omissions."),
+        ("eCRF Checkbox Audit", ecrf_rows, "Unchecked fields remain source value No until a signed PI correction is filed."),
         ("Sample Shipment Manifest", shipment_rows, "Shipment SH-204-45 is accepted with late-temperature note, not rejected."),
         ("Data Cleaning Readiness", readiness_rows, "Site is not clean-ready because ECG, IP accountability, and central lab remain open."),
         ("Principal Investigator Signoff", pi_rows, "Clean-ready attestation is unchecked."),
@@ -8752,13 +8801,13 @@ def packet_clinical_trial_site_binder() -> Case:
     for title, rows, note in special_pages:
         p = page(title)
         d = ImageDraw.Draw(p)
-        draw_ledger(d, 90, 245, [250, 260, 280, 420], rows, 58)
-        draw_note(d, (105, 900, 1510, 1065), "Monitor note", note, "#7f1d1d")
+        draw_ledger(d, 90, 245, [250, 260, 280, 420], rows, 46)
+        draw_note(d, (105, 980, 1510, 1145), "Monitor note", note, "#7f1d1d")
         pages.append(p)
 
     gold = "\n\n".join([
         "# Helio Therapeutics HTX-204 Site 014 Monitoring Packet",
-        "Monitor visit 2026-05-08, data cut 2026-05-06. Site 014 is not clean-ready. Major open items are DEV-014-03 missed W2 ECG for subject 014-003 and DEV-014-07 temperature excursion for kit K-204-153. Subject 014-004 withdrew after related dizziness.",
+        "Monitor visit 2026-05-08, data cut 2026-05-06. Site 014 is not clean-ready. Major open items are DEV-014-03 missed W2 ECG for subject 014-003, DEV-014-07 temperature excursion for kit K-204-153, DEV-014-09 repeat central lab not filed, and DEV-014-11 unblinded pharmacist note in source. Open queries are Q-77, Q-84, Q-86, Q-88, and Q-93. Subject 014-004 withdrew after related dizziness and subject 014-013 withdrew/lost to follow-up.",
         "## Packet Overview\nSite 014 / Harbor Endocrine was monitored by L. Sen on 2026-05-08 with data cut 2026-05-06. The overview identifies enrollment, visit grid, labs, AE/deviation, IP accountability, and query/final sections. The monitor conclusion says the site is not clean-ready.",
         "## Enrollment\n" + md_table(["Subject", "Status", "Date", "Arm / reason", "Note"], subjects),
         "## Visit Schedule\n" + md_table(["Subject", "Visit", "Date", "State", "Kit", "Note"], visits),
@@ -8766,39 +8815,40 @@ def packet_clinical_trial_site_binder() -> Case:
         "## Adverse Events\n" + md_table(["AE", "Subject", "Term", "Severity", "Relatedness", "Outcome"], aes),
         "## Deviations\n" + md_table(["Deviation", "Subject", "Description", "Class", "Status/action"], deviations),
         "## IP Accountability\n" + md_table(ip_rows[0], ip_rows[1:]),
-        "## Temperature Excursion Source\n" + md_table(["Time", "Temp", "Action"], temp_rows[1:]) + "\nKit K-204-153 must not be dosed; the dispense count is zero even though the kit appears in the visit source.",
+        "## Temperature Excursion Source\n" + md_table(["Time", "Temp", "Action"], temp_rows[1:]) + "\nKit K-204-153 must not be dosed; the dispense count is zero even though the kit appears in the visit source. The final 13:40 reading is back in range, but the kit remains quarantined.",
         "## ECG Source and Query Q-77\n" + md_table(["Field", "Visible state"], ecg_rows[1:]) + "\nThe missed ECG is a major deviation and remains open.",
         "## Concomitant Medication Review\n" + md_table(["Subject", "Medication", "Start", "Stop", "Relevance"], med_rows[1:]) + "\nPotassium supplement context does not make AE-014-03 related to study drug.",
-        "## Monitor Query Log\n" + md_table(["Query", "Subject", "Issue", "State"], query_rows[1:]) + "\nOpen queries are Q-77 and Q-84. Q-81 is answered.",
-        "## eCRF Checkbox Audit\n" + md_table(["Subject", "Field", "Visible state", "Data entry"], ecrf_rows[1:]) + "\nUnchecked boxes must not be treated as blank text omissions.",
+        "## Monitor Query Log\n" + md_table(["Query", "Subject", "Issue", "State"], query_rows[1:]) + "\nOpen queries are Q-77, Q-84, Q-86, Q-88, and Q-93. Q-81 and Q-91 are answered.",
+        "## eCRF Checkbox Audit\n" + md_table(["Subject", "Field", "Visible state", "Data entry"], ecrf_rows[1:]) + "\nUnchecked fields remain source value No until a signed PI correction is filed.",
         "## Sample Shipment Manifest\n" + md_table(["Shipment", "Subject", "Tube", "Drawn", "Received", "State"], shipment_rows[1:]) + "\nShipment SH-204-45 is accepted with a late-temperature note, not rejected.",
-        "## Data Cleaning Readiness\n" + md_table(["Domain", "Open", "Critical blocker"], readiness_rows[1:]) + "\nSite is not clean-ready because ECG, IP accountability, and central lab remain open.",
+        "## Data Cleaning Readiness\n" + md_table(["Domain", "Open", "Critical blocker"], readiness_rows[1:]) + "\nSite is not clean-ready because ECG, drug accountability, central lab, AE follow-up, visit windows, and masking remain open.",
         "## Principal Investigator Signoff\n" + md_table(["Statement", "Visible state"], pi_rows[1:]) + "\nClean-ready attestation is unchecked.",
         "## Final Monitor Recap\n" + md_table(["Control item", "Final state"], final_rows[1:]) + "\nThis final recap controls the site status.",
     ])
     facts = [
-        fact("p17.final.state", "source_state", 14, "Final monitor state is not clean-ready; blockers are DEV-014-03 missed W2 ECG for 014-003, K-204-153 temperature excursion/do not dose, central lab pending for 014-008, open queries Q-77 and Q-84.", modality="source-precedence", severity="critical"),
+        fact("p17.final.state", "source_state", 14, "Final monitor state is not clean-ready; blockers include DEV-014-03 missed W2 ECG for 014-003, K-204-153 temperature excursion/do not dose, central lab issues for 014-008/014-011/014-016, visit-window query Q-86, repeat-lab query Q-88, masking query Q-93, and open queries Q-77/Q-84/Q-86/Q-88/Q-93.", modality="source-precedence", severity="critical"),
         fact("p17.overview", "structure", 6, "Overview preserves site 014 / Harbor Endocrine, monitor L. Sen, visit 2026-05-08, data cut 2026-05-06, and the section/risk map from enrollment through queries/final.", modality="structure", severity="major"),
         fact("p17.enrollment.screenfail", "table_cell", 8, "Enrollment log preserves 014-001 screen fail because HbA1c 9.1 and 014-006 screen fail because eGFR 42, both not randomized.", modality="table", severity="critical"),
-        fact("p17.enrollment.randomized", "table_cell", 10, "Enrollment log preserves randomized subjects 014-002 Arm B completed W4, 014-003 Arm A missed W2 ECG, 014-005 Arm A completed W4, 014-007 Arm B IP temperature excursion, and 014-008 Arm A central lab pending.", modality="table", severity="critical"),
-        fact("p17.enrollment.withdrawn", "table_cell", 8, "Enrollment log preserves 014-004 withdrawn on 2026-04-10 from Arm B due AE dizziness.", modality="table", severity="critical"),
+        fact("p17.enrollment.randomized", "table_cell", 10, "Enrollment log preserves randomized subjects 014-002 Arm B completed W4, 014-003 Arm A missed W2 ECG, 014-005 Arm A completed W4, 014-007 Arm B IP temperature excursion, 014-008 Arm A central lab pending, 014-009 Arm B W2 diary window late, 014-011 Arm A central lab repeat pending, 014-012 Arm B waiver W-14, 014-014 Arm A ePRO not activated, and 014-016 Arm B unblinded pharmacist note.", modality="table", severity="critical"),
+        fact("p17.enrollment.additional", "table_cell", 10, "Enrollment log preserves added screen/withdrawal states: 014-010 screen fail QTc 486 ms, 014-015 screen fail BP 168/98, 014-013 withdrawn/lost to follow-up before W4, and 014-012 eligible with waiver W-14.", modality="table", severity="critical"),
+        fact("p17.enrollment.withdrawn", "table_cell", 8, "Enrollment log preserves 014-004 withdrawn on 2026-04-10 from Arm B due AE dizziness and 014-013 withdrawn/lost to follow-up before W4.", modality="table", severity="critical"),
         fact("p17.visit.014002", "table_cell", 8, "Visit grid preserves subject 014-002 V1/W2/W4 rows, dates 04-05/04-19/05-03, kits K-204-118/K-204-142/K-204-166, and notes ECG normal/diary returned/dose reduced.", modality="table", severity="major"),
-        fact("p17.visit.problem.rows", "table_cell", 10, "Visit grid preserves 014-003 W2 partial kit K-204-146 ECG not done, 014-004 W2 withdrawn with no kit/early termination, and 014-007 V1 kit K-204-153 temp excursion.", modality="table", severity="critical"),
-        fact("p17.labs.flags", "table_cell", 10, "Lab table preserves abnormal flags and units: 014-003 ALT 67 H U/L and eGFR 58 L mL/min, 014-004 hemoglobin 10.8 L g/dL, 014-007 potassium 5.6 H mmol/L.", modality="table", severity="critical"),
+        fact("p17.visit.problem.rows", "table_cell", 10, "Visit grid preserves 014-003 W2 partial kit K-204-146 ECG not done, 014-004 W2 withdrawn with no kit/early termination, 014-007 V1 kit K-204-153 temp excursion, 014-007 W2 hold/repeat lab required, 014-009 W2 late outside +2 day window, 014-014 V1 ePRO not activated, and 014-016 V1 pharmacist note sealed.", modality="table", severity="critical"),
+        fact("p17.labs.flags", "table_cell", 10, "Lab table preserves abnormal flags and units: 014-003 ALT 67 H U/L and eGFR 58 L mL/min, 014-004 hemoglobin 10.8 L g/dL, 014-007 potassium 5.6 H mmol/L, 014-009 ALT 49 H U/L, 014-011 creatinine 1.34 H mg/dL, 014-013 hemoglobin 11.7 L g/dL, and 014-016 glucose 62 L mg/dL.", modality="table", severity="critical"),
         fact("p17.labs.normal", "table_cell", 5, "Lab table preserves normal 014-002 ALT 38 U/L reference 0-45 and creatinine 1.11 mg/dL reference 0.60-1.30 with blank flags.", modality="table", severity="major"),
-        fact("p17.aes", "table_cell", 10, "AE log preserves AE IDs bound to subjects/terms: AE-014-01 014-004 dizziness moderate related withdrawn 2026-04-24; AE-014-02 014-002 nausea mild possibly related dose reduced W4; AE-014-03 014-007 hyperkalemia moderate unrelated repeat lab normal.", modality="table", severity="critical"),
-        fact("p17.deviations", "source_state", 12, "Deviation log preserves DEV-014-03 W2 ECG missed major/open Q-77, DEV-014-07 IP temp 9.1C for 3h major/do not dose K-204-153, DEV-014-02 diary page late minor/resolved.", modality="source-precedence", severity="critical"),
-        fact("p17.ip.accountability.returned", "table_cell", 8, "IP accountability preserves returned counts for K-204-118 = 4, K-204-142 = 6, K-204-166 = 2, K-204-121 = 5, and K-204-146 = not returned/open.", modality="table", severity="critical"),
+        fact("p17.aes", "table_cell", 10, "AE log preserves AE IDs bound to subjects/terms: AE-014-01 014-004 dizziness moderate related withdrawn 2026-04-24; AE-014-02 014-002 nausea mild possibly related dose reduced W4; AE-014-03 014-007 hyperkalemia moderate unrelated repeat lab normal; AE-014-04 014-009 headache resolved; AE-014-05 014-011 creatinine increased repeat lab pending; AE-014-06 014-013 lost contact not AE; AE-014-07 014-016 hypoglycemia related safety call completed.", modality="table", severity="critical"),
+        fact("p17.deviations", "source_state", 12, "Deviation log preserves DEV-014-03 W2 ECG missed major/open Q-77, DEV-014-07 IP temp 9.1C for 3h major/do not dose K-204-153, DEV-014-02 diary page late minor/resolved, DEV-014-08 W2 outside +2 day window open Q-86, DEV-014-09 repeat central lab not filed major/open Q-88, DEV-014-10 ePRO not activated/retrain coordinator, and DEV-014-11 unblinded pharmacist note major/masking review open.", modality="source-precedence", severity="critical"),
+        fact("p17.ip.accountability.returned", "table_cell", 8, "IP accountability preserves returned counts/states for K-204-118 = 4, K-204-142 = 6, K-204-166 = 2, K-204-121 = 5, K-204-146 = not returned/open, K-204-158 pending/reconcile after lab, K-204-160 returned 3/diary window late, K-204-171 pending/hold repeat lab, K-204-184 returned 0/ePRO activation open, and K-204-190 returned 2/masking review.", modality="table", severity="critical"),
         fact("p17.ip.accountability.quarantine", "table_cell", 10, "IP accountability preserves K-204-153 for 014-007 dispensed 0, returned quarantined, temp flag 9.1C for 3h, final state do not dose.", modality="table", severity="critical"),
-        fact("p17.temperature.timeline", "table_cell", 8, "Temperature excursion source preserves 04-18 09:10 8.4C alarm, 10:10 9.1C quarantine K-204-153, 12:10 7.8C still above range, and 13:05 5.2C returned to range.", modality="table", severity="major"),
+        fact("p17.temperature.timeline", "table_cell", 8, "Temperature excursion source preserves 04-18 09:10 8.4C alarm, 10:10 9.1C quarantine K-204-153, 11:10 8.8C pharmacy notified, 12:10 7.8C still above range, 13:05 5.2C returned to range, and 13:40 4.7C back in range while the kit remains quarantined.", modality="table", severity="major"),
         fact("p17.ecg.query", "form_state", 10, "ECG source preserves subject 014-003 W2 / 2026-04-21, ECG checkbox unchecked, reason machine unavailable, and query Q-77 open with PI response pending.", modality="form", severity="critical"),
-        fact("p17.conmed", "table_cell", 7, "Concomitant medication review preserves metformin allowed for 014-002, meclizine 04-11 to 04-24 for 014-004 AE dizziness, and potassium supplement 04-01 to 04-19 for 014-007 hyperkalemia context.", modality="table", severity="major"),
-        fact("p17.query.log", "source_state", 9, "Monitor query log preserves Q-74 answered, Q-77 open for 014-003 W2 ECG missing, Q-81 answered do not dose for 014-007 temperature excursion dosing, and Q-84 open for 014-008 central lab pending.", modality="source-precedence", severity="critical"),
-        fact("p17.ecrf.checkboxes", "form_state", 10, "eCRF checkbox audit preserves W2 ECG performed unchecked for 014-003, withdrawal due AE checked for 014-004, kit dispensed unchecked for 014-007, central lab reviewed unchecked for 014-008.", modality="form", severity="critical"),
-        fact("p17.shipments", "table_cell", 9, "Shipment manifest preserves SH-204-44 accepted with received 04-20 09:02, SH-204-45 received 04-23 16:40 with temperature late state accepted/not rejected, and SH-204-46 pending/not reviewed.", modality="table", severity="major"),
-        fact("p17.readiness", "table_cell", 9, "Data cleaning readiness preserves Enrollment open 0 none, ECG open 1 Q-77/014-003, Drug accountability open 1 K-204-153 quarantine, Central lab open 1 014-008 pending, and AE open 0 none.", modality="table", severity="critical"),
-        fact("p17.pi.signoff", "form_state", 8, "PI signoff preserves AE-014-01 checked, DEV-014-03 unchecked, DEV-014-07 checked, clean-ready attestation unchecked, signed Dr. Neha Rao 2026-05-08.", modality="form", severity="critical"),
-        fact("p17.final.recap", "source_state", 9, "Final monitor recap preserves site clean-ready No, critical subject 014-003, critical kit K-204-153, open queries Q-77 and Q-84, withdrawn subject 014-004 due related dizziness, and do not dose K-204-153.", modality="source-precedence", severity="critical"),
+        fact("p17.conmed", "table_cell", 7, "Concomitant medication review preserves metformin allowed for 014-002, meclizine 04-11 to 04-24 for 014-004 AE dizziness, potassium supplement 04-01 to 04-19 for 014-007 hyperkalemia context, ibuprofen 014-009 headache, lisinopril 014-011 renal context, and glipizide 014-016 hypoglycemia context.", modality="table", severity="major"),
+        fact("p17.query.log", "source_state", 9, "Monitor query log preserves Q-74 answered, Q-77 open for 014-003 W2 ECG missing, Q-81 answered do not dose for 014-007 temperature excursion dosing, Q-84 open for 014-008 central lab pending, Q-86 open for 014-009 W2 visit outside window, Q-88 open for 014-011 repeat lab report missing, Q-91 answered retrained for 014-014 ePRO activation evidence, and Q-93 open for 014-016 pharmacist masking note.", modality="source-precedence", severity="critical"),
+        fact("p17.ecrf.checkboxes", "form_state", 10, "eCRF checkbox audit preserves W2 ECG performed unchecked for 014-003, withdrawal due AE checked for 014-004, kit dispensed unchecked for 014-007, central lab reviewed unchecked for 014-008, visit in window unchecked for 014-009, repeat lab attached unchecked for 014-011, ePRO activated unchecked for 014-014, and masking reviewed unchecked for 014-016.", modality="form", severity="critical"),
+        fact("p17.shipments", "table_cell", 9, "Shipment manifest preserves SH-204-44 accepted with received 04-20 09:02, SH-204-45 received 04-23 16:40 with temperature late state accepted/not rejected, SH-204-46 pending/not reviewed, SH-204-47 accepted late draw, SH-204-48 repeat requested, and SH-204-49 safety call done.", modality="table", severity="major"),
+        fact("p17.readiness", "table_cell", 9, "Data cleaning readiness preserves Enrollment open 0 none, ECG open 1 Q-77/014-003, Drug accountability open 1 K-204-153 quarantine, Central lab open 3 for 014-008/014-011/014-016, AE open 1 AE-014-05 repeat lab pending, Visit windows open 1 Q-86/014-009, and Masking open 1 Q-93/014-016.", modality="table", severity="critical"),
+        fact("p17.pi.signoff", "form_state", 8, "PI signoff preserves AE-014-01 checked, DEV-014-03 unchecked, DEV-014-07 checked, DEV-014-09 unchecked, DEV-014-11 unchecked, clean-ready attestation unchecked, signed Dr. Neha Rao 2026-05-08.", modality="form", severity="critical"),
+        fact("p17.final.recap", "source_state", 9, "Final monitor recap preserves site clean-ready No, critical subject 014-003, critical kit K-204-153, open queries Q-77/Q-84/Q-86/Q-88/Q-93, withdrawn subjects 014-004 related dizziness and 014-013 lost to follow-up, do not dose K-204-153, masking review open for 014-016, and central lab repeats for 014-008/014-011/014-016.", modality="source-precedence", severity="critical"),
     ]
     return Case("P17-clinical-trial-site-monitoring", "Clinical Trial Site Monitoring Binder", "clinical-trial", ["multi-page", "clinical-trial", "forms", "labs", "source-precedence", "drug-accountability", "queries"], "Stress long clinical trial source reconstruction with form states, safety flags, accountability, and final monitoring state.", "Sixteen-page site-monitoring packet with enrollment, visit grid, labs, adverse events, deviations, IP accountability, source forms, and final monitor status.", ["enrollment", "visit grid", "labs", "AEs", "deviations", "IP accountability"], ["Preserve form states, source-state conflicts, and final not-clean-ready status."], gold, [near_check("p17-final", "source_state", ["not clean-ready", "014-003", "K-204-153", "Q-77", "Q-84"], 8, 900)], pages, facts=facts)
 
@@ -9108,22 +9158,23 @@ def packet_utility_outage_restoration() -> Case:
         d.line((72, 148, 1585, 148), fill="#1f2937", width=2)
         return img
 
-    alarm_rows = [["Time", "Device", "State", "Note"], ["15:42:11", "R12 breaker", "trip", "phase B ground"], ["15:42:14", "Recloser 12R-3", "lockout", "third shot"], ["15:43:02", "Cap bank CB-4", "offline", "voltage sag"], ["16:05:20", "Switch S-18", "opened", "crew isolation"], ["17:18:44", "Tie T-7", "closed", "backfeed hospital"], ["19:06:10", "R12 breaker", "closed", "normal restored"]]
-    switch_rows = [["Step", "Time", "Action", "Crew", "Customers restored"], ["1", "16:05", "open S-18", "Crew A", "0"], ["2", "16:31", "open S-22", "Crew B", "0"], ["3", "17:18", "close T-7", "Crew C", "4,820"], ["4", "18:05", "replace cutout F-12B", "Crew A", "6,140"], ["5", "19:06", "close R12 breaker", "Control", "8,960"], ["6", "19:32", "normalize T-7", "Crew C", "all stable"]]
+    alarm_rows = [["Time", "Device", "State", "Note"], ["15:42:11", "R12 breaker", "trip", "phase B ground"], ["15:42:14", "Recloser 12R-3", "lockout", "third shot"], ["15:42:19", "Relay 50G", "pickup", "7.8 kA momentary"], ["15:43:02", "Cap bank CB-4", "offline", "voltage sag"], ["15:44:33", "OMS", "8,960 out", "nested outage created"], ["16:05:20", "Switch S-18", "opened", "crew isolation"], ["16:31:05", "Switch S-22", "opened", "Riverside isolated"], ["17:11:00", "DER-44", "0 kW", "curtailment verified"], ["17:18:44", "Tie T-7", "closed", "backfeed hospital"], ["18:05:02", "F-12B", "replaced", "Maple lateral test passed"], ["19:06:10", "R12 breaker", "closed", "normal restored"]]
+    switch_rows = [["Step", "Time", "Action", "Crew", "Customers restored"], ["1", "16:05", "open S-18", "Crew A", "0"], ["2", "16:31", "open S-22", "Crew B", "0"], ["3", "16:47", "test Maple lateral", "Crew A", "0"], ["4", "17:11", "verify DER-44 at 0 kW", "Control", "0"], ["5", "17:18", "close T-7", "Crew C", "4,820"], ["6", "18:05", "replace cutout F-12B", "Crew A", "6,140"], ["7", "18:42", "patrol Riverside taps", "Crew B", "6,140"], ["8", "19:06", "close R12 breaker", "Control", "8,960"], ["9", "19:32", "normalize T-7", "Crew C", "all stable"]]
     feeder_rows = [["Node", "Relation", "Status"], ["Substation Bay R12", "feeds 12R trunk", "tripped then restored"], ["S-18", "upstream sectionalizer", "opened for isolation"], ["F-12B", "tap fuse to Maple lateral", "failed cutout"], ["T-7", "tie to feeder 9Q", "closed for hospital backfeed"], ["Hospital loop", "critical load", "restored 17:18"], ["PV site DER-44", "backfeed risk", "curtailed before close"]]
-    calls = [["Segment", "Customers", "Critical", "Restored"], ["Maple lateral", "2,820", "0", "18:05"], ["Hospital loop", "1,240", "1 hospital", "17:18"], ["Riverside apartments", "3,100", "2 elevators", "19:06"], ["Industrial park", "1,800", "0", "19:06"]]
-    cause_rows = [["Evidence", "Visible value", "Finding"], ["Weather radar", "cell passed 15:36-15:50", "wind gust context"], ["Patrol photo", "char mark at F-12B", "failed cutout"], ["SCADA", "phase B ground", "matches F-12B"], ["DER log", "DER-44 curtailed 17:11", "safe backfeed"], ["Draft report", "tree contact", "superseded"], ["Final report", "failed polymer cutout F-12B", "controls"]]
-    der_check_rows = [["Clearance item", "Operator entry", "Field confirmation", "Release state"], ["DER-44 disconnect", "open 17:06", "visible at POI", "accepted"], ["SCADA output", "0 kW at 17:11", "telemetry stable 5 min", "accepted"], ["Reverse power", "none", "relay 67P clear", "accepted"], ["T-7 permission", "issued 17:16", "close allowed 17:18", "accepted"], ["DER restore", "after normalize", "19:34 call to site", "deferred"]]
+    calls = [["Segment", "Customers", "Critical load / note", "Restored"], ["Maple lateral", "2,820", "0", "18:05"], ["Maple care home spur", "86", "assisted living", "18:05"], ["Hospital loop", "1,240", "1 hospital", "17:18"], ["Riverside apartments", "3,100", "2 elevators", "19:06"], ["Industrial park", "1,800", "0", "19:06"], ["Traffic signal cabinet TS-12", "1 service", "intersection", "17:18"], ["Lift station LS-4", "1 service", "wastewater", "19:06"]]
+    customer_notice_rows = [["Recipient", "Segment", "Time", "Method", "Message state"], ["Hospital facility desk", "Hospital loop", "16:04", "phone", "ETA pending"], ["Hospital facility desk", "Hospital loop", "17:21", "phone", "restored via T-7"], ["City traffic", "TS-12", "17:25", "radio", "signal power back"], ["Wastewater duty officer", "LS-4", "18:18", "phone", "awaiting feeder close"], ["Industrial park contact", "Industrial park", "19:09", "email", "normal restored"], ["Care home manager", "Maple care home spur", "18:08", "phone", "restored after F-12B change"]]
+    cause_rows = [["Evidence", "Visible value", "Finding"], ["Weather radar", "cell passed 15:36-15:50", "wind gust context"], ["Patrol photo P1", "char mark at F-12B", "failed cutout"], ["Patrol photo P2", "clear span; no branch contact", "tree cause superseded"], ["SCADA", "phase B ground", "matches F-12B"], ["Relay oscillography", "single phase-to-ground impulse", "not lightning signature"], ["DER log", "DER-44 curtailed 17:11", "safe backfeed"], ["Cutout tag", "F12B-882 polymer barrel split", "removed for lab"], ["Draft report", "tree contact", "superseded"], ["Final report", "failed polymer cutout F-12B", "controls"]]
+    der_check_rows = [["Clearance item", "Operator entry", "Field confirmation", "Release state"], ["DER-44 disconnect", "open 17:06", "visible at POI", "accepted"], ["SCADA output", "0 kW at 17:11", "telemetry stable 5 min", "accepted"], ["Feeder 9Q load", "74% after transfer", "under emergency rating", "accepted"], ["Reverse power", "none", "relay 67P clear", "accepted"], ["Hospital ATS", "normal source lost", "T-7 source accepted", "accepted"], ["T-7 permission", "issued 17:16", "close allowed 17:18", "accepted"], ["DER restore", "after normalize", "19:34 call to site", "deferred"], ["Site acknowledgment", "R. Valdez 19:36", "DER owner confirms", "logged"]]
     draft_delta_rows = [["Revision item", "Draft entry", "Reviewer mark", "Final treatment"], ["Cause", "tree contact", "crossed in red", "failed polymer cutout F-12B"], ["Hospital restore", "18:05", "circled time mismatch", "17:18 via T-7"], ["DER status", "not mentioned", "blue margin note", "curtailed 17:11"], ["Weather", "primary cause", "downgraded", "context only"], ["Photo P2", "not referenced", "added by reviewer", "no tree contact"]]
     signoff_rows = [["Review gate", "Owner", "Visible state", "Exception"], ["Ops sequence", "N. Ortega", "signed 09:12", "none"], ["Protection review", "R. Mehta", "signed 10:44", "F-12B curve attached"], ["Regulatory review", "S. Kim", "signed 11:20", "major-event no"], ["Vegetation review", "Tree crew", "blank", "not required"], ["DER review", "A. Patel", "initialed 10:58", "restore after normalize"]]
-    notice_route_rows = [["Recipient", "Channel", "Due / sent", "Payload note"], ["Hospital liaison", "phone", "sent 17:21", "backfeed restored"], ["City OEM", "email", "sent 18:12", "critical customer update"], ["State PUC log", "portal", "due 2026-07-05 12:00", "below major threshold"], ["Internal claims", "ticket", "sent 2026-07-03 08:40", "equipment failure category"], ["DER owner", "phone", "sent 19:34", "normalization complete"]]
+    notice_route_rows = [["Recipient", "Channel", "Due / sent", "Payload note"], ["Hospital liaison", "phone", "sent 17:21", "backfeed restored"], ["City OEM", "email", "sent 18:12", "critical customer update"], ["State PUC log", "portal", "due 2026-07-05 12:00", "below major threshold"], ["Internal claims", "ticket", "sent 2026-07-03 08:40", "equipment failure category"], ["DER owner", "phone", "sent 19:34", "normalization complete"], ["Asset engineering", "work order", "sent 2026-07-03 09:05", "F12B-882 lab teardown"], ["Vegetation contractor", "no dispatch", "not required", "P2 ruled out tree contact"]]
     recap_kpi_rows = [["Metric", "Final value", "Source", "Reviewer note"], ["CAIDI window", "3h 24m", "OMS export", "exclude 19:32 normalize"], ["Critical restoration", "95 minutes", "T-7 close", "hospital priority"], ["Customers interrupted", "8,960", "OMS", "same as overview"], ["Cause code", "equipment failure", "final report", "not weather"], ["Follow-up WO", "WO-7714", "asset replacement", "cutout audit route"]]
     pages: list[Image.Image] = []
     p = page("Outage Overview and Restoration State")
     d = ImageDraw.Draw(p)
     draw_kv_band(d, 82, 205, [("Outage", "OI-26-731"), ("Feeder", "12R"), ("Start", "2026-07-02 15:42"), ("Normal", "19:06"), ("Customers", "8,960")], [220, 160, 300, 180, 190])
     draw_note(d, (90, 370, 1510, 545), "Final cause", "Final investigation identifies failed polymer cutout F-12B on Maple lateral. Early draft tree-contact note is superseded but remains visible context.", "#991b1b")
-    draw_ledger(d, 95, 660, [260, 260, 480], [["Metric", "Value", "Note"], ["Hospital restored", "17:18", "via T-7 backfeed"], ["All normal", "19:06", "R12 closed"], ["DER-44", "curtailed 17:11", "before T-7 close"], ["Cause", "F-12B failed cutout", "not tree contact"]], 60)
+    draw_ledger(d, 95, 660, [260, 260, 480], [["Metric", "Value", "Note"], ["Hospital restored", "17:18", "via T-7 backfeed"], ["All normal", "19:06", "R12 closed"], ["DER-44", "curtailed 17:11", "before T-7 close"], ["Cause", "F-12B failed cutout", "not tree contact"], ["Cutout tag", "F12B-882", "sent to asset lab"], ["Critical notices", "hospital, traffic, LS-4", "tracked in notice log"]], 54)
     pages.append(p)
     for title, rows, widths, note in [
         ("SCADA Alarm Sequence", alarm_rows, [170, 260, 180, 470], "Alarm order matters; R12 trip precedes 12R-3 lockout."),
@@ -9133,8 +9184,12 @@ def packet_utility_outage_restoration() -> Case:
     ]:
         p = page(title)
         d = ImageDraw.Draw(p)
-        draw_ledger(d, 80, 235, widths, rows, 60)
-        draw_note(d, (90, 930, 1510, 1110), "Control note", note, "#334155")
+        draw_ledger(d, 80, 235, widths, rows, 48)
+        if title == "Customer Impact by Segment":
+            draw_ledger(d, 95, 720, [265, 220, 160, 160, 300], customer_notice_rows, 46)
+        if title == "Evidence and Cause Table":
+            draw_ledger(d, 95, 800, [250, 240, 260, 360], [["Lab item", "Serial / tag", "Disposition", "Reviewer"], ["Cutout barrel", "F12B-882", "polymer split; archive sample", "Protection"], ["Fuse link", "Kearney 65K", "melt pattern consistent", "Asset Eng"], ["Crossarm mark", "none", "no flashover trace", "Patrol"], ["Tree sample", "not collected", "not applicable", "Vegetation"]], 52)
+        draw_note(d, (90, 1260, 1510, 1440), "Control note", note, "#334155")
         pages.append(p)
     p = page("Feeder One-Line Diagram")
     d = ImageDraw.Draw(p)
@@ -9197,35 +9252,37 @@ def packet_utility_outage_restoration() -> Case:
         pages.append(p)
     gold = "\n\n".join([
         "# MetroGrid Outage OI-26-731 Feeder 12R",
-        "Outage started 2026-07-02 15:42 and normal restoration was at 19:06 for 8,960 customers. Final cause is failed polymer cutout F-12B, not the draft tree-contact note.",
+        "Outage started 2026-07-02 15:42 and normal restoration was at 19:06 for 8,960 customers. Final cause is failed polymer cutout F-12B, not the draft tree-contact note. Cutout tag F12B-882 was sent to the asset lab.",
         "## SCADA Alarm Sequence\n" + md_table(["Time", "Device", "State", "Note"], alarm_rows[1:]),
         "## One-Line Diagram\nR12 bay feeds S-18, F-12B, S-22, Riverside, T-7 tie, Hospital loop, and DER-44 PV. F-12B is the fault point. T-7 ties to feeder 9Q and backfeeds the hospital after DER-44 is curtailed.",
         "## Switching\n" + md_table(["Step", "Time", "Action", "Crew", "Customers restored"], switch_rows[1:]),
-        "## Customer Impact\n" + md_table(["Segment", "Customers", "Critical", "Restored"], calls[1:]),
-        "## Evidence\n" + md_table(["Evidence", "Visible value", "Finding"], cause_rows[1:]),
+        "## Customer Impact\n" + md_table(["Segment", "Customers", "Critical load / note", "Restored"], calls[1:]) + "\n\nCritical customer notifications:\n" + md_table(customer_notice_rows[0], customer_notice_rows[1:]),
+        "## Evidence\n" + md_table(["Evidence", "Visible value", "Finding"], cause_rows[1:]) + "\n\nLab disposition: cutout barrel F12B-882 has polymer split and is archived by Protection; Kearney 65K fuse link has melt pattern consistent and is reviewed by Asset Engineering; crossarm has no flashover trace; tree sample was not collected because vegetation was not applicable.",
         "## Crew Patrol Photo Sheet\nThe field-media register preserves P1 F-12B char mark supporting failed cutout, P2 clear span/no tree contact superseding the draft tree cause, P3 S-18 open tag, and P4 T-7 backfeed tag.",
-        "## DER Backfeed Clearance\n" + md_table(["Check", "Value", "State"], [["DER-44 output", "0 kW at 17:11", "curtailed"], ["Visible open point", "S-22 open", "confirmed"], ["T-7 close", "17:18", "allowed after clearance"], ["Reverse power alarm", "none", "safe"]]) + "\n" + md_table(der_check_rows[0], der_check_rows[1:]) + "\nThe T-7 close is valid only after both SCADA output and field-visible disconnect are accepted. DER restore is deferred until after feeder normalization.",
+        "## DER Backfeed Clearance\n" + md_table(["Check", "Value", "State"], [["DER-44 output", "0 kW at 17:11", "curtailed"], ["Visible open point", "S-22 open", "confirmed"], ["T-7 close", "17:18", "allowed after clearance"], ["Reverse power alarm", "none", "safe"]]) + "\n" + md_table(der_check_rows[0], der_check_rows[1:]) + "\nThe T-7 close is valid only after SCADA output, field-visible disconnect, feeder 9Q load, hospital ATS state, and reverse-power relay are accepted. DER restore is deferred until after feeder normalization and site acknowledgment by R. Valdez at 19:36.",
         "## Draft Report Excerpt\n" + md_table(["Draft field", "Draft value", "Final value"], [["Cause", "tree contact", "failed polymer cutout F-12B"], ["Hospital restore", "18:05", "17:18"], ["DER status", "not mentioned", "curtailed 17:11"]]) + "\n" + md_table(draft_delta_rows[0], draft_delta_rows[1:]) + "\nThis draft excerpt remains visible context, but the final investigation signoff controls cause, hospital restoration time, and DER status.",
         "## Final Investigation Signoff\n" + md_table(["Signer", "Role", "Visible state"], [["N. Ortega", "Distribution Ops", "signed 2026-07-03 09:12"], ["R. Mehta", "Protection Eng", "signed 2026-07-03 10:44"], ["S. Kim", "Regulatory", "signed 2026-07-03 11:20"], ["Tree crew", "not required", "blank"]]) + "\n" + md_table(signoff_rows[0], signoff_rows[1:]) + "\nThe blank tree-crew line is intentional because vegetation was ruled out.",
-        "## Regulatory Notice\n" + md_table(["Field", "Value", "Note"], [["Major event", "No", "below threshold"], ["Critical customer", "1 hospital", "restored 17:18"], ["Notice due", "2026-07-05 12:00", "internal"], ["Cause category", "equipment failure", "polymer cutout"]]) + "\n" + md_table(notice_route_rows[0], notice_route_rows[1:]) + "\nThe PUC portal item is due even though the incident is below the major-event threshold.",
+        "## Regulatory Notice\n" + md_table(["Field", "Value", "Note"], [["Major event", "No", "below threshold"], ["Critical customer", "1 hospital", "restored 17:18"], ["Notice due", "2026-07-05 12:00", "internal"], ["Cause category", "equipment failure", "polymer cutout"]]) + "\n" + md_table(notice_route_rows[0], notice_route_rows[1:]) + "\nThe PUC portal item is due even though the incident is below the major-event threshold. Asset engineering receives work order follow-up for F12B-882; vegetation contractor is not dispatched because P2 ruled out tree contact.",
         "## Final Restoration Recap\n" + md_table(["Control item", "Final state", "Evidence"], [["Cause", "failed F-12B cutout", "patrol photo + SCADA"], ["Hospital", "restored 17:18", "T-7 backfeed"], ["All customers", "restored 19:06", "R12 breaker close"], ["Draft tree contact", "superseded", "no tree contact photo"], ["DER-44", "curtailed 17:11", "safe backfeed"]]) + "\n" + md_table(recap_kpi_rows[0], recap_kpi_rows[1:]) + "\nThe 19:32 normalization step is operating cleanup, not customer restoration. Customer restoration stops at the 19:06 R12 breaker close.",
     ])
     facts = [
         fact("p20.final.cause", "source_state", 12, "Final cause is failed polymer cutout F-12B on Maple lateral; draft tree-contact cause is superseded.", modality="source-precedence", severity="critical"),
         fact("p20.scada.heading", "text", 5, "The alarm section/page title is exactly SCADA Alarm Sequence; it must not be misquoted as SCALAR or another word.", modality="text", severity="major"),
-        fact("p20.alarms", "table_cell", 8, "SCADA alarm sequence preserves all times/devices/states/notes from 15:42:11 R12 trip through 19:06:10 R12 breaker closed.", modality="table", severity="critical"),
+        fact("p20.alarms", "table_cell", 10, "SCADA alarm sequence preserves all times/devices/states/notes from 15:42:11 R12 trip, 15:42:14 12R-3 lockout, 15:42:19 relay 50G pickup 7.8 kA, 15:44:33 OMS 8,960 out, DER-44 0 kW at 17:11, T-7 closed 17:18:44, F-12B replaced 18:05:02, through 19:06:10 R12 breaker closed.", modality="table", severity="critical"),
         fact("p20.oneline", "visual_relation", 10, "One-line diagram preserves R12->S-18->F-12B->S-22/Riverside with T-7 tie to hospital loop and DER-44 PV backfeed risk.", modality="visual", severity="critical"),
-        fact("p20.switching", "table_cell", 9, "Switching log preserves six steps, times, actions, crews, and restored customer counts, including T-7 close at 17:18 restoring 4,820.", modality="table", severity="critical"),
+        fact("p20.switching", "table_cell", 10, "Switching log preserves nine steps, times, actions, crews, and restored customer counts, including Maple lateral test at 16:47, DER-44 verification at 17:11, T-7 close at 17:18 restoring 4,820, Riverside patrol at 18:42, R12 close at 19:06 restoring 8,960, and T-7 normalize at 19:32.", modality="table", severity="critical"),
         fact("p20.restoration.chart", "chart", 8, "Restoration chart preserves customer counts by time: 0 at 15:42/16:31, 4,820 at 17:18, 6,140 at 18:05, 8,960 at 19:06/19:32.", modality="chart", severity="critical"),
-        fact("p20.customer.segments", "table_cell", 8, "Customer impact preserves Maple lateral, hospital loop, Riverside apartments, and industrial park customer counts, critical statuses, and restoration times.", modality="table", severity="critical"),
+        fact("p20.customer.segments", "table_cell", 10, "Customer impact preserves Maple lateral 2,820 restored 18:05, Maple care home spur 86 assisted living restored 18:05, hospital loop 1,240/1 hospital restored 17:18, Riverside apartments 3,100/2 elevators restored 19:06, industrial park 1,800 restored 19:06, traffic signal cabinet TS-12 restored 17:18, and lift station LS-4 restored 19:06.", modality="table", severity="critical"),
+        fact("p20.customer.notifications", "source_state", 8, "Critical customer notifications preserve hospital facility desk calls at 16:04 ETA pending and 17:21 restored via T-7, City traffic radio 17:25 signal power back, wastewater duty officer 18:18 awaiting feeder close, industrial park email 19:09 normal restored, and care home manager 18:08 restored after F-12B change.", modality="source-precedence", severity="critical"),
         fact("p20.photos", "visual_relation", 7, "Patrol photo sheet preserves P1 F-12B char mark, P2 no tree contact, P3 S-18 open tag, and P4 T-7 closed tag.", modality="visual", severity="major"),
         fact("p20.der", "source_state", 8, "DER-44 was curtailed to 0 kW at 17:11 before T-7 close at 17:18; no reverse power alarm occurred.", modality="source-precedence", severity="critical"),
-        fact("p20.der.clearance.detail", "source_state", 8, "DER clearance detail preserves DER-44 disconnect open 17:06, SCADA output 0 kW at 17:11 stable 5 min, relay 67P reverse-power clear, T-7 permission issued 17:16/close allowed 17:18, and DER restore deferred after normalize.", modality="source-precedence", severity="critical"),
+        fact("p20.cause.evidence.detail", "visual_relation", 9, "Cause evidence preserves P1 F-12B char mark, P2 clear span/no branch contact, relay oscillography single phase-to-ground impulse not lightning signature, cutout tag F12B-882 polymer barrel split, Kearney 65K fuse link melt pattern consistent, crossarm no flashover trace, and no tree sample collected.", modality="visual", severity="critical"),
+        fact("p20.der.clearance.detail", "source_state", 10, "DER clearance detail preserves DER-44 disconnect open 17:06, SCADA output 0 kW at 17:11 stable 5 min, feeder 9Q load 74% under emergency rating, relay 67P reverse-power clear, hospital ATS accepted T-7 source, T-7 permission issued 17:16/close allowed 17:18, DER restore deferred after normalize, and R. Valdez site acknowledgment at 19:36.", modality="source-precedence", severity="critical"),
         fact("p20.draft.delta", "source_state", 9, "Draft report excerpt preserves draft-to-final changes: tree contact crossed out to failed F-12B cutout, hospital restore 18:05 corrected to 17:18, DER status not mentioned corrected to curtailed 17:11, weather downgraded to context only, and photo P2 added as no tree contact.", modality="source-precedence", severity="critical"),
         fact("p20.signoff", "form_state", 6, "Final signoff preserves N. Ortega, R. Mehta, S. Kim signed timestamps and Tree crew not required/blank.", modality="form", severity="major"),
         fact("p20.signoff.gates", "form_state", 7, "Final review gates preserve Ops/Protection/Regulatory signed states, Tree crew blank/not required, and DER review initialed by A. Patel at 10:58 with restore after normalize.", modality="form", severity="major"),
         fact("p20.regulatory", "source_state", 7, "Regulatory notice preserves major event No, one critical customer hospital restored 17:18, notice due 2026-07-05 12:00, cause category equipment failure.", modality="source-precedence", severity="major"),
-        fact("p20.notice.routing", "source_state", 6, "Regulatory notice routing preserves hospital liaison phone sent 17:21, City OEM email sent 18:12, State PUC portal due 2026-07-05 12:00, internal claims ticket sent 2026-07-03 08:40, and DER owner phone sent 19:34.", modality="source-precedence", severity="major"),
+        fact("p20.notice.routing", "source_state", 7, "Regulatory notice routing preserves hospital liaison phone sent 17:21, City OEM email sent 18:12, State PUC portal due 2026-07-05 12:00, internal claims ticket sent 2026-07-03 08:40, DER owner phone sent 19:34, asset engineering work order sent 2026-07-03 09:05 for F12B-882 lab teardown, and vegetation contractor no-dispatch/not required because P2 ruled out tree contact.", modality="source-precedence", severity="major"),
         fact("p20.final.recap.kpi", "source_state", 8, "Final recap preserves CAIDI window 3h 24m excluding 19:32 normalize, critical restoration 95 minutes, 8,960 customers interrupted, cause code equipment failure/not weather, and follow-up WO-7714.", modality="source-precedence", severity="critical"),
     ]
     return Case("P20-utility-outage-restoration", "Utility Outage Restoration Packet", "utility-incident", ["multi-page", "utility", "one-line-diagram", "scada", "crew-log", "chart", "source-precedence"], "Stress utility incident packet with one-line network relations, alarm order, switching log, restoration chart, crew photo evidence, DER safety, and superseded draft cause.", "Thirteen-page outage packet with SCADA alarms, feeder one-line, switching log, restoration chart, weather panel, patrol photos, DER clearance, draft/final reports, and regulatory notice.", ["SCADA", "one-line", "switching", "restoration chart", "DER", "final cause"], ["Use alarm order, visual relations, and final investigation context."], gold, [near_check("p20-final", "source_state", ["F-12B", "tree contact", "superseded", "17:18", "19:06"], 8, 900)], pages, facts=facts)
@@ -9282,6 +9339,14 @@ def packet_semiconductor_lot_disposition() -> Case:
         ["P4", "parametric drift", "19", "09", "conditional release"],
         ["C3", "center cluster", "16", "03", "hold"],
     ]
+    defect_actions = [
+        ["Gate", "Trigger", "Wafer/site", "Required action", "Owner"],
+        ["DCT-1", "M1 count > 20", "W07 D5/D6/E5", "scrap wafer; do not sample for REL", "MRB"],
+        ["DCT-2", "S2 scratch crossing active cells", "W05 E2/F2/E3", "engineering hold; inspect sister lot Q8R7-23", "Yield Eng"],
+        ["DCT-3", "E1 edge bead two adjacent cells", "W12 A6/B6", "hold pending edge-bead review", "Process Eng"],
+        ["DCT-4", "P4 drift with clean SEM image", "W09 F3", "conditional release; REL-22-A required", "Reliability"],
+        ["DCT-5", "C3 high-CD cluster", "W03 B4/C4/B5", "hold pending CD remeasure", "Metrology"],
+    ]
     spc_rows = [
         ["Run", "Time", "TiN thickness", "Limit state", "Comment"],
         ["R-2241", "08:06", "41.2", "inside", "start"],
@@ -9291,6 +9356,14 @@ def packet_semiconductor_lot_disposition() -> Case:
         ["R-2245", "09:10", "47.4", "above UCL", "alarm follows"],
         ["R-2246", "09:26", "46.2", "warning", "post alarm"],
         ["R-2247", "09:42", "44.1", "inside", "recovered"],
+    ]
+    spc_interlocks = [
+        ["Interlock", "Observed value", "Threshold", "State", "Disposition"],
+        ["PVD-03 chamber pressure", "4.8 mTorr", "<=5.0 mTorr", "pass", "not root cause"],
+        ["Clamp purge flow", "18.1 slm", ">=19.0 slm", "fail", "future purge increase only"],
+        ["Ti target age", "81.4 kWh", "<=85 kWh", "watch", "continue after clean"],
+        ["Thickness monitor residual", "+1.7 nm", "+/-1.0 nm", "fail", "drives R-2245 review"],
+        ["Alarm acknowledgment", "09:18 by J. Kwon", "required", "complete", "containment clock starts"],
     ]
     recipe_rows = [
         ["Source", "Recipe shown", "Status", "Meaning"],
@@ -9409,6 +9482,7 @@ def packet_semiconductor_lot_disposition() -> Case:
         d.line((*a, *b), fill="#2563eb", width=4)
     draw_ledger(d, 90, 920, [150, 150, 190, 180, 420], spc_rows, 58)
     draw_note(d, (95, 1450, 1510, 1625), "Alarm interpretation", "R-2245 is above UCL at 47.4 nm and is the only plotted point beyond the red line. R-2244 and R-2246 are warning-state points, not rejects by themselves.", "#7f1d1d")
+    draw_ledger(d, 95, 1710, [300, 240, 230, 150, 390], spc_interlocks, 52)
     pages.append(p)
 
     p = page("Defect Pareto and Classification")
@@ -9422,7 +9496,8 @@ def packet_semiconductor_lot_disposition() -> Case:
         d.rectangle((x, 1070 - h, x + 90, 1070), fill=["#dc2626", "#f97316", "#eab308", "#2563eb", "#7c3aed"][i])
         d.text((x, 1085), row[0], fill="#111827", font=F["tiny_bold"])
         d.text((x, 1038 - h), row[2], fill="#111827", font=F["tiny_bold"])
-    draw_note(d, (95, 1260, 1510, 1435), "Classification rule", "M1 metal flake is a scrap class when clustered on adjacent D-row sites. S2, E1, and C3 require engineering hold. P4 is allowed only as conditional release with reliability sample.", "#334155")
+    draw_ledger(d, 95, 1240, [150, 300, 210, 410, 230], defect_actions, 48)
+    draw_note(d, (95, 1660, 1510, 1835), "Classification rule", "M1 metal flake is a scrap class when clustered on adjacent D-row sites. S2, E1, and C3 require engineering hold. P4 is allowed only as conditional release with reliability sample.", "#334155")
     pages.append(p)
 
     for title, rows, note in [
@@ -9491,8 +9566,8 @@ def packet_semiconductor_lot_disposition() -> Case:
         "## Recipe Source Conflict\n" + md_table(recipe_rows[0], recipe_rows[1:]) + "\nTIN_GATE_31 controls the actual run; TIN_GATE_30 appears only on a stale tool-alarm header.",
         "## Wafer Maps\nWafer 03 has C3 cluster at B4, C4, and B5. Wafer 05 has S2 scratch cells E2, F2, and E3. Wafer 07 has M1 metal-flake cells D5, D6, and E5. Wafer 09 has P4 at F3. Wafer 12 has E1 edge cells A6 and B6. Wafer 02 has one edge-marked A1 cell.",
         "## Metrology\n" + md_table(["Wafer", "Site", "CD nm", "Delta", "Flag", "Reviewer note"], metrology),
-        "## SPC Trend\n" + md_table(spc_rows[0], spc_rows[1:]) + "\nR-2245 is above UCL at 47.4 nm. R-2244 and R-2246 are warning-state points but not rejects by themselves.",
-        "## Defects\n" + md_table(defects[0], defects[1:]),
+        "## SPC Trend\n" + md_table(spc_rows[0], spc_rows[1:]) + "\nR-2245 is above UCL at 47.4 nm. R-2244 and R-2246 are warning-state points but not rejects by themselves.\n\nSPC alarm interlocks:\n" + md_table(spc_interlocks[0], spc_interlocks[1:]),
+        "## Defects\n" + md_table(defects[0], defects[1:]) + "\n\nDefect containment actions:\n" + md_table(defect_actions[0], defect_actions[1:]),
         "## Photo Register\nIMG-221 W07 D5 and IMG-222 W07 D6 show M1 metal flakes and support scrap W07. IMG-223 W05 E2 shows S2 scratch and supports hold W05. IMG-224 W12 A6 shows E1 edge bead and supports hold W12. IMG-225 W09 F3 is clean visually but has P4 electrical drift and supports conditional W09.",
         "## MRB Matrix\n" + md_table(["Item", "Decision", "Reason", "Owner"], mrb_rows[1:]),
         "## Reliability and Shipping\n" + md_table(reliability_rows[0], reliability_rows[1:]) + "\n" + md_table(ship_rows[0], ship_rows[1:]),
@@ -9508,7 +9583,9 @@ def packet_semiconductor_lot_disposition() -> Case:
         fact("p21.metrology", "table_cell", 10, "CD-SEM metrology preserves wafer/site/CD/delta/flag/reviewer notes for W03 B4/C4, W05 E2, W07 D5/D6, W09 F3, and W12 A6.", modality="table", severity="critical"),
         fact("p21.spec.rule", "source_state", 6, "CD target 24.9 nm and action limits -2.0/+2.5 nm are preserved, including rule that action-limit sites require MRB disposition even above 93% yield.", modality="source-precedence", severity="major"),
         fact("p21.spc.chart", "chart", 12, "SPC trend preserves R-2241 through R-2247 values and states, especially R-2245 47.4 above UCL, R-2244/R-2246 warning, and recovered R-2247 44.1.", modality="chart", severity="critical"),
+        fact("p21.spc.interlocks", "table_cell", 10, "SPC interlock table preserves chamber pressure 4.8 mTorr pass/not root cause, clamp purge 18.1 slm below >=19.0 fail/future purge increase only, Ti target age 81.4 kWh watch, thickness monitor residual +1.7 nm fail driving R-2245 review, and alarm acknowledgment 09:18 by J. Kwon complete/containment clock starts.", modality="table", severity="critical"),
         fact("p21.defects", "table_cell", 9, "Defect Pareto preserves codes/classes/counts/affected wafers/dispositions for M1, S2, E1, P4, and C3.", modality="table", severity="critical"),
+        fact("p21.defect.actions", "source_state", 10, "Defect containment actions preserve DCT-1 M1 >20 W07 scrap/no REL sample, DCT-2 S2 W05 engineering hold and sister lot Q8R7-23 inspect, DCT-3 E1 W12 hold pending edge-bead review, DCT-4 P4 W09 conditional release requiring REL-22-A, and DCT-5 C3 W03 hold pending CD remeasure.", modality="source-precedence", severity="critical"),
         fact("p21.photo.register", "visual_relation", 9, "Photo review register binds frames to wafer/site/finding/disposition: IMG-221/222 W07 M1 scrap, IMG-223 W05 S2 hold, IMG-224 W12 E1 hold, IMG-225 W09 P4 conditional.", modality="visual", severity="critical"),
         fact("p21.mrb", "source_state", 12, "MRB matrix preserves decisions, reasons, and owners for W07 scrap, W05 hold, W03 hold, W12 hold, W09 conditional release, and release group 01/02/04/06/08/10/11.", modality="source-precedence", severity="critical"),
         fact("p21.reliability", "table_cell", 8, "Reliability plan preserves REL-22-A wafer 09 HTOL 168h pending as condition for release, REL-22-B/C pass references, and REL-22-D wafer 07 not built/scrap/no credit.", modality="table", severity="critical"),
@@ -9700,21 +9777,52 @@ def packet_pharma_stability_release() -> Case:
     for i, (label, note, color) in enumerate(panels):
         x = 90 + (i % 2) * 730
         y = 250 + (i // 2) * 420
-        d.rectangle((x, y, x + 630, y + 315), outline="#334155", width=2)
+        rng = random.Random(21700 + i)
+        d.rectangle((x, y, x + 630, y + 315), outline="#cbd5e1", width=2)
+        d.rectangle((x + 1, y + 1, x + 629, y + 314), outline="#f8fafc", width=1)
         d.text((x + 16, y + 16), label, fill="#111827", font=F["small_bold"])
+        d.text((x + 420, y + 18), f"Seq {2417 + i} / 254 nm", fill="#64748b", font=F["tiny"])
         d.line((x + 55, y + 255, x + 590, y + 255), fill="#111827", width=2)
         d.line((x + 55, y + 255, x + 55, y + 70), fill="#111827", width=2)
-        peak_x = x + 340 if i in [0, 3] else x + 190 + i * 70
+        for tick, rt in enumerate(["0", "2", "4", "6", "8", "10"]):
+            tx = x + 55 + tick * 107
+            d.line((tx, y + 255, tx, y + 262), fill="#111827", width=1)
+            d.text((tx - 8, y + 266), rt, fill="#64748b", font=F["tiny"])
+        for tick, au in enumerate(["0", "25", "50", "75"]):
+            ty = y + 255 - tick * 54
+            d.line((x + 48, ty, x + 55, ty), fill="#111827", width=1)
+            d.text((x + 18, ty - 10), au, fill="#64748b", font=F["tiny"])
+        peak_x = [x + 448, x + 225, x + 358, x + 452][i]
+        integration = (peak_x - (48 if i in [0, 3] else 30), peak_x + (58 if i in [0, 3] else 34))
+        d.rectangle((integration[0], y + 80, integration[1], y + 255), outline="#94a3b8", width=1)
+        d.text((integration[0] + 4, y + 86), "INT", fill="#64748b", font=F["tiny"])
+        shoulder_x = peak_x - (72 if i in [0, 3] else -82)
+        small_peak_x = peak_x + (86 if i in [0, 3] else 118)
         trace = []
-        for step in range(0, 510, 10):
+        for step in range(0, 510, 6):
             xx = x + 65 + step
-            dist = (xx - peak_x) / (28 if i in [0, 3] else 20)
-            height = 148 * pow(2.71828, -(dist * dist) / 2)
-            yy = y + 235 - int(height) + ((step * (i + 3)) % 9) - 4
+            main_width = 23 if i in [0, 3] else 16
+            if xx > peak_x:
+                main_width += 18 if i in [0, 3] else 9
+            main_height = 156 if i in [0, 3] else 92
+            dist = (xx - peak_x) / main_width
+            shoulder_dist = (xx - shoulder_x) / (20 + i * 3)
+            small_dist = (xx - small_peak_x) / (16 + i * 2)
+            height = main_height * pow(2.71828, -(dist * dist) / 2)
+            height += (18 + i * 3) * pow(2.71828, -(shoulder_dist * shoulder_dist) / 2)
+            height += (9 + i * 2) * pow(2.71828, -(small_dist * small_dist) / 2)
+            baseline = 4 * pow(2.71828, -((step - 120) / 180) ** 2) + (step / 510) * (3 if i % 2 else -2)
+            noise = rng.uniform(-2.8, 2.8) + rng.uniform(-1.1, 1.1)
+            yy = y + 235 - int(height + baseline + noise)
             trace.append((xx, yy))
+        fill_trace = [(trace[0][0], y + 255), *trace, (trace[-1][0], y + 255)]
+        d.polygon(fill_trace, fill=(*ImageColor.getrgb(color), 28))
         for a, b in zip(trace, trace[1:]):
             d.line((*a, *b), fill=color, width=2)
-        d.text((x + 16, y + 268), note, fill="#334155", font=F["tiny_bold"])
+        for marker in [shoulder_x, peak_x, small_peak_x]:
+            d.line((marker, y + 247, marker, y + 255), fill="#334155", width=1)
+        d.text((x + 16, y + 284), note, fill="#334155", font=F["tiny_bold"])
+        d.text((x + 494, y + 284), "min", fill="#64748b", font=F["tiny"])
     draw_ledger(d, 90, 1135, [260, 260, 250, 360], [["Panel", "Peak / RT", "Value", "Interpretation"], ["A", "main 7.42", "purity 0.998", "release batch clean"], ["B", "Imp A 3.18", "0.42%", "G217-2403 blocker"], ["C", "Imp B 5.66", "0.31%", "G217-2403 trend"], ["D", "main 7.43", "97.2%", "G217-2404 conditional"]], 62)
     pages.append(p)
 
@@ -9999,12 +10107,84 @@ def write_case(case: Case) -> dict:
     }
 
 
+def write_provider_capabilities() -> None:
+    capabilities = {
+        "schemaVersion": 1,
+        "lastReviewed": "2026-07-07",
+        "notes": [
+            "This file records documented provider ingestion behavior for interpreting Doc2MD results. It is not a scoring file.",
+            "Official Doc2MD runs send native PDFs to the provider. Capability gates diagnose provider/document handling separately from the official score.",
+        ],
+        "providers": {
+            "openai": {
+                "documents": {
+                    "pdf": {
+                        "supported": True,
+                        "ingestionMode": "text_plus_page_images",
+                        "officialDocs": ["https://developers.openai.com/api/docs/guides/file-inputs"],
+                        "note": "OpenAI documents that PDFs provide both extracted text and page images to vision-capable models.",
+                    },
+                    "txt": {"supported": True, "ingestionMode": "native_text"},
+                    "md": {"supported": True, "ingestionMode": "native_text"},
+                    "csv": {"supported": True, "ingestionMode": "native_text_or_spreadsheet"},
+                    "docx": {"supported": True, "ingestionMode": "document_parse"},
+                    "pptx": {"supported": True, "ingestionMode": "document_parse"},
+                    "xlsx": {"supported": True, "ingestionMode": "spreadsheet_parse"},
+                    "images": {"supported": True, "ingestionMode": "vision_image"},
+                }
+            },
+            "google-vertex": {
+                "documents": {
+                    "pdf": {
+                        "supported": True,
+                        "ingestionMode": "page_images",
+                        "officialDocs": [
+                            "https://ai.google.dev/gemini-api/docs/document-processing",
+                            "https://firebase.google.com/docs/ai-logic/input-file-requirements",
+                        ],
+                        "note": "Google documents PDF support for text, images, diagrams, charts, and tables. Firebase AI Logic states PDF pages are tokenized like images.",
+                    },
+                    "txt": {"supported": True, "ingestionMode": "native_text"},
+                    "md": {"supported": True, "ingestionMode": "native_text"},
+                    "csv": {"supported": False, "ingestionMode": "unknown"},
+                    "docx": {"supported": False, "ingestionMode": "unknown"},
+                    "pptx": {"supported": False, "ingestionMode": "unknown"},
+                    "xlsx": {"supported": False, "ingestionMode": "unknown"},
+                    "images": {"supported": True, "ingestionMode": "vision_image"},
+                }
+            },
+            "anthropic": {
+                "documents": {
+                    "pdf": {
+                        "supported": True,
+                        "ingestionMode": "text_plus_page_images",
+                        "officialDocs": ["https://platform.claude.com/docs/en/build-with-claude/pdf-support"],
+                        "note": "Anthropic documents visual PDF support as extracted text plus page images. Some hosted routes can fall back to text-only PDF handling.",
+                    },
+                    "txt": {"supported": True, "ingestionMode": "native_text"},
+                    "md": {"supported": True, "ingestionMode": "native_text"},
+                    "csv": {"supported": True, "ingestionMode": "native_text"},
+                    "docx": {"supported": False, "ingestionMode": "convert_before_upload"},
+                    "pptx": {"supported": False, "ingestionMode": "convert_before_upload"},
+                    "xlsx": {"supported": False, "ingestionMode": "convert_before_upload"},
+                    "images": {"supported": True, "ingestionMode": "vision_image"},
+                }
+            },
+        },
+    }
+    (BENCHMARK_ROOT / "provider-capabilities.json").write_text(json.dumps(capabilities, indent=2) + "\n", encoding="utf-8")
+
+
 def main() -> None:
     if BENCHMARK_ROOT.exists():
         shutil.rmtree(BENCHMARK_ROOT)
     CASE_ROOT.mkdir(parents=True, exist_ok=True)
     manifest = {
         "name": "Doc2MD",
+        "suite": "official",
+        "scoreName": "Doc2MD Native PDF Score",
+        "inputProtocol": "native_pdf",
+        "providerFileModePolicy": "Send the native PDF file to the provider and record the provider's documented PDF ingestion mode separately. Do not convert official inputs to page images in the harness.",
         "version": "0.1.0",
         "description": "Benchmark for faithful document-to-Markdown reconstruction across realistic multi-page documents with dense layouts, charts, tables, forms, diagrams, annotations, and source-state conflicts.",
         "caseCount": len(CASES),
@@ -10012,6 +10192,7 @@ def main() -> None:
         "cases": [write_case(case) for case in CASES],
     }
     (BENCHMARK_ROOT / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    write_provider_capabilities()
     print(f"Wrote {manifest['caseCount']} cases and {manifest['pageCount']} pages to {BENCHMARK_ROOT}")
 
 

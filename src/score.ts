@@ -6,6 +6,7 @@ import { generateObject } from "ai";
 import { googleVertex } from "@ai-sdk/google-vertex";
 import { z } from "zod";
 import { fileSha256, hashObject, sha256 } from "./cache.js";
+import { buildRunContext, models, runCacheKey } from "./run.js";
 
 type Check = {
   id: string;
@@ -32,12 +33,17 @@ type ManifestCase = {
   family: string;
   tags: string[];
   pages?: number;
+  pdf: string;
   gold: string;
   checks: string;
   facts?: string;
 };
 
 type Manifest = {
+  name?: string;
+  suite?: string;
+  scoreName?: string;
+  inputProtocol?: string;
   cases: ManifestCase[];
 };
 
@@ -106,7 +112,7 @@ const weights = {
   markdownQuality: 0,
 };
 
-const scoringVersion = "fact-judge-v16-downstream-recoverability";
+const scoringVersion = "fact-judge-v17-critical-visual-omission-caps";
 const judgeMaxOutputTokens = 6000;
 
 const factStatusCredit = {
@@ -188,6 +194,33 @@ async function exists(filePath: string) {
   } catch {
     return false;
   }
+}
+
+async function readJsonIfExists(filePath: string) {
+  if (!(await exists(filePath))) return null;
+  return JSON.parse(await readFile(filePath, "utf-8")) as any;
+}
+
+function parseArgs() {
+  const args = new Map<string, string>();
+  const positionals: string[] = [];
+  for (let i = 2; i < process.argv.length; i += 1) {
+    const arg = process.argv[i];
+    if (arg.startsWith("--")) {
+      const key = arg.slice(2);
+      const next = process.argv[i + 1];
+      args.set(key, next && !next.startsWith("--") ? process.argv[++i] : "true");
+    } else {
+      positionals.push(arg);
+    }
+  }
+  return { args, positionals };
+}
+
+function rejectUnknownArgs(args: Map<string, string>, allowed: string[]) {
+  const allowedSet = new Set(allowed);
+  const unknown = [...args.keys()].filter((key) => !allowedSet.has(key));
+  if (unknown.length > 0) throw new Error(`Unknown argument(s): ${unknown.map((key) => `--${key}`).join(", ")}`);
 }
 
 function normalize(text: string): string {
@@ -410,6 +443,24 @@ function scoreCaps(params: {
   const criticalMissingPct = criticalPossible === 0 ? 0 : ((criticalWeights.missing ?? 0) / criticalPossible) * 100;
   const criticalIncorrectPct = criticalPossible === 0 ? 0 : ((criticalWeights.incorrect ?? 0) / criticalPossible) * 100;
   const criticalBadPct = criticalMissingPct + criticalIncorrectPct;
+  const criticalVisualDetails = params.factScore.details.filter(
+    (detail) =>
+      detail.severity === "critical" &&
+      (detail.category === "chart" ||
+        detail.category === "visual_relation" ||
+        detail.modality === "visual" ||
+        detail.modality === "chart"),
+  );
+  const criticalVisualMissingWeight = criticalVisualDetails
+    .filter((detail) => detail.status === "missing")
+    .reduce((sum, detail) => sum + detail.weight, 0);
+  const criticalVisualIncorrectWeight = criticalVisualDetails
+    .filter((detail) => detail.status === "incorrect")
+    .reduce((sum, detail) => sum + detail.weight, 0);
+  const criticalVisualPartialWeight = criticalVisualDetails
+    .filter((detail) => detail.status === "partial")
+    .reduce((sum, detail) => sum + detail.weight, 0);
+  const criticalVisualProblemWeight = criticalVisualMissingWeight + criticalVisualIncorrectWeight + criticalVisualPartialWeight * 0.5;
 
   if (partialPct >= 10) caps.push({ cap: 85, reason: `Material partial reconstruction: ${round(partialPct)}% of weighted facts are only partially correct.` });
   if (partialPct >= 20) caps.push({ cap: 75, reason: `Broad partial reconstruction: ${round(partialPct)}% of weighted facts are only partially correct.` });
@@ -442,6 +493,22 @@ function scoreCaps(params: {
   if (criticalIncorrectWeight >= 25) caps.push({ cap: 30, reason: `Severe critical misinformation: ${round(criticalIncorrectPct)}% of critical weighted facts are incorrect.` });
   if (criticalBadWeight >= 25) caps.push({ cap: 45, reason: `Large critical reliability failure: missing plus wrong critical facts are ${round(criticalBadPct)}% of critical weighted facts.` });
   if (criticalBadWeight >= 40) caps.push({ cap: 30, reason: `Severe critical reliability failure: missing plus wrong critical facts are ${round(criticalBadPct)}% of critical weighted facts.` });
+
+  if (criticalVisualMissingWeight > 0) {
+    caps.push({ cap: 70, reason: "Critical chart/visual relation omitted." });
+  }
+  if (criticalVisualMissingWeight >= 10) {
+    caps.push({ cap: 55, reason: "Large critical chart/visual relation omission." });
+  }
+  if (criticalVisualIncorrectWeight > 0) {
+    caps.push({ cap: 55, reason: "Critical chart/visual relation contradicted or misbound." });
+  }
+  if (criticalVisualProblemWeight >= 20) {
+    caps.push({ cap: 60, reason: "Broad critical chart/visual relation failure." });
+  }
+  if (criticalVisualProblemWeight >= 30) {
+    caps.push({ cap: 45, reason: "Severe critical chart/visual relation failure." });
+  }
 
   if (missingPct + incorrectPct >= 20) {
     caps.push({ cap: 60, reason: `Large reliability failure: missing plus wrong facts are ${round(missingPct + incorrectPct)}% of weighted facts.` });
@@ -635,16 +702,28 @@ async function scoringCacheKey(testCase: ManifestCase, predictionPath: string) {
   };
 }
 
-export async function scoreCase(modelId: string, testCase: ManifestCase, options: { force?: boolean } = {}) {
+export async function scoreCase(
+  modelId: string,
+  testCase: ManifestCase,
+  options: {
+    suite?: string;
+    manifestPath?: string;
+    inputProtocol?: string;
+    attemptId: string;
+    predictionPath: string;
+    resultPath: string;
+    scorePath: string;
+  },
+) {
   const checkFile = JSON.parse(await readFile(testCase.checks, "utf-8")) as CheckFile;
   const factFile = testCase.facts
     ? (JSON.parse(await readFile(testCase.facts, "utf-8")) as FactFile)
     : ({ facts: [] } as unknown as FactFile);
-  const runDir = path.join("runs", modelId, testCase.id);
-  const predictionPath = path.join(runDir, "prediction.md");
-  const scorePath = path.join(runDir, "score.json");
+  const predictionPath = options.predictionPath;
+  const resultPath = options.resultPath;
+  const scorePath = options.scorePath;
   const scoreCache = await scoringCacheKey(testCase, predictionPath);
-  if (!options.force && (await exists(scorePath))) {
+  if (await exists(scorePath)) {
     const previous = JSON.parse(await readFile(scorePath, "utf-8")) as any;
     if (previous.scorer?.cache?.scoreKey === scoreCache.scoreKey && !previous.scorer.error) {
       console.log(`${modelId} ${testCase.id}: score skip unchanged`);
@@ -655,7 +734,7 @@ export async function scoreCase(modelId: string, testCase: ManifestCase, options
   const rawPrediction = await readFile(predictionPath, "utf-8");
   const prediction = normalize(rawPrediction);
   const gold = await readFile(testCase.gold, "utf-8");
-  const result = JSON.parse(await readFile(path.join(runDir, "result.json"), "utf-8"));
+  const result = JSON.parse(await readFile(resultPath, "utf-8"));
   const failed = Boolean(result.error || result.finishReason === "error");
   const deterministic = deterministicAudit(checkFile, prediction, failed);
 
@@ -680,7 +759,7 @@ export async function scoreCase(modelId: string, testCase: ManifestCase, options
   } else {
     try {
       const previous = (await exists(scorePath)) ? (JSON.parse(await readFile(scorePath, "utf-8")) as any) : null;
-      if (!options.force && previous?.scorer?.cache?.judgeKey === scoreCache.judgeKey && previous.judgeResult) {
+      if (previous?.scorer?.cache?.judgeKey === scoreCache.judgeKey && previous.judgeResult) {
         judge = previous.judgeResult as JudgeResult;
         judgeReused = true;
       } else {
@@ -733,6 +812,11 @@ export async function scoreCase(modelId: string, testCase: ManifestCase, options
     family: checkFile.family,
     tags: checkFile.tags,
     modelId,
+    suite: options.suite ?? "official",
+    manifestPath: options.manifestPath ?? "benchmark/manifest.json",
+    inputProtocol: options.inputProtocol ?? "native_pdf",
+    attemptId: options.attemptId ?? result.attemptId ?? null,
+    runCache: result.cache ?? null,
     score,
     uncappedScore,
     scorer: {
@@ -769,20 +853,72 @@ export async function scoreCase(modelId: string, testCase: ManifestCase, options
     error: result.error,
   };
 
-  await writeFile(path.join(runDir, "score.json"), JSON.stringify(scored, null, 2) + "\n", "utf-8");
+  await writeFile(scorePath, JSON.stringify(scored, null, 2) + "\n", "utf-8");
   return scored;
 }
 
-export async function scoreModel(modelId: string, options: { force?: boolean } = {}) {
-  const manifest = JSON.parse(await readFile("benchmark/manifest.json", "utf-8")) as Manifest;
+async function attemptIds(runDir: string) {
+  const root = path.join(runDir, "attempts");
+  if (!(await exists(root))) return [];
+  return (await readdir(root, { withFileTypes: true }))
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort();
+}
+
+async function currentAttemptTargets(modelId: string, testCase: ManifestCase, activeRunKey: string) {
+  const runDir = path.join("runs", modelId, testCase.id);
+  const targets: Array<{ attemptId: string; predictionPath: string; resultPath: string; scorePath: string }> = [];
+  const attempts = await attemptIds(runDir);
+  for (const attemptId of attempts) {
+    const resultPath = path.join(runDir, "attempts", attemptId, "result.json");
+    const result = await readJsonIfExists(resultPath);
+    if (result?.cache?.runKey === activeRunKey) {
+      targets.push({
+        attemptId,
+        predictionPath: path.join(runDir, "attempts", attemptId, "prediction.md"),
+        resultPath,
+        scorePath: path.join(runDir, "attempts", attemptId, "score.json"),
+      });
+    }
+  }
+  return targets;
+}
+
+export async function scoreModel(modelId: string, options: { manifestPath?: string } = {}) {
+  const manifestPath = options.manifestPath ?? "benchmark/manifest.json";
+  const manifest = JSON.parse(await readFile(manifestPath, "utf-8")) as Manifest;
+  const spec = models[modelId];
+  if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
+  const context = await buildRunContext(spec, manifest as any, manifestPath);
   const existing = new Set(await readdir(path.join("runs", modelId)));
   const cases = manifest.cases.filter((testCase) => existing.has(testCase.id));
   if (cases.length === 0) throw new Error(`No run outputs found for ${modelId}`);
 
-  const scores = await Promise.all(cases.map((testCase) => scoreCase(modelId, testCase, { force: options.force })));
+  const targets = (
+    await Promise.all(
+      cases.map(async (testCase) => {
+        const activeRun = await runCacheKey(testCase as any, spec, context);
+        const attemptTargets = await currentAttemptTargets(modelId, testCase, activeRun.runKey);
+        return attemptTargets.map((target) => ({ testCase, target }));
+      }),
+    )
+  ).flat();
+  if (targets.length === 0) throw new Error(`No current run outputs found for ${modelId}`);
+
+  const scores = await Promise.all(
+    targets.map(({ testCase, target }) =>
+      scoreCase(modelId, testCase, {
+        suite: manifest.suite ?? "official",
+        manifestPath,
+        inputProtocol: manifest.inputProtocol ?? "native_pdf",
+        ...target,
+      }),
+    ),
+  );
   for (const scored of scores) {
     console.log(
-      `${modelId} ${scored.caseId}: ${scored.score.toFixed(1)} ` +
+      `${modelId} ${scored.caseId}${scored.attemptId ? `#${scored.attemptId}` : ""}: ${scored.score.toFixed(1)} ` +
         `(accuracy ${scored.dimensions.accuracy.toFixed(1)}, judge $${scored.scorer.estimatedCostUsd.toFixed(6)})`,
     );
   }
@@ -803,6 +939,8 @@ export async function scoreModel(modelId: string, options: { force?: boolean } =
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const modelId = process.argv[2] ?? "vertex-gemini-3.1-flash-lite";
-  await scoreModel(modelId, { force: process.argv.includes("--force") });
+  const { args, positionals } = parseArgs();
+  rejectUnknownArgs(args, ["model", "manifest"]);
+  const modelId = positionals[0] ?? args.get("model") ?? "vertex-gemini-3.1-flash-lite";
+  await scoreModel(modelId, { manifestPath: args.get("manifest") });
 }

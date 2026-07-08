@@ -6,10 +6,14 @@
   "type": "module",
   "scripts": {
     "generate": "/Users/aayush/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/generate_benchmark.py",
+    "generate:gates": "/Users/aayush/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/generate_gates.py",
     "bench": "node --env-file=.env.local --import tsx src/bench.ts",
     "run": "node --env-file=.env.local --import tsx src/run.ts",
+    "run:gates": "node --env-file=.env.local --import tsx src/run.ts --manifest benchmark/gates/manifest.json",
     "score": "node --env-file=.env.local --import tsx src/score.ts",
+    "score:gates": "node --env-file=.env.local --import tsx src/score.ts --manifest benchmark/gates/manifest.json",
     "summary": "tsx src/summary.ts",
+    "summary:gates": "tsx src/summary.ts --manifest benchmark/gates/manifest.json",
     "typecheck": "tsc --noEmit"
   },
   "repository": {
