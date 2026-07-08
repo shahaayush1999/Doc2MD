@@ -1,0 +1,35 @@
+{
+  "id": "G04-visual-semantics",
+  "title": "Visual Semantics Gate",
+  "family": "capability-gate",
+  "tags": [
+    "capability-gate",
+    "visual_semantic"
+  ],
+  "facts": [
+    {
+      "id": "g04.checkboxes",
+      "category": "form_state",
+      "weight": 8,
+      "severity": "critical",
+      "expectation": "Production database is checked; billing export bucket is removed by approver; break-glass admin is unchecked.",
+      "modality": "visual_semantic"
+    },
+    {
+      "id": "g04.radio",
+      "category": "form_state",
+      "weight": 6,
+      "severity": "critical",
+      "expectation": "The 7 days radio option is selected; 24 hours and Permanent are not selected.",
+      "modality": "visual_semantic"
+    },
+    {
+      "id": "g04.note",
+      "category": "form_state",
+      "weight": 5,
+      "severity": "critical",
+      "expectation": "The approver note says remove billing bucket and production database only.",
+      "modality": "visual_semantic"
+    }
+  ]
+}

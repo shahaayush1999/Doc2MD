@@ -1,0 +1,7 @@
+{
+  "id": "G04-visual-semantics",
+  "gateId": "visual_semantic",
+  "title": "Visual Semantics Gate",
+  "description": "Extract meaning from checkboxes, radio buttons, strike-through corrections, and local notes.",
+  "observedPdftotext": ""
+}

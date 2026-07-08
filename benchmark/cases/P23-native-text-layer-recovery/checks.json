@@ -1,0 +1,13 @@
+{
+  "id": "P23-native-text-layer-recovery",
+  "title": "Bad Export Native Text Recovery Packet",
+  "family": "native-text-recovery",
+  "tags": [
+    "multi-page",
+    "native-text-layer",
+    "bad-export",
+    "tables",
+    "source-recovery"
+  ],
+  "checks": []
+}

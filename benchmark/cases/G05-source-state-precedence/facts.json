@@ -1,0 +1,35 @@
+{
+  "id": "G05-source-state-precedence",
+  "title": "Source State Precedence Gate",
+  "family": "capability-gate",
+  "tags": [
+    "capability-gate",
+    "source_state_precedence"
+  ],
+  "facts": [
+    {
+      "id": "g05.visible_final",
+      "category": "source_state",
+      "weight": 10,
+      "severity": "critical",
+      "expectation": "The visible final exception card is preserved: RL-884 product EU tenant reporting connector is BLOCKED, owner Nisha Vora, ship date 2026-08-11, reason EU tenant security signoff missing, stamp HOLD UNTIL SIGNOFF.",
+      "modality": "source_state_precedence"
+    },
+    {
+      "id": "g05.review_notes",
+      "category": "source_state",
+      "weight": 5,
+      "severity": "major",
+      "expectation": "The current review notes are preserved: SR-19 remains open, docs are otherwise complete, Hana Park transferred ownership to Nisha Vora on 2026-08-07, and release needs signoff attached.",
+      "modality": "source_state_precedence"
+    },
+    {
+      "id": "g05.hidden_stale_not_current",
+      "category": "forbidden_text",
+      "weight": 8,
+      "severity": "critical",
+      "expectation": "The hidden stale layer is not presented as current visible content: APPROVED, Hana Park, and 2026-08-04 are wrong for the visible document.",
+      "modality": "source_state_precedence"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "id": "G06-multi-page-continuity",
+  "gateId": "multi_page_continuity",
+  "title": "Multi Page Continuity Gate",
+  "description": "Preserve packet order and final state across multiple related pages.",
+  "observedPdftotext": ""
+}

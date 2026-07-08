@@ -1,0 +1,7 @@
+{
+  "id": "G03-layout-reconstruction",
+  "gateId": "layout_reconstruction",
+  "title": "Layout Reconstruction Gate",
+  "description": "Recover reading order and grouping from a realistically drifted slide export.",
+  "observedPdftotext": ""
+}

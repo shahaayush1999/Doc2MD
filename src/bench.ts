@@ -21,6 +21,8 @@ console.table(
   summaries.map((summary) => ({
     model: summary.modelId,
     score: summary.score,
+    rawDepth: summary.rawDepthScore,
+    gatesPassed: `${summary.gateResults.filter((gate: { passed: boolean }) => gate.passed).length}/${summary.gateResults.length}`,
     cost: summary.costUsd,
     ms: summary.totalElapsedMs,
     outputTokens: summary.totalOutputTokens,

@@ -35,6 +35,25 @@ type Score = {
   error?: string;
 };
 
+type CapabilityGate = {
+  id: string;
+  title: string;
+  caseId: string;
+  description?: string;
+  passThreshold?: number;
+};
+
+type ManifestCase = {
+  id: string;
+  title?: string;
+  family?: string;
+  role?: "gate" | "depth";
+  gateId?: string;
+  requiredGates?: string[];
+  pages?: number;
+  pdf: string;
+};
+
 function mean(values: number[]) {
   return values.length === 0 ? 0 : values.reduce((sum, value) => sum + value, 0) / values.length;
 }
@@ -120,13 +139,15 @@ export async function summarizeModel(modelId: string, options: { manifestPath?: 
     suite?: string;
     scoreName?: string;
     inputProtocol?: string;
-    cases: Array<{ id: string; pages?: number; pdf: string }>;
+    capabilityGates?: CapabilityGate[];
+    cases: ManifestCase[];
   };
   const spec = models[modelId];
   if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
   const context = await buildRunContext(spec, manifest as any, manifestPath);
   const suite = manifest.suite ?? "official";
   const manifestCaseIds = new Set(manifest.cases.map((testCase) => testCase.id));
+  const casesById = new Map(manifest.cases.map((testCase) => [testCase.id, testCase]));
   const pagesByCaseId = new Map(manifest.cases.map((testCase) => [testCase.id, testCase.pages ?? 1]));
   const expectedCaseIds = manifest.cases.map((testCase) => testCase.id);
   const caseIds = (await readdir(runRoot)).filter((name) => manifestCaseIds.has(name));
@@ -145,18 +166,22 @@ export async function summarizeModel(modelId: string, options: { manifestPath?: 
   const totalElapsedMs = scores.reduce((sum, score) => sum + score.elapsedMs, 0);
   const totalInputTokens = scores.reduce((sum, score) => sum + (score.usage?.inputTokens ?? 0), 0);
   const totalOutputTokens = scores.reduce((sum, score) => sum + (score.usage?.outputTokens ?? 0), 0);
-  const caseScores = [...scoresByCaseId.entries()]
+  const rawCaseScores = [...scoresByCaseId.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([caseId, attempts]) => {
       const latest = attempts.at(-1)!;
       const values = attempts.map((score) => score.score);
+      const manifestCase = casesById.get(caseId);
       return {
         caseId,
         title: latest.title,
         family: latest.family,
+        role: manifestCase?.role ?? (manifestCase?.gateId ? "gate" : "depth"),
+        gateId: manifestCase?.gateId ?? null,
+        requiredGates: manifestCase?.requiredGates ?? [],
         pages: pagesByCaseId.get(caseId) ?? 1,
         attempts: attempts.length,
-        score: round(mean(values)),
+        rawScore: round(mean(values)),
         scoreMin: round(Math.min(...values)),
         scoreMax: round(Math.max(...values)),
         scoreStddev: round(stddev(values), 2),
@@ -178,6 +203,69 @@ export async function summarizeModel(modelId: string, options: { manifestPath?: 
       };
     });
 
+  const gateDefinitions = manifest.capabilityGates ?? [];
+  const gateCaseScores = new Map(rawCaseScores.filter((score) => score.role === "gate" && score.gateId).map((score) => [score.gateId!, score]));
+  const gateResults = gateDefinitions.map((gate) => {
+    const caseScore = gateCaseScores.get(gate.id);
+    const threshold = gate.passThreshold ?? 80;
+    const passed = Boolean(caseScore && caseScore.rawScore >= threshold && caseScore.attempts > 0);
+    return {
+      id: gate.id,
+      title: gate.title,
+      caseId: gate.caseId,
+      passThreshold: threshold,
+      passed,
+      score: caseScore?.rawScore ?? null,
+      attempts: caseScore?.attempts ?? 0,
+      reason: caseScore ? `${caseScore.rawScore} ${passed ? ">=" : "<"} ${threshold}` : "No current gate score found.",
+    };
+  });
+  const passedGateIds = new Set(gateResults.filter((gate) => gate.passed).map((gate) => gate.id));
+  const gateResultById = new Map(gateResults.map((gate) => [gate.id, gate]));
+
+  const caseScores = rawCaseScores.map((score) => {
+    if (score.role === "gate") {
+      const gate = score.gateId ? gateResultById.get(score.gateId) : null;
+      return {
+        ...score,
+        score: score.rawScore,
+        finalScore: score.rawScore,
+        gatePassed: gate?.passed ?? false,
+        gatePassThreshold: gate?.passThreshold ?? null,
+        blockedByGates: [] as string[],
+      };
+    }
+    const blockedByGates = score.requiredGates.filter((gateId) => !passedGateIds.has(gateId));
+    const finalScore = blockedByGates.length === 0 ? score.rawScore : 0;
+    return {
+      ...score,
+      score: finalScore,
+      finalScore,
+      gatePassed: null,
+      gatePassThreshold: null,
+      blockedByGates,
+    };
+  });
+  const depthCaseScores = caseScores.filter((score) => score.role !== "gate");
+  const gateOnlyScores = caseScores.filter((score) => score.role === "gate");
+
+  const groupScores = gateDefinitions.map((gate) => {
+    const dependent = depthCaseScores.filter((score) => score.requiredGates.includes(gate.id));
+    const weights = dependent.map((score) => ({ value: score.finalScore, weight: pagesByCaseId.get(score.caseId) ?? 1 }));
+    const rawWeights = dependent.map((score) => ({ value: score.rawScore, weight: pagesByCaseId.get(score.caseId) ?? 1 }));
+    const gateResult = gateResultById.get(gate.id);
+    return {
+      gateId: gate.id,
+      title: gate.title,
+      passed: gateResult?.passed ?? false,
+      dependentCaseCount: dependent.length,
+      score: dependent.length === 0 ? null : round(weightedMean(weights)),
+      rawScore: dependent.length === 0 ? null : round(weightedMean(rawWeights)),
+      qualifiedScore: gateResult?.passed && dependent.length > 0 ? round(weightedMean(rawWeights)) : null,
+      blockedCaseIds: dependent.filter((score) => score.blockedByGates.includes(gate.id)).map((score) => score.caseId),
+    };
+  });
+
   const summary = {
     modelId,
     suite,
@@ -186,12 +274,19 @@ export async function summarizeModel(modelId: string, options: { manifestPath?: 
     scoreName: manifest.scoreName ?? (suite === "official" ? "Doc2MD Native PDF Score" : "Doc2MD Capability Gate Score"),
     inputProtocol: manifest.inputProtocol ?? "native_pdf",
     caseCount: caseScores.length,
+    gateCount: gateOnlyScores.length,
+    depthCaseCount: depthCaseScores.length,
     expectedCaseCount: expectedCaseIds.length,
     complete: missingCaseIds.length === 0,
     missingCaseIds,
-    score: round(weightedMean(caseScores.map((score) => ({ value: score.score, weight: pagesByCaseId.get(score.caseId) ?? 1 })))),
-    scoreCaseMean: round(mean(caseScores.map((score) => score.score))),
-    scoreAggregation: "page_weighted",
+    score: round(weightedMean(depthCaseScores.map((score) => ({ value: score.finalScore, weight: pagesByCaseId.get(score.caseId) ?? 1 })))),
+    rawDepthScore: round(weightedMean(depthCaseScores.map((score) => ({ value: score.rawScore, weight: pagesByCaseId.get(score.caseId) ?? 1 })))),
+    scoreCaseMean: round(mean(depthCaseScores.map((score) => score.finalScore))),
+    rawDepthCaseMean: round(mean(depthCaseScores.map((score) => score.rawScore))),
+    scoreAggregation: "page_weighted_depth_cases_after_gate_zeroing",
+    gateScoreContribution: "reported_not_in_official_denominator",
+    gateResults,
+    groupScores,
     costUsd: round(totalCostUsd, 6),
     meanCostUsdPerCaseAttempt: round(mean(scores.map((score) => score.estimatedCostUsd)), 6),
     totalElapsedMs,

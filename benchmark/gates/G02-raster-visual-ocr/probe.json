@@ -1,0 +1,7 @@
+{
+  "id": "G02-raster-visual-ocr",
+  "gateId": "raster_visual_ocr",
+  "title": "Raster Visual OCR Gate",
+  "description": "Read document text that exists only as visible raster content inside the PDF.",
+  "observedPdftotext": ""
+}

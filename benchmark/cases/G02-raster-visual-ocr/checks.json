@@ -1,0 +1,29 @@
+{
+  "id": "G02-raster-visual-ocr",
+  "title": "Raster Visual OCR Gate",
+  "family": "capability-gate",
+  "tags": [
+    "capability-gate",
+    "raster_visual_ocr"
+  ],
+  "checks": [
+    {
+      "id": "g02.header",
+      "category": "visual_ocr",
+      "weight": 3,
+      "description": "The output reads RN-4481, Dock North 3, Velox Freight, and seal VX-39022."
+    },
+    {
+      "id": "g02.rows",
+      "category": "table_cell",
+      "weight": 3,
+      "description": "The raster line items are preserved: sterile wraps 24 accepted; nitrile gloves 18 one carton crushed; label rolls 9 accepted."
+    },
+    {
+      "id": "g02.note",
+      "category": "visual_ocr",
+      "weight": 3,
+      "description": "The note says to hold line 2 for supervisor review."
+    }
+  ]
+}

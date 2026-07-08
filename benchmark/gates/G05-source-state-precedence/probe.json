@@ -1,0 +1,7 @@
+{
+  "id": "G05-source-state-precedence",
+  "gateId": "source_state_precedence",
+  "title": "Source State Precedence Gate",
+  "description": "Prefer visible current document state over stale hidden PDF text when they conflict.",
+  "observedPdftotext": "STALE_TEXT_LAYER: Release status APPROVED. Owner: Hana Park. Ship date: 2026-08-04."
+}

@@ -1,0 +1,27 @@
+{
+  "id": "G01-native-pdf-text-layer",
+  "title": "Native PDF Text Layer Gate",
+  "family": "capability-gate",
+  "tags": [
+    "capability-gate",
+    "native_pdf_text_layer"
+  ],
+  "facts": [
+    {
+      "id": "g01.probe",
+      "category": "native_text_layer",
+      "weight": 8,
+      "severity": "critical",
+      "expectation": "The output preserves TEXT_LAYER_PROBE_7F3A and shipment hold code QX-914.",
+      "modality": "native_pdf_text_layer"
+    },
+    {
+      "id": "g01.release_instruction",
+      "category": "native_text_layer",
+      "weight": 6,
+      "severity": "critical",
+      "expectation": "The output preserves Delta Cold Chain Door 12 and the instruction to keep pallet P-882 on hold until QA signs FORM-19.",
+      "modality": "native_pdf_text_layer"
+    }
+  ]
+}

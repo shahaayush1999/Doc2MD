@@ -1,0 +1,7 @@
+{
+  "id": "G01-native-pdf-text-layer",
+  "gateId": "native_pdf_text_layer",
+  "title": "Native PDF Text Layer Gate",
+  "description": "Recover legitimate extractable PDF text when the rendered page image carries no visible text.",
+  "observedPdftotext": "TEXT_LAYER_PROBE_7F3A: The shipment hold code is QX-914.\nFacility: Delta Cold Chain, Door 12.\nRelease instruction: keep pallet P-882 on hold until QA signs FORM-19."
+}
