@@ -6,3 +6,4 @@ tmp/
 benchmark/rendered/
 scripts/__pycache__/
 runs/
+reports/

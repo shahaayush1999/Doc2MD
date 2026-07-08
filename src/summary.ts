@@ -1,7 +1,7 @@
-import { access, readFile, readdir, writeFile } from "node:fs/promises";
+import { access, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildRunContext, models, runCacheKey } from "./run.js";
+import { buildRunContext, models, runCacheKey, samplesPerModelCase } from "./run.js";
 
 type Score = {
   caseId: string;
@@ -30,6 +30,7 @@ type Score = {
   elapsedMs: number;
   usage: { inputTokens?: number; outputTokens?: number; totalTokens?: number } | null;
   finishReason: string;
+  sample?: string | null;
   runCache?: { runKey?: string };
   error?: string;
 };
@@ -45,6 +46,12 @@ type ManifestCase = {
 
 function mean(values: number[]) {
   return values.length === 0 ? 0 : values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function stddev(values: number[]) {
+  if (values.length <= 1) return 0;
+  const avg = mean(values);
+  return Math.sqrt(mean(values.map((value) => (value - avg) ** 2)));
 }
 
 function weightedMean(values: Array<{ value: number; weight: number }>) {
@@ -108,37 +115,48 @@ export async function summarizeModel(modelId: string, options: { manifestPath?: 
   if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
   const context = await buildRunContext(spec, manifest as any, manifestPath);
   const suite = manifest.suite ?? "official";
-  const existing = new Set((await exists(runRoot)) ? await readdir(runRoot) : []);
   const caseScores = [];
 
   for (const testCase of manifest.cases) {
-    if (!existing.has(testCase.id)) continue;
     const activeRun = await runCacheKey(testCase as any, spec, context);
-    const score = (await readJsonIfExists(path.join(runRoot, testCase.id, "score.json"))) as Score | null;
-    if (!score || score.runCache?.runKey !== activeRun.runKey) continue;
+    const samples: Score[] = [];
+    for (let index = 1; index <= samplesPerModelCase; index += 1) {
+      const sample = String(index).padStart(3, "0");
+      const score = (await readJsonIfExists(path.join(runRoot, testCase.id, "samples", sample, "score.json"))) as Score | null;
+      if (score?.runCache?.runKey === activeRun.runKey) samples.push(score);
+    }
+    if (samples.length === 0) continue;
+
+    const latest = samples.at(-1)!;
+    const scores = samples.map((score) => score.score);
     caseScores.push({
       caseId: testCase.id,
-      title: score.title ?? testCase.title,
-      family: score.family ?? testCase.family,
-      tags: testCase.tags ?? score.tags ?? [],
+      title: latest.title ?? testCase.title,
+      family: latest.family ?? testCase.family,
+      tags: testCase.tags ?? latest.tags ?? [],
       pages: testCase.pages ?? 1,
-      score: score.score,
-      uncappedScore: score.uncappedScore ?? score.score,
-      accuracy: score.dimensions?.accuracy ?? 0,
-      completeness: score.dimensions?.completeness ?? 0,
-      structure: score.dimensions?.structure ?? 0,
-      markdownQuality: score.dimensions?.markdownQuality ?? 0,
-      rawFactScore: score.factScore?.rawScore ?? null,
-      appliedCap: score.caps?.appliedCap ?? null,
-      missingWeight: score.factScore?.statusWeights?.missing ?? 0,
-      incorrectWeight: score.factScore?.statusWeights?.incorrect ?? 0,
-      unsupportedPenalty: score.unsupported?.penalty ?? 0,
-      elapsedMs: score.elapsedMs,
-      costUsd: score.estimatedCostUsd,
-      inputTokens: score.usage?.inputTokens ?? 0,
-      outputTokens: score.usage?.outputTokens ?? 0,
-      finishReason: score.finishReason,
-      error: score.error,
+      samples: samples.length,
+      score: round(mean(scores)),
+      scoreMin: round(Math.min(...scores)),
+      scoreMax: round(Math.max(...scores)),
+      scoreStddev: round(stddev(scores), 2),
+      sampleScores: samples.map((score) => ({ sample: score.sample, score: score.score })),
+      uncappedScore: round(mean(samples.map((score) => score.uncappedScore ?? score.score))),
+      accuracy: round(mean(samples.map((score) => score.dimensions?.accuracy ?? 0))),
+      completeness: round(mean(samples.map((score) => score.dimensions?.completeness ?? 0))),
+      structure: round(mean(samples.map((score) => score.dimensions?.structure ?? 0))),
+      markdownQuality: round(mean(samples.map((score) => score.dimensions?.markdownQuality ?? 0))),
+      rawFactScore: round(mean(samples.map((score) => score.factScore?.rawScore ?? 0))),
+      appliedCap: latest.caps?.appliedCap ?? null,
+      missingWeight: round(mean(samples.map((score) => score.factScore?.statusWeights?.missing ?? 0))),
+      incorrectWeight: round(mean(samples.map((score) => score.factScore?.statusWeights?.incorrect ?? 0))),
+      unsupportedPenalty: round(mean(samples.map((score) => score.unsupported?.penalty ?? 0))),
+      elapsedMs: Math.round(mean(samples.map((score) => score.elapsedMs))),
+      costUsd: round(mean(samples.map((score) => score.estimatedCostUsd)), 6),
+      inputTokens: Math.round(mean(samples.map((score) => score.usage?.inputTokens ?? 0))),
+      outputTokens: Math.round(mean(samples.map((score) => score.usage?.outputTokens ?? 0))),
+      finishReason: latest.finishReason,
+      error: latest.error,
     });
   }
 
@@ -146,10 +164,11 @@ export async function summarizeModel(modelId: string, options: { manifestPath?: 
   const scoredCaseIds = new Set(caseScores.map((score) => score.caseId));
   const missingCaseIds = manifest.cases.map((testCase) => testCase.id).filter((caseId) => !scoredCaseIds.has(caseId));
   const failed = caseScores.filter((score) => score.error || score.finishReason === "error");
-  const totalCostUsd = caseScores.reduce((sum, score) => sum + score.costUsd, 0);
-  const totalElapsedMs = caseScores.reduce((sum, score) => sum + score.elapsedMs, 0);
-  const totalInputTokens = caseScores.reduce((sum, score) => sum + score.inputTokens, 0);
-  const totalOutputTokens = caseScores.reduce((sum, score) => sum + score.outputTokens, 0);
+  const totalCostUsd = caseScores.reduce((sum, score) => sum + score.costUsd * score.samples, 0);
+  const totalElapsedMs = caseScores.reduce((sum, score) => sum + score.elapsedMs * score.samples, 0);
+  const totalInputTokens = caseScores.reduce((sum, score) => sum + score.inputTokens * score.samples, 0);
+  const totalOutputTokens = caseScores.reduce((sum, score) => sum + score.outputTokens * score.samples, 0);
+  const sampleCount = caseScores.reduce((sum, score) => sum + score.samples, 0);
 
   const summary = {
     modelId,
@@ -162,16 +181,19 @@ export async function summarizeModel(modelId: string, options: { manifestPath?: 
     expectedCaseCount: manifest.cases.length,
     complete: missingCaseIds.length === 0,
     missingCaseIds,
+    samplesPerModelCase,
+    sampleCount,
     score: round(weightedMean(caseScores.map((score) => ({ value: score.score, weight: score.pages })))),
     scoreCaseMean: round(mean(caseScores.map((score) => score.score))),
+    scoreStddevCaseMean: round(mean(caseScores.map((score) => score.scoreStddev)), 2),
     scoreAggregation: "page_weighted_case_scores",
     costUsd: round(totalCostUsd, 6),
-    meanCostUsdPerCase: round(mean(caseScores.map((score) => score.costUsd)), 6),
+    meanCostUsdPerSample: sampleCount === 0 ? 0 : round(totalCostUsd / sampleCount, 6),
     totalElapsedMs,
-    meanElapsedMsPerCase: Math.round(mean(caseScores.map((score) => score.elapsedMs))),
+    meanElapsedMsPerSample: sampleCount === 0 ? 0 : Math.round(totalElapsedMs / sampleCount),
     totalInputTokens,
     totalOutputTokens,
-    meanOutputTokensPerCase: Math.round(mean(caseScores.map((score) => score.outputTokens))),
+    meanOutputTokensPerSample: sampleCount === 0 ? 0 : Math.round(totalOutputTokens / sampleCount),
     failureRate: caseScores.length === 0 ? 0 : round((failed.length / caseScores.length) * 100),
     caseScores,
   };

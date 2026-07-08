@@ -94,20 +94,38 @@ export const models: Record<string, ModelSpec> = {
   },
 };
 
-export const benchmarkModelIds = ["openai-gpt-5-nano"] as const;
+export const benchmarkModelIds = ["openai-gpt-5-nano", "vertex-gemini-3.1-flash-lite"] as const;
 
+export const samplesPerModelCase = 3;
 const maxOutputTokens = 24000;
 const inputMode = "native_pdf";
 
-export const prompt = `Convert the attached PDF into one faithful Markdown document.
+export const prompt = `Convert the attached PDF into one faithful Markdown document for downstream machine use.
 
-Rules:
-- Return only Markdown.
-- Preserve visible text in reading order.
-- Preserve headings, lists, tables, forms, captions, code, checkbox states, stamps, handwritten notes, and footnotes where possible.
-- For charts, diagrams, schedules, raster tables, cards, and other non-text visual content, insert concise natural-language descriptions or Markdown tables inline at the original location.
-- Rendered visible content wins over hidden, stale, covered, or invisible PDF text.
-- Do not summarize, cite sources, add commentary, emit JSON, or wrap the Markdown.`;
+Return only Markdown. Do not add commentary, citations, JSON, code fences, or an executive summary.
+
+Reconstruct the document exhaustively:
+- Process every page and every visible region in source order.
+- Preserve all readable text, headings, section hierarchy, lists, captions, footnotes, stamps, annotations, handwritten-style fields, signatures, page-level notes, and document-state notes.
+- Do not omit repetitive, dense, low-level, appendix, tabular, or visually embedded information just because it looks secondary.
+- Do not paraphrase a table, schedule, matrix, register, ledger, checklist, or form into a summary when row/column/label/value relationships are present.
+
+Tables, forms, and structured regions:
+- Preserve every visible row, column, header, unit, label, value, subtotal, footnote marker, continuation row, blank/NA state, and row/column grouping.
+- Use Markdown tables, HTML tables, or clear key-value lists only when the relationships remain unambiguous.
+- Preserve checkbox/radio states, checked vs unchecked vs disabled states, strikeouts, insertions, corrections, voided values, and final/current values.
+
+Visual and non-text regions:
+- For charts, diagrams, maps, floorplans, screenshots, photos, timelines, heatmaps, chromatograms, scorecards, and other visual content, insert inline descriptions or tables at the location where the visual appears.
+- Include labels, legends, axes, units, thresholds, colors, symbols, arrows, callouts, spatial relationships, and printed numeric values.
+- If exact chart values are printed, include the exact values. If values are only visually inferable, describe the trend or approximate values without inventing precision.
+
+Source-state conflicts:
+- Rendered visible current content wins over hidden, stale, covered, deleted, or superseded PDF text.
+- Preserve deleted/superseded/stale content only when it is visibly part of the document's reading experience, and clearly mark it as deleted, superseded, draft, historical, or context.
+- If a visibly broken export still has legitimate selectable PDF text that is necessary to recover the document, use that recoverable text while preserving the visible document order.
+
+The goal is faithful reconstruction of the original document's information and reading experience, not summarization or interpretation.`;
 
 function providerModel(spec: ModelSpec) {
   if (spec.provider === "google-vertex") {
@@ -215,14 +233,18 @@ async function currentSuccessfulRunExists(resultPath: string, runKey: string) {
   return Boolean(result?.cache?.runKey === runKey && !result.error && result.finishReason !== "error");
 }
 
-async function runCase(testCase: ManifestCase, spec: ModelSpec, context: RunContext, options: { force?: boolean } = {}) {
-  const outputDir = path.join("runs", spec.id, testCase.id);
+function sampleId(index: number) {
+  return String(index).padStart(3, "0");
+}
+
+async function runCaseSample(testCase: ManifestCase, spec: ModelSpec, context: RunContext, sample: string, options: { force?: boolean } = {}) {
+  const outputDir = path.join("runs", spec.id, testCase.id, "samples", sample);
   await mkdir(outputDir, { recursive: true });
   const cache = await runCacheKey(testCase, spec, context);
   const resultPath = path.join(outputDir, "result.json");
   const predictionPath = path.join(outputDir, "prediction.md");
   if (!options.force && (await currentSuccessfulRunExists(resultPath, cache.runKey))) {
-    console.log(`${spec.id} ${testCase.id}: skip cached`);
+    console.log(`${spec.id} ${testCase.id}#${sample}: skip cached`);
     return { skipped: true, caseId: testCase.id };
   }
 
@@ -259,12 +281,13 @@ async function runCase(testCase: ManifestCase, spec: ModelSpec, context: RunCont
       usage: result.usage,
       estimatedCostUsd: cost(spec, result.usage),
       outputLength: result.text.length,
+      sample,
       cache,
       inputMode,
     };
     await writeFile(predictionPath, result.text, "utf-8");
     await writeFile(resultPath, JSON.stringify(summary, null, 2) + "\n", "utf-8");
-    console.log(`${spec.id} ${testCase.id}: ${summary.finishReason} ${elapsedMs}ms $${summary.estimatedCostUsd.toFixed(6)}`);
+    console.log(`${spec.id} ${testCase.id}#${sample}: ${summary.finishReason} ${elapsedMs}ms $${summary.estimatedCostUsd.toFixed(6)}`);
     return { skipped: false, caseId: testCase.id };
   } catch (error) {
     const elapsedMs = Math.round(performance.now() - started);
@@ -283,13 +306,14 @@ async function runCase(testCase: ManifestCase, spec: ModelSpec, context: RunCont
       usage: null,
       estimatedCostUsd: 0,
       outputLength: 0,
+      sample,
       error: error instanceof Error ? error.message : String(error),
       cache,
       inputMode,
     };
     await writeFile(predictionPath, "", "utf-8");
     await writeFile(resultPath, JSON.stringify(summary, null, 2) + "\n", "utf-8");
-    console.error(`${spec.id} ${testCase.id}: ERROR ${summary.error}`);
+    console.error(`${spec.id} ${testCase.id}#${sample}: ERROR ${summary.error}`);
     return { skipped: false, caseId: testCase.id };
   }
 }
@@ -305,12 +329,15 @@ export async function runModel(modelId: string, options: { caseId?: string; forc
 
   const context = await buildRunContext(spec, manifest, manifestPath);
   console.log(
-    `Running ${selected.length} case(s) from ${manifest.name} (${manifestPath}) with ${spec.id} in parallel ` +
+    `Running ${selected.length} case(s) x ${samplesPerModelCase} sample(s) from ${manifest.name} (${manifestPath}) with ${spec.id} in parallel ` +
       `[suite=${context.suite}, protocol=${context.inputProtocol}, providerFileMode=${context.providerFileMode}]`,
   );
-  const results = await Promise.all(selected.map((testCase) => runCase(testCase, spec, context, { force: options.force })));
+  const jobs = selected.flatMap((testCase) =>
+    Array.from({ length: samplesPerModelCase }, (_, index) => runCaseSample(testCase, spec, context, sampleId(index + 1), { force: options.force })),
+  );
+  const results = await Promise.all(jobs);
   const skipped = results.filter((result) => result.skipped).length;
-  console.log(`${spec.id}: ${selected.length - skipped} run, ${skipped} skipped`);
+  console.log(`${spec.id}: ${results.length - skipped} run, ${skipped} skipped`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

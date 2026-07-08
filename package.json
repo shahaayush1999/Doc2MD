@@ -10,6 +10,7 @@
     "run": "node --env-file=.env.local --import tsx src/run.ts",
     "score": "node --env-file=.env.local --import tsx src/score.ts",
     "summary": "tsx src/summary.ts",
+    "report": "tsx src/report.ts",
     "typecheck": "tsc --noEmit"
   },
   "repository": {

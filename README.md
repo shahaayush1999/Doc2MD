@@ -20,7 +20,7 @@ Run the full benchmark:
 npm run bench
 ```
 
-The command runs model inference for every official case, evaluates the outputs, and writes `runs/<model>/summary.json` and `runs/<model>/summary.official.json`. It is idempotent: unchanged model/case predictions and unchanged scores are skipped automatically. If one benchmark case changes, only that case is rerun. If a new model is added, only that model is run.
+The command runs three samples for every official model/case, evaluates the outputs, averages the case scores, and writes `runs/<model>/summary.json` and `runs/<model>/summary.official.json`. It is idempotent: unchanged model/case samples and unchanged scores are skipped automatically. If one benchmark case changes, only that case is rerun. If a new model is added, only that model is run.
 
 To intentionally rerun and overwrite cached outputs for an unchanged model/case, use `--force`:
 
@@ -30,19 +30,20 @@ npm run score -- openai-gpt-5-nano
 npm run summary -- openai-gpt-5-nano
 ```
 
-Run data is written as one flat cached result per model/case:
+Run data is written as three cached samples per model/case:
 
 ```text
-runs/<model>/<case>/prediction.md
-runs/<model>/<case>/result.json
-runs/<model>/<case>/score.json
+runs/<model>/<case>/samples/001/prediction.md
+runs/<model>/<case>/samples/001/result.json
+runs/<model>/<case>/samples/001/score.json
 ```
 
-The summary is deterministic: it uses the current-fingerprint `score.json` for each case and computes the official score as the page-weighted mean of case scores. The report includes per-case score, cost, time, and token counts. It does not use an AI model.
+The summary is deterministic: it uses current-fingerprint sample scores for each case, averages those samples, and computes the official score as the page-weighted mean of case averages. The report includes per-case mean/min/max/stddev score, cost, time, and token counts. It does not use an AI model.
 
 The configured benchmark model set is intentionally small while the benchmark is being designed:
 
 - `openai-gpt-5-nano` with minimal thinking, the lowest setting supported by the API
+- `vertex-gemini-3.1-flash-lite` with minimal thinking
 
 All configured cases run in parallel by default. `vertex-gemini-3.1-flash-lite` is used as the scoring evaluator.
 
