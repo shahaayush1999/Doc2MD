@@ -63,7 +63,7 @@ const inferenceAttemptMarkerSchema = z.strictObject({
   sample: z.string().regex(/^\d{3}$/),
   logicalSampleDraw: z.literal(1),
   transportMaxRetries: nonnegativeInteger,
-  runMode: z.enum(["development_anchor", "final_validation"]),
+  runMode: z.enum(["development_anchor", "repeat_validation", "final_validation"]),
   authorizationHash: z.string().length(64).nullable(),
   createdAt: z.string().min(1),
 });
@@ -104,7 +104,7 @@ const currentRunArtifactSchema = z.object({
     logicalGenerationCalls: z.literal(1),
     transportRequestAttempts: z.number().int().positive(),
     retriesAreCohortSamples: z.literal(false),
-    runMode: z.enum(["development_anchor", "final_validation"]),
+    runMode: z.enum(["development_anchor", "repeat_validation", "final_validation"]),
     authorizationHash: z.string().length(64).nullable(),
     sdkVersions: z.strictObject({
       ai: z.string().min(1),
@@ -255,9 +255,11 @@ export const benchmarkModelIds = ["openai-gpt-5-nano", "vertex-gemini-3.1-flash-
 
 export const finalValidationAuthorizationEnvironment = "DOC2MD_FINAL_VALIDATION_AUTHORIZATION";
 const finalValidationAuthorizationPrefix = "final-validation:";
+export const repeatValidationAuthorizationEnvironment = "DOC2MD_REPEAT_VALIDATION_AUTHORIZATION";
+const repeatValidationAuthorizationPrefix = "repeat-validation:";
 
 export type PaidInferenceAuthorization = {
-  runMode: "development_anchor" | "final_validation";
+  runMode: "development_anchor" | "repeat_validation" | "final_validation";
   authorizationHash: string | null;
 };
 
@@ -290,6 +292,36 @@ export function authorizePaidInference(
     );
   }
   return { runMode: "final_validation", authorizationHash: sha256(configuredAuthorization) };
+}
+
+/**
+ * A repeat anchor draw is a separately authorized validation observation. It
+ * cannot target non-anchor models or the official 001 slot, and its checkpoint
+ * identity is persisted as a hash in the immutable attempt ledger.
+ */
+export function authorizeRepeatValidation(
+  modelId: string,
+  suppliedAuthorization?: string,
+  environment: NodeJS.ProcessEnv = process.env,
+): PaidInferenceAuthorization {
+  if (!(benchmarkModelIds as readonly string[]).includes(modelId)) {
+    throw new Error(`${modelId} is not a development anchor and cannot use repeat-anchor authorization.`);
+  }
+  const configuredAuthorization = environment[repeatValidationAuthorizationEnvironment]?.trim();
+  const supplied = suppliedAuthorization?.trim();
+  if (
+    !configuredAuthorization ||
+    !supplied ||
+    configuredAuthorization !== supplied ||
+    !configuredAuthorization.startsWith(repeatValidationAuthorizationPrefix) ||
+    configuredAuthorization.length <= repeatValidationAuthorizationPrefix.length
+  ) {
+    throw new Error(
+      `A repeat anchor draw requires a checkpoint id beginning with ${JSON.stringify(repeatValidationAuthorizationPrefix)} ` +
+        `supplied both through the repeat-validation command and ${repeatValidationAuthorizationEnvironment}.`,
+    );
+  }
+  return { runMode: "repeat_validation", authorizationHash: sha256(configuredAuthorization) };
 }
 
 // Development runs intentionally use one stochastic draw. Repeated cohorts are
@@ -707,14 +739,15 @@ export async function readCurrentCachedRun(resultPath: string, predictionPath: s
   if (!parsedAttemptMarker.success) return null;
   const attemptMarker = parsedAttemptMarker.data;
   const anchorRun = (benchmarkModelIds as readonly string[]).includes(expected.modelId);
+  const expectedRunMode = anchorRun ? (expected.sample === "001" ? "development_anchor" : "repeat_validation") : "final_validation";
   if (
     attemptMarker.runKey !== expected.runKey ||
     attemptMarker.caseId !== expected.caseId ||
     attemptMarker.modelId !== expected.modelId ||
     attemptMarker.sample !== expected.sample ||
     attemptMarker.transportMaxRetries !== expected.protocol.maxRetries ||
-    attemptMarker.runMode !== (anchorRun ? "development_anchor" : "final_validation") ||
-    (anchorRun ? attemptMarker.authorizationHash !== null : attemptMarker.authorizationHash === null) ||
+    attemptMarker.runMode !== expectedRunMode ||
+    (expectedRunMode === "development_anchor" ? attemptMarker.authorizationHash !== null : attemptMarker.authorizationHash === null) ||
     result.inferenceAttempt.logicalSampleDraw !== 1 ||
     result.inferenceAttempt.logicalGenerationCalls !== 1 ||
     result.inferenceAttempt.transportMaxRetries !== expected.protocol.maxRetries ||
@@ -1011,11 +1044,30 @@ export async function runModel(
     manifestPath?: string;
     skipPreflight?: boolean;
     finalValidationAuthorization?: string;
+    sampleIds?: string[];
+    repeatValidationAuthorization?: string;
   } = {},
 ) {
   const spec = models[modelId];
   if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
-  const authorization = authorizePaidInference(modelId, options.finalValidationAuthorization);
+  const selectedSampleIds = options.sampleIds ?? Array.from({ length: samplesPerModelCase }, (_, index) => sampleId(index + 1));
+  if (
+    selectedSampleIds.length === 0 ||
+    new Set(selectedSampleIds).size !== selectedSampleIds.length ||
+    selectedSampleIds.some((sample) => !/^\d{3}$/.test(sample))
+  ) {
+    throw new Error("Selected sample ids must be a non-empty, unique list of three-digit slots.");
+  }
+  const isRepeatValidation = options.sampleIds !== undefined;
+  if (isRepeatValidation && selectedSampleIds.includes("001")) {
+    throw new Error("Repeat validation cannot target or replace the official 001 sample slot.");
+  }
+  if (!isRepeatValidation && options.repeatValidationAuthorization !== undefined) {
+    throw new Error("Repeat-validation authorization was supplied without explicit repeat sample ids.");
+  }
+  const authorization = isRepeatValidation
+    ? authorizeRepeatValidation(modelId, options.repeatValidationAuthorization)
+    : authorizePaidInference(modelId, options.finalValidationAuthorization);
   if (!options.skipPreflight) {
     const { preflightBenchmark } = await import("./preflight.js");
     await preflightBenchmark(options.manifestPath ?? "benchmark/manifest.json");
@@ -1028,14 +1080,13 @@ export async function runModel(
 
   const context = await buildRunContext(spec, manifest, manifestPath);
   console.log(
-    `Running ${selected.length} case(s) x ${samplesPerModelCase} sample(s) from ${manifest.name} (${manifestPath}) with ${spec.id}, ` +
+    `Running ${selected.length} case(s) x ${selectedSampleIds.length} sample(s) [${selectedSampleIds.join(", ")}] from ` +
+      `${manifest.name} (${manifestPath}) with ${spec.id}, ` +
       `up to ${inferenceConcurrency} concurrent calls ` +
       `[suite=${context.suite}, protocol=${context.inputProtocol}, providerFileMode=${context.providerFileMode}]`,
   );
   const jobs = selected.flatMap((testCase) =>
-    Array.from({ length: samplesPerModelCase }, (_, index) => () =>
-      runCaseSample(testCase, spec, context, sampleId(index + 1), authorization),
-    ),
+    selectedSampleIds.map((selectedSampleId) => () => runCaseSample(testCase, spec, context, selectedSampleId, authorization)),
   );
   const results = await runBoundedJobs(jobs, inferenceConcurrency);
   const skipped = results.filter((result) => result.skipped).length;

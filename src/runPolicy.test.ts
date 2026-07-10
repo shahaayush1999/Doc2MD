@@ -3,8 +3,10 @@ import test from "node:test";
 import { parseBenchCliArgs } from "./bench.js";
 import {
   authorizePaidInference,
+  authorizeRepeatValidation,
   benchmarkModelIds,
   finalValidationAuthorizationEnvironment,
+  repeatValidationAuthorizationEnvironment,
 } from "./run.js";
 
 test("benchmark CLI defaults to exactly the two development anchors", () => {
@@ -43,6 +45,27 @@ test("non-anchor inference requires a matching, explicitly prefixed checkpoint a
     [finalValidationAuthorizationEnvironment]: authorization,
   });
   assert.equal(approved.runMode, "final_validation");
+  assert.match(approved.authorizationHash!, /^[a-f0-9]{64}$/);
+});
+
+test("repeat validation is restricted to anchors and requires a matching explicit checkpoint", () => {
+  const modelId = benchmarkModelIds[0];
+  const authorization = "repeat-validation:anchor-variance-2026-07-10";
+  assert.throws(() => authorizeRepeatValidation(modelId, undefined, {}), /requires a checkpoint id/);
+  assert.throws(
+    () => authorizeRepeatValidation(modelId, authorization, { [repeatValidationAuthorizationEnvironment]: "different" }),
+    /requires a checkpoint id/,
+  );
+  assert.throws(
+    () => authorizeRepeatValidation("openai-gpt-5.4-nano", authorization, {
+      [repeatValidationAuthorizationEnvironment]: authorization,
+    }),
+    /not a development anchor/,
+  );
+  const approved = authorizeRepeatValidation(modelId, authorization, {
+    [repeatValidationAuthorizationEnvironment]: authorization,
+  });
+  assert.equal(approved.runMode, "repeat_validation");
   assert.match(approved.authorizationHash!, /^[a-f0-9]{64}$/);
 });
 

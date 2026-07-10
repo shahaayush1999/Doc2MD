@@ -113,7 +113,7 @@ export async function captureValidationSnapshot(options: SnapshotOptions) {
     const exactSuiteScore = mean(cases.map((testCase) => testCase.score));
     const inferenceCostUsd = cases.reduce((sum, testCase) => sum + testCase.inference.estimatedCostUsd, 0);
     const evaluatorCostUsd = cases.reduce((sum, testCase) => sum + testCase.evaluator.estimatedCostUsd, 0);
-    if (Math.abs(exactSuiteScore - summary.suiteSampleScores[0].score) > 5e-7) {
+    if (options.sample === "001" && Math.abs(exactSuiteScore - summary.suiteSampleScores[0].score) > 5e-7) {
       throw new Error(`${modelId} exact suite score does not match the official summary.`);
     }
 
@@ -121,7 +121,7 @@ export async function captureValidationSnapshot(options: SnapshotOptions) {
       modelId,
       sample: options.sample,
       exactSuiteScore,
-      displayedSuiteScore: summary.score,
+      displayedSuiteScore: Math.round(exactSuiteScore * 10) / 10,
       inferenceCostUsd,
       evaluatorCostUsd,
       totalMeasuredCostUsd: inferenceCostUsd + evaluatorCostUsd,
@@ -135,7 +135,7 @@ export async function captureValidationSnapshot(options: SnapshotOptions) {
         cohortArtifact: summary.cohortArtifactFingerprint,
       },
       summaryArtifact: await artifactRecord(summaryPath),
-      summary,
+      officialSummaryAtCapture: summary,
       cases,
     });
   }

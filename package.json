@@ -13,6 +13,7 @@
     "audit:reference": "node --import tsx src/auditReference.ts",
     "preflight": "node --import tsx src/preflight.ts",
     "bench": "node --env-file=.env.local --import tsx src/bench.ts",
+    "repeat:anchors": "node --env-file=.env.local --import tsx src/repeatValidation.ts",
     "run": "node --env-file=.env.local --import tsx src/run.ts",
     "score": "node --env-file=.env.local --import tsx src/score.ts",
     "audit:scorer": "node --env-file=.env.local --import tsx src/auditScorer.ts",

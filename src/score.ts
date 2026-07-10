@@ -2411,11 +2411,16 @@ async function scoreCase(
   }
 }
 
-async function currentTargets(modelId: string, testCase: ManifestCase, spec: (typeof models)[string], context: Awaited<ReturnType<typeof buildRunContext>>) {
+async function currentTargets(
+  modelId: string,
+  testCase: ManifestCase,
+  spec: (typeof models)[string],
+  context: Awaited<ReturnType<typeof buildRunContext>>,
+  sampleIds: string[],
+) {
   const runDir = path.join("runs", modelId, testCase.id, "samples");
   const targets: Array<{ sample: string; predictionPath: string; resultPath: string; scorePath: string; expectedRun: RunCacheExpectation }> = [];
-  for (let index = 1; index <= samplesPerModelCase; index += 1) {
-    const sample = String(index).padStart(3, "0");
+  for (const sample of sampleIds) {
     const sampleDir = path.join(runDir, sample);
     const predictionPath = path.join(sampleDir, "prediction.md");
     const resultPath = path.join(sampleDir, "result.json");
@@ -2438,7 +2443,10 @@ async function validateManifestFacts(cases: ManifestCase[]) {
   );
 }
 
-export async function scoreModel(modelId: string, options: { manifestPath?: string; skipPreflight?: boolean } = {}) {
+export async function scoreModel(
+  modelId: string,
+  options: { manifestPath?: string; skipPreflight?: boolean; sampleIds?: string[] } = {},
+) {
   const manifestPath = options.manifestPath ?? "benchmark/manifest.json";
   if (!options.skipPreflight) {
     const { preflightBenchmark } = await import("./preflight.js");
@@ -2449,11 +2457,20 @@ export async function scoreModel(modelId: string, options: { manifestPath?: stri
   if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
   await validateManifestFacts(manifest.cases);
   const context = await buildRunContext(spec, manifest as any, manifestPath);
+  const selectedSampleIds =
+    options.sampleIds ?? Array.from({ length: samplesPerModelCase }, (_, index) => String(index + 1).padStart(3, "0"));
+  if (
+    selectedSampleIds.length === 0 ||
+    new Set(selectedSampleIds).size !== selectedSampleIds.length ||
+    selectedSampleIds.some((sample) => !/^\d{3}$/.test(sample))
+  ) {
+    throw new Error("Selected score sample ids must be a non-empty, unique list of three-digit slots.");
+  }
 
   const targets = (
     await Promise.all(
       manifest.cases.map(async (testCase) => {
-        const sampleTargets = await currentTargets(modelId, testCase, spec, context);
+        const sampleTargets = await currentTargets(modelId, testCase, spec, context, selectedSampleIds);
         return sampleTargets.map((target) => ({ testCase, target }));
       }),
     )
