@@ -1,10 +1,10 @@
 import { fileURLToPath } from "node:url";
-import { benchmarkModelIds, models, runModel } from "./run.js";
-import { scoreModel } from "./score.js";
+import { benchmarkModelIds, models } from "./run.js";
 import { summarizeModel } from "./summary.js";
 import { generateReport } from "./report.js";
 import { preflightBenchmark } from "./preflight.js";
 import { acquireSampleLock } from "./runRuntime.js";
+import { runModelCasePipelines } from "./modelPipeline.js";
 
 export type BenchCliArgs = {
   modelIds: string[];
@@ -56,8 +56,8 @@ export async function runBenchmark(options: BenchCliArgs) {
 
   try {
     console.log(`Running official Doc2MD native-PDF benchmark:
-1. model inference for one stochastic sample of every selected model/case in parallel
-2. evaluator scoring with structured Zod output in parallel per model
+1. all case pipelines for one model start concurrently
+2. each evaluator starts as soon as its case inference completes
 3. deterministic, equal-case aggregation across the complete single-draw cohort
 
 Unchanged model/case runs and scores are skipped automatically. An immutable attempt marker prevents silent redraws.
@@ -66,11 +66,9 @@ Models: ${options.modelIds.join(", ")}`);
 
     const summaries = [];
     for (const modelId of options.modelIds) {
-      await runModel(modelId, {
-        skipPreflight: true,
+      await runModelCasePipelines(modelId, {
         finalValidationAuthorization: options.finalValidationAuthorization,
       });
-      await scoreModel(modelId, { skipPreflight: true });
       summaries.push(await summarizeModel(modelId));
     }
 

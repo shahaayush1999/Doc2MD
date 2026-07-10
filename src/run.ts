@@ -8,7 +8,7 @@ import { createGoogleVertex } from "@ai-sdk/google-vertex";
 import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
 import { fileSha256, hashObject, sha256, sha256Bytes } from "./cache.js";
-import { runBoundedJobs } from "./concurrency.js";
+import { runJobsInParallel } from "./concurrency.js";
 import {
   acquireSampleLock,
   atomicWriteJson,
@@ -336,18 +336,7 @@ export const maxOutputTokens = 60_000;
 export const inputMode = "native_pdf";
 export const inferenceProtocolVersion = "native-pdf-v3-immutable-attempt-ledger";
 export const inferenceMaxRetries = 2;
-export const inferenceConcurrency = positiveIntegerEnvironment("DOC2MD_INFERENCE_CONCURRENCY", 6);
 const pdfMediaType = "application/pdf";
-
-function positiveIntegerEnvironment(name: string, fallback: number) {
-  const raw = process.env[name];
-  if (raw === undefined || raw === "") return fallback;
-  const parsed = Number(raw);
-  if (!Number.isSafeInteger(parsed) || parsed < 1 || parsed > 64) {
-    throw new Error(`${name} must be an integer from 1 through 64.`);
-  }
-  return parsed;
-}
 
 export const prompt = `Convert the attached PDF into one faithful Markdown document for downstream machine use.
 
@@ -1082,13 +1071,13 @@ export async function runModel(
   console.log(
     `Running ${selected.length} case(s) x ${selectedSampleIds.length} sample(s) [${selectedSampleIds.join(", ")}] from ` +
       `${manifest.name} (${manifestPath}) with ${spec.id}, ` +
-      `up to ${inferenceConcurrency} concurrent calls ` +
+      `all selected cases concurrently ` +
       `[suite=${context.suite}, protocol=${context.inputProtocol}, providerFileMode=${context.providerFileMode}]`,
   );
   const jobs = selected.flatMap((testCase) =>
     selectedSampleIds.map((selectedSampleId) => () => runCaseSample(testCase, spec, context, selectedSampleId, authorization)),
   );
-  const results = await runBoundedJobs(jobs, inferenceConcurrency);
+  const results = await runJobsInParallel(jobs);
   const skipped = results.filter((result) => result.skipped).length;
   console.log(`${spec.id}: ${results.length - skipped} run, ${skipped} skipped`);
 }

@@ -26,3 +26,26 @@ export async function runBoundedJobs<T>(jobs: Array<() => Promise<T>>, concurren
   if (firstError !== undefined) throw firstError;
   return results;
 }
+
+/**
+ * Start every job immediately, preserve input ordering, and wait for all jobs
+ * to settle before surfacing the first failure. This prevents locks from being
+ * released while already-started paid work is still running.
+ */
+export async function runJobsInParallel<T>(jobs: Array<() => Promise<T>>): Promise<T[]> {
+  const outcomes = await Promise.all(
+    jobs.map(async (job) => {
+      try {
+        return { ok: true as const, value: await job() };
+      } catch (error) {
+        return { ok: false as const, error };
+      }
+    }),
+  );
+  const failure = outcomes.find((outcome) => !outcome.ok);
+  if (failure && !failure.ok) throw failure.error;
+  return outcomes.map((outcome) => {
+    if (!outcome.ok) throw outcome.error;
+    return outcome.value;
+  });
+}

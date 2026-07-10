@@ -1,9 +1,9 @@
 import { fileURLToPath } from "node:url";
 import { captureValidationSnapshot } from "./captureValidationSnapshot.js";
+import { runModelCasePipelines } from "./modelPipeline.js";
 import { preflightBenchmark } from "./preflight.js";
-import { benchmarkModelIds, runModel } from "./run.js";
+import { benchmarkModelIds } from "./run.js";
 import { acquireSampleLock } from "./runRuntime.js";
-import { scoreModel } from "./score.js";
 
 const repeatSample = "002";
 const snapshotPath = "docs/results/anchor-repeat-validation-2026-07-10/draw-002.snapshot.json";
@@ -21,12 +21,10 @@ export async function runAnchorRepeatValidation(authorization: string) {
   const lock = await acquireSampleLock("runs/.anchor-repeat-validation-002.lock", { staleAfterMs: 24 * 60 * 60 * 1000 });
   try {
     for (const modelId of benchmarkModelIds) {
-      await runModel(modelId, {
-        skipPreflight: true,
+      await runModelCasePipelines(modelId, {
         sampleIds: [repeatSample],
         repeatValidationAuthorization: authorization,
       });
-      await scoreModel(modelId, { skipPreflight: true, sampleIds: [repeatSample] });
     }
     const snapshot = await captureValidationSnapshot({ sample: repeatSample, outPath: snapshotPath });
     console.log("Repeat-validation draw captured:");

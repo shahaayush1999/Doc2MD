@@ -8,7 +8,7 @@ import { googleVertex } from "@ai-sdk/google-vertex";
 import { z } from "zod";
 import { aggregationContractFingerprint } from "./aggregation.js";
 import { hashObject, sha256, sha256Bytes } from "./cache.js";
-import { runBoundedJobs } from "./concurrency.js";
+import { runJobsInParallel } from "./concurrency.js";
 import { loadBenchmarkManifest } from "./manifest.js";
 import {
   buildRunCacheExpectation,
@@ -232,7 +232,6 @@ const judgeSdkVersions = {
   providerPackage: "@ai-sdk/google-vertex",
   providerPackageVersion: (require("@ai-sdk/google-vertex/package.json") as { version: string }).version,
 } as const;
-export const evaluatorConcurrency = positiveIntegerEnvironment("DOC2MD_EVALUATOR_CONCURRENCY", 4);
 const judgeTransportConfig = {
   epoch: "google-vertex-ai-sdk-candidate-grounded-object-v2",
   providerFactory: "@ai-sdk/google-vertex:googleVertex",
@@ -243,16 +242,6 @@ const judgeTransportConfig = {
   sampling: judgeSampling,
   sdkVersions: judgeSdkVersions,
 } as const;
-
-function positiveIntegerEnvironment(name: string, fallback: number) {
-  const raw = process.env[name];
-  if (raw === undefined || raw === "") return fallback;
-  const parsed = Number(raw);
-  if (!Number.isSafeInteger(parsed) || parsed < 1 || parsed > 64) {
-    throw new Error(`${name} must be an integer from 1 through 64.`);
-  }
-  return parsed;
-}
 
 export const leafStatusCredit = {
   correct: 1,
@@ -2445,7 +2434,7 @@ async function validateManifestFacts(cases: ManifestCase[]) {
 
 export async function scoreModel(
   modelId: string,
-  options: { manifestPath?: string; skipPreflight?: boolean; sampleIds?: string[] } = {},
+  options: { caseId?: string; manifestPath?: string; skipPreflight?: boolean; sampleIds?: string[] } = {},
 ) {
   const manifestPath = options.manifestPath ?? "benchmark/manifest.json";
   if (!options.skipPreflight) {
@@ -2455,7 +2444,11 @@ export async function scoreModel(
   const manifest = (await loadBenchmarkManifest(manifestPath)).manifest as Manifest;
   const spec = models[modelId];
   if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
-  await validateManifestFacts(manifest.cases);
+  const selectedCases = options.caseId ? manifest.cases.filter((testCase) => testCase.id === options.caseId) : manifest.cases;
+  if (selectedCases.length === 0) {
+    throw new Error(`No selected cases. Use one of: ${manifest.cases.map((testCase) => testCase.id).join(", ")}`);
+  }
+  await validateManifestFacts(selectedCases);
   const context = await buildRunContext(spec, manifest as any, manifestPath);
   const selectedSampleIds =
     options.sampleIds ?? Array.from({ length: samplesPerModelCase }, (_, index) => String(index + 1).padStart(3, "0"));
@@ -2469,7 +2462,7 @@ export async function scoreModel(
 
   const targets = (
     await Promise.all(
-      manifest.cases.map(async (testCase) => {
+      selectedCases.map(async (testCase) => {
         const sampleTargets = await currentTargets(modelId, testCase, spec, context, selectedSampleIds);
         return sampleTargets.map((target) => ({ testCase, target }));
       }),
@@ -2485,7 +2478,7 @@ export async function scoreModel(
         ...target,
       }),
   );
-  const scores = await runBoundedJobs(jobs, evaluatorConcurrency);
+  const scores = await runJobsInParallel(jobs);
   for (const scored of scores) {
     const display = scored.score === null ? "INVALID" : scored.score.toFixed(1);
     console.log(
