@@ -8,6 +8,7 @@ import { evaluatePrediction, type ManifestCase } from "./evaluator.js";
 import { loadBenchmarkManifest } from "./manifest.js";
 import { calculateCost } from "./pricing.js";
 import { createModel, defaultModelIds, models, type ModelSpec } from "./models.js";
+import { renderReport } from "./report.js";
 
 const cacheRoot = "runs/cache";
 const promptPath = "benchmark/prompt.md";
@@ -229,15 +230,6 @@ function parseRequestedModels(argv: string[]) {
   return selected;
 }
 
-function escapeHtml(value: unknown) {
-  return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-}
-
-function renderReport(summary: any) {
-  const sections = summary.models.map((model: any) => `<section><h2>${escapeHtml(model.modelId)} — ${model.score === null ? "Incomplete" : model.score.toFixed(1)}</h2><table><thead><tr><th>Case</th><th>Score</th><th>Inference</th><th>Evaluator</th></tr></thead><tbody>${model.cases.map((testCase: any) => `<tr><td>${escapeHtml(testCase.caseId)}</td><td>${testCase.score === null ? "—" : testCase.score.toFixed(1)}</td><td>$${testCase.inferenceCostUsd.toFixed(6)}</td><td>$${testCase.evaluatorCostUsd.toFixed(6)}</td></tr>`).join("")}</tbody></table></section>`).join("");
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Doc2MD benchmark</title><style>body{max-width:1000px;margin:48px auto;padding:0 20px;font:15px/1.5 system-ui;color:#18201c;background:#f6f5f0}h1,h2{font-family:Georgia,serif}section{margin:36px 0;background:white;padding:20px;border:1px solid #ddd;border-radius:10px}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px;border-bottom:1px solid #ddd}th{color:#59625d}</style></head><body><h1>Doc2MD benchmark</h1><p>${summary.caseCount} current cases · ${summary.models.length} complete models · Cumulative measured spend $${summary.totalCostUsd.toFixed(6)}</p>${sections}</body></html>`;
-}
-
 async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt: string, evaluatorSourceHash: string) {
   const merged = [];
   for (const modelId of await cachedModelIds()) {
@@ -251,12 +243,14 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
         score: cached.evaluation.score,
         inferenceCostUsd: cached.inference.costUsd ?? 0,
         evaluatorCostUsd: cached.evaluation.evaluator.costUsd ?? 0,
+        outputTokens: cached.inference.usage?.outputTokens ?? 0,
       });
     }
     if (cases.length !== manifest.cases.length) continue;
     const inferenceCostUsd = cases.reduce((sum, testCase) => sum + testCase.inferenceCostUsd, 0);
     const evaluatorCostUsd = cases.reduce((sum, testCase) => sum + testCase.evaluatorCostUsd, 0);
-    merged.push({ modelId, score: mean(cases.map((testCase) => testCase.score)), inferenceCostUsd, evaluatorCostUsd, totalCostUsd: inferenceCostUsd + evaluatorCostUsd, cases });
+    const totalOutputTokens = cases.reduce((sum, testCase) => sum + testCase.outputTokens, 0);
+    merged.push({ modelId, score: mean(cases.map((testCase) => testCase.score)), inferenceCostUsd, evaluatorCostUsd, totalCostUsd: inferenceCostUsd + evaluatorCostUsd, totalOutputTokens, cases });
   }
   return merged.sort((a, b) => b.score - a.score);
 }
