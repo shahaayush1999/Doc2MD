@@ -246,13 +246,15 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
         inferenceCostUsd: cached.inference.costUsd ?? 0,
         evaluatorCostUsd: cached.evaluation.evaluator.costUsd ?? 0,
         outputTokens: cached.inference.usage?.outputTokens ?? 0,
+        inferenceElapsedMs: cached.inference.elapsedMs ?? 0,
       });
     }
     if (cases.length !== manifest.cases.length) continue;
     const inferenceCostUsd = cases.reduce((sum, testCase) => sum + testCase.inferenceCostUsd, 0);
     const evaluatorCostUsd = cases.reduce((sum, testCase) => sum + testCase.evaluatorCostUsd, 0);
     const totalOutputTokens = cases.reduce((sum, testCase) => sum + testCase.outputTokens, 0);
-    merged.push({ modelId, score: mean(cases.map((testCase) => testCase.score)), inferenceCostUsd, evaluatorCostUsd, totalCostUsd: inferenceCostUsd + evaluatorCostUsd, totalOutputTokens, cases });
+    const inferenceSeconds = cases.reduce((sum, testCase) => sum + testCase.inferenceElapsedMs, 0) / 1_000;
+    merged.push({ modelId, score: mean(cases.map((testCase) => testCase.score)), inferenceCostUsd, evaluatorCostUsd, totalCostUsd: inferenceCostUsd + evaluatorCostUsd, totalOutputTokens, inferenceSeconds, cases });
   }
   return merged.sort((a, b) => b.score - a.score);
 }
