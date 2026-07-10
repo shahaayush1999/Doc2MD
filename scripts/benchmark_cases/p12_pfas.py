@@ -547,13 +547,12 @@ def build(output_root):
             curve_leaves.append(
                 leaf(
                     f"p03.curve.{slug}.{index:02d}",
-                    f"{name} has response ratio {response:.3f} at {level:g} ng/L.",
+                    f"{name} has response ratio {response:.3f} at concentration {level:g}.",
                     evidence_policy={
                         "type": "lexical",
                         "allOf": [
                             [name],
                             [f"{level:g}"],
-                            ["ng/L"],
                             [f"{response:.3f}"],
                             ["response ratio", "ratio"],
                         ],
@@ -602,26 +601,26 @@ def build(output_root):
                 "Each panel uses weighted 1/x^2 calibration and labels every point with both concentration and response.",
                 evidence_policy={
                     "type": "lexical",
-                    "allOf": [["weighted 1/x^2", "1/x^2"], ["point"], ["concentration"], ["response"]],
+                    "allOf": [["weighted 1/x^2", "1/x^2"], ["point", "points"], ["concentration"], ["response"]],
                 },
             ),
             leaf(
                 "p03.chart.trend.pfoa",
                 "The PFOA series rises monotonically from response ratio 0.021 at its lowest standard to 5.986 at its highest standard.",
                 harm=2,
-                evidence_policy={"type": "lexical", "allOf": [["PFOA"], ["rises monotonically", "monotonic increase", "increases"], ["0.021"], ["5.986"]]},
+                evidence_policy={"type": "lexical", "allOf": [["PFOA"], ["rises monotonically", "monotonic increase", "increases", "positive slope"], ["0.021"], ["5.986"]]},
             ),
             leaf(
                 "p03.chart.trend.pfos",
                 "The PFOS series rises monotonically from response ratio 0.042 at its lowest standard to 8.177 at its highest standard.",
                 harm=2,
-                evidence_policy={"type": "lexical", "allOf": [["PFOS"], ["rises monotonically", "monotonic increase", "increases"], ["0.042"], ["8.177"]]},
+                evidence_policy={"type": "lexical", "allOf": [["PFOS"], ["rises monotonically", "monotonic increase", "increases", "positive slope"], ["0.042"], ["8.177"]]},
             ),
             leaf(
                 "p03.chart.trend.hfpo",
                 "The HFPO-DA series rises monotonically from response ratio 0.044 at its lowest standard to 6.632 at its highest standard.",
                 harm=2,
-                evidence_policy={"type": "lexical", "allOf": [["HFPO-DA"], ["rises monotonically", "monotonic increase", "increases"], ["0.044"], ["6.632"]]},
+                evidence_policy={"type": "lexical", "allOf": [["HFPO-DA"], ["rises monotonically", "monotonic increase", "increases", "positive slope"], ["0.044"], ["6.632"]]},
             ),
         ],
         budget=2,

@@ -1032,7 +1032,7 @@
           "id": "p03.curve.pfoa.01",
           "canonicalClaimId": "p03.curve.pfoa.01",
           "claimType": "scalar",
-          "expectation": "PFOA has response ratio 0.021 at 0.25 ng/L.",
+          "expectation": "PFOA has response ratio 0.021 at concentration 0.25.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1042,9 +1042,6 @@
               ],
               [
                 "0.25"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "0.021"
@@ -1060,7 +1057,7 @@
           "id": "p03.curve.pfoa.02",
           "canonicalClaimId": "p03.curve.pfoa.02",
           "claimType": "scalar",
-          "expectation": "PFOA has response ratio 0.077 at 1 ng/L.",
+          "expectation": "PFOA has response ratio 0.077 at concentration 1.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1070,9 +1067,6 @@
               ],
               [
                 "1"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "0.077"
@@ -1088,7 +1082,7 @@
           "id": "p03.curve.pfoa.03",
           "canonicalClaimId": "p03.curve.pfoa.03",
           "claimType": "scalar",
-          "expectation": "PFOA has response ratio 0.406 at 5 ng/L.",
+          "expectation": "PFOA has response ratio 0.406 at concentration 5.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1098,9 +1092,6 @@
               ],
               [
                 "5"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "0.406"
@@ -1116,7 +1107,7 @@
           "id": "p03.curve.pfoa.04",
           "canonicalClaimId": "p03.curve.pfoa.04",
           "claimType": "scalar",
-          "expectation": "PFOA has response ratio 1.393 at 20 ng/L.",
+          "expectation": "PFOA has response ratio 1.393 at concentration 20.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1126,9 +1117,6 @@
               ],
               [
                 "20"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "1.393"
@@ -1144,7 +1132,7 @@
           "id": "p03.curve.pfoa.05",
           "canonicalClaimId": "p03.curve.pfoa.05",
           "claimType": "scalar",
-          "expectation": "PFOA has response ratio 5.986 at 80 ng/L.",
+          "expectation": "PFOA has response ratio 5.986 at concentration 80.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1154,9 +1142,6 @@
               ],
               [
                 "80"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "5.986"
@@ -1172,7 +1157,7 @@
           "id": "p03.curve.pfos.01",
           "canonicalClaimId": "p03.curve.pfos.01",
           "claimType": "scalar",
-          "expectation": "PFOS has response ratio 0.042 at 0.5 ng/L.",
+          "expectation": "PFOS has response ratio 0.042 at concentration 0.5.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1182,9 +1167,6 @@
               ],
               [
                 "0.5"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "0.042"
@@ -1200,7 +1182,7 @@
           "id": "p03.curve.pfos.02",
           "canonicalClaimId": "p03.curve.pfos.02",
           "claimType": "scalar",
-          "expectation": "PFOS has response ratio 0.184 at 2 ng/L.",
+          "expectation": "PFOS has response ratio 0.184 at concentration 2.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1210,9 +1192,6 @@
               ],
               [
                 "2"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "0.184"
@@ -1228,7 +1207,7 @@
           "id": "p03.curve.pfos.03",
           "canonicalClaimId": "p03.curve.pfos.03",
           "claimType": "scalar",
-          "expectation": "PFOS has response ratio 0.958 at 10 ng/L.",
+          "expectation": "PFOS has response ratio 0.958 at concentration 10.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1238,9 +1217,6 @@
               ],
               [
                 "10"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "0.958"
@@ -1256,7 +1232,7 @@
           "id": "p03.curve.pfos.04",
           "canonicalClaimId": "p03.curve.pfos.04",
           "claimType": "scalar",
-          "expectation": "PFOS has response ratio 4.753 at 50 ng/L.",
+          "expectation": "PFOS has response ratio 4.753 at concentration 50.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1266,9 +1242,6 @@
               ],
               [
                 "50"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "4.753"
@@ -1284,7 +1257,7 @@
           "id": "p03.curve.pfos.05",
           "canonicalClaimId": "p03.curve.pfos.05",
           "claimType": "scalar",
-          "expectation": "PFOS has response ratio 8.177 at 100 ng/L.",
+          "expectation": "PFOS has response ratio 8.177 at concentration 100.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1294,9 +1267,6 @@
               ],
               [
                 "100"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "8.177"
@@ -1312,7 +1282,7 @@
           "id": "p03.curve.hfpo-da.01",
           "canonicalClaimId": "p03.curve.hfpo-da.01",
           "claimType": "scalar",
-          "expectation": "HFPO-DA has response ratio 0.044 at 0.5 ng/L.",
+          "expectation": "HFPO-DA has response ratio 0.044 at concentration 0.5.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1322,9 +1292,6 @@
               ],
               [
                 "0.5"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "0.044"
@@ -1340,7 +1307,7 @@
           "id": "p03.curve.hfpo-da.02",
           "canonicalClaimId": "p03.curve.hfpo-da.02",
           "claimType": "scalar",
-          "expectation": "HFPO-DA has response ratio 0.175 at 2 ng/L.",
+          "expectation": "HFPO-DA has response ratio 0.175 at concentration 2.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1350,9 +1317,6 @@
               ],
               [
                 "2"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "0.175"
@@ -1368,7 +1332,7 @@
           "id": "p03.curve.hfpo-da.03",
           "canonicalClaimId": "p03.curve.hfpo-da.03",
           "claimType": "scalar",
-          "expectation": "HFPO-DA has response ratio 0.790 at 10 ng/L.",
+          "expectation": "HFPO-DA has response ratio 0.790 at concentration 10.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1378,9 +1342,6 @@
               ],
               [
                 "10"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "0.790"
@@ -1396,7 +1357,7 @@
           "id": "p03.curve.hfpo-da.04",
           "canonicalClaimId": "p03.curve.hfpo-da.04",
           "claimType": "scalar",
-          "expectation": "HFPO-DA has response ratio 4.400 at 50 ng/L.",
+          "expectation": "HFPO-DA has response ratio 4.400 at concentration 50.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1406,9 +1367,6 @@
               ],
               [
                 "50"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "4.400"
@@ -1424,7 +1382,7 @@
           "id": "p03.curve.hfpo-da.05",
           "canonicalClaimId": "p03.curve.hfpo-da.05",
           "claimType": "scalar",
-          "expectation": "HFPO-DA has response ratio 6.632 at 80 ng/L.",
+          "expectation": "HFPO-DA has response ratio 6.632 at concentration 80.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1434,9 +1392,6 @@
               ],
               [
                 "80"
-              ],
-              [
-                "ng/L"
               ],
               [
                 "6.632"
@@ -1600,7 +1555,8 @@
                 "1/x^2"
               ],
               [
-                "point"
+                "point",
+                "points"
               ],
               [
                 "concentration"
@@ -1626,7 +1582,8 @@
               [
                 "rises monotonically",
                 "monotonic increase",
-                "increases"
+                "increases",
+                "positive slope"
               ],
               [
                 "0.021"
@@ -1652,7 +1609,8 @@
               [
                 "rises monotonically",
                 "monotonic increase",
-                "increases"
+                "increases",
+                "positive slope"
               ],
               [
                 "0.042"
@@ -1678,7 +1636,8 @@
               [
                 "rises monotonically",
                 "monotonic increase",
-                "increases"
+                "increases",
+                "positive slope"
               ],
               [
                 "0.044"
@@ -1864,8 +1823,8 @@
               [
                 ">=0.995",
                 ">= 0.995",
-                "\u22650.995",
-                "\u2265 0.995"
+                "≥0.995",
+                "≥ 0.995"
               ],
               [
                 "-15",
@@ -1881,7 +1840,7 @@
               [
                 "within",
                 "+/-",
-                "\u00b1"
+                "±"
               ],
               [
                 "standards"
@@ -2142,8 +2101,8 @@
               [
                 "<=20",
                 "<= 20",
-                "\u226420",
-                "\u2264 20"
+                "≤20",
+                "≤ 20"
               ],
               [
                 "%"
@@ -2521,7 +2480,7 @@
               [
                 "within",
                 "+/-",
-                "\u00b1"
+                "±"
               ],
               [
                 "low-level"
@@ -2644,8 +2603,8 @@
               ],
               [
                 "uL",
-                "\u00b5L",
-                "\u03bcL"
+                "µL",
+                "μL"
               ],
               [
                 "ng/L"
@@ -2806,8 +2765,8 @@
               ],
               [
                 "uL",
-                "\u00b5L",
-                "\u03bcL"
+                "µL",
+                "μL"
               ],
               [
                 "surrogate"
@@ -4584,8 +4543,8 @@
               ],
               [
                 "uL",
-                "\u00b5L",
-                "\u03bcL"
+                "µL",
+                "μL"
               ],
               [
                 "flushed"

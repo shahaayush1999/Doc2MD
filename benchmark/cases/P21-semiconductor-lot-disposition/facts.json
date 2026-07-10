@@ -2509,9 +2509,6 @@
                 "IMG-223"
               ],
               [
-                "long"
-              ],
-              [
                 "diagonal"
               ],
               [
@@ -2563,19 +2560,18 @@
                 "IMG-227"
               ],
               [
-                "bright"
-              ],
-              [
                 "edge",
                 "boundary"
               ],
               [
-                "residue",
-                "band"
+                "band",
+                "line"
               ],
               [
                 "bead",
-                "deposits"
+                "deposits",
+                "droplets",
+                "bumps"
               ]
             ]
           }

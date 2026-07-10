@@ -463,7 +463,7 @@ def build(output_root):
         ],
         budget=2,
     )
-    case.add_region("p05.image.223", "IMG-223 scratch SEM", "image", [visual_leaf("p05.img223.finding", "IMG-223 visibly shows a long diagonal scratch crossing the field.", [["IMG-223"], ["long"], ["diagonal"], ["scratch"], ["crossing", "across"]], harm=2)], budget=2)
+    case.add_region("p05.image.223", "IMG-223 scratch SEM", "image", [visual_leaf("p05.img223.finding", "IMG-223 visibly shows a long diagonal scratch crossing the field.", [["IMG-223"], ["diagonal"], ["scratch"], ["crossing", "across"]], harm=2)], budget=2)
     case.add_region(
         "p05.image.227",
         "IMG-227 edge-bead SEM",
@@ -472,7 +472,7 @@ def build(output_root):
             visual_leaf(
                 "p05.img227.finding",
                 "IMG-227 visibly shows a bright edge-residue band with bead deposits.",
-                [["IMG-227"], ["bright"], ["edge", "boundary"], ["residue", "band"], ["bead", "deposits"]],
+                [["IMG-227"], ["edge", "boundary"], ["band", "line"], ["bead", "deposits", "droplets", "bumps"]],
             ),
         ],
         budget=2,

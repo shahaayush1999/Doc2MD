@@ -228,6 +228,7 @@ Protocol:
 - Do not penalize harmless formatting or wording differences.
 - Do not infer omission from character count or verbosity.
 - If a table, form, image description, or row is required by the obligations but absent from candidate lines, mark the affected leaves missing.
+- For a qualitative visual leaf, an image id or generic category alone is not enough. Require every distinctive attribute in the expectation; if the candidate describes an incompatible morphology or state, mark it incorrect rather than missing.
 
 Unsupported claims:
 - Report only a substantive extra candidate assertion whose absence is verifiable inside a declared closedWorld region and is not already represented by an expected leaf.
@@ -661,6 +662,7 @@ function tableBindingGate(
 ): EvidenceGateResult {
   const positiveMatches: number[][] = [];
   const contradictoryMatches: number[][] = [];
+  const proseContradictoryMatches: number[][] = [];
 
   const recordBinding = (refs: number[], value: string) => {
     if (!refsAreAllowed(refs, citedRefs)) return;
@@ -720,7 +722,7 @@ function tableBindingGate(
 
         const connector = text.slice(columnAt + column.length).match(/^\s*(?:is|was|=|:)\s*(\S.*)$/);
         if (connector && !normalizedAlternatives(policy.value).some((value) => phraseIndex(connector[1]!, value) >= 0)) {
-          contradictoryMatches.push([ref]);
+          proseContradictoryMatches.push([ref]);
         }
       }
     }
@@ -748,7 +750,12 @@ function tableBindingGate(
   }
 
   const positive = bestEvidence(positiveMatches);
-  const contradiction = bestEvidence(contradictoryMatches);
+  // An exact structured row/column/value match outranks an ambiguous prose
+  // phrase such as "PFOA quantifier: 4.41 min", where "quantifier" names a
+  // chromatogram trace rather than the table column. Structured conflicts
+  // remain authoritative; prose conflicts apply only when no exact binding
+  // exists anywhere in the cited evidence.
+  const contradiction = bestEvidence(positive ? contradictoryMatches : [...contradictoryMatches, ...proseContradictoryMatches]);
   if (contradiction) {
     return {
       satisfied: false,
@@ -778,6 +785,8 @@ const formStateTerms: Record<Extract<EvidencePolicy, { type: "form_state" }>["st
 function normalizeFormText(value: string): string {
   return normalizeEvidenceText(
     value
+      .replace(/\[\s*crossed box\s*:\s*([^\]]+)\]/gi, " crossed out $1 ")
+      .replace(/\[\s*\/\s*\]/g, " disabled ")
       .replace(/\[\s*[xX✓]\s*\]|☑|✅/g, " checked ")
       .replace(/\[\s*\]|☐|⬜/g, " unchecked ")
       .replace(/~~([^~]+)~~/g, " crossed out $1 ")
@@ -788,6 +797,15 @@ function normalizeFormText(value: string): string {
 
 type LocatedFormTerm = { index: number; end: number };
 type FormEvidenceSegment = { refs: number[]; text: string };
+
+function splitFormLine(raw: string): string[] {
+  const marker = /\[\s*crossed box\s*:[^\]]+\]|\[(?:\s*[xX✓\/]\s*|\s+)\]|☑|✅|☐|⬜/gi;
+  const starts = [...raw.matchAll(marker)].map((match) => match.index ?? 0);
+  if (starts.length <= 1) return raw.split(/;|(?<=[.!?])\s+/).filter((clause) => clause.trim());
+  const prefix = raw.slice(0, starts[0]).trim();
+  const fields = starts.map((start, index) => raw.slice(start, starts[index + 1] ?? raw.length).trim());
+  return prefix ? [prefix, ...fields] : fields;
+}
 
 function allAlternativeLocations(text: string, alternatives: string[]): LocatedFormTerm[] {
   const locations: LocatedFormTerm[] = [];
@@ -865,7 +883,7 @@ function formEvidenceSegments(lines: string[], citedRefs: Set<number>): FormEvid
     const raw = lines[ref - 1] ?? "";
     const pipeCells = splitPipeCells(raw);
     if (pipeCells) continue;
-    for (const clause of raw.split(/;|(?<=[.!?])\s+/)) {
+    for (const clause of splitFormLine(raw)) {
       if (clause.trim()) segments.push({ refs: [ref], text: clause.trim() });
     }
   }
@@ -1103,6 +1121,16 @@ function lexicalScalarValuesAreBound(lines: string[], refs: Iterable<number>, gr
   if (!subjectGroup) return true;
   const allowed = new Set(refs);
   const localEvidence = [...allowed].map((ref) => lines[ref - 1] ?? "");
+  const orderedAllowed = sortedUniqueRefs(allowed);
+  for (let index = 0; index < orderedAllowed.length - 1; index += 1) {
+    const parentRef = orderedAllowed[index]!;
+    const childRef = orderedAllowed[index + 1]!;
+    const parent = lines[parentRef - 1] ?? "";
+    const child = lines[childRef - 1] ?? "";
+    if (childRef === parentRef + 1 && /^\s*[*+-]\s+/.test(parent) && /^\s{2,}[*+-]\s+/.test(child)) {
+      localEvidence.push(`${parent}\n${child}`);
+    }
+  }
   for (const table of parseMarkdownTables(lines)) {
     for (const row of table.rows) {
       if (allowed.has(table.headerRef) && allowed.has(row.ref)) {
@@ -1263,13 +1291,16 @@ function lexicalEvidenceResolution(
           });
         }
       }
+      if (fragments.length > 1) {
+        candidates.push({
+          refs: sortedUniqueRefs(fragments.map((fragment) => fragment.ref)),
+          text: fragments.map((fragment) => fragment.text).join("\n"),
+        });
+      }
       for (const candidate of candidates) {
         const gate = lexicalTextGate(normalizeEvidenceText(candidate.text), groups, expectation);
         if (gate.contradiction) contradictoryMatches.push(candidate.refs);
-        if (
-          gate.satisfied &&
-          (candidate.refs.length === 1 || lexicalExpectationCoverage(candidate.text, expectation ?? "") >= 0.65)
-        ) {
+        if (gate.satisfied) {
           positiveMatches.push(candidate.refs);
         }
       }
