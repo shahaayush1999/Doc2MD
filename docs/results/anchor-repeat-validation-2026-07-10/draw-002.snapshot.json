@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "kind": "doc2md_anchor_validation_draw_snapshot",
-  "capturedAt": "2026-07-10T13:06:31.651Z",
-  "sourceGitCommit": "d735d7dacc87c43fbb53b797cea11bd2c2cf217f",
-  "sourceWorktreeWasClean": false,
-  "sourceWorktreeStatus": "M package.json\n M src/captureValidationSnapshot.ts\n?? docs/results/anchor-repeat-validation-2026-07-10/draw-002.snapshot.json\n?? src/buildRepeatValidationReport.ts",
+  "capturedAt": "2026-07-10T13:08:02.746Z",
+  "sourceGitCommit": "60536d4413148368b66c6297568a64627b39ab95",
+  "sourceWorktreeWasClean": true,
+  "sourceWorktreeStatus": "",
   "benchmark": {
     "name": "Doc2MD",
     "suite": "official",

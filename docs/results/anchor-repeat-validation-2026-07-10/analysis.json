@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "doc2md_anchor_two_draw_validation_analysis",
-  "generatedAt": "2026-07-10T13:06:31.838Z",
+  "generatedAt": "2026-07-10T13:08:02.922Z",
   "sources": {
     "firstSnapshot": {
       "path": "docs/results/anchor-repeat-validation-2026-07-10/draw-001.snapshot.json",
@@ -9,12 +9,12 @@
     },
     "repeatSnapshot": {
       "path": "docs/results/anchor-repeat-validation-2026-07-10/draw-002.snapshot.json",
-      "sha256": "8975929e239d80456cbc3ad18fd1876333a4b439e67d71e8480d5fe92e254938"
+      "sha256": "54f45a1daa894fa66a23bb8f91647a676fbd79a0d4f28047a954755b9c393e15"
     },
     "firstCapturedAt": "2026-07-10T12:52:35.939Z",
-    "repeatCapturedAt": "2026-07-10T13:06:31.651Z",
+    "repeatCapturedAt": "2026-07-10T13:08:02.746Z",
     "firstSourceGitCommit": "86243c07d48122b2a53cdc6a87a021cea51ef5f5",
-    "repeatSourceGitCommit": "d735d7dacc87c43fbb53b797cea11bd2c2cf217f"
+    "repeatSourceGitCommit": "60536d4413148368b66c6297568a64627b39ab95"
   },
   "scope": {
     "modelIds": [
