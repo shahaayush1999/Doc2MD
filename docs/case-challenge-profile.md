@@ -12,7 +12,7 @@ This internal profile defines why each case belongs in the canonical five-case, 
 
 ## Construct coverage matrix
 
-`P` marks primary ownership and `S` marks meaningful supporting coverage. A dash means the case is not relied on for that construct. This matrix is a design/semantic audit; measured budget shares remain in `reports/corpus-audit.json`.
+`P` marks primary ownership and `S` marks meaningful supporting coverage. A dash means the case is not relied on for that construct.
 
 | Required construct | P12 | P15 | P17 | P21 | P23 |
 | --- | :---: | :---: | :---: | :---: | :---: |
@@ -41,8 +41,8 @@ This internal profile defines why each case belongs in the canonical five-case, 
 - 12,490 words recoverable from native text, concentrated deliberately rather than present on every page.
 - 200 scored regions, 1,205 atomic leaves, and 372 raw evidence-budget units.
 - Under the official equal-case score, effective modality shares are 47.20% native text, 29.90% raster, 12.60% mixed, 7.99% vector geometry, and 2.31% native-layer recovery.
-- Declared text-only-recoverable evidence is 46.77% by raw pooled budget and 47.20% under equal-case weighting. The stricter PDF text-layer audit recovers only 18.57% exactly, because declarations describe potential recoverability rather than proven complete extraction.
-- The canonical reference audit supports 1,205/1,205 leaves. Seventy-four qualitative leaves are semantic-only and remain a mandatory human-review stratum.
+- Declared text-only-recoverable evidence is 46.77% by raw pooled budget and 47.20% under equal-case weighting. A prior text-layer review recovered only 18.57% exactly, because declarations describe potential recoverability rather than proven complete extraction.
+- The canonical references support 1,205 scored leaves. Seventy-four qualitative leaves are semantic-only and require human judgment.
 
 ## Maintenance rules
 

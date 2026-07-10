@@ -52,73 +52,6 @@ def _generation_lock(temporary_root: Path):
             fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
-def _provider_capabilities() -> dict:
-    return {
-        "schemaVersion": 1,
-        "lastReviewed": "2026-07-10",
-        "notes": [
-            "This file records documented provider ingestion behavior for interpreting Doc2MD results. It is not a scoring file.",
-            "Official Doc2MD runs send native PDFs to the provider. Provider ingestion mode is reported as context, not used as a scoring gate.",
-        ],
-        "providers": {
-            "openai": {
-                "documents": {
-                    "pdf": {
-                        "supported": True,
-                        "ingestionMode": "text_plus_page_images",
-                        "officialDocs": ["https://developers.openai.com/api/docs/guides/file-inputs"],
-                        "note": "OpenAI documents that PDFs provide both extracted text and page images to vision-capable models.",
-                    },
-                    "txt": {"supported": True, "ingestionMode": "native_text"},
-                    "md": {"supported": True, "ingestionMode": "native_text"},
-                    "csv": {"supported": True, "ingestionMode": "native_text_or_spreadsheet"},
-                    "docx": {"supported": True, "ingestionMode": "document_parse"},
-                    "pptx": {"supported": True, "ingestionMode": "document_parse"},
-                    "xlsx": {"supported": True, "ingestionMode": "spreadsheet_parse"},
-                    "images": {"supported": True, "ingestionMode": "vision_image"},
-                }
-            },
-            "google-vertex": {
-                "documents": {
-                    "pdf": {
-                        "supported": True,
-                        "ingestionMode": "page_images",
-                        "officialDocs": [
-                            "https://ai.google.dev/gemini-api/docs/document-processing",
-                            "https://firebase.google.com/docs/ai-logic/input-file-requirements",
-                        ],
-                        "note": "Google documents PDF support for text, images, diagrams, charts, and tables. Firebase AI Logic states PDF pages are tokenized like images.",
-                    },
-                    "txt": {"supported": True, "ingestionMode": "native_text"},
-                    "md": {"supported": True, "ingestionMode": "native_text"},
-                    "csv": {"supported": False, "ingestionMode": "unknown"},
-                    "docx": {"supported": False, "ingestionMode": "unknown"},
-                    "pptx": {"supported": False, "ingestionMode": "unknown"},
-                    "xlsx": {"supported": False, "ingestionMode": "unknown"},
-                    "images": {"supported": True, "ingestionMode": "vision_image"},
-                }
-            },
-            "anthropic": {
-                "documents": {
-                    "pdf": {
-                        "supported": True,
-                        "ingestionMode": "text_plus_page_images",
-                        "officialDocs": ["https://platform.claude.com/docs/en/build-with-claude/pdf-support"],
-                        "note": "Anthropic documents visual PDF support as extracted text plus page images. Some hosted routes can fall back to text-only PDF handling.",
-                    },
-                    "txt": {"supported": True, "ingestionMode": "native_text"},
-                    "md": {"supported": True, "ingestionMode": "native_text"},
-                    "csv": {"supported": True, "ingestionMode": "native_text"},
-                    "docx": {"supported": False, "ingestionMode": "convert_before_upload"},
-                    "pptx": {"supported": False, "ingestionMode": "convert_before_upload"},
-                    "xlsx": {"supported": False, "ingestionMode": "convert_before_upload"},
-                    "images": {"supported": True, "ingestionMode": "vision_image"},
-                }
-            },
-        },
-    }
-
-
 def _write_json(path: Path, value: dict) -> None:
     path.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
@@ -174,7 +107,6 @@ def _generate_in_place(output_root: Path) -> dict:
         "cases": cases,
     }
     _write_json(output_root / "manifest.json", manifest)
-    _write_json(output_root / "provider-capabilities.json", _provider_capabilities())
     return manifest
 
 

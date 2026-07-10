@@ -22,10 +22,9 @@ The benchmark must measure whether a model can turn a real native PDF into one e
 
 - During normal iteration, run only the two anchors above.
 - Use exactly one stochastic sample per model/case.
-- Cache unchanged inference and never rerun it after scorer, report, or documentation-only changes.
 - Do not report fake SD, ranges, reliability, or excessive decimal precision from one draw.
 - Do not run GPT-5.4 Nano, GPT-5.4 Mini, Gemini 2.5, Gemini 3 Flash, premium models, or frontier sweeps during iteration.
-- Repeated runs require an explicitly approved final-validation checkpoint.
+- Use repeated runs only when intentionally checking variance.
 - Diagnose substantive omissions, misbindings, hallucinations, state loss, visual failures, and long-context failures; do not tune to a one- or two-point stochastic movement.
 
 ## Construct coverage
@@ -88,12 +87,11 @@ The official suite must test all of the following:
 6. Generate and render the entire corpus before paid calls.
 7. Inspect every page at readable scale.
 8. Audit every fact against the source and reference.
-9. Run deterministic preflight and scorer counterfactual tests.
-10. Run GPT-5 Nano once, then Gemini 3.1 Flash-Lite once.
-11. Inspect complete outputs and judgments, not just aggregate scores.
-12. Attribute the observed gap to specific cases and capabilities.
-13. Iterate only when evidence reveals a genuine construct, corpus, or scorer defect.
-14. Stop broadening when every retained case has a unique reason to exist.
+9. Run GPT-5 Nano once, then Gemini 3.1 Flash-Lite once.
+10. Inspect complete outputs and judgments, not just aggregate scores.
+11. Attribute the observed gap to specific cases and capabilities.
+12. Iterate only when evidence reveals a genuine construct, corpus, or scorer defect.
+13. Stop broadening when every retained case has a unique reason to exist.
 
 ## Release blockers
 
@@ -103,13 +101,10 @@ Do not call the benchmark ready if either anchor broadly saturates; Gemini is ne
 
 - Implemented consolidated benchmark.
 - Case disposition record and challenge/capability matrix.
-- Modality and text-extractability audit.
-- Source-to-gold/facts traceability.
-- Validated scoring contract and controlled counterfactual evidence.
-- One-sample default harness behavior.
+- Source PDFs, references, and atomic facts.
+- One-command model, evaluator, aggregation, and report flow.
 - Current one-run results for both anchors.
-- Per-case and per-capability failure analysis and a causal explanation of the gap.
-- Deterministic generation, validation, caching, and reporting.
-- Honest launch verdict and a recommendation on whether repeated final validation is warranted.
+- Per-case failure analysis and a causal explanation of the gap.
+- Honest interpretation of one-draw uncertainty.
 
 The objective is not to make GPT-5 Nano score low. A weak model should score low because it genuinely omits, misbinds, hallucinates, truncates, loses state, or fails visual and long-context reconstruction. A good model should score substantially higher because it solves more of those real problems. Neither should saturate.

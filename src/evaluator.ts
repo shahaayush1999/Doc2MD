@@ -1,25 +1,9 @@
-import { access, readFile } from "node:fs/promises";
-import { createRequire } from "node:module";
-import path from "node:path";
+import { readFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
-import { fileURLToPath } from "node:url";
 import { generateObject, NoObjectGeneratedError } from "ai";
 import { googleVertex } from "@ai-sdk/google-vertex";
 import { z } from "zod";
-import { aggregationContractFingerprint } from "./aggregation.js";
-import { hashObject, sha256, sha256Bytes } from "./cache.js";
-import { runJobsInParallel } from "./concurrency.js";
-import { loadBenchmarkManifest } from "./manifest.js";
-import {
-  buildRunCacheExpectation,
-  buildRunContext,
-  models,
-  readCurrentCachedRun,
-  runCacheKey,
-  samplesPerModelCase,
-  type RunCacheExpectation,
-} from "./run.js";
-import { acquireSampleLock, atomicWriteJson, calculateTokenCostUsd } from "./runRuntime.js";
+import { calculateCost } from "./pricing.js";
 
 export type ManifestCase = {
   id: string;
@@ -212,36 +196,10 @@ const evaluator = {
   outputPerMillion: 1.5,
 } as const;
 
-const evaluatorScoringConfig = {
-  id: evaluator.id,
-  modelName: evaluator.modelName,
-  provider: evaluator.provider,
-  reasoning: evaluator.reasoning,
-} as const;
-
-export const scoringContractVersion = "atomic-region-candidate-grounded-v9";
-const judgeProtocolVersion = "audited-obligations-candidate-lines-v7";
-const semanticValidatorVersion = "typed-evidence-policy-resolver-v8";
 const judgeMaxOutputTokens = 32_000;
 const judgeMaxAttempts = 2;
 const judgeTransportMaxRetries = 2;
 const judgeSampling = { temperature: 0, seed: 731_2026 } as const;
-const require = createRequire(import.meta.url);
-const judgeSdkVersions = {
-  ai: (require("ai/package.json") as { version: string }).version,
-  providerPackage: "@ai-sdk/google-vertex",
-  providerPackageVersion: (require("@ai-sdk/google-vertex/package.json") as { version: string }).version,
-} as const;
-const judgeTransportConfig = {
-  epoch: "google-vertex-ai-sdk-candidate-grounded-object-v2",
-  providerFactory: "@ai-sdk/google-vertex:googleVertex",
-  structuredOutput: "generateObject/zod",
-  maxRetries: judgeTransportMaxRetries,
-  maxOutputTokens: judgeMaxOutputTokens,
-  reasoning: evaluator.reasoning,
-  sampling: judgeSampling,
-  sdkVersions: judgeSdkVersions,
-} as const;
 
 export const leafStatusCredit = {
   correct: 1,
@@ -1867,82 +1825,6 @@ export function scoreAtomicRegions(facts: FactFile, unvalidatedJudge: unknown, p
   };
 }
 
-export type NormalizedRunOutcome = { kind: "success" | "model_failure" };
-
-/** Normalize only the run state that changes scoring; volatile error text is excluded. */
-export function normalizeRunOutcome(value: unknown): NormalizedRunOutcome {
-  const result = value && typeof value === "object" ? (value as { error?: unknown; finishReason?: unknown }) : {};
-  return { kind: result.error || result.finishReason === "error" ? "model_failure" : "success" };
-}
-
-export function derivedScoreCacheKey(input: {
-  caseId: string;
-  judgeKey: string;
-  factsHash: string;
-  runOutcome: NormalizedRunOutcome;
-}): string {
-  return hashObject({ ...input, scoringContractFingerprint });
-}
-
-/**
- * A cached derived score is never authoritative. Only a valid prior evaluator
- * judgment may be reused, and its atomic score is rebuilt under current code.
- */
-type JudgeCacheIdentity = {
-  judgeKey: string;
-  predictionHash: string;
-  pdfHash: string;
-  goldHash: string;
-  factsHash: string;
-  renderedPromptHash: string;
-  judgeContractFingerprint: string;
-};
-
-export function recomputeCachedJudgment(
-  facts: FactFile,
-  cachedScore: unknown,
-  expectedIdentity: string | JudgeCacheIdentity,
-  prediction: string,
-) {
-  const cached = cachedScore && typeof cachedScore === "object" ? (cachedScore as any) : null;
-  const expectedJudgeKey = typeof expectedIdentity === "string" ? expectedIdentity : expectedIdentity.judgeKey;
-  const cachedIdentity = cached?.scorer?.cache;
-  const exactJudgeIdentity = cachedIdentity?.judgeKey === expectedJudgeKey;
-  const implementationOnlyReplay =
-    typeof expectedIdentity !== "string" &&
-    cached?.scoringContractVersion === scoringContractVersion &&
-    cached?.scorer?.evaluatorModelId === evaluator.id &&
-    cached?.scorer?.evaluatorModelName === evaluator.modelName &&
-    cached?.scorer?.evaluatorReasoning === evaluator.reasoning &&
-    cachedIdentity?.predictionHash === expectedIdentity.predictionHash &&
-    cachedIdentity?.pdfHash === expectedIdentity.pdfHash &&
-    cachedIdentity?.goldHash === expectedIdentity.goldHash &&
-    cachedIdentity?.factsHash === expectedIdentity.factsHash &&
-    cachedIdentity?.renderedPromptHash === expectedIdentity.renderedPromptHash;
-  if (
-    cached?.valid !== true ||
-    cached?.scorer?.status !== "valid" ||
-    (!exactJudgeIdentity && !implementationOnlyReplay) ||
-    !cached?.judgeResult
-  ) {
-    return null;
-  }
-  try {
-    const judgeResult = validateJudgeResult(facts, cached.judgeResult, prediction);
-    return { judgeResult, atomicScore: scoreAtomicRegions(facts, judgeResult, prediction) };
-  } catch {
-    return null;
-  }
-}
-
-function missingJudgeResult(facts: FactFile): JudgeResult {
-  return {
-    leafResults: expectedLeaves(facts).map((leaf) => ({ id: leaf.id, status: "missing", candidateLineRefs: [], note: "The model call failed." })),
-    unsupportedClaims: [],
-    rationale: "The model call failed before producing a candidate reconstruction.",
-  };
-}
-
 export function judgeRegionsForPrompt(facts: FactFile) {
   return facts.regions.map((region) => ({
     id: region.id,
@@ -1981,102 +1863,6 @@ ${numberedCandidate(prediction)}
 CANDIDATE`;
 }
 
-function judgePrompt(testCase: ManifestCase, facts: FactFile, prediction: string, repairNote?: string): string {
-  return `${judgeContextPrompt(testCase, facts, repairNote)}\n\n${candidatePrompt(prediction)}`;
-}
-
-const judgeContractFingerprint = hashObject({
-  evaluator: evaluatorScoringConfig,
-  judgeProtocolVersion,
-  semanticValidatorVersion,
-  judgeMaxOutputTokens,
-  judgeMaxAttempts,
-  judgeTransportConfig,
-  judgeInstructions,
-  judgeSchema: judgeSchema.toJSONSchema(),
-  promptBuilderHash: sha256(judgePrompt.toString()),
-  contextPromptBuilderHash: sha256(judgeContextPrompt.toString()),
-  candidatePromptBuilderHash: sha256(candidatePrompt.toString()),
-  candidateLinesHash: sha256(candidateLines.toString()),
-  candidateNumberingHash: sha256(numberedCandidate.toString()),
-  evidenceNormalizationHash: sha256(normalizeEvidenceText.toString()),
-  phraseMatchingHash: sha256(
-    [
-      phraseIndex,
-      matchingAlternative,
-      containsAllGroups,
-      equalAlternative,
-      occurrenceIsNegated,
-      alternativeMatchState,
-      lexicalSemanticNegative,
-      lexicalTextGate,
-      compactLexicalCover,
-      lexicalExpectationToken,
-      lexicalExpectationTokens,
-      lexicalExpectationCoverage,
-      lexicalScalarValuesAreBound,
-      judgeConfirmedLexicalCitationRecovery,
-      lexicalEvidenceResolution,
-    ]
-      .map(String)
-      .join("\n"),
-  ),
-  markdownTableEvidenceHash: sha256(
-    [splitPipeCells, isMarkdownDelimiter, parseMarkdownTables, splitPlainColumns, rowKeyMatches].map(String).join("\n"),
-  ),
-  htmlTableEvidenceHash: sha256([decodeHtmlText, lineRefsForSpan, parseHtmlTables].map(String).join("\n")),
-  tableBindingGateHash: sha256(tableBindingGate.toString()),
-  formStateGateHash: sha256(
-    [
-      normalizeFormText,
-      allAlternativeLocations,
-      allAlternativeMatches,
-      explicitStatesForLabel,
-      explicitStatesInFormText,
-      formEvidenceSegments,
-      formStateGate,
-    ]
-      .map(String)
-      .join("\n"),
-  ),
-  directedEdgeGateHash: sha256(directedEdgeGate.toString()),
-  orderedTokensGateHash: sha256([normalizedDocument, orderedTokensGate].map(String).join("\n")),
-  evidencePolicyGateHash: sha256([evaluateEvidencePolicy, resolveEvidencePolicy].map(String).join("\n")),
-  unsupportedClosedWorldGateHash: sha256(
-    [
-      identifierFamily,
-      resolveNovelClosedWorldKey,
-      closedWorldTableColumnGroups,
-      tableHeaderMatchCount,
-      novelClosedWorldTableRows,
-      discoverStructuredClosedWorldClaims,
-    ]
-      .map(String)
-      .join("\n"),
-  ),
-  promptRegionProjectionHash: sha256(judgeRegionsForPrompt.toString()),
-  semanticValidatorHash: sha256(validateJudgeResult.toString()),
-  conciseErrorHash: sha256(conciseError.toString()),
-  retryableJudgeErrorHash: sha256(retryableJudgeError.toString()),
-  combineUsageHash: sha256(combineUsage.toString()),
-  judgeTransportImplementationHash: sha256(judgeWithGemini.toString()),
-});
-
-export const scoringContractFingerprint = hashObject({
-  scoringContractVersion,
-  aggregationContractFingerprint,
-  judgeContractFingerprint,
-  factsSchema: factFileSchema.toJSONSchema(),
-  leafStatusCredit,
-  unsupportedCredit,
-  scoreAtomicRegionsHash: sha256(scoreAtomicRegions.toString()),
-  unsupportedHarmForRegionHash: sha256(unsupportedHarmForRegion.toString()),
-  clamp01Hash: sha256(clamp01.toString()),
-  normalizeRunOutcomeHash: sha256(normalizeRunOutcome.toString()),
-  derivedScoreCacheKeyHash: sha256(derivedScoreCacheKey.toString()),
-  recomputeCachedJudgmentHash: sha256(recomputeCachedJudgment.toString()),
-});
-
 export function evaluatorPriceReport(usage: any) {
   return {
     version: evaluator.pricingVersion,
@@ -2084,7 +1870,7 @@ export function evaluatorPriceReport(usage: any) {
     inputPerMillion: evaluator.inputPerMillion,
     cachedInputPerMillion: evaluator.cachedInputPerMillion,
     outputPerMillion: evaluator.outputPerMillion,
-    estimatedCostUsd: calculateTokenCostUsd(evaluator, usage),
+    estimatedCostUsd: calculateCost(evaluator, usage),
   };
 }
 
@@ -2190,339 +1976,40 @@ export async function judgeWithGemini(testCase: ManifestCase, facts: FactFile, p
   throw new Error("Unreachable evaluator retry state.");
 }
 
-async function exists(filePath: string) {
-  try {
-    await access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function readJsonIfExists(filePath: string) {
-  if (!(await exists(filePath))) return null;
-  try {
-    return JSON.parse(await readFile(filePath, "utf-8")) as any;
-  } catch {
-    return null;
-  }
-}
-
-export async function scoringCacheKey(testCase: ManifestCase, predictionPath: string, currentResult?: unknown) {
-  if (!testCase.facts) throw new BenchmarkContractError(`Case ${testCase.id} has no facts path.`);
-  const [prediction, gold, factsText, pdf, siblingResult] = await Promise.all([
-    readFile(predictionPath, "utf-8"),
-    readFile(testCase.gold, "utf-8"),
-    readFile(testCase.facts, "utf-8"),
-    readFile(testCase.pdf),
-    currentResult === undefined ? readJsonIfExists(path.join(path.dirname(predictionPath), "result.json")) : Promise.resolve(currentResult),
-  ]);
-  if (siblingResult === null || siblingResult === undefined) {
-    throw new BenchmarkContractError(`Cannot derive a score cache key without the current result for ${testCase.id}.`);
-  }
-  const facts = parseFactFile(JSON.parse(factsText), { caseId: testCase.id, pages: testCase.pages });
-  return scoringCacheKeyFromSnapshot(testCase, { prediction, gold, factsText, facts, pdf }, siblingResult);
-}
-
-export function scoringCacheKeyFromSnapshot(
-  testCase: ManifestCase,
-  snapshot: { prediction: string; gold: string; factsText: string; facts: FactFile; pdf: Buffer },
-  currentResult: unknown,
-) {
-  const { prediction, gold, factsText, facts, pdf } = snapshot;
-  const predictionHash = sha256(prediction);
-  const pdfHash = sha256Bytes(pdf);
-  const goldHash = sha256(gold);
-  const factsHash = sha256(factsText);
-  const renderedPromptHash = sha256(judgePrompt(testCase, facts, prediction));
-  const runOutcome = normalizeRunOutcome(currentResult);
-  const judgeKey = hashObject({
+export async function evaluatePrediction(testCase: ManifestCase, prediction: string) {
+  if (!testCase.facts) throw new Error(`${testCase.id} has no facts file.`);
+  const facts = parseFactFile(JSON.parse(await readFile(testCase.facts, "utf8")), {
     caseId: testCase.id,
-    predictionHash,
-    pdfHash,
-    goldHash,
-    renderedPromptHash,
-    judgeContractFingerprint,
+    pages: testCase.pages,
   });
+  const judged = await judgeWithGemini(testCase, facts, prediction);
+  if (!judged.ok) {
+    return {
+      valid: false,
+      score: null,
+      evaluator: {
+        model: evaluator.modelName,
+        attempts: judged.attempts,
+        errors: judged.errors,
+        elapsedMs: judged.elapsedMs,
+        usage: judged.usage,
+        costUsd: judged.estimatedCostUsd,
+      },
+    };
+  }
+  const atomicScore = scoreAtomicRegions(facts, judged.result, prediction);
   return {
-    scoreKey: derivedScoreCacheKey({ caseId: testCase.id, judgeKey, factsHash, runOutcome }),
-    judgeKey,
-    runOutcome,
-    predictionHash,
-    pdfHash,
-    goldHash,
-    factsHash,
-    renderedPromptHash,
-    judgeContractFingerprint,
-    scoringContractFingerprint,
-  };
-}
-
-async function scoreCase(
-  modelId: string,
-  testCase: ManifestCase,
-  options: {
-    suite?: string;
-    manifestPath?: string;
-    inputProtocol?: string;
-    sample: string;
-    expectedRun: RunCacheExpectation;
-    predictionPath: string;
-    resultPath: string;
-    scorePath: string;
-  },
-) {
-  if (!testCase.facts) throw new BenchmarkContractError(`Case ${testCase.id} has no facts path.`);
-  const runLock = await acquireSampleLock(path.join(path.dirname(options.scorePath), ".run.lock"));
-  try {
-  const scoreLock = await acquireSampleLock(path.join(path.dirname(options.scorePath), ".score.lock"));
-  try {
-  const result = await readCurrentCachedRun(options.resultPath, options.predictionPath, options.expectedRun);
-  if (!result) {
-    throw new BenchmarkContractError(`Run artifact changed or became invalid before scoring ${modelId} ${testCase.id}#${options.sample}.`);
-  }
-  const [factsText, gold, rawPrediction, pdf] = await Promise.all([
-    readFile(testCase.facts, "utf-8"),
-    readFile(testCase.gold, "utf-8"),
-    readFile(options.predictionPath, "utf-8"),
-    readFile(testCase.pdf),
-  ]);
-  const facts = parseFactFile(JSON.parse(factsText), { caseId: testCase.id, pages: testCase.pages });
-  const scoreCache = scoringCacheKeyFromSnapshot(
-    testCase,
-    { prediction: rawPrediction, gold, factsText, facts, pdf },
-    result,
-  );
-  if (scoreCache.pdfHash !== options.expectedRun.pdfHash || scoreCache.predictionHash !== result.cache.predictionHash) {
-    throw new BenchmarkContractError(`Scoring snapshot changed before evaluator submission for ${modelId} ${testCase.id}#${options.sample}.`);
-  }
-
-  const previous = await readJsonIfExists(options.scorePath);
-  const modelCallFailed = scoreCache.runOutcome.kind === "model_failure";
-  let judgeResult: JudgeResult | null = null;
-  let cachedAtomicScore: ReturnType<typeof scoreAtomicRegions> | null = null;
-  let evaluatorStatus: "valid" | "failed" | "not_run_model_failure";
-  let evaluatorAttempts = 0;
-  let evaluatorErrors: string[] = [];
-  let evaluatorElapsedMs = 0;
-  let evaluatorUsage: any = null;
-  let evaluatorCostUsd = 0;
-  let evaluatorResolved: any = null;
-  let judgeReused = false;
-
-  const reusableJudgment = modelCallFailed ? null : recomputeCachedJudgment(facts, previous, scoreCache, rawPrediction);
-
-  if (modelCallFailed) {
-    judgeResult = missingJudgeResult(facts);
-    evaluatorStatus = "not_run_model_failure";
-  } else if (reusableJudgment) {
-    judgeResult = reusableJudgment.judgeResult;
-    cachedAtomicScore = reusableJudgment.atomicScore;
-    evaluatorStatus = "valid";
-    evaluatorAttempts = previous.scorer?.attempts ?? 0;
-    evaluatorErrors = Array.isArray(previous.scorer?.errors) ? previous.scorer.errors : [];
-    evaluatorElapsedMs = previous.scorer?.elapsedMs ?? 0;
-    evaluatorUsage = previous.scorer?.usage ?? null;
-    evaluatorCostUsd = evaluatorPriceReport(evaluatorUsage).estimatedCostUsd;
-    evaluatorResolved = previous.scorer?.resolved ?? null;
-    judgeReused = true;
-  } else {
-    const judged = await judgeWithGemini(testCase, facts, rawPrediction);
-    evaluatorAttempts = judged.attempts;
-    evaluatorErrors = judged.errors;
-    evaluatorElapsedMs = judged.elapsedMs;
-    evaluatorUsage = judged.usage;
-    evaluatorCostUsd = judged.estimatedCostUsd;
-    evaluatorResolved = judged.resolved;
-    if (judged.ok) {
-      judgeResult = judged.result;
-      evaluatorStatus = "valid";
-    } else {
-      evaluatorStatus = "failed";
-    }
-  }
-
-  const valid = evaluatorStatus !== "failed";
-  const atomicScore = cachedAtomicScore ?? (judgeResult ? scoreAtomicRegions(facts, judgeResult, rawPrediction) : null);
-  const score = modelCallFailed ? 0 : atomicScore?.score ?? null;
-  const scorer = {
-    type: "atomic-region-candidate-grounded-judge",
-    status: evaluatorStatus,
-    evaluatorModelId: evaluator.id,
-    evaluatorModelName: evaluator.modelName,
-    evaluatorReasoning: evaluator.reasoning,
-    attempts: evaluatorAttempts,
-    errors: evaluatorErrors,
-    elapsedMs: evaluatorElapsedMs,
-    usage: evaluatorUsage,
-    estimatedCostUsd: evaluatorCostUsd,
-    pricing: evaluatorPriceReport(evaluatorUsage),
-    resolved: evaluatorResolved,
-    judgeReused,
-    cache: scoreCache,
-  };
-  const scored = {
-    caseId: testCase.id,
-    title: testCase.title,
-    family: testCase.family,
-    tags: testCase.tags,
-    modelId,
-    suite: options.suite ?? "official",
-    manifestPath: options.manifestPath ?? "benchmark/manifest.json",
-    inputProtocol: options.inputProtocol ?? "native_pdf",
-    sample: options.sample,
-    runCache: result.cache ?? null,
-    scoringContractVersion,
-    scoringContractFingerprint,
-    valid,
-    score,
-    modelCallFailed,
-    evaluatorFailure: evaluatorStatus === "failed",
-    scorer,
+    valid: true,
+    score: atomicScore.score,
+    evaluator: {
+      model: evaluator.modelName,
+      attempts: judged.attempts,
+      errors: judged.errors,
+      elapsedMs: judged.elapsedMs,
+      usage: judged.usage,
+      costUsd: judged.estimatedCostUsd,
+    },
     atomicScore,
-    judgeResult,
-    rationale: judgeResult?.rationale ?? "Evaluator failed; this sample is invalid and has no score.",
-    estimatedCostUsd: result.estimatedCostUsd ?? 0,
-    elapsedMs: result.elapsedMs ?? 0,
-    usage: result.usage ?? null,
-    outputLength: result.outputLength ?? rawPrediction.length,
-    finishReason: result.finishReason ?? "unknown",
-    error: result.error,
+    judgeResult: judged.result,
   };
-
-  await atomicWriteJson(options.scorePath, scored);
-  return scored;
-  } finally {
-    await scoreLock.release();
-  }
-  } finally {
-    await runLock.release();
-  }
-}
-
-async function currentTargets(
-  modelId: string,
-  testCase: ManifestCase,
-  spec: (typeof models)[string],
-  context: Awaited<ReturnType<typeof buildRunContext>>,
-  sampleIds: string[],
-) {
-  const runDir = path.join("runs", modelId, testCase.id, "samples");
-  const targets: Array<{ sample: string; predictionPath: string; resultPath: string; scorePath: string; expectedRun: RunCacheExpectation }> = [];
-  for (const sample of sampleIds) {
-    const sampleDir = path.join(runDir, sample);
-    const predictionPath = path.join(sampleDir, "prediction.md");
-    const resultPath = path.join(sampleDir, "result.json");
-    const activeRun = await runCacheKey(testCase, spec, context, sample);
-    const expectedRun = buildRunCacheExpectation(testCase, spec, context, sample, activeRun);
-    const current = await readCurrentCachedRun(resultPath, predictionPath, expectedRun);
-    if (!current) continue;
-    targets.push({ sample, predictionPath, resultPath, scorePath: path.join(sampleDir, "score.json"), expectedRun });
-  }
-  return targets;
-}
-
-async function validateManifestFacts(cases: ManifestCase[]) {
-  await Promise.all(
-    cases.map(async (testCase) => {
-      if (!testCase.facts) throw new BenchmarkContractError(`Case ${testCase.id} has no facts path.`);
-      const rawFacts = JSON.parse(await readFile(testCase.facts, "utf-8"));
-      parseFactFile(rawFacts, { caseId: testCase.id, pages: testCase.pages });
-    }),
-  );
-}
-
-export async function scoreModel(
-  modelId: string,
-  options: { caseId?: string; manifestPath?: string; skipPreflight?: boolean; sampleIds?: string[] } = {},
-) {
-  const manifestPath = options.manifestPath ?? "benchmark/manifest.json";
-  if (!options.skipPreflight) {
-    const { preflightBenchmark } = await import("./preflight.js");
-    await preflightBenchmark(manifestPath);
-  }
-  const manifest = (await loadBenchmarkManifest(manifestPath)).manifest as Manifest;
-  const spec = models[modelId];
-  if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
-  const selectedCases = options.caseId ? manifest.cases.filter((testCase) => testCase.id === options.caseId) : manifest.cases;
-  if (selectedCases.length === 0) {
-    throw new Error(`No selected cases. Use one of: ${manifest.cases.map((testCase) => testCase.id).join(", ")}`);
-  }
-  await validateManifestFacts(selectedCases);
-  const context = await buildRunContext(spec, manifest as any, manifestPath);
-  const selectedSampleIds =
-    options.sampleIds ?? Array.from({ length: samplesPerModelCase }, (_, index) => String(index + 1).padStart(3, "0"));
-  if (
-    selectedSampleIds.length === 0 ||
-    new Set(selectedSampleIds).size !== selectedSampleIds.length ||
-    selectedSampleIds.some((sample) => !/^\d{3}$/.test(sample))
-  ) {
-    throw new Error("Selected score sample ids must be a non-empty, unique list of three-digit slots.");
-  }
-
-  const targets = (
-    await Promise.all(
-      selectedCases.map(async (testCase) => {
-        const sampleTargets = await currentTargets(modelId, testCase, spec, context, selectedSampleIds);
-        return sampleTargets.map((target) => ({ testCase, target }));
-      }),
-    )
-  ).flat();
-  if (targets.length === 0) throw new Error(`No current run outputs found for ${modelId}`);
-
-  const jobs = targets.map(({ testCase, target }) => () =>
-    scoreCase(modelId, testCase, {
-        suite: manifest.suite ?? "official",
-        manifestPath,
-        inputProtocol: manifest.inputProtocol ?? "native_pdf",
-        ...target,
-      }),
-  );
-  const scores = await runJobsInParallel(jobs);
-  for (const scored of scores) {
-    const display = scored.score === null ? "INVALID" : scored.score.toFixed(1);
-    console.log(
-      `${modelId} ${scored.caseId}${scored.sample ? `#${scored.sample}` : ""}: ${display} ` +
-        `(evaluator ${scored.scorer.status}, judge $${scored.scorer.estimatedCostUsd.toFixed(6)})`,
-    );
-  }
-  return scores;
-}
-
-function parseCli(argv: string[]) {
-  let positionalModel: string | undefined;
-  let model: string | undefined;
-  let manifestPath: string | undefined;
-  let sawOption = false;
-  const seen = new Set<string>();
-  for (let index = 0; index < argv.length; index += 1) {
-    const argument = argv[index]!;
-    if (!argument.startsWith("--")) {
-      if (sawOption || positionalModel) throw new Error(`Unexpected positional argument ${argument}.`);
-      positionalModel = argument;
-      continue;
-    }
-    sawOption = true;
-    const key = argument.slice(2);
-    if (key !== "model" && key !== "manifest") throw new Error(`Unknown option --${key}.`);
-    if (seen.has(key)) throw new Error(`Duplicate option --${key}.`);
-    seen.add(key);
-    const value = argv[index + 1];
-    if (!value || value.startsWith("--")) throw new Error(`--${key} requires a value.`);
-    if (key === "model") model = value;
-    else manifestPath = value;
-    index += 1;
-  }
-  if (positionalModel && model) throw new Error("Do not specify the model both positionally and with --model.");
-  return { modelId: positionalModel ?? model ?? "vertex-gemini-3.1-flash-lite", manifestPath };
-}
-
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const cli = parseCli(process.argv.slice(2));
-  const keepAlive = setInterval(() => undefined, 1_000);
-  try {
-    await scoreModel(cli.modelId, { manifestPath: cli.manifestPath });
-  } finally {
-    clearInterval(keepAlive);
-  }
 }
