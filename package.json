@@ -5,13 +5,19 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "generate": "/Users/aayush/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 scripts/generate_benchmark.py",
+    "generate": "uv run python scripts/generate_benchmark.py",
+    "validate": "uv run python scripts/validate_benchmark.py --benchmark benchmark --json",
+    "render": "uv run python scripts/validate_benchmark.py --benchmark benchmark --render tmp/pdfs/benchmark --json",
+    "preflight": "node --import tsx src/preflight.ts",
     "bench": "node --env-file=.env.local --import tsx src/bench.ts",
     "run": "node --env-file=.env.local --import tsx src/run.ts",
     "score": "node --env-file=.env.local --import tsx src/score.ts",
-    "summary": "tsx src/summary.ts",
-    "report": "tsx src/report.ts",
-    "typecheck": "tsc --noEmit"
+    "audit:scorer": "node --env-file=.env.local --import tsx src/auditScorer.ts",
+    "summary": "node --env-file=.env.local --import tsx src/summary.ts",
+    "report": "node --env-file=.env.local --import tsx src/report.ts",
+    "test": "node --import tsx --test src/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm test && npm run preflight"
   },
   "repository": {
     "type": "git",

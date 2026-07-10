@@ -1,145 +1,3309 @@
 {
+  "schemaVersion": 2,
   "id": "P12-pfas-method-validation",
-  "title": "Regulatory PFAS Method Validation Supplement",
-  "family": "scientific-regulatory",
+  "title": "PFAS Method Validation Supplement",
+  "family": "environmental analytical laboratory",
   "tags": [
-    "multi-page",
+    "native-pdf",
     "scientific",
-    "regulatory",
-    "tables",
-    "continuation",
     "equations",
-    "chromatograms",
-    "qc"
+    "nested-table",
+    "continuation",
+    "scan",
+    "chromatograms"
   ],
-  "facts": [
+  "regions": [
     {
-      "id": "p12.method",
-      "category": "text",
-      "weight": 5,
-      "expectation": "Method metadata preserves lab, method basis EPA 533 modified, SCIEX 6500+ QTRAP, column, injection, mobile phases, and study dates.",
-      "guidance": "",
-      "severity": "major"
+      "id": "p01.method",
+      "page": 1,
+      "label": "Method record",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p01.method.schema",
+          "expectation": "The region preserves the source field schema in order: Field, Recorded value.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.method.row-order",
+          "expectation": "The source row order is recoverable as: Instrument -> Column -> Injection -> Mobile phase A -> Mobile phase B -> Study dates.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.method.instrument.recorded-value",
+          "expectation": "For Instrument, Recorded value is SCIEX 6500+ QTRAP; ESI negative.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.method.column.recorded-value",
+          "expectation": "For Column, Recorded value is Acquity BEH C18, 2.1 x 50 mm, 1.7 um.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.method.injection.recorded-value",
+          "expectation": "For Injection, Recorded value is 5 uL.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.method.mobile-phase-a.recorded-value",
+          "expectation": "For Mobile phase A, Recorded value is 5 mM ammonium acetate in water.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.method.mobile-phase-b.recorded-value",
+          "expectation": "For Mobile phase B, Recorded value is Methanol.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.method.study-dates.recorded-value",
+          "expectation": "For Study dates, Recorded value is 8-19 April 2024.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.manifest",
-      "category": "table_cell",
-      "weight": 7,
-      "expectation": "Manifest preserves sample IDs, matrix, collected/received times, pH, chlorine, volume, and condition for all eight rows.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p01.workflow",
+      "page": 1,
+      "label": "Analytical workflow",
+      "kind": "diagram",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p01.workflow.01",
+          "expectation": "Workflow step 1 is Receipt.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.workflow.02",
+          "expectation": "Workflow step 2 is Preservation.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.workflow.03",
+          "expectation": "Workflow step 3 is SPE extraction.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.workflow.04",
+          "expectation": "Workflow step 4 is Dry-down.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.workflow.05",
+          "expectation": "Workflow step 5 is Reconstitution.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.workflow.06",
+          "expectation": "Workflow step 6 is LC-MS/MS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.workflow.07",
+          "expectation": "Workflow step 7 is Review.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.equations",
-      "category": "formula",
-      "weight": 6,
-      "expectation": "All four equations are preserved: R, C_sample, LOD, and U95 with k=2.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p01.manifest",
+      "page": 1,
+      "label": "Bottle and QC manifest",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p01.manifest.schema",
+          "expectation": "The region preserves the source field schema in order: Sample ID, Matrix, Collected, Received, pH, Cl mg/L, mL, State.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.manifest.row-order",
+          "expectation": "The source row order is recoverable as: FB-240408-01 -> DW-240408-02 -> DW-240408-03 -> DW-240409-04 -> DW-240409-05 -> LRB-240410-01 -> LCS-240410-01 -> MSD-240410-03.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.manifest.fb-240408-01.matrix",
+          "expectation": "For FB-240408-01, Matrix is Field blank.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.fb-240408-01.collected",
+          "expectation": "For FB-240408-01, Collected is 08 Apr 09:10.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.fb-240408-01.received",
+          "expectation": "For FB-240408-01, Received is 08 Apr 15:42.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.fb-240408-01.ph",
+          "expectation": "For FB-240408-01, pH is 6.8.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.fb-240408-01.cl-mg-l",
+          "expectation": "For FB-240408-01, Cl mg/L is <0.02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.fb-240408-01.ml",
+          "expectation": "For FB-240408-01, mL is 252.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.fb-240408-01.state",
+          "expectation": "For FB-240408-01, State is OK.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-02.matrix",
+          "expectation": "For DW-240408-02, Matrix is Finished water.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-02.collected",
+          "expectation": "For DW-240408-02, Collected is 08 Apr 09:25.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-02.received",
+          "expectation": "For DW-240408-02, Received is 08 Apr 15:42.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-02.ph",
+          "expectation": "For DW-240408-02, pH is 7.2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-02.cl-mg-l",
+          "expectation": "For DW-240408-02, Cl mg/L is <0.02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-02.ml",
+          "expectation": "For DW-240408-02, mL is 251.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-02.state",
+          "expectation": "For DW-240408-02, State is OK.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-03.matrix",
+          "expectation": "For DW-240408-03, Matrix is Finished water.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-03.collected",
+          "expectation": "For DW-240408-03, Collected is 08 Apr 09:40.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-03.received",
+          "expectation": "For DW-240408-03, Received is 08 Apr 15:42.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-03.ph",
+          "expectation": "For DW-240408-03, pH is 7.1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-03.cl-mg-l",
+          "expectation": "For DW-240408-03, Cl mg/L is <0.02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-03.ml",
+          "expectation": "For DW-240408-03, mL is 249.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240408-03.state",
+          "expectation": "For DW-240408-03, State is OK.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-04.matrix",
+          "expectation": "For DW-240409-04, Matrix is Finished water.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-04.collected",
+          "expectation": "For DW-240409-04, Collected is 09 Apr 10:05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-04.received",
+          "expectation": "For DW-240409-04, Received is 09 Apr 16:20.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-04.ph",
+          "expectation": "For DW-240409-04, pH is 7.4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-04.cl-mg-l",
+          "expectation": "For DW-240409-04, Cl mg/L is <0.02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-04.ml",
+          "expectation": "For DW-240409-04, mL is 250.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-04.state",
+          "expectation": "For DW-240409-04, State is OK.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-05.matrix",
+          "expectation": "For DW-240409-05, Matrix is Finished water.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-05.collected",
+          "expectation": "For DW-240409-05, Collected is 09 Apr 10:20.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-05.received",
+          "expectation": "For DW-240409-05, Received is 09 Apr 16:20.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-05.ph",
+          "expectation": "For DW-240409-05, pH is 7.3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-05.cl-mg-l",
+          "expectation": "For DW-240409-05, Cl mg/L is <0.02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-05.ml",
+          "expectation": "For DW-240409-05, mL is 250.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.dw-240409-05.state",
+          "expectation": "For DW-240409-05, State is OK.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lrb-240410-01.matrix",
+          "expectation": "For LRB-240410-01, Matrix is Reagent blank.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lrb-240410-01.collected",
+          "expectation": "For LRB-240410-01, Collected is 10 Apr 07:30.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lrb-240410-01.received",
+          "expectation": "For LRB-240410-01, Received is 10 Apr 07:30.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lrb-240410-01.ph",
+          "expectation": "For LRB-240410-01, pH is 6.9.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lrb-240410-01.cl-mg-l",
+          "expectation": "For LRB-240410-01, Cl mg/L is <0.02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lrb-240410-01.ml",
+          "expectation": "For LRB-240410-01, mL is 250.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lrb-240410-01.state",
+          "expectation": "For LRB-240410-01, State is Prepared.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lcs-240410-01.matrix",
+          "expectation": "For LCS-240410-01, Matrix is Control sample.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lcs-240410-01.collected",
+          "expectation": "For LCS-240410-01, Collected is 10 Apr 07:35.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lcs-240410-01.received",
+          "expectation": "For LCS-240410-01, Received is 10 Apr 07:35.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lcs-240410-01.ph",
+          "expectation": "For LCS-240410-01, pH is 7.0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lcs-240410-01.cl-mg-l",
+          "expectation": "For LCS-240410-01, Cl mg/L is <0.02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lcs-240410-01.ml",
+          "expectation": "For LCS-240410-01, mL is 250.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.lcs-240410-01.state",
+          "expectation": "For LCS-240410-01, State is Prepared.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.msd-240410-03.matrix",
+          "expectation": "For MSD-240410-03, Matrix is Matrix spike dup..",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.msd-240410-03.collected",
+          "expectation": "For MSD-240410-03, Collected is 10 Apr 07:40.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.msd-240410-03.received",
+          "expectation": "For MSD-240410-03, Received is 10 Apr 07:40.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.msd-240410-03.ph",
+          "expectation": "For MSD-240410-03, pH is 7.1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.msd-240410-03.cl-mg-l",
+          "expectation": "For MSD-240410-03, Cl mg/L is <0.02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.msd-240410-03.ml",
+          "expectation": "For MSD-240410-03, mL is 250.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.manifest.msd-240410-03.state",
+          "expectation": "For MSD-240410-03, State is Prepared.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.calibration",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "Calibration table preserves all 12 analytes with IS, quantifier, qualifier, RT, m, b, R2, range, LOD, and LOQ.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p02.equations",
+      "page": 2,
+      "label": "Calibration equations",
+      "kind": "text",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p02.equations.00",
+          "expectation": "Response ratio is written as R = A_native / A_IS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.equations.01",
+          "expectation": "Sample concentration is written as C_sample = ((R - b) / m) x DF.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.equations.02",
+          "expectation": "Detection limit is written as LOD = t_(n-1,0.99) x SD_low.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.equations.03",
+          "expectation": "Expanded uncertainty is written as U95 = 2 x sqrt(u_cal^2 + u_rep^2 + u_vol^2 + u_rec^2).",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.curves",
-      "category": "chart",
-      "weight": 7,
-      "expectation": "Calibration curve data for PFOA, PFOS, and HFPO-DA are preserved with levels and response values.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p02.calibration",
+      "page": 2,
+      "label": "Nested calibration table",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p02.calibration.schema",
+          "expectation": "The region preserves the source field schema in order: Analyte, Internal standard, Quant., Qual., RT, m, R2, LOD / LOQ.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.calibration.row-order",
+          "expectation": "The source row order is recoverable as: PFBA -> PFPeA -> PFHxA -> PFHpA -> PFOA -> PFNA -> PFDA -> PFBS -> PFHxS -> PFOS -> 6:2 FTS -> HFPO-DA.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.calibration.pfba.internal-standard",
+          "expectation": "For PFBA, Internal standard is 13C4-PFBA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfba.quant",
+          "expectation": "For PFBA, Quant. is 213>169.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfba.qual",
+          "expectation": "For PFBA, Qual. is 213>119.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfba.rt",
+          "expectation": "For PFBA, RT is 2.18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfba.m",
+          "expectation": "For PFBA, m is 0.0921.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfba.r2",
+          "expectation": "For PFBA, R2 is 0.9987.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfba.lod-loq",
+          "expectation": "For PFBA, LOD / LOQ is 0.16 / 0.50.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfpea.internal-standard",
+          "expectation": "For PFPeA, Internal standard is 13C5-PFPeA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfpea.quant",
+          "expectation": "For PFPeA, Quant. is 263>219.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfpea.qual",
+          "expectation": "For PFPeA, Qual. is 263>169.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfpea.rt",
+          "expectation": "For PFPeA, RT is 2.74.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfpea.m",
+          "expectation": "For PFPeA, m is 0.0875.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfpea.r2",
+          "expectation": "For PFPeA, R2 is 0.9991.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfpea.lod-loq",
+          "expectation": "For PFPeA, LOD / LOQ is 0.13 / 0.50.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxa.internal-standard",
+          "expectation": "For PFHxA, Internal standard is 13C5-PFHxA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxa.quant",
+          "expectation": "For PFHxA, Quant. is 313>269.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxa.qual",
+          "expectation": "For PFHxA, Qual. is 313>119.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxa.rt",
+          "expectation": "For PFHxA, RT is 3.32.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxa.m",
+          "expectation": "For PFHxA, m is 0.0814.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxa.r2",
+          "expectation": "For PFHxA, R2 is 0.9985.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxa.lod-loq",
+          "expectation": "For PFHxA, LOD / LOQ is 0.18 / 0.50.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhpa.internal-standard",
+          "expectation": "For PFHpA, Internal standard is 13C4-PFHpA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhpa.quant",
+          "expectation": "For PFHpA, Quant. is 363>319.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhpa.qual",
+          "expectation": "For PFHpA, Qual. is 363>169.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhpa.rt",
+          "expectation": "For PFHpA, RT is 3.86.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhpa.m",
+          "expectation": "For PFHpA, m is 0.0778.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhpa.r2",
+          "expectation": "For PFHpA, R2 is 0.9990.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhpa.lod-loq",
+          "expectation": "For PFHpA, LOD / LOQ is 0.15 / 0.50.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfoa.internal-standard",
+          "expectation": "For PFOA, Internal standard is 13C8-PFOA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfoa.quant",
+          "expectation": "For PFOA, Quant. is 413>369.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfoa.qual",
+          "expectation": "For PFOA, Qual. is 413>169.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfoa.rt",
+          "expectation": "For PFOA, RT is 4.41.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfoa.m",
+          "expectation": "For PFOA, m is 0.0749.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfoa.r2",
+          "expectation": "For PFOA, R2 is 0.9967.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfoa.lod-loq",
+          "expectation": "For PFOA, LOD / LOQ is 0.08 / 0.25.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfna.internal-standard",
+          "expectation": "For PFNA, Internal standard is 13C9-PFNA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfna.quant",
+          "expectation": "For PFNA, Quant. is 463>419.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfna.qual",
+          "expectation": "For PFNA, Qual. is 463>169.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfna.rt",
+          "expectation": "For PFNA, RT is 4.95.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfna.m",
+          "expectation": "For PFNA, m is 0.0712.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfna.r2",
+          "expectation": "For PFNA, R2 is 0.9989.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfna.lod-loq",
+          "expectation": "For PFNA, LOD / LOQ is 0.09 / 0.25.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfda.internal-standard",
+          "expectation": "For PFDA, Internal standard is 13C6-PFDA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfda.quant",
+          "expectation": "For PFDA, Quant. is 513>469.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfda.qual",
+          "expectation": "For PFDA, Qual. is 513>219.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfda.rt",
+          "expectation": "For PFDA, RT is 5.48.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfda.m",
+          "expectation": "For PFDA, m is 0.0686.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfda.r2",
+          "expectation": "For PFDA, R2 is 0.9986.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfda.lod-loq",
+          "expectation": "For PFDA, LOD / LOQ is 0.10 / 0.25.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfbs.internal-standard",
+          "expectation": "For PFBS, Internal standard is 18O2-PFBS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfbs.quant",
+          "expectation": "For PFBS, Quant. is 299>80.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfbs.qual",
+          "expectation": "For PFBS, Qual. is 299>99.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfbs.rt",
+          "expectation": "For PFBS, RT is 3.05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfbs.m",
+          "expectation": "For PFBS, m is 0.1033.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfbs.r2",
+          "expectation": "For PFBS, R2 is 0.9992.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfbs.lod-loq",
+          "expectation": "For PFBS, LOD / LOQ is 0.17 / 0.50.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxs.internal-standard",
+          "expectation": "For PFHxS, Internal standard is 18O2-PFHxS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxs.quant",
+          "expectation": "For PFHxS, Quant. is 399>80.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxs.qual",
+          "expectation": "For PFHxS, Qual. is 399>99.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxs.rt",
+          "expectation": "For PFHxS, RT is 4.63.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxs.m",
+          "expectation": "For PFHxS, m is 0.0968.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxs.r2",
+          "expectation": "For PFHxS, R2 is 0.9988.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfhxs.lod-loq",
+          "expectation": "For PFHxS, LOD / LOQ is 0.20 / 0.50.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfos.internal-standard",
+          "expectation": "For PFOS, Internal standard is 13C8-PFOS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfos.quant",
+          "expectation": "For PFOS, Quant. is 499>80.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfos.qual",
+          "expectation": "For PFOS, Qual. is 499>99.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfos.rt",
+          "expectation": "For PFOS, RT is 5.64.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfos.m",
+          "expectation": "For PFOS, m is 0.0915.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfos.r2",
+          "expectation": "For PFOS, R2 is 0.9953.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.pfos.lod-loq",
+          "expectation": "For PFOS, LOD / LOQ is 0.22 / 0.50.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.6-2-fts.internal-standard",
+          "expectation": "For 6:2 FTS, Internal standard is 13C2-6:2FTS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.6-2-fts.quant",
+          "expectation": "For 6:2 FTS, Quant. is 427>407.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.6-2-fts.qual",
+          "expectation": "For 6:2 FTS, Qual. is 427>81.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.6-2-fts.rt",
+          "expectation": "For 6:2 FTS, RT is 5.19.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.6-2-fts.m",
+          "expectation": "For 6:2 FTS, m is 0.0642.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.6-2-fts.r2",
+          "expectation": "For 6:2 FTS, R2 is 0.9979.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.6-2-fts.lod-loq",
+          "expectation": "For 6:2 FTS, LOD / LOQ is 0.31 / 1.00.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.hfpo-da.internal-standard",
+          "expectation": "For HFPO-DA, Internal standard is 13C3-HFPO-DA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.hfpo-da.quant",
+          "expectation": "For HFPO-DA, Quant. is 329>285.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.hfpo-da.qual",
+          "expectation": "For HFPO-DA, Qual. is 329>169.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.hfpo-da.rt",
+          "expectation": "For HFPO-DA, RT is 3.71.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.hfpo-da.m",
+          "expectation": "For HFPO-DA, m is 0.0839.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.hfpo-da.r2",
+          "expectation": "For HFPO-DA, R2 is 0.9979.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.calibration.hfpo-da.lod-loq",
+          "expectation": "For HFPO-DA, LOD / LOQ is 0.14 / 0.50.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.residuals",
-      "category": "table_cell",
-      "weight": 5,
-      "expectation": "Residual table preserves PFOA 7.8, PFOS 10.6, HFPO-DA 6.1, zero failing points, and reviewer notes.",
-      "guidance": "",
-      "severity": "major"
+      "id": "p03.curve.pfoa",
+      "page": 3,
+      "label": "PFOA calibration curve",
+      "kind": "chart",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p03.curve.pfoa.01",
+          "expectation": "PFOA has response ratio 0.021 at 0.25 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.curve.pfoa.02",
+          "expectation": "PFOA has response ratio 0.077 at 1 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.curve.pfoa.03",
+          "expectation": "PFOA has response ratio 0.406 at 5 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.curve.pfoa.04",
+          "expectation": "PFOA has response ratio 1.393 at 20 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.curve.pfoa.05",
+          "expectation": "PFOA has response ratio 5.986 at 80 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.table-s4-continuation",
-      "category": "structure",
-      "weight": 9,
-      "expectation": "Table S4 is preserved as one logical continuation table across pages 4 and 5, with repeated headers not treated as data.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p03.curve.pfos",
+      "page": 3,
+      "label": "PFOS calibration curve",
+      "kind": "chart",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p03.curve.pfos.01",
+          "expectation": "PFOS has response ratio 0.042 at 0.5 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.curve.pfos.02",
+          "expectation": "PFOS has response ratio 0.184 at 2 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.curve.pfos.03",
+          "expectation": "PFOS has response ratio 0.958 at 10 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.curve.pfos.04",
+          "expectation": "PFOS has response ratio 4.753 at 50 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.curve.pfos.05",
+          "expectation": "PFOS has response ratio 8.177 at 100 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.table-s4-values",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "All Table S4 recovery/RSD/N/status values for PFBA through HFPO-DA are preserved.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p03.curve.hfpo-da",
+      "page": 3,
+      "label": "HFPO-DA calibration curve",
+      "kind": "chart",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p03.curve.hfpo-da.01",
+          "expectation": "HFPO-DA has response ratio 0.044 at 0.5 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.curve.hfpo-da.02",
+          "expectation": "HFPO-DA has response ratio 0.175 at 2 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.curve.hfpo-da.03",
+          "expectation": "HFPO-DA has response ratio 0.790 at 10 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.curve.hfpo-da.04",
+          "expectation": "HFPO-DA has response ratio 4.400 at 50 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.curve.hfpo-da.05",
+          "expectation": "HFPO-DA has response ratio 6.632 at 80 ng/L.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.matrix-spike",
-      "category": "table_cell",
-      "weight": 8,
-      "expectation": "Matrix spike table preserves native/spike/MS/MSD/RPD/flag values, including PFOS J-native below 2x LOQ and 6:2 FTS low bias monitored.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p03.residuals",
+      "page": 3,
+      "label": "Residual disposition",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p03.residuals.schema",
+          "expectation": "The region preserves the source field schema in order: Analyte, Max abs residual, Failing points, Review decision.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.residuals.row-order",
+          "expectation": "The source row order is recoverable as: PFOA -> PFOS -> HFPO-DA.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.residuals.pfoa.max-abs-residual",
+          "expectation": "For PFOA, Max abs residual is 7.8%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.residuals.pfoa.failing-points",
+          "expectation": "For PFOA, Failing points is 0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.residuals.pfoa.review-decision",
+          "expectation": "For PFOA, Review decision is 1/x2 retained.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.residuals.pfos.max-abs-residual",
+          "expectation": "For PFOS, Max abs residual is 10.6%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.residuals.pfos.failing-points",
+          "expectation": "For PFOS, Failing points is 0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.residuals.pfos.review-decision",
+          "expectation": "For PFOS, Review decision is High calibrator inside +/-15%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.residuals.hfpo-da.max-abs-residual",
+          "expectation": "For HFPO-DA, Max abs residual is 6.1%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.residuals.hfpo-da.failing-points",
+          "expectation": "For HFPO-DA, Failing points is 0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.residuals.hfpo-da.review-decision",
+          "expectation": "For HFPO-DA, Review decision is No curvature.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.sequence",
-      "category": "source_state",
-      "weight": 8,
-      "expectation": "Full sequence table preserves Seq 1-20 with Type, Vial, SampleID, Time, IS OK, Carryover, and State; Seq 18 DW-240409-04 is Reinject due to InternalStd_OK No; Seq 19 DW-240409-04-RI is Accepted and controls final results.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p04.s4",
+      "page": 4,
+      "label": "Table S4 rows PFBA-PFNA",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p04.s4.schema",
+          "expectation": "The region preserves the source field schema in order: Analyte, Low rec / RSD, Mid rec / RSD, High rec / RSD, n, State.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.s4.row-order",
+          "expectation": "The source row order is recoverable as: PFBA -> PFPeA -> PFHxA -> PFHpA -> PFOA -> PFNA.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.s4.pfba.low-rec-rsd",
+          "expectation": "For PFBA, Low rec / RSD is 96 / 8.4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfba.mid-rec-rsd",
+          "expectation": "For PFBA, Mid rec / RSD is 101 / 4.6.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfba.high-rec-rsd",
+          "expectation": "For PFBA, High rec / RSD is 99 / 3.8.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfba.n",
+          "expectation": "For PFBA, n is 7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfba.state",
+          "expectation": "For PFBA, State is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfpea.low-rec-rsd",
+          "expectation": "For PFPeA, Low rec / RSD is 93 / 9.1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfpea.mid-rec-rsd",
+          "expectation": "For PFPeA, Mid rec / RSD is 98 / 5.2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfpea.high-rec-rsd",
+          "expectation": "For PFPeA, High rec / RSD is 101 / 4.1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfpea.n",
+          "expectation": "For PFPeA, n is 7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfpea.state",
+          "expectation": "For PFPeA, State is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfhxa.low-rec-rsd",
+          "expectation": "For PFHxA, Low rec / RSD is 91 / 10.3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfhxa.mid-rec-rsd",
+          "expectation": "For PFHxA, Mid rec / RSD is 97 / 5.8.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfhxa.high-rec-rsd",
+          "expectation": "For PFHxA, High rec / RSD is 100 / 4.3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfhxa.n",
+          "expectation": "For PFHxA, n is 7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfhxa.state",
+          "expectation": "For PFHxA, State is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfhpa.low-rec-rsd",
+          "expectation": "For PFHpA, Low rec / RSD is 95 / 7.9.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfhpa.mid-rec-rsd",
+          "expectation": "For PFHpA, Mid rec / RSD is 99 / 4.9.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfhpa.high-rec-rsd",
+          "expectation": "For PFHpA, High rec / RSD is 102 / 4.0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfhpa.n",
+          "expectation": "For PFHpA, n is 7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfhpa.state",
+          "expectation": "For PFHpA, State is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfoa.low-rec-rsd",
+          "expectation": "For PFOA, Low rec / RSD is 98 / 6.8.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfoa.mid-rec-rsd",
+          "expectation": "For PFOA, Mid rec / RSD is 103 / 3.7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfoa.high-rec-rsd",
+          "expectation": "For PFOA, High rec / RSD is 101 / 3.2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfoa.n",
+          "expectation": "For PFOA, n is 7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfoa.state",
+          "expectation": "For PFOA, State is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfna.low-rec-rsd",
+          "expectation": "For PFNA, Low rec / RSD is 97 / 7.2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfna.mid-rec-rsd",
+          "expectation": "For PFNA, Mid rec / RSD is 102 / 4.1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfna.high-rec-rsd",
+          "expectation": "For PFNA, High rec / RSD is 100 / 3.6.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfna.n",
+          "expectation": "For PFNA, n is 7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.s4.pfna.state",
+          "expectation": "For PFNA, State is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.review-trail",
-      "category": "text",
-      "weight": 4,
-      "expectation": "Review trail preserves M. Iyer 2024-04-19 14:05, L. Chen 2024-04-22 09:40, and R. Patel 2024-04-22 16:10.",
-      "guidance": "",
-      "severity": "major"
+      "id": "p04.continuation",
+      "page": 4,
+      "label": "Continuation notice",
+      "kind": "structure",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p04.continuation.rows",
+          "expectation": "Table S4 continues on the next page with PFDA through HFPO-DA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.continuation.headers",
+          "expectation": "The continued Table S4 uses repeated column headers.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.chromatograms",
-      "category": "visual_relation",
-      "weight": 10,
-      "expectation": "All six chromatogram panels preserve panel labels, sample/channel, RT/area/concentration or IS recovery facts.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p05.s4",
+      "page": 5,
+      "label": "Table S4 rows PFDA-HFPO-DA",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p05.s4.schema",
+          "expectation": "The region preserves the source field schema in order: Analyte, Low rec / RSD, Mid rec / RSD, High rec / RSD, n, State.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.s4.row-order",
+          "expectation": "The source row order is recoverable as: PFDA -> PFBS -> PFHxS -> PFOS -> 6:2 FTS -> HFPO-DA.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.s4.pfda.low-rec-rsd",
+          "expectation": "For PFDA, Low rec / RSD is 92 / 11.5.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfda.mid-rec-rsd",
+          "expectation": "For PFDA, Mid rec / RSD is 96 / 6.3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfda.high-rec-rsd",
+          "expectation": "For PFDA, High rec / RSD is 99 / 4.9.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfda.n",
+          "expectation": "For PFDA, n is 7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfda.state",
+          "expectation": "For PFDA, State is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfbs.low-rec-rsd",
+          "expectation": "For PFBS, Low rec / RSD is 104 / 9.7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfbs.mid-rec-rsd",
+          "expectation": "For PFBS, Mid rec / RSD is 99 / 4.8.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfbs.high-rec-rsd",
+          "expectation": "For PFBS, High rec / RSD is 98 / 4.0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfbs.n",
+          "expectation": "For PFBS, n is 7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfbs.state",
+          "expectation": "For PFBS, State is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfhxs.low-rec-rsd",
+          "expectation": "For PFHxS, Low rec / RSD is 101 / 8.9.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfhxs.mid-rec-rsd",
+          "expectation": "For PFHxS, Mid rec / RSD is 100 / 4.4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfhxs.high-rec-rsd",
+          "expectation": "For PFHxS, High rec / RSD is 97 / 3.9.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfhxs.n",
+          "expectation": "For PFHxS, n is 7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfhxs.state",
+          "expectation": "For PFHxS, State is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfos.low-rec-rsd",
+          "expectation": "For PFOS, Low rec / RSD is 89 / 12.6.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfos.mid-rec-rsd",
+          "expectation": "For PFOS, Mid rec / RSD is 95 / 6.7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfos.high-rec-rsd",
+          "expectation": "For PFOS, High rec / RSD is 96 / 5.1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfos.n",
+          "expectation": "For PFOS, n is 7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.pfos.state",
+          "expectation": "For PFOS, State is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.6-2-fts.low-rec-rsd",
+          "expectation": "For 6:2 FTS, Low rec / RSD is 86 / 14.8.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.6-2-fts.mid-rec-rsd",
+          "expectation": "For 6:2 FTS, Mid rec / RSD is 92 / 7.4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.6-2-fts.high-rec-rsd",
+          "expectation": "For 6:2 FTS, High rec / RSD is 94 / 6.3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.6-2-fts.n",
+          "expectation": "For 6:2 FTS, n is 7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.6-2-fts.state",
+          "expectation": "For 6:2 FTS, State is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.hfpo-da.low-rec-rsd",
+          "expectation": "For HFPO-DA, Low rec / RSD is 99 / 7.5.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.hfpo-da.mid-rec-rsd",
+          "expectation": "For HFPO-DA, Mid rec / RSD is 104 / 4.2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.hfpo-da.high-rec-rsd",
+          "expectation": "For HFPO-DA, High rec / RSD is 103 / 3.5.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.hfpo-da.n",
+          "expectation": "For HFPO-DA, n is 7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.s4.hfpo-da.state",
+          "expectation": "For HFPO-DA, State is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.retention",
-      "category": "table_cell",
-      "weight": 5,
-      "expectation": "Retention windows preserve PFOA 4.41 +/-0.08, PFHxS 4.63 +/-0.08, 6:2 FTS 5.19 +/-0.10, PFOS 5.64 +/-0.10.",
-      "guidance": "",
-      "severity": "major"
+      "id": "p05.continuation",
+      "page": 5,
+      "label": "Continuation identity",
+      "kind": "structure",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p05.continuation.same-table",
+          "expectation": "This page continues Table S4 from the prior page.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.continuation.headers-not-data",
+          "expectation": "The repeated Table S4 headers are not data rows.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.final-results",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "Final results table preserves sample/analyte/result/qualifier/U95/reference rows, including DW-240409-04 references Seq 19.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p05.spike",
+      "page": 5,
+      "label": "Matrix spike duplicate",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p05.spike.schema",
+          "expectation": "The region preserves the source field schema in order: Analyte, Native, Spike, MS rec, MSD rec, RPD, Qualifier.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.spike.row-order",
+          "expectation": "The source row order is recoverable as: PFOA -> PFOS -> PFHxS -> HFPO-DA -> 6:2 FTS.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.spike.pfoa.native",
+          "expectation": "For PFOA, Native is 3.42.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfoa.spike",
+          "expectation": "For PFOA, Spike is 10.00.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfoa.ms-rec",
+          "expectation": "For PFOA, MS rec is 96.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfoa.msd-rec",
+          "expectation": "For PFOA, MSD rec is 98.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfoa.rpd",
+          "expectation": "For PFOA, RPD is 2.1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfoa.qualifier",
+          "expectation": "For PFOA, Qualifier is None.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfos.native",
+          "expectation": "For PFOS, Native is 0.74.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfos.spike",
+          "expectation": "For PFOS, Spike is 10.00.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfos.ms-rec",
+          "expectation": "For PFOS, MS rec is 91.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfos.msd-rec",
+          "expectation": "For PFOS, MSD rec is 88.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfos.rpd",
+          "expectation": "For PFOS, RPD is 3.4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfos.qualifier",
+          "expectation": "For PFOS, Qualifier is J: native <2x LOQ.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfhxs.native",
+          "expectation": "For PFHxS, Native is 1.16.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfhxs.spike",
+          "expectation": "For PFHxS, Spike is 10.00.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfhxs.ms-rec",
+          "expectation": "For PFHxS, MS rec is 102.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfhxs.msd-rec",
+          "expectation": "For PFHxS, MSD rec is 99.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfhxs.rpd",
+          "expectation": "For PFHxS, RPD is 3.0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.pfhxs.qualifier",
+          "expectation": "For PFHxS, Qualifier is None.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.hfpo-da.native",
+          "expectation": "For HFPO-DA, Native is <0.50.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.hfpo-da.spike",
+          "expectation": "For HFPO-DA, Spike is 10.00.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.hfpo-da.ms-rec",
+          "expectation": "For HFPO-DA, MS rec is 105.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.hfpo-da.msd-rec",
+          "expectation": "For HFPO-DA, MSD rec is 106.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.hfpo-da.rpd",
+          "expectation": "For HFPO-DA, RPD is 1.0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.hfpo-da.qualifier",
+          "expectation": "For HFPO-DA, Qualifier is U native.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.6-2-fts.native",
+          "expectation": "For 6:2 FTS, Native is <1.00.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.6-2-fts.spike",
+          "expectation": "For 6:2 FTS, Spike is 10.00.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.6-2-fts.ms-rec",
+          "expectation": "For 6:2 FTS, MS rec is 84.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.6-2-fts.msd-rec",
+          "expectation": "For 6:2 FTS, MSD rec is 87.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.6-2-fts.rpd",
+          "expectation": "For 6:2 FTS, RPD is 3.5.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.spike.6-2-fts.qualifier",
+          "expectation": "For 6:2 FTS, Qualifier is Low bias monitored.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.uncertainty",
-      "category": "table_cell",
-      "weight": 6,
-      "expectation": "Uncertainty budget preserves all component percentages and expanded U k=2 values 15.4, 22.8, and 13.8.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p06.sequence",
+      "page": 6,
+      "label": "Scanned instrument sequence",
+      "kind": "form",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p06.sequence.schema",
+          "expectation": "The region preserves the source field schema in order: Seq, Type, Vial, Sample ID, Time, IS, Carry, State.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p06.sequence.row-order",
+          "expectation": "The source row order is recoverable as: 01 -> 02 -> 03 -> 04 -> 05 -> 06 -> 07 -> 08 -> 09 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p06.sequence.01.type",
+          "expectation": "For 01, Type is Blank.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.01.vial",
+          "expectation": "For 01, Vial is A01.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.01.sample-id",
+          "expectation": "For 01, Sample ID is SBLK-01.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.01.time",
+          "expectation": "For 01, Time is 08:10.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.01.is",
+          "expectation": "For 01, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.01.carry",
+          "expectation": "For 01, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.01.state",
+          "expectation": "For 01, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.02.type",
+          "expectation": "For 02, Type is Cal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.02.vial",
+          "expectation": "For 02, Vial is A02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.02.sample-id",
+          "expectation": "For 02, Sample ID is CAL-0.5.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.02.time",
+          "expectation": "For 02, Time is 08:23.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.02.is",
+          "expectation": "For 02, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.02.carry",
+          "expectation": "For 02, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.02.state",
+          "expectation": "For 02, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.03.type",
+          "expectation": "For 03, Type is Cal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.03.vial",
+          "expectation": "For 03, Vial is A03.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.03.sample-id",
+          "expectation": "For 03, Sample ID is CAL-1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.03.time",
+          "expectation": "For 03, Time is 08:36.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.03.is",
+          "expectation": "For 03, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.03.carry",
+          "expectation": "For 03, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.03.state",
+          "expectation": "For 03, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.04.type",
+          "expectation": "For 04, Type is Cal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.04.vial",
+          "expectation": "For 04, Vial is A04.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.04.sample-id",
+          "expectation": "For 04, Sample ID is CAL-2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.04.time",
+          "expectation": "For 04, Time is 08:49.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.04.is",
+          "expectation": "For 04, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.04.carry",
+          "expectation": "For 04, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.04.state",
+          "expectation": "For 04, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.05.type",
+          "expectation": "For 05, Type is Cal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.05.vial",
+          "expectation": "For 05, Vial is A05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.05.sample-id",
+          "expectation": "For 05, Sample ID is CAL-5.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.05.time",
+          "expectation": "For 05, Time is 09:02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.05.is",
+          "expectation": "For 05, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.05.carry",
+          "expectation": "For 05, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.05.state",
+          "expectation": "For 05, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.06.type",
+          "expectation": "For 06, Type is Cal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.06.vial",
+          "expectation": "For 06, Vial is A06.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.06.sample-id",
+          "expectation": "For 06, Sample ID is CAL-10.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.06.time",
+          "expectation": "For 06, Time is 09:15.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.06.is",
+          "expectation": "For 06, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.06.carry",
+          "expectation": "For 06, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.06.state",
+          "expectation": "For 06, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.07.type",
+          "expectation": "For 07, Type is Cal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.07.vial",
+          "expectation": "For 07, Vial is A07.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.07.sample-id",
+          "expectation": "For 07, Sample ID is CAL-20.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.07.time",
+          "expectation": "For 07, Time is 09:28.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.07.is",
+          "expectation": "For 07, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.07.carry",
+          "expectation": "For 07, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.07.state",
+          "expectation": "For 07, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.08.type",
+          "expectation": "For 08, Type is Cal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.08.vial",
+          "expectation": "For 08, Vial is A08.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.08.sample-id",
+          "expectation": "For 08, Sample ID is CAL-50.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.08.time",
+          "expectation": "For 08, Time is 09:41.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.08.is",
+          "expectation": "For 08, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.08.carry",
+          "expectation": "For 08, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.08.state",
+          "expectation": "For 08, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.09.type",
+          "expectation": "For 09, Type is Cal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.09.vial",
+          "expectation": "For 09, Vial is A09.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.09.sample-id",
+          "expectation": "For 09, Sample ID is CAL-80.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.09.time",
+          "expectation": "For 09, Time is 09:54.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.09.is",
+          "expectation": "For 09, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.09.carry",
+          "expectation": "For 09, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.09.state",
+          "expectation": "For 09, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.10.type",
+          "expectation": "For 10, Type is Blank.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.10.vial",
+          "expectation": "For 10, Vial is B01.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.10.sample-id",
+          "expectation": "For 10, Sample ID is LRB-240410-01.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.10.time",
+          "expectation": "For 10, Time is 10:07.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.10.is",
+          "expectation": "For 10, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.10.carry",
+          "expectation": "For 10, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.10.state",
+          "expectation": "For 10, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.11.type",
+          "expectation": "For 11, Type is LCS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.11.vial",
+          "expectation": "For 11, Vial is B02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.11.sample-id",
+          "expectation": "For 11, Sample ID is LCS-240410-01.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.11.time",
+          "expectation": "For 11, Time is 10:20.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.11.is",
+          "expectation": "For 11, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.11.carry",
+          "expectation": "For 11, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.11.state",
+          "expectation": "For 11, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.12.type",
+          "expectation": "For 12, Type is Sample.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.12.vial",
+          "expectation": "For 12, Vial is B03.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.12.sample-id",
+          "expectation": "For 12, Sample ID is FB-240408-01.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.12.time",
+          "expectation": "For 12, Time is 10:33.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.12.is",
+          "expectation": "For 12, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.12.carry",
+          "expectation": "For 12, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.12.state",
+          "expectation": "For 12, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.13.type",
+          "expectation": "For 13, Type is Sample.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.13.vial",
+          "expectation": "For 13, Vial is B04.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.13.sample-id",
+          "expectation": "For 13, Sample ID is DW-240408-02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.13.time",
+          "expectation": "For 13, Time is 10:46.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.13.is",
+          "expectation": "For 13, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.13.carry",
+          "expectation": "For 13, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.13.state",
+          "expectation": "For 13, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.14.type",
+          "expectation": "For 14, Type is Sample.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.14.vial",
+          "expectation": "For 14, Vial is B05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.14.sample-id",
+          "expectation": "For 14, Sample ID is DW-240408-03.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.14.time",
+          "expectation": "For 14, Time is 10:59.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.14.is",
+          "expectation": "For 14, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.14.carry",
+          "expectation": "For 14, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.14.state",
+          "expectation": "For 14, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.15.type",
+          "expectation": "For 15, Type is MS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.15.vial",
+          "expectation": "For 15, Vial is B06.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.15.sample-id",
+          "expectation": "For 15, Sample ID is DW-240408-03-MS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.15.time",
+          "expectation": "For 15, Time is 11:12.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.15.is",
+          "expectation": "For 15, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.15.carry",
+          "expectation": "For 15, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.15.state",
+          "expectation": "For 15, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.16.type",
+          "expectation": "For 16, Type is MSD.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.16.vial",
+          "expectation": "For 16, Vial is B07.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.16.sample-id",
+          "expectation": "For 16, Sample ID is DW-240408-03-MSD.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.16.time",
+          "expectation": "For 16, Time is 11:25.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.16.is",
+          "expectation": "For 16, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.16.carry",
+          "expectation": "For 16, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.16.state",
+          "expectation": "For 16, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.17.type",
+          "expectation": "For 17, Type is CCV.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.17.vial",
+          "expectation": "For 17, Vial is B08.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.17.sample-id",
+          "expectation": "For 17, Sample ID is CCV-10.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.17.time",
+          "expectation": "For 17, Time is 11:38.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.17.is",
+          "expectation": "For 17, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.17.carry",
+          "expectation": "For 17, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.17.state",
+          "expectation": "For 17, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.18.type",
+          "expectation": "For 18, Type is Sample.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.18.vial",
+          "expectation": "For 18, Vial is B09.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.18.sample-id",
+          "expectation": "For 18, Sample ID is DW-240409-04.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.18.time",
+          "expectation": "For 18, Time is 11:51.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.18.is",
+          "expectation": "For 18, IS is N.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.18.carry",
+          "expectation": "For 18, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.18.state",
+          "expectation": "For 18, State is Reinject.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.19.type",
+          "expectation": "For 19, Type is Sample.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.19.vial",
+          "expectation": "For 19, Vial is C01.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.19.sample-id",
+          "expectation": "For 19, Sample ID is DW-240409-04-RI.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.19.time",
+          "expectation": "For 19, Time is 12:18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.19.is",
+          "expectation": "For 19, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.19.carry",
+          "expectation": "For 19, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.19.state",
+          "expectation": "For 19, State is Accepted.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.20.type",
+          "expectation": "For 20, Type is Sample.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.20.vial",
+          "expectation": "For 20, Vial is C02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.20.sample-id",
+          "expectation": "For 20, Sample ID is DW-240409-05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.20.time",
+          "expectation": "For 20, Time is 12:31.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.20.is",
+          "expectation": "For 20, IS is Y.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.20.carry",
+          "expectation": "For 20, Carry is Clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.sequence.20.state",
+          "expectation": "For 20, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p12.qualifiers",
-      "category": "text",
-      "weight": 4,
-      "expectation": "Qualifier meanings are preserved: U not detected, J estimated, RI reinjection, MS matrix spike, MSD matrix spike duplicate.",
-      "guidance": "",
-      "severity": "major"
+      "id": "p06.signoff",
+      "page": 6,
+      "label": "Sequence review signoff",
+      "kind": "form",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p06.signoff.analyst",
+          "expectation": "M. Iyer signed analyst review on 2024-04-19 at 14:05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.signoff.technical",
+          "expectation": "L. Chen signed technical review on 2024-04-22 at 09:40.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.signoff.qa",
+          "expectation": "R. Patel signed QA review on 2024-04-22 at 16:10.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.signoff.control",
+          "expectation": "Sequence 19, not Sequence 18, controls final DW-240409-04 results.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p07.chromatograms",
+      "page": 7,
+      "label": "Chromatogram plate S7",
+      "kind": "image",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p07.chrom.axes.time",
+          "expectation": "The chromatogram x-axis is Time (min).",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.axes.intensity",
+          "expectation": "The chromatogram y-axis is Intensity (cps).",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.a.binding",
+          "expectation": "Panel A is LRB/PFOS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.a.peak",
+          "expectation": "Panel A has no reportable peak.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.a.noise",
+          "expectation": "Panel A noise is 41 cps.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.b.binding",
+          "expectation": "Panel B is CAL-0.5/PFOS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.b.rt",
+          "expectation": "Panel B retention time is 5.64 min.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.b.area",
+          "expectation": "Panel B area is 4,572.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.b.sn",
+          "expectation": "Panel B S/N is 12.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.c.binding",
+          "expectation": "Panel C is DW-240408-03/PFOA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.c.rt",
+          "expectation": "Panel C retention time is 4.41 min.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.c.area",
+          "expectation": "Panel C area is 25,621.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.c.concentration",
+          "expectation": "Panel C concentration is 3.42 ng/L.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.d.original",
+          "expectation": "Panel D shows original internal-standard recovery of 38% for DW-240409-04.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.chrom.d.reinject",
+          "expectation": "Panel D shows reinjection internal-standard recovery of 91% for DW-240409-04.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p07.results",
+      "page": 7,
+      "label": "Final result table",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p07.results.schema",
+          "expectation": "The region preserves the source field schema in order: Result ID, Sample, Analyte, Result, Qual., U95, Reference.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p07.results.row-order",
+          "expectation": "The source row order is recoverable as: R-01 -> R-02 -> R-03 -> R-04 -> R-05 -> R-06 -> R-07 -> R-08.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p07.results.r-01.sample",
+          "expectation": "For R-01, Sample is FB-240408-01.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-01.analyte",
+          "expectation": "For R-01, Analyte is PFOA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-01.result",
+          "expectation": "For R-01, Result is <0.25.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-01.qual",
+          "expectation": "For R-01, Qual. is U.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-01.u95",
+          "expectation": "For R-01, U95 is -.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-01.reference",
+          "expectation": "For R-01, Reference is p2 limit / context.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-02.sample",
+          "expectation": "For R-02, Sample is DW-240408-02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-02.analyte",
+          "expectation": "For R-02, Analyte is PFOA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-02.result",
+          "expectation": "For R-02, Result is 2.18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-02.qual",
+          "expectation": "For R-02, Qual. is -.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-02.u95",
+          "expectation": "For R-02, U95 is 0.42.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-02.reference",
+          "expectation": "For R-02, Reference is S7C / other sample.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-03.sample",
+          "expectation": "For R-03, Sample is DW-240408-02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-03.analyte",
+          "expectation": "For R-03, Analyte is PFOS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-03.result",
+          "expectation": "For R-03, Result is 0.62.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-03.qual",
+          "expectation": "For R-03, Qual. is J.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-03.u95",
+          "expectation": "For R-03, U95 is 0.18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-03.reference",
+          "expectation": "For R-03, Reference is S7B / cal context.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-04.sample",
+          "expectation": "For R-04, Sample is DW-240408-03.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-04.analyte",
+          "expectation": "For R-04, Analyte is PFOA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-04.result",
+          "expectation": "For R-04, Result is 3.42.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-04.qual",
+          "expectation": "For R-04, Qual. is -.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-04.u95",
+          "expectation": "For R-04, U95 is 0.55.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-04.reference",
+          "expectation": "For R-04, Reference is S7C / direct.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-05.sample",
+          "expectation": "For R-05, Sample is DW-240408-03.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-05.analyte",
+          "expectation": "For R-05, Analyte is PFOS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-05.result",
+          "expectation": "For R-05, Result is 0.74.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-05.qual",
+          "expectation": "For R-05, Qual. is J.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-05.u95",
+          "expectation": "For R-05, U95 is 0.19.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-05.reference",
+          "expectation": "For R-05, Reference is S7A / blank context.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-06.sample",
+          "expectation": "For R-06, Sample is DW-240409-04.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-06.analyte",
+          "expectation": "For R-06, Analyte is PFOA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-06.result",
+          "expectation": "For R-06, Result is 1.06.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-06.qual",
+          "expectation": "For R-06, Qual. is J.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-06.u95",
+          "expectation": "For R-06, U95 is 0.25.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-06.reference",
+          "expectation": "For R-06, Reference is S7D IS / Seq 19.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-07.sample",
+          "expectation": "For R-07, Sample is DW-240409-04.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-07.analyte",
+          "expectation": "For R-07, Analyte is PFOS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-07.result",
+          "expectation": "For R-07, Result is <0.50.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-07.qual",
+          "expectation": "For R-07, Qual. is U.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-07.u95",
+          "expectation": "For R-07, U95 is -.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-07.reference",
+          "expectation": "For R-07, Reference is S7D IS / Seq 19.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-08.sample",
+          "expectation": "For R-08, Sample is DW-240409-05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-08.analyte",
+          "expectation": "For R-08, Analyte is PFOA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-08.result",
+          "expectation": "For R-08, Result is 4.87.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-08.qual",
+          "expectation": "For R-08, Qual. is -.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-08.u95",
+          "expectation": "For R-08, U95 is 0.72.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.results.r-08.reference",
+          "expectation": "For R-08, Reference is No S7 panel.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p07.uncertainty",
+      "page": 7,
+      "label": "Expanded uncertainty table",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p07.uncertainty.schema",
+          "expectation": "The region preserves the source field schema in order: Analyte, u cal, u rep, u vol, u rec, U95.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p07.uncertainty.row-order",
+          "expectation": "The source row order is recoverable as: PFOA -> PFOS -> HFPO-DA.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p07.uncertainty.pfoa.u-cal",
+          "expectation": "For PFOA, u cal is 5.2%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.pfoa.u-rep",
+          "expectation": "For PFOA, u rep is 4.1%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.pfoa.u-vol",
+          "expectation": "For PFOA, u vol is 1.5%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.pfoa.u-rec",
+          "expectation": "For PFOA, u rec is 3.6%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.pfoa.u95",
+          "expectation": "For PFOA, U95 is 15.4%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.pfos.u-cal",
+          "expectation": "For PFOS, u cal is 7.4%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.pfos.u-rep",
+          "expectation": "For PFOS, u rep is 6.9%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.pfos.u-vol",
+          "expectation": "For PFOS, u vol is 1.5%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.pfos.u-rec",
+          "expectation": "For PFOS, u rec is 5.1%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.pfos.u95",
+          "expectation": "For PFOS, U95 is 22.8%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.hfpo-da.u-cal",
+          "expectation": "For HFPO-DA, u cal is 4.8%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.hfpo-da.u-rep",
+          "expectation": "For HFPO-DA, u rep is 3.7%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.hfpo-da.u-vol",
+          "expectation": "For HFPO-DA, u vol is 1.5%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.hfpo-da.u-rec",
+          "expectation": "For HFPO-DA, u rec is 3.2%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.uncertainty.hfpo-da.u95",
+          "expectation": "For HFPO-DA, U95 is 13.8%.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     }
   ]
 }

@@ -1,11 +1,23 @@
-import { access, mkdir, readFile, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, rm } from "node:fs/promises";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { fileURLToPath } from "node:url";
 import { generateText } from "ai";
 import { createGoogleVertex, googleVertex } from "@ai-sdk/google-vertex";
 import { openai } from "@ai-sdk/openai";
-import { fileSha256, hashObject, sha256 } from "./cache.js";
+import { z } from "zod";
+import { fileSha256, hashObject, sha256, sha256Bytes } from "./cache.js";
+import { runBoundedJobs } from "./concurrency.js";
+import {
+  acquireSampleLock,
+  atomicWriteJson,
+  atomicWriteText,
+  calculateTokenCostUsd,
+  parseRunCliArgs,
+  runUsage,
+} from "./runRuntime.js";
+import { canonicalProjectReference, loadBenchmarkManifest } from "./manifest.js";
 
 export type ManifestCase = {
   id: string;
@@ -22,6 +34,83 @@ export type Manifest = {
   cases: ManifestCase[];
 };
 
+const nonnegativeInteger = z.number().int().nonnegative();
+const tokenUsageSchema = z.object({
+  inputTokens: nonnegativeInteger,
+  outputTokens: nonnegativeInteger,
+  totalTokens: nonnegativeInteger,
+}).passthrough();
+const runCacheSchema = z.strictObject({
+  schemaVersion: z.literal(3),
+  runKey: z.string().length(64),
+  inferenceFingerprint: z.string().length(64),
+  sample: z.string().regex(/^\d{3}$/),
+  pdfHash: z.string().length(64),
+  promptHash: z.string().length(64),
+  modelConfigHash: z.string().length(64),
+  protocolHash: z.string().length(64),
+  inferenceBenchmarkFingerprint: z.string().length(64),
+  providerFileMode: z.string().min(1),
+  predictionHash: z.string().length(64),
+});
+const currentRunArtifactSchema = z.object({
+  artifactStatus: z.literal("scoreable_model_response"),
+  responseReceived: z.literal(true),
+  caseId: z.string().min(1),
+  title: z.string().min(1),
+  modelId: z.string().min(1),
+  modelName: z.string().min(1),
+  provider: z.enum(["google-vertex", "openai"]),
+  suite: z.string().min(1),
+  manifestPath: z.string().min(1),
+  inputProtocol: z.string().min(1),
+  providerFileMode: z.string().min(1),
+  executionProvenance: z.object({
+    schemaVersion: z.literal(1),
+    protocolVersion: z.string().min(1),
+    inputMode: z.string().min(1),
+    inputProtocol: z.string().min(1),
+    mediaType: z.literal("application/pdf"),
+    providerFileMode: z.string().min(1),
+    maxOutputTokens: nonnegativeInteger,
+    maxRetries: nonnegativeInteger,
+    transportEpoch: z.string().min(1),
+    providerPayloadMode: z.string().min(1),
+    samplingMode: z.string().min(1),
+    sdkVersions: z.strictObject({
+      ai: z.string().min(1),
+      providerPackage: z.string().min(1),
+      providerPackageVersion: z.string().min(1),
+    }),
+    promptHash: z.string().length(64),
+    protocolHash: z.string().length(64),
+    pdfHash: z.string().length(64),
+    modelConfigHash: z.string().length(64),
+    inferenceFingerprint: z.string().length(64),
+    inferenceBenchmarkFingerprint: z.string().length(64),
+  }).passthrough(),
+  providerMetadata: z.object({
+    requested: z.object({ provider: z.string().min(1), modelId: z.string().min(1) }).passthrough(),
+    resolved: z.object({ provider: z.string().min(1), modelId: z.string().min(1) }).passthrough(),
+  }).passthrough(),
+  elapsedMs: nonnegativeInteger,
+  finishReason: z.string().min(1),
+  usage: tokenUsageSchema,
+  estimatedCostUsd: z.number().finite().nonnegative(),
+  pricing: z.object({
+    version: z.string().min(1),
+    currency: z.literal("USD"),
+    inputPerMillion: z.number().finite().nonnegative(),
+    cachedInputPerMillion: z.number().finite().nonnegative(),
+    outputPerMillion: z.number().finite().nonnegative(),
+    estimatedCostUsd: z.number().finite().nonnegative(),
+  }).passthrough(),
+  outputLength: nonnegativeInteger,
+  sample: z.string().regex(/^\d{3}$/),
+  cache: runCacheSchema,
+  inputMode: z.string().min(1),
+}).passthrough();
+
 export type ModelSpec = {
   id: string;
   modelName: string;
@@ -29,9 +118,13 @@ export type ModelSpec = {
   reasoning?: "none" | "minimal";
   location?: string;
   baseURL?: string;
+  pricingVersion: string;
   inputPerMillion: number;
+  cachedInputPerMillion: number;
   outputPerMillion: number;
 };
+
+const pricingVersion = "2026-07-10";
 
 export const models: Record<string, ModelSpec> = {
   "vertex-gemini-2.5-flash-lite": {
@@ -40,8 +133,9 @@ export const models: Record<string, ModelSpec> = {
     provider: "google-vertex",
     reasoning: "minimal",
     location: "global",
-    baseURL: "https://aiplatform.googleapis.com/v1/projects/803270566601/locations/global/publishers/google",
+    pricingVersion,
     inputPerMillion: 0.1,
+    cachedInputPerMillion: 0.01,
     outputPerMillion: 0.4,
   },
   "vertex-gemini-3.1-flash-lite": {
@@ -49,15 +143,30 @@ export const models: Record<string, ModelSpec> = {
     modelName: "gemini-3.1-flash-lite",
     provider: "google-vertex",
     reasoning: "minimal",
+    pricingVersion,
     inputPerMillion: 0.25,
+    cachedInputPerMillion: 0.025,
     outputPerMillion: 1.5,
+  },
+  "vertex-gemini-3.1-pro": {
+    id: "vertex-gemini-3.1-pro",
+    modelName: "gemini-3.1-pro-preview",
+    provider: "google-vertex",
+    reasoning: "minimal",
+    pricingVersion,
+    inputPerMillion: 2,
+    cachedInputPerMillion: 0.2,
+    outputPerMillion: 12,
   },
   "vertex-gemini-3-flash-preview": {
     id: "vertex-gemini-3-flash-preview",
     modelName: "gemini-3-flash-preview",
     provider: "google-vertex",
     reasoning: "minimal",
+    location: "global",
+    pricingVersion,
     inputPerMillion: 0.5,
+    cachedInputPerMillion: 0.05,
     outputPerMillion: 3,
   },
   "openai-gpt-5-nano": {
@@ -65,7 +174,9 @@ export const models: Record<string, ModelSpec> = {
     modelName: "gpt-5-nano",
     provider: "openai",
     reasoning: "minimal",
+    pricingVersion,
     inputPerMillion: 0.05,
+    cachedInputPerMillion: 0.005,
     outputPerMillion: 0.4,
   },
   "openai-gpt-5.4-nano": {
@@ -73,15 +184,29 @@ export const models: Record<string, ModelSpec> = {
     modelName: "gpt-5.4-nano",
     provider: "openai",
     reasoning: "none",
+    pricingVersion,
     inputPerMillion: 0.2,
+    cachedInputPerMillion: 0.02,
     outputPerMillion: 1.25,
+  },
+  "openai-gpt-5.4-mini": {
+    id: "openai-gpt-5.4-mini",
+    modelName: "gpt-5.4-mini",
+    provider: "openai",
+    reasoning: "none",
+    pricingVersion,
+    inputPerMillion: 0.75,
+    cachedInputPerMillion: 0.075,
+    outputPerMillion: 4.5,
   },
   "openai-gpt-5.5": {
     id: "openai-gpt-5.5",
     modelName: "gpt-5.5",
     provider: "openai",
     reasoning: "none",
+    pricingVersion,
     inputPerMillion: 5,
+    cachedInputPerMillion: 0.5,
     outputPerMillion: 30,
   },
   "vertex-gemini-3.5-flash": {
@@ -89,16 +214,32 @@ export const models: Record<string, ModelSpec> = {
     modelName: "gemini-3.5-flash",
     provider: "google-vertex",
     reasoning: "minimal",
-    inputPerMillion: 0.3,
-    outputPerMillion: 2.5,
+    pricingVersion,
+    inputPerMillion: 1.5,
+    cachedInputPerMillion: 0.15,
+    outputPerMillion: 9,
   },
 };
 
 export const benchmarkModelIds = ["openai-gpt-5-nano", "vertex-gemini-3.1-flash-lite"] as const;
 
 export const samplesPerModelCase = 3;
-const maxOutputTokens = 24000;
-const inputMode = "native_pdf";
+export const maxOutputTokens = 24000;
+export const inputMode = "native_pdf";
+export const inferenceProtocolVersion = "native-pdf-v2";
+export const inferenceMaxRetries = 2;
+export const inferenceConcurrency = positiveIntegerEnvironment("DOC2MD_INFERENCE_CONCURRENCY", 6);
+const pdfMediaType = "application/pdf";
+
+function positiveIntegerEnvironment(name: string, fallback: number) {
+  const raw = process.env[name];
+  if (raw === undefined || raw === "") return fallback;
+  const parsed = Number(raw);
+  if (!Number.isSafeInteger(parsed) || parsed < 1 || parsed > 64) {
+    throw new Error(`${name} must be an integer from 1 through 64.`);
+  }
+  return parsed;
+}
 
 export const prompt = `Convert the attached PDF into one faithful Markdown document for downstream machine use.
 
@@ -127,39 +268,111 @@ Source-state conflicts:
 
 The goal is faithful reconstruction of the original document's information and reading experience, not summarization or interpretation.`;
 
+export function vertexProviderRoute(spec: ModelSpec, environment: NodeJS.ProcessEnv = process.env) {
+  if (spec.provider !== "google-vertex") {
+    throw new Error(`Cannot build a Vertex route for non-Vertex model ${spec.id}.`);
+  }
+
+  const apiKeyMode = Boolean(environment.GOOGLE_VERTEX_API_KEY);
+  const location = spec.location ?? environment.GOOGLE_VERTEX_LOCATION;
+  const project = environment.GOOGLE_VERTEX_PROJECT;
+  let baseURL = spec.baseURL;
+
+  // The provider SDK's Express/API-key endpoint ignores its `location`
+  // option. Use the standard project-scoped endpoint when a model declares a
+  // location, while retaining API-key authentication through x-goog-api-key.
+  if (apiKeyMode && spec.location && !baseURL) {
+    if (!project) {
+      throw new Error(
+        `${spec.id} requires GOOGLE_VERTEX_PROJECT because ${spec.modelName} is routed to the explicit Vertex location ${spec.location}.`,
+      );
+    }
+    if (!/^[a-z0-9][a-z0-9._:-]*$/i.test(project)) {
+      throw new Error("GOOGLE_VERTEX_PROJECT contains characters that are not valid in a Vertex resource path.");
+    }
+    if (!/^[a-z0-9-]+$/i.test(spec.location)) {
+      throw new Error(`Invalid Vertex location ${spec.location}.`);
+    }
+    const host = spec.location === "global" ? "aiplatform.googleapis.com" : `${spec.location}-aiplatform.googleapis.com`;
+    baseURL = `https://${host}/v1/projects/${encodeURIComponent(project)}/locations/${spec.location}/publishers/google`;
+  }
+
+  return {
+    authMode: apiKeyMode ? "express_api_key" : "application_default_credentials",
+    project: apiKeyMode && !spec.location ? null : project ?? null,
+    location: location ?? null,
+    baseURL: baseURL ?? null,
+  } as const;
+}
+
 function providerModel(spec: ModelSpec) {
-  if (spec.provider === "google-vertex") {
-    if (spec.location || spec.baseURL) {
-      return createGoogleVertex({ location: spec.location, baseURL: spec.baseURL })(spec.modelName);
+  switch (spec.provider) {
+    case "google-vertex": {
+      const route = vertexProviderRoute(spec);
+      if (spec.location || spec.baseURL) {
+        return createGoogleVertex({ location: route.location ?? undefined, baseURL: route.baseURL ?? undefined })(spec.modelName);
+      }
+      return googleVertex(spec.modelName);
     }
-    return googleVertex(spec.modelName);
+    case "openai":
+      return openai(spec.modelName);
   }
-  return openai(spec.modelName);
 }
 
-function cost(spec: ModelSpec, usage: any): number {
-  const input = usage?.inputTokens ?? 0;
-  const output = usage?.outputTokens ?? 0;
-  return (input / 1_000_000) * spec.inputPerMillion + (output / 1_000_000) * spec.outputPerMillion;
+export function modelPricingFingerprint(spec: ModelSpec) {
+  return hashObject({
+    schemaVersion: 2,
+    modelId: spec.id,
+    pricingVersion: spec.pricingVersion,
+    inputPerMillion: spec.inputPerMillion,
+    cachedInputPerMillion: spec.cachedInputPerMillion,
+    outputPerMillion: spec.outputPerMillion,
+    calculatorHash: sha256(calculateTokenCostUsd.toString()),
+  });
 }
 
-function parseArgs() {
-  const args = new Map<string, string>();
-  for (let i = 2; i < process.argv.length; i += 1) {
-    const arg = process.argv[i];
-    if (arg.startsWith("--")) {
-      const key = arg.slice(2);
-      const next = process.argv[i + 1];
-      args.set(key, next && !next.startsWith("--") ? process.argv[++i] : "true");
-    }
+export function modelConfigFingerprint(spec: ModelSpec) {
+  const route = spec.provider === "google-vertex" ? vertexProviderRoute(spec) : null;
+  const providerRuntime = route
+    ? {
+        authMode: route.authMode,
+        project: route.project,
+        location: route.location,
+        ...(route.baseURL !== (spec.baseURL ?? null) ? { effectiveBaseURL: route.baseURL } : {}),
+      }
+    : { authMode: "openai_api_key" };
+  return hashObject({
+    schemaVersion: 2,
+    modelName: spec.modelName,
+    provider: spec.provider,
+    reasoning: spec.reasoning ?? null,
+    location: spec.location ?? null,
+    baseURL: spec.baseURL ?? null,
+    providerRuntime,
+  });
+}
+
+export function priceReport(spec: ModelSpec, usage: any) {
+  return {
+    version: spec.pricingVersion,
+    source:
+      spec.provider === "openai"
+        ? `https://developers.openai.com/api/docs/models/${spec.modelName}`
+        : "https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing",
+    basis: "standard on-demand token pricing; documents remain below long-context thresholds",
+    currency: "USD",
+    inputPerMillion: spec.inputPerMillion,
+    cachedInputPerMillion: spec.cachedInputPerMillion,
+    outputPerMillion: spec.outputPerMillion,
+    estimatedCostUsd: calculateTokenCostUsd(spec, usage),
+  };
+}
+
+export class RunInfrastructureError extends Error {
+  constructor(message: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "RunInfrastructureError";
   }
-  return args;
-}
-
-function rejectUnknownArgs(args: Map<string, string>, allowed: string[]) {
-  const allowedSet = new Set(allowed);
-  const unknown = [...args.keys()].filter((key) => !allowedSet.has(key));
-  if (unknown.length > 0) throw new Error(`Unknown argument(s): ${unknown.map((key) => `--${key}`).join(", ")}`);
 }
 
 async function exists(filePath: string) {
@@ -171,16 +384,53 @@ async function exists(filePath: string) {
   }
 }
 
-type RunContext = {
+export type InferenceProtocol = {
+  version: string;
+  inputMode: string;
+  inputProtocol: string;
+  mediaType: string;
+  providerFileMode: string;
+  maxOutputTokens: number;
+  maxRetries: number;
+  samplesPerModelCase: number;
+  transportEpoch: string;
+  providerPayloadMode: string;
+  samplingMode: string;
+  sdkVersions: {
+    ai: string;
+    providerPackage: string;
+    providerPackageVersion: string;
+  };
+};
+
+const require = createRequire(import.meta.url);
+const aiSdkVersion = (require("ai/package.json") as { version: string }).version;
+const inferenceTransportEpoch = "generate-text-native-pdf-buffer-v2";
+const inferenceProviderPayloadMode = "messages.user.content.file.buffer";
+const inferenceSamplingMode = "provider-default-sampling";
+
+function inferenceSdkVersions(spec: ModelSpec): InferenceProtocol["sdkVersions"] {
+  const providerPackage = spec.provider === "openai" ? "@ai-sdk/openai" : "@ai-sdk/google-vertex";
+  const providerPackageVersion = (require(`${providerPackage}/package.json`) as { version: string }).version;
+  return { ai: aiSdkVersion, providerPackage, providerPackageVersion };
+}
+
+export type RunContext = {
   suite: string;
   manifestPath: string;
   inputProtocol: string;
   providerFileMode: string;
+  protocol: InferenceProtocol;
+  protocolHash: string;
+  promptHash: string;
+  casePdfHashes: Record<string, string>;
+  inferenceBenchmarkFingerprint: string;
 };
 
-async function providerFileMode(spec: ModelSpec) {
+async function providerFileMode(spec: ModelSpec, manifestPath: string) {
   try {
-    const capabilities = JSON.parse(await readFile("benchmark/provider-capabilities.json", "utf-8")) as {
+    const capabilitiesPath = path.join(path.dirname(manifestPath), "provider-capabilities.json");
+    const capabilities = JSON.parse(await readFile(capabilitiesPath, "utf-8")) as {
       providers?: Record<string, { documents?: Record<string, { ingestionMode?: string }> }>;
     };
     return capabilities.providers?.[spec.provider]?.documents?.pdf?.ingestionMode ?? "unknown";
@@ -190,47 +440,203 @@ async function providerFileMode(spec: ModelSpec) {
 }
 
 export async function buildRunContext(spec: ModelSpec, manifest: Manifest, manifestPath: string): Promise<RunContext> {
+  const canonicalManifestPath = canonicalProjectReference(manifestPath);
+  const caseIds = manifest.cases.map((testCase) => testCase.id);
+  if (new Set(caseIds).size !== caseIds.length) {
+    throw new Error(`Benchmark manifest contains duplicate case ids: ${canonicalManifestPath}`);
+  }
+  const inputProtocol = manifest.inputProtocol ?? inputMode;
+  const documentedProviderFileMode = await providerFileMode(spec, canonicalManifestPath);
+  const protocol = {
+    version: inferenceProtocolVersion,
+    inputMode,
+    inputProtocol,
+    mediaType: pdfMediaType,
+    providerFileMode: documentedProviderFileMode,
+    maxOutputTokens,
+    maxRetries: inferenceMaxRetries,
+    samplesPerModelCase,
+    transportEpoch: inferenceTransportEpoch,
+    providerPayloadMode: inferenceProviderPayloadMode,
+    samplingMode: inferenceSamplingMode,
+    sdkVersions: inferenceSdkVersions(spec),
+  } satisfies InferenceProtocol;
+  const casePdfEntries = await Promise.all(
+    manifest.cases.map(async (testCase) => [testCase.id, await fileSha256(testCase.pdf)] as const),
+  );
+  const casePdfHashes = Object.fromEntries(casePdfEntries);
+  const promptHash = sha256(prompt);
+  const protocolHash = hashObject(protocol);
   return {
     suite: manifest.suite ?? "official",
-    manifestPath,
-    inputProtocol: manifest.inputProtocol ?? inputMode,
-    providerFileMode: await providerFileMode(spec),
+    manifestPath: canonicalManifestPath,
+    inputProtocol,
+    providerFileMode: documentedProviderFileMode,
+    protocol,
+    protocolHash,
+    promptHash,
+    casePdfHashes,
+    inferenceBenchmarkFingerprint: hashObject({
+      schemaVersion: 1,
+      promptHash,
+      protocolHash,
+      cases: casePdfEntries.map(([caseId, pdfHash]) => ({ caseId, pdfHash })),
+    }),
   };
 }
 
-export async function runCacheKey(testCase: ManifestCase, spec: ModelSpec, context: RunContext) {
-  const pdfHash = await fileSha256(testCase.pdf);
-  const promptHash = sha256(prompt);
-  const modelConfigHash = hashObject({
-    id: spec.id,
-    modelName: spec.modelName,
-    provider: spec.provider,
-    reasoning: spec.reasoning ?? null,
-    location: spec.location ?? null,
-    baseURL: spec.baseURL ?? null,
-    maxOutputTokens,
-    inputMode,
-    suite: context.suite,
-    manifestPath: context.manifestPath,
-    inputProtocol: context.inputProtocol,
-    providerFileMode: context.providerFileMode,
+export async function runCacheKey(testCase: ManifestCase, spec: ModelSpec, context: RunContext, sample: string) {
+  if (!/^\d{3}$/.test(sample)) throw new Error(`Invalid sample id ${JSON.stringify(sample)}; expected a three-digit slot.`);
+  const pdfHash = context.casePdfHashes[testCase.id] ?? (await fileSha256(testCase.pdf));
+  const modelConfigHash = modelConfigFingerprint(spec);
+  const runKey = hashObject({
+    schemaVersion: 3,
+    caseId: testCase.id,
+    sample,
+    pdfHash,
+    promptHash: context.promptHash,
+    modelConfigHash,
+    protocolHash: context.protocolHash,
   });
   return {
-    runKey: hashObject({ caseId: testCase.id, pdfHash, promptHash, modelConfigHash }),
+    schemaVersion: 3,
+    runKey,
+    inferenceFingerprint: runKey,
+    sample,
     pdfHash,
-    promptHash,
+    promptHash: context.promptHash,
     modelConfigHash,
+    protocolHash: context.protocolHash,
+    inferenceBenchmarkFingerprint: context.inferenceBenchmarkFingerprint,
+    providerFileMode: context.providerFileMode,
   };
 }
 
 async function readJsonIfExists(filePath: string) {
   if (!(await exists(filePath))) return null;
-  return JSON.parse(await readFile(filePath, "utf-8")) as any;
+  try {
+    return JSON.parse(await readFile(filePath, "utf-8")) as any;
+  } catch {
+    return null;
+  }
 }
 
-async function currentSuccessfulRunExists(resultPath: string, runKey: string) {
-  const result = await readJsonIfExists(resultPath);
-  return Boolean(result?.cache?.runKey === runKey && !result.error && result.finishReason !== "error");
+export type RunCacheExpectation = {
+  runKey: string;
+  caseId: string;
+  modelId: string;
+  sample: string;
+  suite: string;
+  manifestPath: string;
+  inputProtocol: string;
+  providerFileMode: string;
+  protocol: InferenceProtocol;
+  inferenceBenchmarkFingerprint: string;
+  protocolHash: string;
+  modelConfigHash: string;
+  pdfHash: string;
+};
+
+export function buildRunCacheExpectation(
+  testCase: ManifestCase,
+  spec: ModelSpec,
+  context: RunContext,
+  sample: string,
+  cache: Awaited<ReturnType<typeof runCacheKey>>,
+): RunCacheExpectation {
+  return {
+    runKey: cache.runKey,
+    caseId: testCase.id,
+    modelId: spec.id,
+    sample,
+    suite: context.suite,
+    manifestPath: context.manifestPath,
+    inputProtocol: context.inputProtocol,
+    providerFileMode: context.providerFileMode,
+    protocol: context.protocol,
+    inferenceBenchmarkFingerprint: context.inferenceBenchmarkFingerprint,
+    protocolHash: context.protocolHash,
+    modelConfigHash: cache.modelConfigHash,
+    pdfHash: cache.pdfHash,
+  };
+}
+
+export async function readCurrentCachedRun(resultPath: string, predictionPath: string, expected: RunCacheExpectation) {
+  const rawResult = await readJsonIfExists(resultPath);
+  const parsed = currentRunArtifactSchema.safeParse(rawResult);
+  if (!parsed.success) return null;
+  const result = parsed.data;
+  const spec = models[expected.modelId];
+  if (!spec) return null;
+  if (
+    result.cache.runKey !== expected.runKey ||
+    result.cache.inferenceFingerprint !== expected.runKey ||
+    result.cache.sample !== expected.sample ||
+    result.caseId !== expected.caseId ||
+    result.modelId !== expected.modelId ||
+    result.sample !== expected.sample ||
+    result.suite !== expected.suite ||
+    canonicalProjectReference(result.manifestPath) !== canonicalProjectReference(expected.manifestPath) ||
+    result.inputProtocol !== expected.inputProtocol ||
+    result.providerFileMode !== expected.providerFileMode ||
+    result.modelName !== spec.modelName ||
+    result.provider !== spec.provider ||
+    result.cache.protocolHash !== expected.protocolHash ||
+    result.cache.modelConfigHash !== expected.modelConfigHash ||
+    result.cache.pdfHash !== expected.pdfHash ||
+    result.executionProvenance.inferenceFingerprint !== expected.runKey ||
+    result.executionProvenance.protocolHash !== expected.protocolHash ||
+    result.executionProvenance.protocolVersion !== expected.protocol.version ||
+    result.executionProvenance.mediaType !== expected.protocol.mediaType ||
+    result.executionProvenance.maxOutputTokens !== expected.protocol.maxOutputTokens ||
+    result.executionProvenance.maxRetries !== expected.protocol.maxRetries ||
+    result.executionProvenance.transportEpoch !== expected.protocol.transportEpoch ||
+    result.executionProvenance.providerPayloadMode !== expected.protocol.providerPayloadMode ||
+    result.executionProvenance.samplingMode !== expected.protocol.samplingMode ||
+    JSON.stringify(result.executionProvenance.sdkVersions) !== JSON.stringify(expected.protocol.sdkVersions) ||
+    result.executionProvenance.modelConfigHash !== expected.modelConfigHash ||
+    result.executionProvenance.pdfHash !== expected.pdfHash ||
+    result.executionProvenance.promptHash !== result.cache.promptHash ||
+    result.executionProvenance.providerFileMode !== expected.providerFileMode ||
+    result.executionProvenance.inputProtocol !== expected.inputProtocol ||
+    result.executionProvenance.inputMode !== inputMode ||
+    result.providerMetadata.requested.provider !== spec.provider ||
+    result.providerMetadata.requested.modelId !== spec.modelName ||
+    result.estimatedCostUsd !== result.pricing.estimatedCostUsd
+  ) {
+    return null;
+  }
+  // Legacy artifacts used one broad catch block and could record disk/configuration
+  // failures as model errors. They are not trustworthy scoreable responses.
+  if (result.error) return null;
+  if (!(await exists(predictionPath))) return null;
+  const prediction = await readFile(predictionPath, "utf-8");
+  if (prediction.length !== result.outputLength || sha256(prediction) !== result.cache.predictionHash) return null;
+  return result;
+}
+
+export async function readValidCachedRun(resultPath: string, predictionPath: string, expected: RunCacheExpectation) {
+  const result = await readCurrentCachedRun(resultPath, predictionPath, expected);
+  if (!result || result.error || result.finishReason === "error") return null;
+  return result;
+}
+
+async function refreshPriceReport(resultPath: string, result: any, spec: ModelSpec) {
+  const pricing = priceReport(spec, result.usage);
+  const rawUsage = result.rawUsage ?? result.usage?.raw ?? null;
+  if (
+    result.estimatedCostUsd === pricing.estimatedCostUsd &&
+    result.pricing?.version === pricing.version &&
+    result.pricing?.inputPerMillion === pricing.inputPerMillion &&
+    result.pricing?.cachedInputPerMillion === pricing.cachedInputPerMillion &&
+    result.pricing?.outputPerMillion === pricing.outputPerMillion &&
+    result.rawUsage !== undefined
+  ) {
+    return result;
+  }
+  const refreshed = { ...result, estimatedCostUsd: pricing.estimatedCostUsd, pricing, rawUsage };
+  await atomicWriteJson(resultPath, refreshed);
+  return refreshed;
 }
 
 function sampleId(index: number) {
@@ -240,33 +646,82 @@ function sampleId(index: number) {
 async function runCaseSample(testCase: ManifestCase, spec: ModelSpec, context: RunContext, sample: string, options: { force?: boolean } = {}) {
   const outputDir = path.join("runs", spec.id, testCase.id, "samples", sample);
   await mkdir(outputDir, { recursive: true });
-  const cache = await runCacheKey(testCase, spec, context);
+  const cache = await runCacheKey(testCase, spec, context, sample);
+  const expectedRun = buildRunCacheExpectation(testCase, spec, context, sample, cache);
   const resultPath = path.join(outputDir, "result.json");
   const predictionPath = path.join(outputDir, "prediction.md");
-  if (!options.force && (await currentSuccessfulRunExists(resultPath, cache.runKey))) {
-    console.log(`${spec.id} ${testCase.id}#${sample}: skip cached`);
-    return { skipped: true, caseId: testCase.id };
-  }
-
-  const pdf = await readFile(testCase.pdf);
-  const started = performance.now();
+  const lock = await acquireSampleLock(path.join(outputDir, ".run.lock"));
   try {
-    const result = await generateText({
-      model: providerModel(spec),
-      messages: [
-        {
-          role: "user",
-          content: [
-            { type: "text", text: prompt },
-            { type: "file", data: pdf, mediaType: "application/pdf", filename: `${testCase.id}.pdf` },
+    // The cache must be checked only after exclusive ownership: another runner
+    // may have completed this exact sample while this process waited.
+    const cached = options.force ? null : await readCurrentCachedRun(resultPath, predictionPath, expectedRun);
+    if (cached) {
+      await refreshPriceReport(resultPath, cached, spec);
+      console.log(`${spec.id} ${testCase.id}#${sample}: skip cached${cached.finishReason === "error" ? " model response failure" : ""}`);
+      return { skipped: true, caseId: testCase.id };
+    }
+
+    let pdf: Buffer;
+    try {
+      pdf = await readFile(testCase.pdf);
+    } catch (error) {
+      throw new RunInfrastructureError(`Cannot read source PDF for ${spec.id} ${testCase.id}#${sample}.`, { cause: error });
+    }
+    if (sha256Bytes(pdf) !== cache.pdfHash) {
+      throw new RunInfrastructureError(
+        `Source PDF changed after preflight for ${spec.id} ${testCase.id}#${sample}; provider call was not started. Rerun preflight.`,
+      );
+    }
+
+    let model: ReturnType<typeof providerModel>;
+    try {
+      model = providerModel(spec);
+    } catch (error) {
+      throw new RunInfrastructureError(`Cannot configure provider model ${spec.id}.`, { cause: error });
+    }
+
+    // Remove the commit marker before spending on a replacement. If the provider
+    // or persistence fails, prediction.md may remain for diagnosis but the sample
+    // cannot be mistaken for a current completed run.
+    try {
+      await rm(resultPath, { force: true });
+    } catch (error) {
+      throw new RunInfrastructureError(`Cannot invalidate prior result for ${spec.id} ${testCase.id}#${sample}; provider call was not started.`, {
+        cause: error,
+      });
+    }
+
+    const started = performance.now();
+    const result = await (async () => {
+      try {
+        return await generateText({
+          model,
+          messages: [
+            {
+              role: "user",
+              content: [
+                { type: "text", text: prompt },
+                { type: "file", data: pdf, mediaType: pdfMediaType, filename: `${testCase.id}.pdf` },
+              ],
+            },
           ],
-        },
-      ],
-      maxOutputTokens,
-      ...(spec.reasoning ? { reasoning: spec.reasoning } : {}),
-    });
+          maxOutputTokens,
+          maxRetries: inferenceMaxRetries,
+          ...(spec.reasoning ? { reasoning: spec.reasoning } : {}),
+        });
+      } catch (error) {
+        throw new RunInfrastructureError(
+          `Provider invocation failed for ${spec.id} ${testCase.id}#${sample}; no scoreable model-response artifact was written.`,
+          { cause: error },
+        );
+      }
+    })();
     const elapsedMs = Math.round(performance.now() - started);
+    const predictionHash = sha256(result.text);
+    const pricing = priceReport(spec, result.usage);
     const summary = {
+      artifactStatus: "scoreable_model_response",
+      responseReceived: true,
       caseId: testCase.id,
       title: testCase.title,
       modelId: spec.id,
@@ -276,76 +731,128 @@ async function runCaseSample(testCase: ManifestCase, spec: ModelSpec, context: R
       manifestPath: context.manifestPath,
       inputProtocol: context.inputProtocol,
       providerFileMode: context.providerFileMode,
+      executionProvenance: {
+        schemaVersion: 1,
+        protocolVersion: context.protocol.version,
+        inputMode: context.protocol.inputMode,
+        inputProtocol: context.protocol.inputProtocol,
+        mediaType: context.protocol.mediaType,
+        providerFileMode: context.providerFileMode,
+        maxOutputTokens: context.protocol.maxOutputTokens,
+        maxRetries: context.protocol.maxRetries,
+        transportEpoch: context.protocol.transportEpoch,
+        providerPayloadMode: context.protocol.providerPayloadMode,
+        samplingMode: context.protocol.samplingMode,
+        sdkVersions: context.protocol.sdkVersions,
+        promptHash: context.promptHash,
+        protocolHash: context.protocolHash,
+        pdfHash: cache.pdfHash,
+        modelConfigHash: cache.modelConfigHash,
+        inferenceFingerprint: cache.inferenceFingerprint,
+        inferenceBenchmarkFingerprint: context.inferenceBenchmarkFingerprint,
+      },
+      providerMetadata: {
+        requested: {
+          provider: spec.provider,
+          modelId: spec.modelName,
+          reasoning: spec.reasoning ?? null,
+          location: spec.location ?? null,
+          baseURL: spec.baseURL ?? null,
+          ...(spec.provider === "google-vertex"
+            ? {
+                effectiveLocation: vertexProviderRoute(spec).location,
+                effectiveBaseURL: vertexProviderRoute(spec).baseURL,
+              }
+            : {}),
+          documentedPdfIngestionMode: context.providerFileMode,
+        },
+        resolved: {
+          provider: model.provider,
+          modelId: result.response.modelId,
+          responseId: result.response.id,
+          responseTimestamp: result.response.timestamp,
+          rawFinishReason: result.rawFinishReason ?? null,
+          warnings: result.warnings ?? [],
+          providerMetadata: result.providerMetadata ?? null,
+        },
+      },
       elapsedMs,
       finishReason: result.finishReason,
       usage: result.usage,
-      estimatedCostUsd: cost(spec, result.usage),
+      rawUsage: result.usage.raw ?? null,
+      estimatedCostUsd: pricing.estimatedCostUsd,
+      pricing,
       outputLength: result.text.length,
       sample,
-      cache,
+      cache: { ...cache, predictionHash },
       inputMode,
     };
-    await writeFile(predictionPath, result.text, "utf-8");
-    await writeFile(resultPath, JSON.stringify(summary, null, 2) + "\n", "utf-8");
+    const validatedSummary = currentRunArtifactSchema.safeParse(summary);
+    if (!validatedSummary.success) {
+      throw new RunInfrastructureError(
+        `Provider returned an incomplete result envelope for ${spec.id} ${testCase.id}#${sample}; no cache commit was written. ${validatedSummary.error.message}`,
+      );
+    }
+    try {
+      // result.json is the commit marker and is intentionally renamed last. A
+      // crash between the two writes leaves no valid cache hit.
+      await atomicWriteText(predictionPath, result.text);
+      await atomicWriteJson(resultPath, validatedSummary.data);
+    } catch (error) {
+      await rm(resultPath, { force: true }).catch(() => undefined);
+      throw new RunInfrastructureError(
+        `Failed to persist ${spec.id} ${testCase.id}#${sample}; the sample was invalidated instead of being recorded as a model zero.`,
+        { cause: error },
+      );
+    }
     console.log(`${spec.id} ${testCase.id}#${sample}: ${summary.finishReason} ${elapsedMs}ms $${summary.estimatedCostUsd.toFixed(6)}`);
     return { skipped: false, caseId: testCase.id };
-  } catch (error) {
-    const elapsedMs = Math.round(performance.now() - started);
-    const summary = {
-      caseId: testCase.id,
-      title: testCase.title,
-      modelId: spec.id,
-      modelName: spec.modelName,
-      provider: spec.provider,
-      suite: context.suite,
-      manifestPath: context.manifestPath,
-      inputProtocol: context.inputProtocol,
-      providerFileMode: context.providerFileMode,
-      elapsedMs,
-      finishReason: "error",
-      usage: null,
-      estimatedCostUsd: 0,
-      outputLength: 0,
-      sample,
-      error: error instanceof Error ? error.message : String(error),
-      cache,
-      inputMode,
-    };
-    await writeFile(predictionPath, "", "utf-8");
-    await writeFile(resultPath, JSON.stringify(summary, null, 2) + "\n", "utf-8");
-    console.error(`${spec.id} ${testCase.id}#${sample}: ERROR ${summary.error}`);
-    return { skipped: false, caseId: testCase.id };
+  } finally {
+    await lock.release();
   }
 }
 
-export async function runModel(modelId: string, options: { caseId?: string; force?: boolean; manifestPath?: string } = {}) {
+export async function runModel(
+  modelId: string,
+  options: { caseId?: string; force?: boolean; manifestPath?: string; skipPreflight?: boolean } = {},
+) {
+  if (!options.skipPreflight) {
+    const { preflightBenchmark } = await import("./preflight.js");
+    await preflightBenchmark(options.manifestPath ?? "benchmark/manifest.json");
+  }
   const spec = models[modelId];
   if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
 
   const manifestPath = options.manifestPath ?? "benchmark/manifest.json";
-  const manifest = JSON.parse(await readFile(manifestPath, "utf-8")) as Manifest;
+  const manifest = (await loadBenchmarkManifest(manifestPath)).manifest as Manifest;
   const selected = options.caseId ? manifest.cases.filter((testCase) => testCase.id === options.caseId) : manifest.cases;
   if (selected.length === 0) throw new Error(`No selected cases. Use one of: ${manifest.cases.map((testCase) => testCase.id).join(", ")}`);
 
   const context = await buildRunContext(spec, manifest, manifestPath);
   console.log(
-    `Running ${selected.length} case(s) x ${samplesPerModelCase} sample(s) from ${manifest.name} (${manifestPath}) with ${spec.id} in parallel ` +
+    `Running ${selected.length} case(s) x ${samplesPerModelCase} sample(s) from ${manifest.name} (${manifestPath}) with ${spec.id}, ` +
+      `up to ${inferenceConcurrency} concurrent calls ` +
       `[suite=${context.suite}, protocol=${context.inputProtocol}, providerFileMode=${context.providerFileMode}]`,
   );
   const jobs = selected.flatMap((testCase) =>
-    Array.from({ length: samplesPerModelCase }, (_, index) => runCaseSample(testCase, spec, context, sampleId(index + 1), { force: options.force })),
+    Array.from({ length: samplesPerModelCase }, (_, index) => () =>
+      runCaseSample(testCase, spec, context, sampleId(index + 1), { force: options.force }),
+    ),
   );
-  const results = await Promise.all(jobs);
+  const results = await runBoundedJobs(jobs, inferenceConcurrency);
   const skipped = results.filter((result) => result.skipped).length;
   console.log(`${spec.id}: ${results.length - skipped} run, ${skipped} skipped`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const args = parseArgs();
-  rejectUnknownArgs(args, ["model", "case", "force", "manifest"]);
-  await runModel(args.get("model") ?? "vertex-gemini-3.1-flash-lite", {
-    caseId: args.get("case"),
-    force: args.has("force"),
-    manifestPath: args.get("manifest"),
-  });
+  const args = parseRunCliArgs(process.argv.slice(2));
+  if (args.help) {
+    console.log(runUsage);
+  } else {
+    await runModel(args.modelId, {
+      caseId: args.caseId,
+      force: args.force,
+      manifestPath: args.manifestPath,
+    });
+  }
 }

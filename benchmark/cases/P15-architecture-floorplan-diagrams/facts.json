@@ -1,128 +1,1220 @@
 {
+  "schemaVersion": 2,
   "id": "P15-architecture-floorplan-diagrams",
-  "title": "Architecture Floorplan Diagram Packet",
-  "family": "diagram",
+  "title": "Suite 214 Laboratory Coordination Set",
+  "family": "architectural and building systems",
   "tags": [
-    "multi-page",
+    "native-pdf",
     "floorplan",
-    "network",
-    "rack",
+    "rack-elevation",
+    "directed-topology",
     "panel-schedule",
-    "rfi",
-    "visual-relations"
+    "scanned-rfi"
   ],
-  "facts": [
+  "regions": [
     {
-      "id": "p15.revision",
-      "category": "source_state",
-      "weight": 6,
-      "expectation": "Rev C dated 2026-06-12 controls; Rev B D-214A is superseded by D-214B and CR-6 corridor-side reader.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p01.register",
+      "page": 1,
+      "label": "Document register",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p01.register.schema",
+          "expectation": "The region preserves the source field schema in order: Sheet, Title, Revision, Issue date, Status.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.register.row-order",
+          "expectation": "The source row order is recoverable as: A2.14 -> T4.08 -> N1.07 -> E6.02 -> RFI-214B.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.register.a2-14.title",
+          "expectation": "For A2.14, Title is Suite 214 floor plan.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.a2-14.revision",
+          "expectation": "For A2.14, Revision is C.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.a2-14.issue-date",
+          "expectation": "For A2.14, Issue date is 12 Jun 2026.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.a2-14.status",
+          "expectation": "For A2.14, Status is Coordinated.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.t4-08.title",
+          "expectation": "For T4.08, Title is Rack R2 elevation and ports.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.t4-08.revision",
+          "expectation": "For T4.08, Revision is C.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.t4-08.issue-date",
+          "expectation": "For T4.08, Issue date is 12 Jun 2026.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.t4-08.status",
+          "expectation": "For T4.08, Status is Coordinated.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.n1-07.title",
+          "expectation": "For N1.07, Title is Laboratory network topology.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.n1-07.revision",
+          "expectation": "For N1.07, Revision is C.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.n1-07.issue-date",
+          "expectation": "For N1.07, Issue date is 12 Jun 2026.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.n1-07.status",
+          "expectation": "For N1.07, Status is Coordinated.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.e6-02.title",
+          "expectation": "For E6.02, Title is Panel LP-2 schedule.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.e6-02.revision",
+          "expectation": "For E6.02, Revision is C.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.e6-02.issue-date",
+          "expectation": "For E6.02, Issue date is 12 Jun 2026.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.e6-02.status",
+          "expectation": "For E6.02, Status is Coordinated.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.rfi-214b.title",
+          "expectation": "For RFI-214B, Title is Lab B corridor door.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.rfi-214b.revision",
+          "expectation": "For RFI-214B, Revision is Answered.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.rfi-214b.issue-date",
+          "expectation": "For RFI-214B, Issue date is 12 Jun 2026.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.register.rfi-214b.status",
+          "expectation": "For RFI-214B, Status is Attached scan.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p15.rooms",
-      "category": "visual_relation",
-      "weight": 10,
-      "expectation": "Floor plan preserves room names and dimensions for 214 Clean Prep, 215 Lab B, 216 Freezer, 217 Wash, and 218 IT Closet, plus overall 45 ft 0 in width, 22 ft 0 in depth, and coordination schedule linking 214 to CS-2/01, D-214B to CR-6/L2-15, 216 to VLAN 240/L2-17, and 218 to rack R2/L2-19.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p01.revisions",
+      "page": 1,
+      "label": "Revision history",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p01.revisions.schema",
+          "expectation": "The region preserves the source field schema in order: Revision, Date, Change, Issued by.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.revisions.row-order",
+          "expectation": "The source row order is recoverable as: A -> B -> C.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.revisions.a.date",
+          "expectation": "For A, Date is 28 May.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.revisions.a.change",
+          "expectation": "For A, Change is Existing-condition backgrounds.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.revisions.a.issued-by",
+          "expectation": "For A, Issued by is M. Song.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.revisions.b.date",
+          "expectation": "For B, Date is 07 Jun.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.revisions.b.change",
+          "expectation": "For B, Change is Lab B door shown as D-214A.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.revisions.b.issued-by",
+          "expectation": "For B, Issued by is M. Song.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.revisions.c.date",
+          "expectation": "For C, Date is 12 Jun.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.revisions.c.change",
+          "expectation": "For C, Change is Door D-214B; CR-6; circuit L2-15.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.revisions.c.issued-by",
+          "expectation": "For C, Issued by is A. Verma.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p15.egress",
-      "category": "visual_relation",
-      "weight": 5,
-      "expectation": "Egress arrow exits from Clean Prep toward C2 Corridor.",
-      "guidance": "",
-      "severity": "major"
+      "id": "p01.control",
+      "page": 1,
+      "label": "Revision control statement",
+      "kind": "text",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p01.control.rev-c",
+          "expectation": "Revision C dated 2026-06-12 controls over Revision B.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.control.old-id",
+          "expectation": "D-214A remains only on the attached marked-up Revision B RFI sheet.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p15.callouts",
-      "category": "visual_relation",
-      "weight": 8,
-      "expectation": "Callout 6 is CR-6 at Lab B corridor door; callout 9 is rack R2 in 218 IT Closet; callout 11 is freezer FZ-3 in 216 Freezer.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p02.plan",
+      "page": 2,
+      "label": "Floor plan rooms and dimensions",
+      "kind": "diagram",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p02.rooms.214",
+          "expectation": "Room 214 Clean Prep is 18 ft 6 in x 12 ft 0 in.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.rooms.215",
+          "expectation": "Room 215 Lab B is 16 ft 0 in x 12 ft 0 in.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.rooms.216",
+          "expectation": "Room 216 Freezer is 10 ft 6 in x 12 ft 0 in.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.rooms.217",
+          "expectation": "Room 217 Wash is 12 ft 0 in x 10 ft 0 in.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.rooms.218",
+          "expectation": "Room 218 IT Closet is 10 ft 6 in x 10 ft 0 in.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.rooms.lab-b-corridor",
+          "expectation": "The south wall of 215 Lab B directly adjoins C2 Corridor.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.rooms.overall-width",
+          "expectation": "Overall suite width is 45 ft 0 in.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.rooms.overall-depth",
+          "expectation": "Overall suite depth is 22 ft 0 in.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p15.rack.units",
-      "category": "visual_relation",
-      "weight": 10,
-      "expectation": "Rack elevation preserves CS-2 at U42-U43, PP-7 U36-U37, FW-02 U30-U31, UPS A U24-U26, GW-3 U18, NVR bridge U12-U13.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p02.egress",
+      "page": 2,
+      "label": "Egress arrow",
+      "kind": "diagram",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p02.egress.direction",
+          "expectation": "The egress arrow runs from 214 Clean Prep toward C2 Corridor.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p15.patch.table",
-      "category": "table_cell",
-      "weight": 8,
-      "expectation": "Patch table preserves CS-2/01 D214-01 tablet dock VLAN 210, CS-2/07 D215-03 CR-6 VLAN 230, CS-2/12 D216-02 FZ-3 VLAN 240, CS-2/19 D218-01 FW-02 mgmt VLAN 99.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p02.callouts",
+      "page": 2,
+      "label": "Plan callouts",
+      "kind": "diagram",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p02.callout.6",
+          "expectation": "Callout 6 identifies reader CR-6 on the corridor side of D-214B in the shared wall between 215 Lab B and C2 Corridor.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.callout.9",
+          "expectation": "Callout 9 is rack R2 in room 218 IT Closet.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.callout.11",
+          "expectation": "Callout 11 is freezer FZ-3 in room 216.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p15.network.arrows",
-      "category": "visual_relation",
-      "weight": 12,
-      "expectation": "Network topology preserves directed links FW-02 to CS-2 trunk, CS-2 to CR-6 VLAN 230, CS-2 to FZ-3 VLAN 240, CS-2 to QA subnet VLAN 210, CR-6 to NVR badge mirror, dashed optional FZ-3 to NVR alert overlay, plus rule extract ACL-230-06, ACL-240-11, TRK-CS2-FW02, and OPT-CAM with source, destination, VLAN, and state.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p02.coordination",
+      "page": 2,
+      "label": "Room coordination table",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p02.coordination.schema",
+          "expectation": "The region preserves the source field schema in order: Location, Field condition, Coordinated artifact.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.coordination.row-order",
+          "expectation": "The source row order is recoverable as: 214 Clean Prep -> 215 Lab B -> 216 Freezer -> 218 IT Closet.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.coordination.214-clean-prep.field-condition",
+          "expectation": "For 214 Clean Prep, Field condition is D214-01 tablet dock.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.coordination.214-clean-prep.coordinated-artifact",
+          "expectation": "For 214 Clean Prep, Coordinated artifact is CS-2/01; VLAN 210.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.coordination.215-lab-b.field-condition",
+          "expectation": "For 215 Lab B, Field condition is D-214B; CR-6 corridor side.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.coordination.215-lab-b.coordinated-artifact",
+          "expectation": "For 215 Lab B, Coordinated artifact is CS-2/07; L2-15.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.coordination.216-freezer.field-condition",
+          "expectation": "For 216 Freezer, Field condition is FZ-3 at callout 11.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.coordination.216-freezer.coordinated-artifact",
+          "expectation": "For 216 Freezer, Coordinated artifact is CS-2/12; VLAN 240; L2-17.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.coordination.218-it-closet.field-condition",
+          "expectation": "For 218 IT Closet, Field condition is Rack R2 at callout 9.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.coordination.218-it-closet.coordinated-artifact",
+          "expectation": "For 218 IT Closet, Coordinated artifact is CS-2/19; L2-19.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p15.subnets",
-      "category": "visual_relation",
-      "weight": 8,
-      "expectation": "VLAN 240 maps to 10.42.40.0/24 freezer/camera telemetry; VLAN 230 is access control; VLAN 210 is QA devices; ACL-230-06 permits one-way CR-6 to NVR event mirror, and ACL-240-11 denies FZ-3 to QA telemetry except broker.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p03.rack",
+      "page": 3,
+      "label": "Rack-unit elevation",
+      "kind": "diagram",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p03.rack.01",
+          "expectation": "Core switch CS-2 occupies U42-U43.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.rack.02",
+          "expectation": "Patch panel PP-7 occupies U36-U37.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.rack.03",
+          "expectation": "Firewall FW-02 occupies U30-U31.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.rack.04",
+          "expectation": "UPS A occupies U24-U26.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.rack.05",
+          "expectation": "Gateway GW-3 occupies U18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.rack.06",
+          "expectation": "NVR bridge occupies U12-U13.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p15.optional.path",
-      "category": "visual_relation",
-      "weight": 4,
-      "expectation": "Dashed optional alert overlay runs from FZ-3 to NVR.",
-      "guidance": "",
-      "severity": "major"
+      "id": "p03.patch",
+      "page": 3,
+      "label": "Patch schedule",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p03.patch.schema",
+          "expectation": "The region preserves the source field schema in order: Port, Drop, Room, Device, VLAN.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.patch.row-order",
+          "expectation": "The source row order is recoverable as: CS-2/01 -> CS-2/07 -> CS-2/12 -> CS-2/19.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.patch.cs-2-01.drop",
+          "expectation": "For CS-2/01, Drop is D214-01.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-01.room",
+          "expectation": "For CS-2/01, Room is 214.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-01.device",
+          "expectation": "For CS-2/01, Device is Tablet dock.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-01.vlan",
+          "expectation": "For CS-2/01, VLAN is 210.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-07.drop",
+          "expectation": "For CS-2/07, Drop is D215-03.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-07.room",
+          "expectation": "For CS-2/07, Room is 215.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-07.device",
+          "expectation": "For CS-2/07, Device is Card reader CR-6.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-07.vlan",
+          "expectation": "For CS-2/07, VLAN is 230.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-12.drop",
+          "expectation": "For CS-2/12, Drop is D216-02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-12.room",
+          "expectation": "For CS-2/12, Room is 216.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-12.device",
+          "expectation": "For CS-2/12, Device is Freezer monitor FZ-3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-12.vlan",
+          "expectation": "For CS-2/12, VLAN is 240.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-19.drop",
+          "expectation": "For CS-2/19, Drop is D218-01.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-19.room",
+          "expectation": "For CS-2/19, Room is 218.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-19.device",
+          "expectation": "For CS-2/19, Device is FW-02 management.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.patch.cs-2-19.vlan",
+          "expectation": "For CS-2/19, VLAN is 99.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p15.panel",
-      "category": "table_cell",
-      "weight": 12,
-      "expectation": "Panel LP-2 schedule preserves all circuits L2-11, L2-13, L2-15, L2-17, L2-19, L2-21 with loads, breakers, emergency states, rooms, notes, and load summary rows for normal receptacles 3.2/0.0 kVA, access control 0.4/0.4, cold storage 0.7/0.7, IT/UPS 1.1/1.1, spare capacity 2.6/- held for Rev D.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p04.topology",
+      "page": 4,
+      "label": "Directed network topology",
+      "kind": "diagram",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p04.edge.01",
+          "expectation": "A solid directed link runs from FW-02 to CS-2 for trunk 99/210/230/240.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.edge.02",
+          "expectation": "A solid directed link runs from CS-2 to CR-6 for VLAN 230.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.edge.03",
+          "expectation": "A solid directed link runs from CS-2 to FZ-3 for VLAN 240.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.edge.04",
+          "expectation": "A solid directed link runs from CS-2 to QA subnet for VLAN 210.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.edge.05",
+          "expectation": "A solid directed link runs from CR-6 to NVR for badge event mirror.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.edge.06",
+          "expectation": "A dashed optional directed link runs from FZ-3 to NVR for optional alert overlay.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p15.emergency",
-      "category": "source_state",
-      "weight": 8,
-      "expectation": "Emergency circuits are L2-15, L2-17, and L2-19; L2-17 is Freezer FZ-3 and matches callout 11; emergency branch labels match floor plan callouts is checked, while L2-21 released for construction and freezer monitor moved to normal power are unchecked.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p04.rules",
+      "page": 4,
+      "label": "Access-control rule table",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p04.rules.schema",
+          "expectation": "The region preserves the source field schema in order: Rule, Source, Destination, VLAN, State.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.rules.row-order",
+          "expectation": "The source row order is recoverable as: ACL-230-06 -> SVC-210-QA -> TRK-FW02-CS2 -> OPT-CAM.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.rules.acl-230-06.source",
+          "expectation": "For ACL-230-06, Source is CR-6.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.acl-230-06.destination",
+          "expectation": "For ACL-230-06, Destination is NVR event mirror.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.acl-230-06.vlan",
+          "expectation": "For ACL-230-06, VLAN is 230 -> 240.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.acl-230-06.state",
+          "expectation": "For ACL-230-06, State is Permit one-way.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.svc-210-qa.source",
+          "expectation": "For SVC-210-QA, Source is CS-2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.svc-210-qa.destination",
+          "expectation": "For SVC-210-QA, Destination is QA subnet.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.svc-210-qa.vlan",
+          "expectation": "For SVC-210-QA, VLAN is 210.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.svc-210-qa.state",
+          "expectation": "For SVC-210-QA, State is Permit telemetry.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.trk-fw02-cs2.source",
+          "expectation": "For TRK-FW02-CS2, Source is FW-02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.trk-fw02-cs2.destination",
+          "expectation": "For TRK-FW02-CS2, Destination is CS-2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.trk-fw02-cs2.vlan",
+          "expectation": "For TRK-FW02-CS2, VLAN is 99/210/230/240.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.trk-fw02-cs2.state",
+          "expectation": "For TRK-FW02-CS2, State is Tagged trunk.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.opt-cam.source",
+          "expectation": "For OPT-CAM, Source is FZ-3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.opt-cam.destination",
+          "expectation": "For OPT-CAM, Destination is NVR.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.opt-cam.vlan",
+          "expectation": "For OPT-CAM, VLAN is 240.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.rules.opt-cam.state",
+          "expectation": "For OPT-CAM, State is Optional / dashed.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p15.rfi.answer",
-      "category": "source_state",
-      "weight": 8,
-      "expectation": "RFI final answer uses D-214B, adds CR-6 card reader on corridor side, updates access control schedule and LP-2 circuit L2-15.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p05.panel",
+      "page": 5,
+      "label": "Panel LP-2 schedule",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p05.panel.schema",
+          "expectation": "The region preserves the source field schema in order: Circuit, Load, Breaker, Emergency, Room, Note.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.panel.row-order",
+          "expectation": "The source row order is recoverable as: L2-11 -> L2-13 -> L2-15 -> L2-17 -> L2-19 -> L2-21.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.panel.l2-11.load",
+          "expectation": "For L2-11, Load is Bench outlets B.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-11.breaker",
+          "expectation": "For L2-11, Breaker is 20A/1P.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-11.emergency",
+          "expectation": "For L2-11, Emergency is No.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-11.room",
+          "expectation": "For L2-11, Room is 215.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-11.note",
+          "expectation": "For L2-11, Note is GFCI.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-13.load",
+          "expectation": "For L2-13, Load is Autoclave AC-1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-13.breaker",
+          "expectation": "For L2-13, Breaker is 30A/2P.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-13.emergency",
+          "expectation": "For L2-13, Emergency is No.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-13.room",
+          "expectation": "For L2-13, Room is 217.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-13.note",
+          "expectation": "For L2-13, Note is Dedicated.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-15.load",
+          "expectation": "For L2-15, Load is Door controller DC-6.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-15.breaker",
+          "expectation": "For L2-15, Breaker is 20A/1P.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-15.emergency",
+          "expectation": "For L2-15, Emergency is Yes.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-15.room",
+          "expectation": "For L2-15, Room is 215.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-15.note",
+          "expectation": "For L2-15, Note is Feeds CR-6.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-17.load",
+          "expectation": "For L2-17, Load is Freezer FZ-3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-17.breaker",
+          "expectation": "For L2-17, Breaker is 20A/1P.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-17.emergency",
+          "expectation": "For L2-17, Emergency is Yes.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-17.room",
+          "expectation": "For L2-17, Room is 216.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-17.note",
+          "expectation": "For L2-17, Note is Monitor required.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-19.load",
+          "expectation": "For L2-19, Load is Rack R2 UPS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-19.breaker",
+          "expectation": "For L2-19, Breaker is 20A/1P.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-19.emergency",
+          "expectation": "For L2-19, Emergency is Yes.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-19.room",
+          "expectation": "For L2-19, Room is 218.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-19.note",
+          "expectation": "For L2-19, Note is UPS A.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-21.load",
+          "expectation": "For L2-21, Load is Spare.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-21.breaker",
+          "expectation": "For L2-21, Breaker is 20A/1P.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-21.emergency",
+          "expectation": "For L2-21, Emergency is No.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-21.room",
+          "expectation": "For L2-21, Room is -.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.panel.l2-21.note",
+          "expectation": "For L2-21, Note is Hold for Rev D.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p15.revision.cloud",
-      "category": "visual_relation",
-      "weight": 5,
-      "expectation": "Revision cloud text says D-214B + CR-6.",
-      "guidance": "",
-      "severity": "major"
+      "id": "p05.loads",
+      "page": 5,
+      "label": "Panel load summary",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p05.loads.schema",
+          "expectation": "The region preserves the source field schema in order: Branch, Connected, Emergency, Coordination note.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.loads.row-order",
+          "expectation": "The source row order is recoverable as: Normal receptacles -> Access control -> Cold storage -> IT / UPS -> Spare capacity.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.loads.normal-receptacles.connected",
+          "expectation": "For Normal receptacles, Connected is 3.2 kVA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.normal-receptacles.emergency",
+          "expectation": "For Normal receptacles, Emergency is 0.0 kVA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.normal-receptacles.coordination-note",
+          "expectation": "For Normal receptacles, Coordination note is Bench and autoclave.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.access-control.connected",
+          "expectation": "For Access control, Connected is 0.4 kVA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.access-control.emergency",
+          "expectation": "For Access control, Emergency is 0.4 kVA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.access-control.coordination-note",
+          "expectation": "For Access control, Coordination note is DC-6 on L2-15.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.cold-storage.connected",
+          "expectation": "For Cold storage, Connected is 0.7 kVA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.cold-storage.emergency",
+          "expectation": "For Cold storage, Emergency is 0.7 kVA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.cold-storage.coordination-note",
+          "expectation": "For Cold storage, Coordination note is FZ-3 on L2-17.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.it-ups.connected",
+          "expectation": "For IT / UPS, Connected is 1.1 kVA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.it-ups.emergency",
+          "expectation": "For IT / UPS, Emergency is 1.1 kVA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.it-ups.coordination-note",
+          "expectation": "For IT / UPS, Coordination note is R2 UPS on L2-19.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.spare-capacity.connected",
+          "expectation": "For Spare capacity, Connected is 2.6 kVA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.spare-capacity.emergency",
+          "expectation": "For Spare capacity, Emergency is -.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.loads.spare-capacity.coordination-note",
+          "expectation": "For Spare capacity, Coordination note is L2-21 held for Rev D.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p15.rev.table",
-      "category": "table_cell",
-      "weight": 6,
-      "expectation": "RFI field table preserves Door label D-214A to D-214B, Reader none to CR-6 corridor side, Circuit unassigned to L2-15, Schedule draft to issued.",
-      "guidance": "",
-      "severity": "critical"
+      "id": "p05.checks",
+      "page": 5,
+      "label": "Electrical issue checkboxes",
+      "kind": "form",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p05.checks.labels",
+          "expectation": "Emergency labels match floor-plan callouts is checked.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.checks.spare",
+          "expectation": "L2-21 released for construction is unchecked.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.checks.freezer",
+          "expectation": "Freezer monitor moved to normal power is unchecked.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p06.rfi-scan",
+      "page": 6,
+      "label": "Scanned RFI response",
+      "kind": "form",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p06.rfi.old",
+          "expectation": "The scanned Revision B answer D-214A is struck out.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.rfi.door",
+          "expectation": "The corrected controlling door identifier is D-214B.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.rfi.reader",
+          "expectation": "CR-6 is added on the corridor side.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.rfi.circuit",
+          "expectation": "Panel LP-2 circuit L2-15 is assigned to the reader.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.rfi.revision",
+          "expectation": "Revision C dated 2026-06-12 governs.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.rfi.signoff.architect",
+          "expectation": "A. Verma signed the RFI on 2026-06-12.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.rfi.signoff.security",
+          "expectation": "Security reviewer initials are TN.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p06.fields",
+      "page": 6,
+      "label": "RFI revision field table",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p06.fields.schema",
+          "expectation": "The region preserves the source field schema in order: Field, Revision B, Revision C.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p06.fields.row-order",
+          "expectation": "The source row order is recoverable as: Door identifier -> Reader -> Circuit -> Schedule.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p06.fields.door-identifier.revision-b",
+          "expectation": "For Door identifier, Revision B is D-214A.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.fields.door-identifier.revision-c",
+          "expectation": "For Door identifier, Revision C is D-214B.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.fields.reader.revision-b",
+          "expectation": "For Reader, Revision B is None.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.fields.reader.revision-c",
+          "expectation": "For Reader, Revision C is CR-6 corridor side.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.fields.circuit.revision-b",
+          "expectation": "For Circuit, Revision B is Unassigned.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.fields.circuit.revision-c",
+          "expectation": "For Circuit, Revision C is L2-15.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.fields.schedule.revision-b",
+          "expectation": "For Schedule, Revision B is Draft.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.fields.schedule.revision-c",
+          "expectation": "For Schedule, Revision C is Issued.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     }
   ]
 }

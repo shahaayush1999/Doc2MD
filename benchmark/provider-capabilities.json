@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastReviewed": "2026-07-07",
+  "lastReviewed": "2026-07-10",
   "notes": [
     "This file records documented provider ingestion behavior for interpreting Doc2MD results. It is not a scoring file.",
     "Official Doc2MD runs send native PDFs to the provider. Provider ingestion mode is reported as context, not used as a scoring gate."

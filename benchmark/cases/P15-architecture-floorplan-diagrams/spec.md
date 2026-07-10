@@ -1,7 +1,9 @@
-# Architecture Floorplan Diagram Packet
+# Suite 214 Laboratory Coordination Set
 
-Source modality: Six-page architecture/facilities packet with floorplan, rack elevation, topology, panel schedule, and RFI markup.
+Source modality: born-digital native technical drawing set with one embedded scanned field-RFI response
 
-Family: `diagram`
+Family: `architectural and building systems`
 
-Tags: `multi-page`, `floorplan`, `network`, `rack`, `panel-schedule`, `rfi`, `visual-relations`
+Purpose: Test spatial plan relations, rack-unit placement, directed network links, electrical bindings, checkbox state, and a scanned field revision.
+
+Tags: `native-pdf`, `floorplan`, `rack-elevation`, `directed-topology`, `panel-schedule`, `scanned-rfi`

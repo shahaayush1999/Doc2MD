@@ -1,178 +1,1652 @@
 {
+  "schemaVersion": 2,
   "id": "P20-utility-outage-restoration",
-  "title": "Utility Outage Restoration Packet",
-  "family": "utility-incident",
+  "title": "Feeder 12R Outage Investigation",
+  "family": "electric utility incident operations",
   "tags": [
-    "multi-page",
-    "utility",
-    "one-line-diagram",
+    "native-pdf",
     "scada",
-    "crew-log",
-    "chart",
+    "switching-log",
+    "one-line",
+    "restoration-chart",
+    "field-photos",
+    "redline",
     "source-precedence"
   ],
-  "facts": [
+  "regions": [
     {
-      "id": "p20.final.cause",
-      "category": "source_state",
-      "weight": 12,
-      "expectation": "Final cause is failed polymer cutout F-12B on Maple lateral; draft tree-contact cause is superseded.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p01.summary",
+      "page": 1,
+      "label": "Incident event record",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p01.summary.schema",
+          "expectation": "The region preserves the source field schema in order: Field, Recorded value.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.summary.row-order",
+          "expectation": "The source row order is recoverable as: Outage start -> Customers interrupted -> Critical customers -> Hospital restoration -> All-customer restoration -> Network normalized.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.summary.outage-start.recorded-value",
+          "expectation": "For Outage start, Recorded value is 2 Jul 2026 15:42.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.summary.customers-interrupted.recorded-value",
+          "expectation": "For Customers interrupted, Recorded value is 8,960.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.summary.critical-customers.recorded-value",
+          "expectation": "For Critical customers, Recorded value is Hospital loop; traffic signal TS-12; lift station LS-4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.summary.hospital-restoration.recorded-value",
+          "expectation": "For Hospital restoration, Recorded value is 17:18 via tie T-7.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.summary.all-customer-restoration.recorded-value",
+          "expectation": "For All-customer restoration, Recorded value is 19:06 via R12 breaker close.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.summary.network-normalized.recorded-value",
+          "expectation": "For Network normalized, Recorded value is 19:32 after T-7 opened.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.scada.heading",
-      "category": "text",
-      "weight": 5,
-      "expectation": "The alarm section/page title is exactly SCADA Alarm Sequence; it must not be misquoted as SCALAR or another word.",
-      "guidance": "",
-      "modality": "text",
-      "severity": "major"
+      "id": "p01.sources",
+      "page": 1,
+      "label": "Incident source register",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p01.sources.schema",
+          "expectation": "The region preserves the source field schema in order: Record, Clock basis, Custodian, State.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.sources.row-order",
+          "expectation": "The source row order is recoverable as: SCADA alarm export -> Switching order 12R-731 -> OMS restoration series -> Patrol media P1-P3 -> Investigation report.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.sources.scada-alarm-export.clock-basis",
+          "expectation": "For SCADA alarm export, Clock basis is Sub-second.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.scada-alarm-export.custodian",
+          "expectation": "For SCADA alarm export, Custodian is System control.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.scada-alarm-export.state",
+          "expectation": "For SCADA alarm export, State is Frozen 20:00.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.switching-order-12r-731.clock-basis",
+          "expectation": "For Switching order 12R-731, Clock basis is 24-hour local.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.switching-order-12r-731.custodian",
+          "expectation": "For Switching order 12R-731, Custodian is Control room.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.switching-order-12r-731.state",
+          "expectation": "For Switching order 12R-731, State is Signed.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.oms-restoration-series.clock-basis",
+          "expectation": "For OMS restoration series, Clock basis is 5-minute bins.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.oms-restoration-series.custodian",
+          "expectation": "For OMS restoration series, Custodian is Outage management.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.oms-restoration-series.state",
+          "expectation": "For OMS restoration series, State is Final.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.patrol-media-p1-p3.clock-basis",
+          "expectation": "For Patrol media P1-P3, Clock basis is GPS device time.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.patrol-media-p1-p3.custodian",
+          "expectation": "For Patrol media P1-P3, Custodian is Crew A.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.patrol-media-p1-p3.state",
+          "expectation": "For Patrol media P1-P3, State is Uploaded.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.investigation-report.clock-basis",
+          "expectation": "For Investigation report, Clock basis is Revision 2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.investigation-report.custodian",
+          "expectation": "For Investigation report, Custodian is Protection engineering.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.sources.investigation-report.state",
+          "expectation": "For Investigation report, State is Signed 3 Jul.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.alarms",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "SCADA alarm sequence preserves all times/devices/states/notes from 15:42:11 R12 trip, 15:42:14 12R-3 lockout, 15:42:19 relay 50G pickup 7.8 kA, 15:44:33 OMS 8,960 out, DER-44 0 kW at 17:11, T-7 closed 17:18:44, F-12B replaced 18:05:02, through 19:06:10 R12 breaker closed.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p02.alarms",
+      "page": 2,
+      "label": "SCADA alarm sequence",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p02.alarms.schema",
+          "expectation": "The region preserves the source field schema in order: Time, Device, State, System note.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.alarms.row-order",
+          "expectation": "The source row order is recoverable as: 15:42:11 -> 15:42:14 -> 15:42:19 -> 15:43:02 -> 15:44:33 -> 16:05:20 -> 16:31:05 -> 17:11:00 -> 17:18:44 -> 18:05:02 -> 18:55:18 -> 19:00:41 -> 19:06:10.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.alarms.15-42-11.device",
+          "expectation": "For 15:42:11, Device is R12 breaker.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-42-11.state",
+          "expectation": "For 15:42:11, State is Trip.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-42-11.system-note",
+          "expectation": "For 15:42:11, System note is Phase B ground.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-42-14.device",
+          "expectation": "For 15:42:14, Device is Recloser 12R-3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-42-14.state",
+          "expectation": "For 15:42:14, State is Lockout.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-42-14.system-note",
+          "expectation": "For 15:42:14, System note is Third shot.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-42-19.device",
+          "expectation": "For 15:42:19, Device is Relay 50G.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-42-19.state",
+          "expectation": "For 15:42:19, State is Pickup.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-42-19.system-note",
+          "expectation": "For 15:42:19, System note is 7.8 kA momentary.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-43-02.device",
+          "expectation": "For 15:43:02, Device is Cap bank CB-4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-43-02.state",
+          "expectation": "For 15:43:02, State is Offline.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-43-02.system-note",
+          "expectation": "For 15:43:02, System note is Voltage sag.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-44-33.device",
+          "expectation": "For 15:44:33, Device is OMS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-44-33.state",
+          "expectation": "For 15:44:33, State is 8,960 out.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.15-44-33.system-note",
+          "expectation": "For 15:44:33, System note is Nested outage created.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.16-05-20.device",
+          "expectation": "For 16:05:20, Device is Switch S-18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.16-05-20.state",
+          "expectation": "For 16:05:20, State is Opened.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.16-05-20.system-note",
+          "expectation": "For 16:05:20, System note is Crew isolation.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.16-31-05.device",
+          "expectation": "For 16:31:05, Device is Switch S-22.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.16-31-05.state",
+          "expectation": "For 16:31:05, State is Opened.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.16-31-05.system-note",
+          "expectation": "For 16:31:05, System note is Riverside isolated.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.17-11-00.device",
+          "expectation": "For 17:11:00, Device is DER-44.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.17-11-00.state",
+          "expectation": "For 17:11:00, State is 0 kW.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.17-11-00.system-note",
+          "expectation": "For 17:11:00, System note is Curtailment verified.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.17-18-44.device",
+          "expectation": "For 17:18:44, Device is Tie T-7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.17-18-44.state",
+          "expectation": "For 17:18:44, State is Closed.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.17-18-44.system-note",
+          "expectation": "For 17:18:44, System note is Hospital backfeed.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.18-05-02.device",
+          "expectation": "For 18:05:02, Device is F-12B.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.18-05-02.state",
+          "expectation": "For 18:05:02, State is Replaced.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.18-05-02.system-note",
+          "expectation": "For 18:05:02, System note is Maple test passed.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.18-55-18.device",
+          "expectation": "For 18:55:18, Device is Switch S-18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.18-55-18.state",
+          "expectation": "For 18:55:18, State is Closed.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.18-55-18.system-note",
+          "expectation": "For 18:55:18, System note is Upstream path staged.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.19-00-41.device",
+          "expectation": "For 19:00:41, Device is Switch S-22.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.19-00-41.state",
+          "expectation": "For 19:00:41, State is Closed.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.19-00-41.system-note",
+          "expectation": "For 19:00:41, System note is Riverside path staged.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.19-06-10.device",
+          "expectation": "For 19:06:10, Device is R12 breaker.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.19-06-10.state",
+          "expectation": "For 19:06:10, State is Closed.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.alarms.19-06-10.system-note",
+          "expectation": "For 19:06:10, System note is Normal source restored.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.oneline",
-      "category": "visual_relation",
-      "weight": 10,
-      "expectation": "One-line diagram preserves R12->S-18->F-12B->S-22/Riverside with T-7 tie to hospital loop and DER-44 PV backfeed risk.",
-      "guidance": "",
-      "modality": "visual",
-      "severity": "critical"
+      "id": "p03.switching",
+      "page": 3,
+      "label": "Switching order",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p03.switching.schema",
+          "expectation": "The region preserves the source field schema in order: Step, Time, Action, Authority, Cumulative restored.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.switching.row-order",
+          "expectation": "The source row order is recoverable as: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.switching.1.time",
+          "expectation": "For 1, Time is 16:05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.1.action",
+          "expectation": "For 1, Action is Open S-18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.1.authority",
+          "expectation": "For 1, Authority is Crew A / Control.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.1.cumulative-restored",
+          "expectation": "For 1, Cumulative restored is 0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.2.time",
+          "expectation": "For 2, Time is 16:31.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.2.action",
+          "expectation": "For 2, Action is Open S-22.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.2.authority",
+          "expectation": "For 2, Authority is Crew B / Control.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.2.cumulative-restored",
+          "expectation": "For 2, Cumulative restored is 0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.3.time",
+          "expectation": "For 3, Time is 16:47.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.3.action",
+          "expectation": "For 3, Action is Test Maple lateral.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.3.authority",
+          "expectation": "For 3, Authority is Crew A.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.3.cumulative-restored",
+          "expectation": "For 3, Cumulative restored is 0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.4.time",
+          "expectation": "For 4, Time is 17:11.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.4.action",
+          "expectation": "For 4, Action is Verify DER-44 at 0 kW.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.4.authority",
+          "expectation": "For 4, Authority is System control.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.4.cumulative-restored",
+          "expectation": "For 4, Cumulative restored is 0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.5.time",
+          "expectation": "For 5, Time is 17:18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.5.action",
+          "expectation": "For 5, Action is Close tie T-7.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.5.authority",
+          "expectation": "For 5, Authority is Crew C / Control.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.5.cumulative-restored",
+          "expectation": "For 5, Cumulative restored is 4,820.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.6.time",
+          "expectation": "For 6, Time is 18:05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.6.action",
+          "expectation": "For 6, Action is Replace and test F-12B.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.6.authority",
+          "expectation": "For 6, Authority is Crew A.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.6.cumulative-restored",
+          "expectation": "For 6, Cumulative restored is 6,140.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.7.time",
+          "expectation": "For 7, Time is 18:42.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.7.action",
+          "expectation": "For 7, Action is Patrol Riverside taps.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.7.authority",
+          "expectation": "For 7, Authority is Crew B.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.7.cumulative-restored",
+          "expectation": "For 7, Cumulative restored is 6,140.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.8.time",
+          "expectation": "For 8, Time is 18:55.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.8.action",
+          "expectation": "For 8, Action is Close S-18.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.8.authority",
+          "expectation": "For 8, Authority is Crew A / Control.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.8.cumulative-restored",
+          "expectation": "For 8, Cumulative restored is 6,140.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.9.time",
+          "expectation": "For 9, Time is 19:00.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.9.action",
+          "expectation": "For 9, Action is Close S-22.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.9.authority",
+          "expectation": "For 9, Authority is Crew B / Control.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.9.cumulative-restored",
+          "expectation": "For 9, Cumulative restored is 6,140.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.10.time",
+          "expectation": "For 10, Time is 19:06.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.10.action",
+          "expectation": "For 10, Action is Close R12 breaker.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.10.authority",
+          "expectation": "For 10, Authority is System control.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.10.cumulative-restored",
+          "expectation": "For 10, Cumulative restored is 8,960.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.11.time",
+          "expectation": "For 11, Time is 19:32.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.11.action",
+          "expectation": "For 11, Action is Open T-7 / normalize.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.11.authority",
+          "expectation": "For 11, Authority is Crew C / Control.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.switching.11.cumulative-restored",
+          "expectation": "For 11, Cumulative restored is 8,960 stable.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.switching",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "Switching log preserves nine steps, times, actions, crews, and restored customer counts, including Maple lateral test at 16:47, DER-44 verification at 17:11, T-7 close at 17:18 restoring 4,820, Riverside patrol at 18:42, R12 close at 19:06 restoring 8,960, and T-7 normalize at 19:32.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p03.signoff",
+      "page": 3,
+      "label": "Switching-order signoff",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p03.signoff.schema",
+          "expectation": "The region preserves the source field schema in order: Role, Name, Signed.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.signoff.row-order",
+          "expectation": "The source row order is recoverable as: Switching authority -> Field lead -> Control desk.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.signoff.switching-authority.name",
+          "expectation": "For Switching authority, Name is N. Ortega.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.signoff.switching-authority.signed",
+          "expectation": "For Switching authority, Signed is 2 Jul 19:40.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.signoff.field-lead.name",
+          "expectation": "For Field lead, Name is R. Mehta.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.signoff.field-lead.signed",
+          "expectation": "For Field lead, Signed is 2 Jul 19:44.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.signoff.control-desk.name",
+          "expectation": "For Control desk, Name is A. Patel.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.signoff.control-desk.signed",
+          "expectation": "For Control desk, Signed is 2 Jul 19:45.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.restoration.chart",
-      "category": "chart",
-      "weight": 8,
-      "expectation": "Restoration chart preserves customer counts by time: 0 at 15:42/16:31, 4,820 at 17:18, 6,140 at 18:05, 8,960 at 19:06/19:32.",
-      "guidance": "",
-      "modality": "chart",
-      "severity": "critical"
+      "id": "p04.oneline",
+      "page": 4,
+      "label": "Feeder one-line",
+      "kind": "diagram",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p04.edge.01",
+          "expectation": "A directed relation runs from R12 bay to S-18 for normal feed.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.edge.02",
+          "expectation": "A directed relation runs from S-18 to F-12B for Maple lateral.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.edge.03",
+          "expectation": "A directed relation runs from F-12B to S-22 for 12R trunk.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.edge.04",
+          "expectation": "A directed relation runs from S-22 to Riverside for 12R load.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.edge.05",
+          "expectation": "A directed relation runs from S-22 to T-7 for tie branch.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.edge.06",
+          "expectation": "A directed relation runs from T-7 to Hospital for temporary backfeed.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.edge.07",
+          "expectation": "A directed relation runs from Feeder 9Q to T-7 for 9Q source.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.edge.08",
+          "expectation": "A directed relation runs from DER-44 to F-12B for PV backfeed risk.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.customer.segments",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "Customer impact preserves Maple lateral 2,820 restored 18:05, Maple care home spur 86 assisted living restored 18:05, hospital loop 1,240/1 hospital restored 17:18, Riverside apartments 3,100/2 elevators restored 19:06, industrial park 1,800 restored 19:06, traffic signal cabinet TS-12 restored 17:18, and lift station LS-4 restored 19:06.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p04.clearance",
+      "page": 4,
+      "label": "DER and transfer clearance",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p04.clearance.schema",
+          "expectation": "The region preserves the source field schema in order: Clearance item, Operator entry, Field confirmation, State.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.clearance.row-order",
+          "expectation": "The source row order is recoverable as: DER-44 disconnect -> SCADA output -> Feeder 9Q load -> Reverse power -> Hospital ATS -> T-7 permission -> DER restore.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.clearance.der-44-disconnect.operator-entry",
+          "expectation": "For DER-44 disconnect, Operator entry is Open 17:06.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.der-44-disconnect.field-confirmation",
+          "expectation": "For DER-44 disconnect, Field confirmation is Visible at POI.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.der-44-disconnect.state",
+          "expectation": "For DER-44 disconnect, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.scada-output.operator-entry",
+          "expectation": "For SCADA output, Operator entry is 0 kW 17:11.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.scada-output.field-confirmation",
+          "expectation": "For SCADA output, Field confirmation is Stable 5 min.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.scada-output.state",
+          "expectation": "For SCADA output, State is Accepted.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.feeder-9q-load.operator-entry",
+          "expectation": "For Feeder 9Q load, Operator entry is 74% after transfer.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.feeder-9q-load.field-confirmation",
+          "expectation": "For Feeder 9Q load, Field confirmation is Below emergency rating.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.feeder-9q-load.state",
+          "expectation": "For Feeder 9Q load, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.reverse-power.operator-entry",
+          "expectation": "For Reverse power, Operator entry is None.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.reverse-power.field-confirmation",
+          "expectation": "For Reverse power, Field confirmation is Relay 67P clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.reverse-power.state",
+          "expectation": "For Reverse power, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.hospital-ats.operator-entry",
+          "expectation": "For Hospital ATS, Operator entry is Normal source lost.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.hospital-ats.field-confirmation",
+          "expectation": "For Hospital ATS, Field confirmation is T-7 source accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.hospital-ats.state",
+          "expectation": "For Hospital ATS, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.t-7-permission.operator-entry",
+          "expectation": "For T-7 permission, Operator entry is Issued 17:16.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.t-7-permission.field-confirmation",
+          "expectation": "For T-7 permission, Field confirmation is Close at 17:18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.t-7-permission.state",
+          "expectation": "For T-7 permission, State is Accepted.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.der-restore.operator-entry",
+          "expectation": "For DER restore, Operator entry is After normalize.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.der-restore.field-confirmation",
+          "expectation": "For DER restore, Field confirmation is Site call 19:34.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.clearance.der-restore.state",
+          "expectation": "For DER restore, State is Deferred.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.customer.notifications",
-      "category": "source_state",
-      "weight": 8,
-      "expectation": "Critical customer notifications preserve hospital facility desk calls at 16:04 ETA pending and 17:21 restored via T-7, City traffic radio 17:25 signal power back, wastewater duty officer 18:18 awaiting feeder close, industrial park email 19:09 normal restored, and care home manager 18:08 restored after F-12B change.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p05.restoration",
+      "page": 5,
+      "label": "OMS restoration chart",
+      "kind": "chart",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p05.restoration.1542",
+          "expectation": "Cumulative customers restored at 15:42 are 0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.restoration.1631",
+          "expectation": "Cumulative customers restored at 16:31 are 0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.restoration.1718",
+          "expectation": "Cumulative customers restored at 17:18 are 4,820.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.restoration.1805",
+          "expectation": "Cumulative customers restored at 18:05 are 6,140.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.restoration.1906",
+          "expectation": "Cumulative customers restored at 19:06 are 8,960.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.restoration.1932",
+          "expectation": "Cumulative customers restored at 19:32 are 8,960.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.photos",
-      "category": "visual_relation",
-      "weight": 7,
-      "expectation": "Patrol photo sheet preserves P1 F-12B char mark, P2 no tree contact, P3 S-18 open tag, and P4 T-7 closed tag.",
-      "guidance": "",
-      "modality": "visual",
-      "severity": "major"
+      "id": "p05.impact",
+      "page": 5,
+      "label": "Customer impact table",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p05.impact.schema",
+          "expectation": "The region preserves the source field schema in order: Segment, Customers, Critical load, Restored.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.impact.row-order",
+          "expectation": "The source row order is recoverable as: 9Q transfer block -> Hospital loop -> TS-12 -> Maple tested block -> Care home spur -> Riverside / industrial block -> LS-4.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.impact.9q-transfer-block.customers",
+          "expectation": "For 9Q transfer block, Customers is 4,820.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.9q-transfer-block.critical-load",
+          "expectation": "For 9Q transfer block, Critical load is Includes hospital + TS-12.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.9q-transfer-block.restored",
+          "expectation": "For 9Q transfer block, Restored is 17:18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.hospital-loop.customers",
+          "expectation": "For Hospital loop, Customers is 1,240.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.hospital-loop.critical-load",
+          "expectation": "For Hospital loop, Critical load is Hospital.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.hospital-loop.restored",
+          "expectation": "For Hospital loop, Restored is 17:18.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.ts-12.customers",
+          "expectation": "For TS-12, Customers is 1 service.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.ts-12.critical-load",
+          "expectation": "For TS-12, Critical load is Traffic signal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.ts-12.restored",
+          "expectation": "For TS-12, Restored is 17:18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.maple-tested-block.customers",
+          "expectation": "For Maple tested block, Customers is 1,320.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.maple-tested-block.critical-load",
+          "expectation": "For Maple tested block, Critical load is Includes care home spur.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.maple-tested-block.restored",
+          "expectation": "For Maple tested block, Restored is 18:05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.care-home-spur.customers",
+          "expectation": "For Care home spur, Customers is 86.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.care-home-spur.critical-load",
+          "expectation": "For Care home spur, Critical load is Assisted living.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.care-home-spur.restored",
+          "expectation": "For Care home spur, Restored is 18:05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.riverside-industrial-block.customers",
+          "expectation": "For Riverside / industrial block, Customers is 2,820.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.riverside-industrial-block.critical-load",
+          "expectation": "For Riverside / industrial block, Critical load is Includes LS-4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.riverside-industrial-block.restored",
+          "expectation": "For Riverside / industrial block, Restored is 19:06.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.ls-4.customers",
+          "expectation": "For LS-4, Customers is 1 service.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.ls-4.critical-load",
+          "expectation": "For LS-4, Critical load is Lift station.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.ls-4.restored",
+          "expectation": "For LS-4, Restored is 19:06.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.reconciliation",
+          "expectation": "The three parent blocks reconcile to 8,960 customers.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.impact.nesting",
+          "expectation": "Critical-service rows are nested callouts and are not added again.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.der",
-      "category": "source_state",
-      "weight": 8,
-      "expectation": "DER-44 was curtailed to 0 kW at 17:11 before T-7 close at 17:18; no reverse power alarm occurred.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p06.photo.p1",
+      "page": 6,
+      "label": "P1 damaged cutout photograph",
+      "kind": "image",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p06.p1.device",
+          "expectation": "P1 is bound to F-12B at 16:18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.p1.damage",
+          "expectation": "P1 visibly shows a blackened split polymer cutout barrel below the phase-B conductor.",
+          "harm": 2,
+          "allowPartial": true
+        }
+      ]
     },
     {
-      "id": "p20.cause.evidence.detail",
-      "category": "visual_relation",
-      "weight": 9,
-      "expectation": "Cause evidence preserves P1 F-12B char mark, P2 clear span/no branch contact, relay oscillography single phase-to-ground impulse not lightning signature, cutout tag F12B-882 polymer barrel split, Kearney 65K fuse link melt pattern consistent, crossarm no flashover trace, and no tree sample collected.",
-      "guidance": "",
-      "modality": "visual",
-      "severity": "critical"
+      "id": "p06.photo.p2",
+      "page": 6,
+      "label": "P2 clear-span photograph",
+      "kind": "image",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p06.p2.location",
+          "expectation": "P2 is the Maple span at 16:23.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.p2.clear",
+          "expectation": "P2 visibly shows a clear span with no branch touching the conductors.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.der.clearance.detail",
-      "category": "source_state",
-      "weight": 10,
-      "expectation": "DER clearance detail preserves DER-44 disconnect open 17:06, SCADA output 0 kW at 17:11 stable 5 min, feeder 9Q load 74% under emergency rating, relay 67P reverse-power clear, hospital ATS accepted T-7 source, T-7 permission issued 17:16/close allowed 17:18, DER restore deferred after normalize, and R. Valdez site acknowledgment at 19:36.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p06.photo.p3",
+      "page": 6,
+      "label": "P3 open-switch photograph",
+      "kind": "image",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p06.p3.device",
+          "expectation": "P3 is S-18 at 16:31.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.p3.blade",
+          "expectation": "P3 visibly shows an open switch blade.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.p3.tag",
+          "expectation": "P3 visibly shows a yellow S-18 OPEN hold tag.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.draft.delta",
-      "category": "source_state",
-      "weight": 9,
-      "expectation": "Draft report excerpt preserves draft-to-final changes: tree contact crossed out to failed F-12B cutout, hospital restore 18:05 corrected to 17:18, DER status not mentioned corrected to curtailed 17:11, weather downgraded to context only, and photo P2 added as no tree contact.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p07.redline",
+      "page": 7,
+      "label": "Scanned redlined draft report",
+      "kind": "form",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p07.redline.cause-old",
+          "expectation": "TREE CONTACT is visibly struck as the Revision 1 preliminary cause.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.redline.cause-new",
+          "expectation": "The cause correction is failed polymer cutout F-12B.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.redline.hospital",
+          "expectation": "Hospital restoration is corrected from 18:05 to 17:18 via T-7.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.redline.der",
+          "expectation": "DER-44 status is corrected to curtailed at 17:11.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.redline.weather",
+          "expectation": "Weather is retained as context rather than the final cause.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.signoff",
-      "category": "form_state",
-      "weight": 6,
-      "expectation": "Final signoff preserves N. Ortega, R. Mehta, S. Kim signed timestamps and Tree crew not required/blank.",
-      "guidance": "",
-      "modality": "form",
-      "severity": "major"
+      "id": "p07.evidence",
+      "page": 7,
+      "label": "Reviewer evidence matrix",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p07.evidence.schema",
+          "expectation": "The region preserves the source field schema in order: Evidence, Observed state, Use in Revision 2.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p07.evidence.row-order",
+          "expectation": "The source row order is recoverable as: Photo P1 -> Photo P2 -> Relay 50G -> Cutout tag F12B-882 -> Lightning log.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p07.evidence.photo-p1.observed-state",
+          "expectation": "For Photo P1, Observed state is Split / char at F-12B.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.evidence.photo-p1.use-in-revision-2",
+          "expectation": "For Photo P1, Use in Revision 2 is Supports equipment failure.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.evidence.photo-p2.observed-state",
+          "expectation": "For Photo P2, Observed state is Clear span / no contact.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.evidence.photo-p2.use-in-revision-2",
+          "expectation": "For Photo P2, Use in Revision 2 is Rejects tree-contact draft.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.evidence.relay-50g.observed-state",
+          "expectation": "For Relay 50G, Observed state is Single phase-ground impulse.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.evidence.relay-50g.use-in-revision-2",
+          "expectation": "For Relay 50G, Use in Revision 2 is Matches failed cutout.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.evidence.cutout-tag-f12b-882.observed-state",
+          "expectation": "For Cutout tag F12B-882, Observed state is Polymer barrel split.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.evidence.cutout-tag-f12b-882.use-in-revision-2",
+          "expectation": "For Cutout tag F12B-882, Use in Revision 2 is Asset-lab teardown.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.evidence.lightning-log.observed-state",
+          "expectation": "For Lightning log, Observed state is None within 5 miles.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.evidence.lightning-log.use-in-revision-2",
+          "expectation": "For Lightning log, Use in Revision 2 is Not causal.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.signoff.gates",
-      "category": "form_state",
-      "weight": 7,
-      "expectation": "Final review gates preserve Ops/Protection/Regulatory signed states, Tree crew blank/not required, and DER review initialed by A. Patel at 10:58 with restore after normalize.",
-      "guidance": "",
-      "modality": "form",
-      "severity": "major"
+      "id": "p08.final",
+      "page": 8,
+      "label": "Final incident determination",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p08.final.schema",
+          "expectation": "The region preserves the source field schema in order: Control field, Final value, Basis.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p08.final.row-order",
+          "expectation": "The source row order is recoverable as: Cause -> Hospital restoration -> All customers restored -> DER-44 -> Major-event threshold -> Follow-up.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p08.final.cause.final-value",
+          "expectation": "For Cause, Final value is Failed polymer cutout F-12B.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.final.cause.basis",
+          "expectation": "For Cause, Basis is P1 + relay + tag F12B-882.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.final.hospital-restoration.final-value",
+          "expectation": "For Hospital restoration, Final value is 17:18.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.final.hospital-restoration.basis",
+          "expectation": "For Hospital restoration, Basis is T-7 switching step 5.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.final.all-customers-restored.final-value",
+          "expectation": "For All customers restored, Final value is 19:06.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.final.all-customers-restored.basis",
+          "expectation": "For All customers restored, Basis is R12 close / OMS.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.final.der-44.final-value",
+          "expectation": "For DER-44, Final value is Curtailed 17:11.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.final.der-44.basis",
+          "expectation": "For DER-44, Basis is 0 kW before T-7 close.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.final.major-event-threshold.final-value",
+          "expectation": "For Major-event threshold, Final value is No.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.final.major-event-threshold.basis",
+          "expectation": "For Major-event threshold, Basis is 8,960 customers / 3 h 24 m.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.final.follow-up.final-value",
+          "expectation": "For Follow-up, Final value is WO-7714.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.final.follow-up.basis",
+          "expectation": "For Follow-up, Basis is Replace peer cutouts / lab teardown.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.regulatory",
-      "category": "source_state",
-      "weight": 7,
-      "expectation": "Regulatory notice preserves major event No, one critical customer hospital restored 17:18, notice due 2026-07-05 12:00, cause category equipment failure.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "major"
+      "id": "p08.notices",
+      "page": 8,
+      "label": "Regulatory and stakeholder routing",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p08.notices.schema",
+          "expectation": "The region preserves the source field schema in order: Recipient, Channel, Due / sent, Payload.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p08.notices.row-order",
+          "expectation": "The source row order is recoverable as: Hospital liaison -> City OEM -> State PUC log -> DER owner -> Asset engineering -> Vegetation contractor.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p08.notices.hospital-liaison.channel",
+          "expectation": "For Hospital liaison, Channel is Phone.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.hospital-liaison.due-sent",
+          "expectation": "For Hospital liaison, Due / sent is Sent 17:21.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.hospital-liaison.payload",
+          "expectation": "For Hospital liaison, Payload is Backfeed restored.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.city-oem.channel",
+          "expectation": "For City OEM, Channel is Email.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.city-oem.due-sent",
+          "expectation": "For City OEM, Due / sent is Sent 18:12.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.city-oem.payload",
+          "expectation": "For City OEM, Payload is Critical-load update.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.state-puc-log.channel",
+          "expectation": "For State PUC log, Channel is Portal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.state-puc-log.due-sent",
+          "expectation": "For State PUC log, Due / sent is Due 05 Jul 12:00.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.state-puc-log.payload",
+          "expectation": "For State PUC log, Payload is Below major threshold.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.der-owner.channel",
+          "expectation": "For DER owner, Channel is Phone.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.der-owner.due-sent",
+          "expectation": "For DER owner, Due / sent is Sent 19:34.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.der-owner.payload",
+          "expectation": "For DER owner, Payload is Normalization complete.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.asset-engineering.channel",
+          "expectation": "For Asset engineering, Channel is Work order.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.asset-engineering.due-sent",
+          "expectation": "For Asset engineering, Due / sent is Sent 03 Jul 09:05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.asset-engineering.payload",
+          "expectation": "For Asset engineering, Payload is F12B-882 teardown.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.vegetation-contractor.channel",
+          "expectation": "For Vegetation contractor, Channel is No dispatch.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.vegetation-contractor.due-sent",
+          "expectation": "For Vegetation contractor, Due / sent is Not required.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.notices.vegetation-contractor.payload",
+          "expectation": "For Vegetation contractor, Payload is P2 rules out tree contact.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p20.notice.routing",
-      "category": "source_state",
-      "weight": 7,
-      "expectation": "Regulatory notice routing preserves hospital liaison phone sent 17:21, City OEM email sent 18:12, State PUC portal due 2026-07-05 12:00, internal claims ticket sent 2026-07-03 08:40, DER owner phone sent 19:34, asset engineering work order sent 2026-07-03 09:05 for F12B-882 lab teardown, and vegetation contractor no-dispatch/not required because P2 ruled out tree contact.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "major"
-    },
-    {
-      "id": "p20.final.recap.kpi",
-      "category": "source_state",
-      "weight": 8,
-      "expectation": "Final recap preserves CAIDI window 3h 24m excluding 19:32 normalize, critical restoration 95 minutes, 8,960 customers interrupted, cause code equipment failure/not weather, and follow-up WO-7714.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p08.signoff",
+      "page": 8,
+      "label": "Final investigation signoff",
+      "kind": "form",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p08.signoff.ops",
+          "expectation": "Operations sequence is checked and signed by N. Ortega at 09:12.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p08.signoff.protection",
+          "expectation": "Protection review is checked and signed by R. Mehta at 10:44.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p08.signoff.regulatory",
+          "expectation": "Regulatory review is checked and signed by S. Kim at 11:20.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p08.signoff.vegetation",
+          "expectation": "Vegetation review is disabled and marked not required.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     }
   ]
 }

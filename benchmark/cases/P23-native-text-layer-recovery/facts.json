@@ -1,59 +1,826 @@
 {
+  "schemaVersion": 2,
   "id": "P23-native-text-layer-recovery",
-  "title": "Bad Export Native Text Recovery Packet",
-  "family": "native-text-recovery",
+  "title": "West Region Logistics Exception Control Packet",
+  "family": "office export recovery",
   "tags": [
-    "multi-page",
-    "native-text-layer",
-    "bad-export",
+    "native-pdf",
+    "libreoffice-export",
+    "malformed-layout",
+    "native-text-recovery",
     "tables",
-    "source-recovery"
+    "source-precedence"
   ],
-  "facts": [
+  "regions": [
     {
-      "id": "p23.memo",
-      "category": "native_text_layer",
-      "weight": 8,
-      "expectation": "The memo preserves OR-7712, West Region Logistics, prepared 2026-07-05, owner Lena Ortiz, final recommendation to hold Reno outbound consolidation, exception owner Ravi Mehta, and review deadline 2026-07-12 16:00 PT.",
-      "guidance": "",
-      "modality": "native_pdf_text_layer",
-      "severity": "critical"
+      "id": "p01.control",
+      "page": 1,
+      "label": "Memo control fields",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p01.control.schema",
+          "expectation": "The region preserves the source field schema in order: Memo field, Memo value, Linked field, Linked value.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.control.row-order",
+          "expectation": "The source row order is recoverable as: Prepared -> Review window -> Scope.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.control.prepared.memo-value",
+          "expectation": "For Prepared, Memo value is 10 Jul 2026.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.control.prepared.linked-field",
+          "expectation": "For Prepared, Linked field is Coordinator.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.control.prepared.linked-value",
+          "expectation": "For Prepared, Linked value is Lena Ortiz.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.control.review-window.memo-value",
+          "expectation": "For Review window, Memo value is Through 12 Jul 16:00 PT.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.control.review-window.linked-field",
+          "expectation": "For Review window, Linked field is Region.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.control.review-window.linked-value",
+          "expectation": "For Review window, Linked value is West.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.control.scope.memo-value",
+          "expectation": "For Scope, Memo value is Cross-dock and linehaul exceptions.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.control.scope.linked-field",
+          "expectation": "For Scope, Linked field is Record.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.control.scope.linked-value",
+          "expectation": "For Scope, Linked value is OR-7712.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p23.decisions",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "Decision register preserves D-17 Reno consolidation hold pending dock staffing exception/Ravi/2026-07-12 16:00 PT, D-18 Boise overflow approve temporary cross-dock slot B7/Lena/2026-07-09, and D-19 Tacoma weekend linehaul keep existing carrier allocation/Mira/2026-07-11.",
-      "guidance": "",
-      "modality": "native_pdf_text_layer",
-      "severity": "critical"
+      "id": "p01.note",
+      "page": 1,
+      "label": "Operating note",
+      "kind": "text",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p01.note.trigger",
+          "expectation": "OR-7712 opened because Reno dock staffing was three crew positions below plan.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.note.scope.local-controls",
+          "expectation": "Boise overflow capacity and Tacoma weekend allocation are separately controlled.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.note.scope.regional-stop",
+          "expectation": "No blanket regional stop was issued.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p23.lanes",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "Lane risk register preserves Reno -> SFO 41 pallets blocked dock crew short by 3, Boise -> SEA 18 pallets approved overflow slot B7, Tacoma -> PDX 27 pallets watch carrier capacity tight, and Spokane -> SEA 12 pallets clear.",
-      "guidance": "",
-      "modality": "native_pdf_text_layer",
-      "severity": "critical"
+      "id": "p01.decisions",
+      "page": 1,
+      "label": "Decision register",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p01.decisions.schema",
+          "expectation": "The region preserves the source field schema in order: ID, Scope, Disposition, Owner, Due.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.decisions.row-order",
+          "expectation": "The source row order is recoverable as: D-17 -> D-18 -> D-19.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.decisions.d-17.scope",
+          "expectation": "For D-17, Scope is Reno consolidation.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.decisions.d-17.disposition",
+          "expectation": "For D-17, Disposition is HOLD \u2014 dock crew exception.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.decisions.d-17.owner",
+          "expectation": "For D-17, Owner is Ravi Mehta.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.decisions.d-17.due",
+          "expectation": "For D-17, Due is 12 Jul 16:00 PT.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.decisions.d-18.scope",
+          "expectation": "For D-18, Scope is Boise overflow.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.decisions.d-18.disposition",
+          "expectation": "For D-18, Disposition is APPROVE \u2014 cross-dock slot B7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.decisions.d-18.owner",
+          "expectation": "For D-18, Owner is Lena Ortiz.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.decisions.d-18.due",
+          "expectation": "For D-18, Due is 09 Jul.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.decisions.d-19.scope",
+          "expectation": "For D-19, Scope is Tacoma weekend linehaul.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.decisions.d-19.disposition",
+          "expectation": "For D-19, Disposition is RETAIN \u2014 current carrier allocation.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.decisions.d-19.owner",
+          "expectation": "For D-19, Owner is Mira Chen.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.decisions.d-19.due",
+          "expectation": "For D-19, Due is 11 Jul.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p23.reserve",
-      "category": "table_cell",
-      "weight": 8,
-      "expectation": "Cost reserve preserves temporary slot B7 $2,400 eligible, Reno labor standby $3,850 eligible if hold extends, Tacoma weekend premium $1,175 not eligible, reserve $6,250 if hold extends and $2,400 if closes on time.",
-      "guidance": "",
-      "modality": "native_pdf_text_layer",
-      "severity": "critical"
+      "id": "p01.routing",
+      "page": 1,
+      "label": "Memo routing",
+      "kind": "text",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p01.routing.audience",
+          "expectation": "The memo routes to network planning, Reno operations, transportation, and finance.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.routing.blocker",
+          "expectation": "D-17 is the only open blocking decision.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p23.final",
-      "category": "source_state",
-      "weight": 8,
-      "expectation": "Final controlling statement is that Reno outbound consolidation remains ON HOLD until Ravi Mehta closes the dock staffing exception.",
-      "guidance": "",
-      "modality": "native_pdf_text_layer",
-      "severity": "critical"
+      "id": "p02.lanes",
+      "page": 2,
+      "label": "Lane risk register",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p02.lanes.schema",
+          "expectation": "The region preserves the source field schema in order: Lane, Pallets, Constraint, State, Control / next gate.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.lanes.row-order",
+          "expectation": "The source row order is recoverable as: Reno \u2192 SFO -> Boise \u2192 SEA -> Tacoma \u2192 PDX -> Spokane \u2192 SEA.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.lanes.reno-sfo.pallets",
+          "expectation": "For Reno \u2192 SFO, Pallets is 41.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.reno-sfo.constraint",
+          "expectation": "For Reno \u2192 SFO, Constraint is Dock crew short by 3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.reno-sfo.state",
+          "expectation": "For Reno \u2192 SFO, State is BLOCKED.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.reno-sfo.control-next-gate",
+          "expectation": "For Reno \u2192 SFO, Control / next gate is Ravi closes D-17.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.boise-sea.pallets",
+          "expectation": "For Boise \u2192 SEA, Pallets is 18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.boise-sea.constraint",
+          "expectation": "For Boise \u2192 SEA, Constraint is Overflow slot B7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.boise-sea.state",
+          "expectation": "For Boise \u2192 SEA, State is RELEASED.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.boise-sea.control-next-gate",
+          "expectation": "For Boise \u2192 SEA, Control / next gate is Cutoff 09 Jul 18:00.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.tacoma-pdx.pallets",
+          "expectation": "For Tacoma \u2192 PDX, Pallets is 27.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.tacoma-pdx.constraint",
+          "expectation": "For Tacoma \u2192 PDX, Constraint is Carrier capacity tight.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.tacoma-pdx.state",
+          "expectation": "For Tacoma \u2192 PDX, State is WATCH.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.tacoma-pdx.control-next-gate",
+          "expectation": "For Tacoma \u2192 PDX, Control / next gate is Confirm 11 Jul 10:00.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.spokane-sea.pallets",
+          "expectation": "For Spokane \u2192 SEA, Pallets is 12.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.spokane-sea.constraint",
+          "expectation": "For Spokane \u2192 SEA, Constraint is None.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.spokane-sea.state",
+          "expectation": "For Spokane \u2192 SEA, State is CLEAR.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.lanes.spokane-sea.control-next-gate",
+          "expectation": "For Spokane \u2192 SEA, Control / next gate is No action.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p02.controls",
+      "page": 2,
+      "label": "Local release controls",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p02.controls.schema",
+          "expectation": "The region preserves the source field schema in order: Location, Release authority, Evidence, Limit.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.controls.row-order",
+          "expectation": "The source row order is recoverable as: Reno -> Boise -> Tacoma -> Spokane.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.controls.reno.release-authority",
+          "expectation": "For Reno, Release authority is Ravi Mehta.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.controls.reno.evidence",
+          "expectation": "For Reno, Evidence is Crew roster RC-118.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.controls.reno.limit",
+          "expectation": "For Reno, Limit is No outbound consolidation.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.controls.boise.release-authority",
+          "expectation": "For Boise, Release authority is Lena Ortiz.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.controls.boise.evidence",
+          "expectation": "For Boise, Evidence is Slot approval LO-551.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.controls.boise.limit",
+          "expectation": "For Boise, Limit is 18 pallets / B7 only.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.controls.tacoma.release-authority",
+          "expectation": "For Tacoma, Release authority is Mira Chen.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.controls.tacoma.evidence",
+          "expectation": "For Tacoma, Evidence is Carrier note TC-49.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.controls.tacoma.limit",
+          "expectation": "For Tacoma, Limit is Existing allocation.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.controls.spokane.release-authority",
+          "expectation": "For Spokane, Release authority is Dispatch desk.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.controls.spokane.evidence",
+          "expectation": "For Spokane, Evidence is Daily plan SP-210.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.controls.spokane.limit",
+          "expectation": "For Spokane, Limit is Standard cutoff.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p02.sequence",
+      "page": 2,
+      "label": "Independent lane sequence",
+      "kind": "text",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p02.sequence.boise",
+          "expectation": "Boise may release independently.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.sequence.tacoma",
+          "expectation": "Tacoma remains on watch without reserve eligibility.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.sequence.spokane",
+          "expectation": "Spokane remains clear.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.sequence.reno",
+          "expectation": "Reno may not consolidate until Ravi Mehta records D-17 closure.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p03.reserve",
+      "page": 3,
+      "label": "Reserve ledger",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p03.reserve.schema",
+          "expectation": "The region preserves the source field schema in order: Reserve line, Amount, Eligibility, Control basis.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.reserve.row-order",
+          "expectation": "The source row order is recoverable as: Temporary slot B7 -> Reno labor standby -> Tacoma weekend premium.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.reserve.temporary-slot-b7.amount",
+          "expectation": "For Temporary slot B7, Amount is $2,400.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.reserve.temporary-slot-b7.eligibility",
+          "expectation": "For Temporary slot B7, Eligibility is Eligible.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.reserve.temporary-slot-b7.control-basis",
+          "expectation": "For Temporary slot B7, Control basis is Approval LO-551.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.reserve.reno-labor-standby.amount",
+          "expectation": "For Reno labor standby, Amount is $3,850.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.reserve.reno-labor-standby.eligibility",
+          "expectation": "For Reno labor standby, Eligibility is Conditional.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.reserve.reno-labor-standby.control-basis",
+          "expectation": "For Reno labor standby, Control basis is Only if D-17 extends past 12 Jul 16:00 PT.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.reserve.tacoma-weekend-premium.amount",
+          "expectation": "For Tacoma weekend premium, Amount is $1,175.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.reserve.tacoma-weekend-premium.eligibility",
+          "expectation": "For Tacoma weekend premium, Eligibility is Not eligible.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.reserve.tacoma-weekend-premium.control-basis",
+          "expectation": "For Tacoma weekend premium, Control basis is Existing carrier allocation retained.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p03.scenarios",
+      "page": 3,
+      "label": "Reserve scenarios",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p03.scenarios.schema",
+          "expectation": "The region preserves the source field schema in order: Scenario, Eligible reserve, Included lines.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.scenarios.row-order",
+          "expectation": "The source row order is recoverable as: D-17 closes by 12 Jul 16:00 PT -> D-17 remains open after 12 Jul 16:00 PT.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.scenarios.d-17-closes-by-12-jul-16-00-pt.eligible-reserve",
+          "expectation": "For D-17 closes by 12 Jul 16:00 PT, Eligible reserve is $2,400.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.scenarios.d-17-closes-by-12-jul-16-00-pt.included-lines",
+          "expectation": "For D-17 closes by 12 Jul 16:00 PT, Included lines is Temporary slot B7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.scenarios.d-17-remains-open-after-12-jul-16-00-pt.eligible-reserve",
+          "expectation": "For D-17 remains open after 12 Jul 16:00 PT, Eligible reserve is $6,250.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.scenarios.d-17-remains-open-after-12-jul-16-00-pt.included-lines",
+          "expectation": "For D-17 remains open after 12 Jul 16:00 PT, Included lines is Slot B7 + Reno labor standby.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p03.annotation",
+      "page": 3,
+      "label": "Finance annotation",
+      "kind": "text",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p03.annotation.tacoma",
+          "expectation": "The Tacoma premium is excluded because D-19 retains the existing carrier allocation.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.annotation.reno",
+          "expectation": "Reno labor standby becomes eligible only after the D-17 deadline passes while the hold remains open.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p03.stamp",
+      "page": 3,
+      "label": "Raster finance concurrence stamp",
+      "kind": "image",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p03.stamp.approver",
+          "expectation": "The stamp records finance concurrence by M. Okafor.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.stamp.time",
+          "expectation": "The concurrence stamp is dated 10 Jul 2026 at 14:18 PT.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.stamp.control",
+          "expectation": "The stamp names reserve control LO-551.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p04.statement",
+      "page": 4,
+      "label": "Final controlling disposition",
+      "kind": "text",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p04.statement.hold",
+          "expectation": "Reno outbound consolidation remains ON HOLD.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.statement.release",
+          "expectation": "Release requires Ravi Mehta to close the D-17 dock staffing exception.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p04.signoff",
+      "page": 4,
+      "label": "Signoff register",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p04.signoff.schema",
+          "expectation": "The region preserves the source field schema in order: Role, Name, State, Timestamp.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.signoff.row-order",
+          "expectation": "The source row order is recoverable as: Operations -> Finance -> Exception owner -> Document control.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.signoff.operations.name",
+          "expectation": "For Operations, Name is Lena Ortiz.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.signoff.operations.state",
+          "expectation": "For Operations, State is Approved.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.signoff.operations.timestamp",
+          "expectation": "For Operations, Timestamp is 10 Jul 15:05 PT.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.signoff.finance.name",
+          "expectation": "For Finance, Name is M. Okafor.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.signoff.finance.state",
+          "expectation": "For Finance, State is Concurred.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.signoff.finance.timestamp",
+          "expectation": "For Finance, Timestamp is 10 Jul 14:18 PT.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.signoff.exception-owner.name",
+          "expectation": "For Exception owner, Name is Ravi Mehta.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.signoff.exception-owner.state",
+          "expectation": "For Exception owner, State is Open \u2014 not signed.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.signoff.exception-owner.timestamp",
+          "expectation": "For Exception owner, Timestamp is Next review 12 Jul 16:00 PT.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.signoff.document-control.name",
+          "expectation": "For Document control, Name is S. Bell.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.signoff.document-control.state",
+          "expectation": "For Document control, State is Revision 3 effective.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.signoff.document-control.timestamp",
+          "expectation": "For Document control, Timestamp is 10 Jul 15:10 PT.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p04.interpretation",
+      "page": 4,
+      "label": "Signoff state interpretation",
+      "kind": "text",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p04.interpretation.finance",
+          "expectation": "Finance concurrence authorizes the reserve but does not release Reno.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interpretation.owner-state",
+          "expectation": "Ravi Mehta remains open and unsigned.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interpretation.effect",
+          "expectation": "Ravi Mehta's open, unsigned row keeps the controlling statement in force.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p04.control",
+      "page": 4,
+      "label": "Document control",
+      "kind": "text",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p04.control.supersession",
+          "expectation": "Revision 3 supersedes Revision 2 at 10 Jul 2026 15:10 PT.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.control.review",
+          "expectation": "The next review is 12 Jul 2026 at 16:00 PT.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.control.retention",
+          "expectation": "The retention class is operations exception / seven years.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     }
   ]
 }

@@ -1,7 +1,9 @@
-# Clinical Trial Site Monitoring Binder
+# HTX-204 Site 014 Monitoring File
 
-Source modality: Sixteen-page site-monitoring packet with enrollment, visit grid, labs, adverse events, deviations, IP accountability, source forms, and final monitor status.
+Source modality: born-digital native monitoring file with embedded scanned eCRF and accountability-form regions
 
-Family: `clinical-trial`
+Family: `clinical trial site operations`
 
-Tags: `multi-page`, `clinical-trial`, `forms`, `labs`, `source-precedence`, `drug-accountability`, `queries`
+Purpose: Test longitudinal subject continuity, clinical table bindings, visible correction history, checkbox state, investigational-product accountability, and final site readiness.
+
+Tags: `native-pdf`, `longitudinal-records`, `labs`, `deviations`, `corrected-ecrf`, `accountability-form`, `source-state`

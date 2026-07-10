@@ -1,7 +1,9 @@
-# Launch Readiness Dossier
+# Northwest Pilot Readiness Review
 
-Source modality: Seven-page raster-heavy launch dossier with charts, tables, diagram, heatmap, ledger, and draft appendix.
+Source modality: born-digital native PDF with one embedded raster escalation matrix
 
-Family: `packet`
+Family: `retail operations`
 
-Tags: `multi-page`, `dashboard`, `dependency-map`, `readiness-table`, `heatmap`, `ledger`, `source-precedence`
+Purpose: Test a realistic born-digital operating packet with embedded visual regions and a superseded appendix.
+
+Tags: `native-pdf`, `dashboard`, `dependency-map`, `heatmap`, `source-precedence`

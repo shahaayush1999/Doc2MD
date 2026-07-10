@@ -1,78 +1,95 @@
-import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { buildBenchmarkFingerprint } from "./benchmarkFingerprint.js";
+import { sha256, stableJson } from "./cache.js";
+import { models, prompt, samplesPerModelCase } from "./run.js";
+import { scoringContractFingerprint } from "./score.js";
+import { atomicWriteText } from "./runRuntime.js";
+import { loadBenchmarkManifest } from "./manifest.js";
+import { deriveModelSummary } from "./summary.js";
 
-type CaseScore = {
+export type CaseScore = {
   caseId: string;
   title?: string;
   family?: string;
   tags: string[];
   pages: number;
-  samples: number;
-  score: number;
-  scoreMin: number;
-  scoreMax: number;
-  scoreStddev: number;
-  accuracy: number;
-  completeness: number;
-  structure: number;
-  outputTokens: number;
+  samples?: number;
+  expectedSamples?: number;
+  complete?: boolean;
+  score: number | null;
+  scoreMin: number | null;
+  scoreMax: number | null;
+  scoreStddev: number | null;
+  sampleScores: Array<{ sample: string; score: number; valid?: boolean; modelCallFailed?: boolean }>;
+  finishReasons?: Array<{ sample: string; finishReason: string }>;
+  outputTokens?: number;
 };
 
-type Summary = {
+export type Summary = {
   modelId: string;
-  benchmarkName: string;
-  scoreName: string;
-  inputProtocol: string;
+  provider: string;
+  suite: string;
+  manifestPath: string;
+  benchmarkFingerprint: string;
+  inferenceBenchmarkFingerprint: string;
+  inferenceProtocolFingerprint: string;
+  modelConfigFingerprint: string;
+  resolvedInferenceModelId: string | null;
+  resolvedEvaluatorModelId: string | null;
+  pricingFingerprint: string;
+  pricingVersion: string;
+  scoringContractFingerprint: string;
+  cohortArtifactFingerprint: string;
+  benchmarkName?: string;
+  scoreName?: string;
+  inputProtocol?: string;
   caseCount: number;
+  expectedCaseCount: number;
   samplesPerModelCase: number;
   sampleCount: number;
-  score: number;
-  scoreCaseMean: number;
-  scoreStddevCaseMean: number;
+  score: number | null;
+  suiteSampleScores: Array<{ sample: string; score: number }>;
+  scoreStddev: number | null;
+  scoreMin: number | null;
+  scoreMax: number | null;
+  scoreAggregation: string;
   costUsd: number;
   totalElapsedMs: number;
   totalInputTokens: number;
   totalOutputTokens: number;
-  failureRate: number;
+  modelFailureCount?: number;
+  modelFailureRate?: number;
+  evaluatorFailureCount?: number;
+  evaluatorFailureRate?: number;
   complete: boolean;
+  missingCaseIds?: string[];
+  invalidSamples?: unknown[];
   caseScores: CaseScore[];
 };
 
-type ManifestCase = {
+export type ManifestCase = {
   id: string;
   title: string;
   family: string;
   tags: string[];
   pages: number;
+  pdf: string;
+  gold: string;
+  spec: string;
+  facts: string;
 };
 
-type Manifest = {
+export type Manifest = {
+  schemaVersion?: number;
   name: string;
+  suite?: string;
   scoreName?: string;
   inputProtocol?: string;
   description?: string;
   pageCount?: number;
   cases: ManifestCase[];
-};
-
-const caseChallengeFallback: Record<string, string> = {
-  "P07-launch-readiness-dossier":
-    "A product launch packet with a dashboard, dependency map, readiness register, escalation heatmap, procurement ledger, and draft/final source-state conflicts.",
-  "P12-pfas-method-validation":
-    "A scientific-regulatory supplement with equations, calibration tables, continuation tables, chromatogram panels, QC qualifiers, and final result cross-references.",
-  "P15-architecture-floorplan-diagrams":
-    "An architecture and facilities packet with floorplan callouts, rack positions, topology arrows, panel schedules, and RFI markup.",
-  "P17-clinical-trial-site-monitoring":
-    "A clinical operations binder with subject visit matrices, lab flags, adverse events, protocol deviations, accountability tables, source forms, and final monitoring status.",
-  "P20-utility-outage-restoration":
-    "A utility incident packet with SCADA sequence, feeder one-line diagram, switching log, restoration chart, DER clearance, customer-impact map, and draft/final cause conflict.",
-  "P21-semiconductor-lot-disposition":
-    "A semiconductor quality file with wafer maps, metrology, SPC exceptions, recipe conflicts, MRB disposition, reliability results, shipping holds, and audit evidence.",
-  "P22-pharma-stability-release":
-    "A pharmaceutical release file with stability continuation, dissolution data, chromatograms, chamber map, hardness mini-trends, deviations, regulatory commitments, and final QA release state.",
-  "P23-native-text-layer-recovery":
-    "A bad-export logistics packet whose visible rendering is damaged but whose native PDF text layer contains recoverable memo, register, table, and final-control information.",
 };
 
 function round(value: number, digits = 1) {
@@ -97,45 +114,242 @@ function fmtSeconds(ms: number) {
 }
 
 function modelLabel(modelId: string) {
-  return modelId.replace(/^openai-/, "").replace(/^vertex-/, "").replace(/-/g, " ");
-}
-
-function slug(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  return models[modelId]?.modelName ?? modelId;
 }
 
 async function readJson<T>(filePath: string): Promise<T> {
   return JSON.parse(await readFile(filePath, "utf-8")) as T;
 }
 
-async function loadSummaries(): Promise<Summary[]> {
-  const entries = await readdir("runs", { withFileTypes: true }).catch(() => []);
-  const summaries: Summary[] = [];
-  for (const entry of entries) {
-    if (!entry.isDirectory()) continue;
-    const summaryPath = path.join("runs", entry.name, "summary.json");
-    try {
-      summaries.push(await readJson<Summary>(summaryPath));
-    } catch {
-      // Ignore incomplete model directories.
+type SummaryFreshness = {
+  inferenceBenchmarkFingerprint: string;
+  inferenceProtocolFingerprint: string;
+  modelConfigFingerprint: string;
+  pricingFingerprint: string;
+  pricingVersion: string;
+  cohortArtifactFingerprint: string;
+  artifactDerivedSummary?: Summary;
+};
+
+function mean(values: number[]) {
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function sampleStddev(values: number[]) {
+  if (values.length <= 1) return 0;
+  const average = mean(values);
+  return Math.sqrt(values.reduce((sum, value) => sum + (value - average) ** 2, 0) / (values.length - 1));
+}
+
+function approximatelyEqual(left: number, right: number, tolerance = 0.000005) {
+  return Math.abs(left - right) <= tolerance;
+}
+
+function canonicalPersistedJson(value: unknown) {
+  return stableJson(JSON.parse(JSON.stringify(value)));
+}
+
+export function validateSummaryArithmetic(summary: Summary, manifest: Manifest): string | null {
+  const expectedSampleIds = Array.from({ length: summary.samplesPerModelCase }, (_, index) => String(index + 1).padStart(3, "0"));
+  const sampleIdSet = new Set(expectedSampleIds);
+  const caseById = new Map(manifest.cases.map((testCase) => [testCase.id, testCase]));
+  const sampleScoresByCase = new Map<string, Map<string, number>>();
+
+  for (const caseScore of summary.caseScores) {
+    const testCase = caseById.get(caseScore.caseId);
+    if (!testCase) return `unknown case summary ${caseScore.caseId}`;
+    if (
+      caseScore.title !== testCase.title ||
+      caseScore.family !== testCase.family ||
+      caseScore.pages !== testCase.pages ||
+      JSON.stringify(caseScore.tags) !== JSON.stringify(testCase.tags)
+    ) {
+      return `case metadata is stale for ${caseScore.caseId}`;
+    }
+    if (caseScore.complete !== true || caseScore.samples !== summary.samplesPerModelCase) {
+      return `case cohort is incomplete for ${caseScore.caseId}`;
+    }
+    if (!Array.isArray(caseScore.sampleScores) || caseScore.sampleScores.length !== expectedSampleIds.length) {
+      return `case sample cohort is incomplete for ${caseScore.caseId}`;
+    }
+    const bySample = new Map<string, number>();
+    for (const sample of caseScore.sampleScores) {
+      if (!sampleIdSet.has(sample.sample) || bySample.has(sample.sample)) return `case sample ids are invalid for ${caseScore.caseId}`;
+      if (sample.valid !== true || !Number.isFinite(sample.score) || sample.score < 0 || sample.score > 100) {
+        return `case sample score is invalid for ${caseScore.caseId}#${sample.sample}`;
+      }
+      bySample.set(sample.sample, sample.score);
+    }
+    const values = expectedSampleIds.map((sample) => bySample.get(sample)!);
+    if (
+      !approximatelyEqual(caseScore.score!, round(mean(values), 6)) ||
+      !approximatelyEqual(caseScore.scoreMin!, round(Math.min(...values), 6)) ||
+      !approximatelyEqual(caseScore.scoreMax!, round(Math.max(...values), 6)) ||
+      !approximatelyEqual(caseScore.scoreStddev!, round(sampleStddev(values), 6))
+    ) {
+      return `case aggregate arithmetic is invalid for ${caseScore.caseId}`;
+    }
+    sampleScoresByCase.set(caseScore.caseId, bySample);
+  }
+
+  const suiteBySample = new Map(summary.suiteSampleScores.map((sample) => [sample.sample, sample.score]));
+  if (suiteBySample.size !== expectedSampleIds.length) return "full-suite sample ids are invalid";
+  const recomputedSuiteScores: number[] = [];
+  for (const sampleId of expectedSampleIds) {
+    const expected = round(mean(manifest.cases.map((testCase) => sampleScoresByCase.get(testCase.id)!.get(sampleId)!)), 6);
+    const stored = suiteBySample.get(sampleId);
+    if (stored === undefined || !approximatelyEqual(stored, expected)) return `full-suite sample arithmetic is invalid for ${sampleId}`;
+    recomputedSuiteScores.push(expected);
+  }
+  if (
+    !approximatelyEqual(summary.score!, round(mean(recomputedSuiteScores))) ||
+    !approximatelyEqual(summary.scoreStddev!, round(sampleStddev(recomputedSuiteScores), 6)) ||
+    !approximatelyEqual(summary.scoreMin!, round(Math.min(...recomputedSuiteScores), 6)) ||
+    !approximatelyEqual(summary.scoreMax!, round(Math.max(...recomputedSuiteScores), 6))
+  ) {
+    return "full-suite aggregate arithmetic is invalid";
+  }
+  return null;
+}
+
+export function validSummary(
+  summary: Summary,
+  manifest: Manifest,
+  benchmarkFingerprint: string,
+  freshness?: SummaryFreshness,
+) {
+  const expectedCaseIds = new Set(manifest.cases.map((testCase) => testCase.id));
+  if (!summary.complete) return "summary is incomplete";
+  if ((summary.missingCaseIds?.length ?? 0) > 0 || (summary.invalidSamples?.length ?? 0) > 0) {
+    return "summary contains missing cases or invalid samples";
+  }
+  if (summary.benchmarkFingerprint !== benchmarkFingerprint) return "benchmark fingerprint is stale";
+  if (summary.scoringContractFingerprint !== scoringContractFingerprint) return "scoring contract is stale";
+  if (freshness) {
+    if (summary.inferenceBenchmarkFingerprint !== freshness.inferenceBenchmarkFingerprint) return "inference benchmark fingerprint is stale";
+    if (summary.inferenceProtocolFingerprint !== freshness.inferenceProtocolFingerprint) return "inference protocol fingerprint is stale";
+    if (summary.modelConfigFingerprint !== freshness.modelConfigFingerprint) return "model configuration fingerprint is stale";
+    if (summary.pricingFingerprint !== freshness.pricingFingerprint || summary.pricingVersion !== freshness.pricingVersion) {
+      return "pricing metadata is stale";
+    }
+    if (summary.cohortArtifactFingerprint !== freshness.cohortArtifactFingerprint) return "run/score cohort artifacts are stale";
+    if (
+      freshness.artifactDerivedSummary &&
+      canonicalPersistedJson(summary) !== canonicalPersistedJson(freshness.artifactDerivedSummary)
+    ) {
+      return "summary content does not match current run/score artifacts";
     }
   }
-  return summaries.sort((a, b) => b.score - a.score);
+  if (summary.suite !== (manifest.suite ?? "official")) return "suite does not match the manifest";
+  if (typeof summary.score !== "number" || !Number.isFinite(summary.score)) return "aggregate score is missing";
+  if (
+    typeof summary.scoreStddev !== "number" ||
+    !Number.isFinite(summary.scoreStddev) ||
+    typeof summary.scoreMin !== "number" ||
+    !Number.isFinite(summary.scoreMin) ||
+    typeof summary.scoreMax !== "number" ||
+    !Number.isFinite(summary.scoreMax)
+  ) {
+    return "full-suite variability fields are missing";
+  }
+  if (!models[summary.modelId]) return "model is not in the current registry";
+  if (summary.provider !== models[summary.modelId].provider) return "provider metadata does not match the current model registry";
+  if (typeof summary.resolvedInferenceModelId !== "string" || summary.resolvedInferenceModelId.length === 0) {
+    return "resolved inference model identity is missing";
+  }
+  if ((summary.modelFailureCount ?? 0) < summary.sampleCount &&
+      (typeof summary.resolvedEvaluatorModelId !== "string" || summary.resolvedEvaluatorModelId.length === 0)) {
+    return "resolved evaluator model identity is missing";
+  }
+  if (summary.expectedCaseCount !== manifest.cases.length || summary.caseCount !== manifest.cases.length) return "case count is stale";
+  if (!Array.isArray(summary.caseScores) || summary.caseScores.length !== manifest.cases.length) return "case summaries are incomplete";
+  const caseScoreIds = new Set(summary.caseScores.map((caseScore) => caseScore.caseId));
+  if (caseScoreIds.size !== expectedCaseIds.size || [...expectedCaseIds].some((caseId) => !caseScoreIds.has(caseId))) {
+    return "case summaries do not match the manifest";
+  }
+  if (summary.samplesPerModelCase !== samplesPerModelCase) return "sample count does not match the current protocol";
+  if (summary.sampleCount !== manifest.cases.length * summary.samplesPerModelCase) return "sample count is incomplete";
+  if (!Array.isArray(summary.suiteSampleScores) || summary.suiteSampleScores.length !== summary.samplesPerModelCase) {
+    return "full-suite sample scores are incomplete";
+  }
+  const expectedSampleIds = new Set(Array.from({ length: summary.samplesPerModelCase }, (_, index) => String(index + 1).padStart(3, "0")));
+  const suiteSampleIds = new Set(summary.suiteSampleScores.map((sampleScore) => sampleScore.sample));
+  if (
+    suiteSampleIds.size !== expectedSampleIds.size ||
+    [...expectedSampleIds].some((sampleId) => !suiteSampleIds.has(sampleId)) ||
+    summary.suiteSampleScores.some((sampleScore) => !Number.isFinite(sampleScore.score))
+  ) {
+    return "full-suite sample cohort is invalid";
+  }
+  if (summary.scoreAggregation !== "equal_case_sample_first") return "score aggregation contract is stale";
+  if (
+    summary.caseScores.some(
+      (caseScore) =>
+        !Number.isFinite(caseScore.score) ||
+        !Number.isFinite(caseScore.scoreMin) ||
+        !Number.isFinite(caseScore.scoreMax) ||
+        !Array.isArray(caseScore.sampleScores) ||
+        caseScore.sampleScores.length !== summary.samplesPerModelCase ||
+        new Set(caseScore.sampleScores.map((sampleScore) => sampleScore.sample)).size !== expectedSampleIds.size ||
+        [...expectedSampleIds].some(
+          (sampleId) => !caseScore.sampleScores.some((sampleScore) => sampleScore.sample === sampleId && Number.isFinite(sampleScore.score)),
+        ),
+    )
+  ) {
+    return "per-case score ranges are incomplete";
+  }
+  if (
+    [summary.costUsd, summary.totalElapsedMs, summary.totalInputTokens, summary.totalOutputTokens].some(
+      (value) => typeof value !== "number" || !Number.isFinite(value) || value < 0,
+    )
+  ) {
+    return "inference operating totals are invalid";
+  }
+  const arithmeticError = validateSummaryArithmetic(summary, manifest);
+  if (arithmeticError) return arithmeticError;
+  return null;
 }
 
-function bestBy<T>(items: T[], score: (item: T) => number): T | null {
-  if (items.length === 0) return null;
-  return items.reduce((best, item) => (score(item) > score(best) ? item : best));
+async function currentSummaryFreshness(summary: Summary, manifest: Manifest, manifestPath: string): Promise<SummaryFreshness> {
+  if (!models[summary.modelId]) throw new Error(`Unknown model ${summary.modelId}.`);
+  const derived = (await deriveModelSummary(summary.modelId, { manifestPath, lockSamples: false })) as Summary;
+  return {
+    inferenceBenchmarkFingerprint: derived.inferenceBenchmarkFingerprint,
+    inferenceProtocolFingerprint: derived.inferenceProtocolFingerprint,
+    modelConfigFingerprint: derived.modelConfigFingerprint,
+    pricingFingerprint: derived.pricingFingerprint,
+    pricingVersion: derived.pricingVersion,
+    cohortArtifactFingerprint: derived.cohortArtifactFingerprint,
+    artifactDerivedSummary: derived,
+  };
 }
 
-function caseRows(manifest: Manifest, summaries: Summary[]) {
-  return manifest.cases.map((testCase) => {
-    const scores = summaries.map((summary) => summary.caseScores.find((score) => score.caseId === testCase.id));
-    const valid = scores.filter((score): score is CaseScore => Boolean(score));
-    const high = valid.length === 0 ? 0 : Math.max(...valid.map((score) => score.score));
-    const low = valid.length === 0 ? 0 : Math.min(...valid.map((score) => score.score));
-    return { testCase, scores, high, low, spread: round(high - low) };
-  });
+async function loadSummaries(manifest: Manifest, manifestPath: string, benchmarkFingerprint: string): Promise<Summary[]> {
+  const entries = await readdir("runs", { withFileTypes: true }).catch(() => []);
+  const summaries: Summary[] = [];
+  const summaryFile = `summary.${manifest.suite ?? "official"}.json`;
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+    const summaryPath = path.join("runs", entry.name, summaryFile);
+    try {
+      const summary = await readJson<Summary>(summaryPath);
+      if (summary.modelId !== entry.name) {
+        console.warn(`Ignoring ${summaryPath}: model id does not match its run directory`);
+        continue;
+      }
+      const freshness = await currentSummaryFreshness(summary, manifest, manifestPath);
+      const invalidReason = validSummary(summary, manifest, benchmarkFingerprint, freshness);
+      if (invalidReason) {
+        console.warn(`Ignoring ${summaryPath}: ${invalidReason}`);
+      } else {
+        summaries.push(summary);
+      }
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      console.warn(`Ignoring ${summaryPath}: cannot read or validate summary (${detail})`);
+    }
+  }
+  return summaries.sort((a, b) => (b.score ?? -Infinity) - (a.score ?? -Infinity) || (a.modelId < b.modelId ? -1 : a.modelId > b.modelId ? 1 : 0));
 }
 
 function bar(value: number, max = 100) {
@@ -143,48 +357,124 @@ function bar(value: number, max = 100) {
   return `<span class="bar" aria-hidden="true"><span style="width:${pct}%"></span></span>`;
 }
 
-function scatterSvg(summaries: Summary[], xField: "cost" | "time") {
-  const width = 720;
-  const height = 300;
-  const pad = { left: 56, right: 28, top: 24, bottom: 48 };
-  const xValues = summaries.map((summary) => (xField === "cost" ? summary.costUsd : summary.totalElapsedMs / 1000));
-  const maxX = Math.max(...xValues, 1);
-  const minX = 0;
-  const x = (value: number) => pad.left + ((value - minX) / (maxX - minX || 1)) * (width - pad.left - pad.right);
-  const y = (score: number) => pad.top + (1 - score / 100) * (height - pad.top - pad.bottom);
-  const xLabel = xField === "cost" ? "Total benchmark cost, USD" : "Total sampled model time, seconds";
-  const pointColor = xField === "cost" ? "#0f766e" : "#1d4ed8";
+function scoreBar(value: number) {
+  return `<span class="score-cell">${bar(value)}<span class="score-value">${value}</span></span>`;
+}
 
-  const points = summaries
-    .map((summary) => {
-      const rawX = xField === "cost" ? summary.costUsd : summary.totalElapsedMs / 1000;
-      const label = modelLabel(summary.modelId);
-      return `<g>
-        <circle cx="${x(rawX)}" cy="${y(summary.score)}" r="5.5" fill="${pointColor}"></circle>
-        <text x="${Math.min(width - 190, x(rawX) + 10)}" y="${Math.max(18, y(summary.score) - 8)}">${escapeHtml(label)} (${summary.score})</text>
-      </g>`;
-    })
-    .join("\n");
+function chartDataScript(summaries: Summary[]) {
+  const data = summaries.map((summary) => ({
+    id: summary.modelId,
+    label: modelLabel(summary.modelId),
+    score: summary.score!,
+    cost: summary.costUsd,
+    time: round(summary.totalElapsedMs / 1000, 1),
+    tokens: summary.totalOutputTokens,
+    provider: summary.provider,
+  }));
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
 
-  return `<svg class="figure-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Score versus ${escapeHtml(xLabel)}">
-    <line x1="${pad.left}" y1="${height - pad.bottom}" x2="${width - pad.right}" y2="${height - pad.bottom}" stroke="#1f2937" stroke-width="1"></line>
-    <line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${height - pad.bottom}" stroke="#1f2937" stroke-width="1"></line>
-    <g class="ticks">
-      <text x="${pad.left - 38}" y="${y(100) + 4}">100</text>
-      <text x="${pad.left - 30}" y="${y(75) + 4}">75</text>
-      <text x="${pad.left - 30}" y="${y(50) + 4}">50</text>
-      <text x="${pad.left - 30}" y="${y(25) + 4}">25</text>
-      <text x="${pad.left - 20}" y="${y(0) + 4}">0</text>
-      <line x1="${pad.left}" y1="${y(75)}" x2="${width - pad.right}" y2="${y(75)}" stroke="#e5e7eb"></line>
-      <line x1="${pad.left}" y1="${y(50)}" x2="${width - pad.right}" y2="${y(50)}" stroke="#e5e7eb"></line>
-      <line x1="${pad.left}" y1="${y(25)}" x2="${width - pad.right}" y2="${y(25)}" stroke="#e5e7eb"></line>
-      <text x="${pad.left}" y="${height - 14}">0</text>
-      <text x="${width - 150}" y="${height - 14}">${round(maxX, xField === "cost" ? 3 : 0)}</text>
-    </g>
-    ${points}
-    <text class="axis-title" x="${width / 2 - 92}" y="${height - 4}">${escapeHtml(xLabel)}</text>
-    <text class="axis-title" transform="translate(14 ${height / 2 + 46}) rotate(-90)">Doc2MD score</text>
-  </svg>`;
+function interactiveChart(summaries: Summary[], inferenceCallCount: number) {
+  return `<div class="bench-chart" id="doc2md-bench-chart" data-points="${escapeHtml(chartDataScript(summaries))}">
+    <div class="bench-chart__tabs" role="tablist" aria-label="Chart x-axis metric">
+      <button type="button" data-metric="cost" aria-selected="true">Fidelity vs Cost</button>
+      <button type="button" data-metric="time" aria-selected="false">Fidelity vs Time</button>
+      <button type="button" data-metric="tokens" aria-selected="false">Fidelity vs Output</button>
+    </div>
+    <div class="bench-chart__stage"></div>
+  </div>
+  <script>
+(() => {
+  const root = document.getElementById("doc2md-bench-chart");
+  if (!root) return;
+  const data = JSON.parse(root.dataset.points || "[]");
+  const stage = root.querySelector(".bench-chart__stage");
+  const buttons = Array.from(root.querySelectorAll("[data-metric]"));
+  const W = 2400, H = 1500;
+  const pad = { left: 150, right: 120, top: 140, bottom: 210 };
+  const right = W - pad.right;
+  const bottom = H - pad.bottom;
+  const providerColors = { "openai": "#0f766e", "google-vertex": "#2563eb" };
+  const color = (point) => providerColors[point.provider] || "#6b7280";
+  const fmtMoney = (v) => "$" + (v < 0.01 ? v.toFixed(4) : v.toFixed(v < 1 ? 3 : 2));
+  const fmtSeconds = (v) => Math.round(v) + "s";
+  const fmtTokens = (v) => Math.round(v / 1000) + "k";
+  const metrics = {
+    cost: { title: "Reconstruction fidelity vs estimated inference cost", axis: "Estimated inference cost for ${inferenceCallCount} calls, USD (log scale)", value: p => p.cost, format: fmtMoney, ticks: [0.03, 0.1, 0.3, 1, 3], scale: "log" },
+    time: { title: "Reconstruction fidelity vs model-call duration", axis: "Summed model-call duration for ${inferenceCallCount} calls", value: p => p.time, format: fmtSeconds, ticks: [0, 300, 600, 900, 1200] },
+    tokens: { title: "Reconstruction fidelity vs output volume", axis: "Total inference output tokens for ${inferenceCallCount} calls", value: p => p.tokens, format: fmtTokens, ticks: [0, 50000, 100000, 150000] },
+  };
+  const labelOffsets = {
+    cost: {
+      "openai-gpt-5.4-mini": { dx: -34, dy: 18, anchor: "end" },
+      "vertex-gemini-3-flash-preview": { dx: 34, dy: 116, anchor: "start" },
+      "vertex-gemini-3.1-flash-lite": { dx: -34, dy: 92, anchor: "end" },
+      "vertex-gemini-2.5-flash-lite": { dx: 34, dy: 56, anchor: "start" },
+      "openai-gpt-5.4-nano": { dx: -34, dy: -48, anchor: "end" },
+      "openai-gpt-5-nano": { dx: 34, dy: 58, anchor: "start" },
+    },
+    time: {
+      "openai-gpt-5.4-mini": { dx: -34, dy: -46, anchor: "end" },
+      "vertex-gemini-3-flash-preview": { dx: 34, dy: 122, anchor: "start" },
+      "vertex-gemini-3.1-flash-lite": { dx: -34, dy: 58, anchor: "end" },
+      "vertex-gemini-2.5-flash-lite": { dx: 34, dy: 58, anchor: "start" },
+      "openai-gpt-5.4-nano": { dx: -34, dy: -50, anchor: "end" },
+      "openai-gpt-5-nano": { dx: 34, dy: 58, anchor: "start" },
+    },
+    tokens: {
+      "openai-gpt-5.4-mini": { dx: -86, dy: 34, anchor: "end" },
+      "vertex-gemini-3-flash-preview": { dx: 34, dy: 122, anchor: "start" },
+      "vertex-gemini-3.1-flash-lite": { dx: -34, dy: 58, anchor: "end" },
+      "vertex-gemini-2.5-flash-lite": { dx: -34, dy: 58, anchor: "end" },
+      "openai-gpt-5.4-nano": { dx: -34, dy: -50, anchor: "end" },
+      "openai-gpt-5-nano": { dx: 34, dy: 58, anchor: "start" },
+    },
+  };
+  const esc = (value) => String(value).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+  const yMin = Math.max(0, Math.floor((Math.min(...data.map(p => p.score)) - 4) / 5) * 5);
+  const y = (score) => pad.top + (1 - (score - yMin) / (100 - yMin || 1)) * (bottom - pad.top);
+  const yTicks = Array.from({ length: Math.floor((100 - yMin) / 10) + 1 }, (_, i) => 100 - i * 10).filter(v => v >= yMin);
+  function render(metricName) {
+    const metric = metrics[metricName];
+    const values = data.map(metric.value);
+    const positiveValues = values.filter(value => value > 0);
+    const minPositive = positiveValues.length ? Math.min(...positiveValues) : 0.000001;
+    const logFloor = Math.max(minPositive * 0.8, 0.000001);
+    const maxRawX = Math.max(...values, metric.scale === "log" ? logFloor * 10 : 1);
+    const minX = metric.scale === "log" ? Math.log10(logFloor) : 0;
+    const maxX = metric.scale === "log" ? Math.log10(Math.max(maxRawX * 1.12, logFloor * 10)) : maxRawX;
+    const transformX = (value) => metric.scale === "log" ? Math.log10(Math.max(value, logFloor)) : value;
+    const x = (value) => pad.left + ((transformX(value) - minX) / (maxX - minX || 1)) * (right - pad.left);
+    const positioned = data.map(point => ({ ...point, x: x(metric.value(point)), y: y(point.score), rawX: metric.value(point) }));
+    const xTicks = metric.ticks.filter(tick => (metric.scale === "log" ? tick >= minPositive : tick >= 0) && tick <= maxRawX);
+    const grid = yTicks.map(tick => '<g><line x1="' + pad.left + '" y1="' + y(tick) + '" x2="' + right + '" y2="' + y(tick) + '" stroke="#d8d2c3" stroke-width="2"></line><text x="' + pad.left + '" y="' + (y(tick) - 18) + '">' + tick + '</text></g>').join("")
+      + xTicks.map(tick => '<g><line x1="' + x(tick) + '" y1="' + pad.top + '" x2="' + x(tick) + '" y2="' + bottom + '" stroke="#ebe6d9" stroke-width="1.5"></line><text x="' + x(tick) + '" y="' + (bottom + 78) + '" text-anchor="middle">' + metric.format(tick) + '</text></g>').join("");
+    const labelItems = positioned.map(point => {
+      const offset = (labelOffsets[metricName] && labelOffsets[metricName][point.id]) || { dx: 34, dy: -34, anchor: "start" };
+      const lx = Math.max(pad.left + 20, Math.min(right - 20, point.x + offset.dx));
+      const ly = Math.max(pad.top + 32, Math.min(bottom - 16, point.y + offset.dy));
+      return { point, lx, ly, anchor: offset.anchor };
+    });
+    const connectors = labelItems.map(item => {
+      const labelEdgeX = item.anchor === "end" ? item.lx + 14 : item.lx - 14;
+      const labelEdgeY = item.ly - 10;
+      const farEnough = Math.abs(labelEdgeX - item.point.x) > 42 || Math.abs(labelEdgeY - item.point.y) > 42;
+      if (!farEnough) return "";
+      return '<line class="bench-chart__leader" x1="' + item.point.x + '" y1="' + item.point.y + '" x2="' + labelEdgeX + '" y2="' + labelEdgeY + '" stroke="' + color(item.point) + '"></line>';
+    }).join("");
+    const labels = labelItems.map(item => '<text class="bench-chart__label" x="' + item.lx + '" y="' + item.ly + '" text-anchor="' + item.anchor + '" style="fill:' + color(item.point) + '">' + esc(item.point.label) + ' (' + item.point.score + ')</text>').join("");
+    const points = positioned.map(point => '<g class="bench-chart__point" tabindex="0" data-id="' + esc(point.id) + '" aria-label="' + esc(point.label + ": " + point.score + ", " + metric.format(point.rawX)) + '"><circle cx="' + point.x + '" cy="' + point.y + '" r="26" fill="transparent"></circle><circle cx="' + point.x + '" cy="' + point.y + '" r="15" fill="' + color(point) + '" stroke="#fffdf8" stroke-width="7"></circle><title>' + esc(point.label + " — score " + point.score + ", " + metric.axis + ": " + metric.format(point.rawX)) + '</title></g>').join("");
+    stage.innerHTML = '<svg class="figure-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(metric.title) + '"><rect width="' + W + '" height="' + H + '" fill="#fffdf8"></rect><text class="chart-title" x="' + pad.left + '" y="86">' + esc(metric.title) + '</text><g class="ticks">' + grid + '</g>' + connectors + points + labels + '<text class="axis-title" text-anchor="middle" x="' + (pad.left + (right - pad.left) / 2) + '" y="' + (H - 34) + '">' + esc(metric.axis) + '</text><text class="axis-title" transform="translate(58 ' + (H / 2 + 110) + ') rotate(-90)">Reconstruction fidelity score</text></svg>';
+  }
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      buttons.forEach(other => other.setAttribute("aria-selected", String(other === button)));
+      render(button.dataset.metric || "cost");
+    });
+  });
+  render("cost");
+})();
+  </script>`;
 }
 
 function css() {
@@ -262,28 +552,8 @@ function css() {
       font: 13px/1.4 ui-sans-serif, system-ui, sans-serif;
       margin-top: 20px;
     }
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-      margin: 26px 0 8px;
-    }
-    .metric {
-      border-top: 3px solid var(--ink);
-      padding: 12px 0 6px;
-    }
-    .metric strong {
-      display: block;
-      font: 700 28px/1.05 ui-sans-serif, system-ui, sans-serif;
-      margin-bottom: 4px;
-    }
-    .metric span {
-      display: block;
-      color: var(--muted);
-      font: 13px/1.35 ui-sans-serif, system-ui, sans-serif;
-    }
     .figure {
-      margin: 24px 0 30px;
+      margin: 18px 0 30px;
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
       padding: 18px 0 12px;
@@ -300,17 +570,75 @@ function css() {
     }
     .figure-svg {
       width: 100%;
-      max-width: 760px;
+      max-width: 980px;
       height: auto;
       display: block;
-      background: #fffaf0;
+      background: #fffdf8;
+      border: 1px solid #e5dfd0;
+    }
+    .bench-chart {
+      max-width: 980px;
+    }
+    .bench-chart__tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      width: min(100%, 620px);
+      margin: 0 auto 14px;
+      padding: 3px;
+      border: 1px solid #ddd6c5;
+      border-radius: 999px;
+      background: #fffdf8;
+      font: 12px/1.2 ui-sans-serif, system-ui, sans-serif;
+    }
+    .bench-chart__tabs button {
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 7px 13px;
+      font: inherit;
+    }
+    .bench-chart__tabs button[aria-selected="true"] {
+      background: #ece7da;
+      color: var(--ink);
+      font-weight: 700;
     }
     svg text {
       font-family: ui-sans-serif, system-ui, sans-serif;
-      font-size: 12px;
+      font-size: 30px;
       fill: #1f2937;
     }
-    svg .axis-title { fill: var(--muted); font-weight: 700; }
+    svg .chart-title {
+      font-size: 42px;
+      font-weight: 700;
+      fill: #111827;
+    }
+    svg .axis-title {
+      fill: var(--muted);
+      font-size: 34px;
+      font-weight: 700;
+    }
+    svg .bench-chart__label {
+      font-size: 34px;
+      font-weight: 800;
+      fill: #111827;
+      stroke: #fffdf8;
+      stroke-width: 8px;
+      paint-order: stroke fill;
+    }
+    svg .bench-chart__leader {
+      opacity: 0.34;
+      stroke-width: 3px;
+      stroke-linecap: round;
+    }
+    svg .bench-chart__point circle {
+      transition: r 140ms ease, opacity 140ms ease;
+    }
+    svg .bench-chart__point:hover circle:last-child,
+    svg .bench-chart__point:focus circle:last-child {
+      r: 22px;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -329,13 +657,23 @@ function css() {
       vertical-align: top;
     }
     td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .table-scroll table { min-width: 940px; }
+    .appendix-table th,
+    .appendix-table td { white-space: nowrap; }
+    .appendix-table th:first-child,
+    .appendix-table td:first-child {
+      min-width: 250px;
+      white-space: normal;
+    }
     .bar {
-      display: inline-block;
-      width: 82px;
+      display: block;
+      width: 92px;
       height: 6px;
       border: 1px solid #cbd5e1;
-      margin-right: 8px;
-      vertical-align: middle;
       background: white;
     }
     .bar > span {
@@ -343,32 +681,17 @@ function css() {
       height: 100%;
       background: var(--accent);
     }
-    .case-list {
+    .score-cell {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 18px;
-      margin-top: 20px;
+      grid-template-columns: 92px 42px;
+      align-items: center;
+      justify-content: end;
+      gap: 10px;
+      font-variant-numeric: tabular-nums;
     }
-    .case {
-      border-top: 1px solid var(--line);
-      padding-top: 16px;
-    }
-    .case h3 {
-      margin-top: 0;
-      font-size: 18px;
-    }
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin: 8px 0 10px;
-    }
-    .tag {
-      border: 1px solid #d1d5db;
-      padding: 2px 6px;
-      font: 11px/1.3 ui-sans-serif, system-ui, sans-serif;
-      color: var(--muted);
-      background: #fff;
+    .score-value {
+      display: block;
+      text-align: right;
     }
     .note {
       border-left: 3px solid var(--warn);
@@ -386,81 +709,58 @@ function css() {
     @media (max-width: 760px) {
       main { padding: 32px 18px 56px; }
       h1 { font-size: 38px; }
-      .summary-grid { grid-template-columns: 1fr 1fr; }
       table { font-size: 12px; }
     }
   </style>`;
 }
 
-function renderReport(manifest: Manifest, summaries: Summary[]) {
-  const generatedAt = new Date();
-  const bestScore = bestBy(summaries, (summary) => summary.score);
-  const bestValue = bestBy(summaries, (summary) => (summary.costUsd > 0 ? summary.score / summary.costUsd : 0));
-  const fastestPerPoint = bestBy(summaries, (summary) => (summary.totalElapsedMs > 0 ? summary.score / (summary.totalElapsedMs / 1000) : 0));
-  const rows = caseRows(manifest, summaries);
-  const scoreSpread = summaries.length >= 2 ? round(Math.max(...summaries.map((s) => s.score)) - Math.min(...summaries.map((s) => s.score))) : 0;
+export function renderReport(manifest: Manifest, summaries: Summary[]) {
+  summaries = [...summaries].sort((a, b) => b.score! - a.score! || (a.modelId < b.modelId ? -1 : a.modelId > b.modelId ? 1 : 0));
   const totalPages = manifest.pageCount ?? manifest.cases.reduce((sum, testCase) => sum + (testCase.pages ?? 1), 0);
-  const sampleCount = summaries[0]?.samplesPerModelCase ?? 0;
+  const samplesPerCaseValues = new Set(summaries.map((summary) => summary.samplesPerModelCase));
+  const inferenceCallCounts = new Set(summaries.map((summary) => summary.sampleCount));
+  if (samplesPerCaseValues.size !== 1 || inferenceCallCounts.size !== 1) {
+    throw new Error("Cannot compare summaries with different sample cohorts");
+  }
+  if (new Set(summaries.map((summary) => summary.modelId)).size !== summaries.length) {
+    throw new Error("Cannot compare duplicate model summaries");
+  }
+  const samplesPerCase = [...samplesPerCaseValues][0];
+  const inferenceCallCount = [...inferenceCallCounts][0];
+  const tokenLimitFinishes = (summary: Summary) =>
+    summary.caseScores.reduce(
+      (count, caseScore) => count + (caseScore.finishReasons ?? []).filter((item) => item.finishReason === "length").length,
+      0,
+    );
 
   const modelTable = summaries
     .map(
       (summary) => `<tr>
-        <td><strong>${escapeHtml(summary.modelId)}</strong></td>
-        <td class="num">${bar(summary.score)}${summary.score}</td>
+        <td><strong>${escapeHtml(modelLabel(summary.modelId))}</strong><div class="muted">${escapeHtml(summary.modelId)}</div></td>
+        <td class="num">${scoreBar(summary.score!)}</td>
+        <td class="num">${summary.scoreStddev!.toFixed(2)}</td>
+        <td class="num">${summary.scoreMin!.toFixed(1)}–${summary.scoreMax!.toFixed(1)}</td>
         <td class="num">${fmtMoney(summary.costUsd)}</td>
         <td class="num">${fmtSeconds(summary.totalElapsedMs)}</td>
-        <td class="num">${summary.totalOutputTokens.toLocaleString()}</td>
-        <td class="num">${summary.scoreStddevCaseMean}</td>
-        <td class="num">${summary.sampleCount}</td>
+        <td class="num">${summary.totalOutputTokens.toLocaleString("en-US")}</td>
+        <td class="num">${summary.modelFailureCount ?? 0}/${summary.sampleCount}</td>
+        <td class="num">${tokenLimitFinishes(summary)}/${summary.sampleCount}</td>
       </tr>`,
     )
     .join("\n");
 
-  const caseTableHeader = summaries.map((summary) => `<th class="num">${escapeHtml(modelLabel(summary.modelId))}</th>`).join("");
-  const caseTableRows = rows
-    .map((row) => {
-      const scoreCells = row.scores
-        .map((score) =>
-          score
-            ? `<td class="num">${score.score}<br><span class="muted">${score.scoreMin}-${score.scoreMax}, sd ${score.scoreStddev}</span></td>`
-            : `<td class="num">-</td>`,
-        )
-        .join("");
-      return `<tr>
-        <td><a href="#${slug(row.testCase.id)}">${escapeHtml(row.testCase.id)}</a></td>
-        <td>${escapeHtml(row.testCase.title)}</td>
-        <td class="num">${row.testCase.pages}</td>
-        ${scoreCells}
-        <td class="num">${row.spread}</td>
-      </tr>`;
-    })
-    .join("\n");
-
-  const caseSections = rows
-    .map((row) => {
-      const scores = row.scores
-        .map((score, index) => {
-          const summary = summaries[index];
-          if (!score) return "";
-          return `<tr>
-            <td>${escapeHtml(modelLabel(summary.modelId))}</td>
-            <td class="num">${score.score}</td>
-            <td class="num">${score.scoreMin}-${score.scoreMax}</td>
-            <td class="num">${score.scoreStddev}</td>
-            <td class="num">${score.accuracy}</td>
-            <td class="num">${score.outputTokens.toLocaleString()}</td>
-          </tr>`;
+  const caseScoreMaps = new Map(
+    summaries.map((summary) => [summary.modelId, new Map(summary.caseScores.map((caseScore) => [caseScore.caseId, caseScore]))]),
+  );
+  const caseAppendix = manifest.cases
+    .map((testCase) => {
+      const cells = summaries
+        .map((summary) => {
+          const caseScore = caseScoreMaps.get(summary.modelId)!.get(testCase.id)!;
+          return `<td class="num"><strong>${caseScore.score!.toFixed(1)}</strong> <span class="muted">(${caseScore.scoreMin!.toFixed(1)}–${caseScore.scoreMax!.toFixed(1)})</span></td>`;
         })
         .join("");
-      return `<section class="case" id="${slug(row.testCase.id)}">
-        <h3>${escapeHtml(row.testCase.id)}: ${escapeHtml(row.testCase.title)}</h3>
-        <div class="tags">${row.testCase.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>
-        <p>${escapeHtml(caseChallengeFallback[row.testCase.id] ?? "This case tests faithful reconstruction of dense document information into machine-usable Markdown.")}</p>
-        <table>
-          <thead><tr><th>Model</th><th class="num">Mean</th><th class="num">Range</th><th class="num">Stddev</th><th class="num">Accuracy</th><th class="num">Mean Output Tokens</th></tr></thead>
-          <tbody>${scores}</tbody>
-        </table>
-      </section>`;
+      return `<tr><td><strong>${escapeHtml(testCase.id)}</strong><div class="muted">${escapeHtml(testCase.title)}</div></td>${cells}</tr>`;
     })
     .join("\n");
 
@@ -477,79 +777,50 @@ function renderReport(manifest: Manifest, summaries: Summary[]) {
     <header>
       <div class="kicker">Doc2MD Technical Report</div>
       <h1>Faithful document-to-Markdown reconstruction under dense PDF conditions</h1>
-      <p class="lede">Doc2MD evaluates whether a model can turn a PDF into a single Markdown document that preserves the document's information, structure, tables, visual elements, and reading experience. This report is generated from cached benchmark outputs; regenerating the report does not rerun paid model or evaluator calls.</p>
+      <p class="lede">Doc2MD evaluates whether a model can turn a PDF into a single Markdown document that preserves the document's information, structure, tables, visual elements, and reading experience.</p>
       <div class="meta">
-        <span>Generated ${escapeHtml(generatedAt.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }))} IST</span>
         <span>${manifest.cases.length} cases</span>
         <span>${totalPages} pages</span>
-        <span>${sampleCount} samples per model/case</span>
+        <span>${samplesPerCase} samples per model/case</span>
         <span>Input protocol: ${escapeHtml(manifest.inputProtocol ?? "native_pdf")}</span>
       </div>
     </header>
 
     <section>
-      <h2>Highlights</h2>
-      <div class="summary-grid">
-        <div class="metric"><strong>${escapeHtml(bestScore ? modelLabel(bestScore.modelId) : "n/a")}</strong><span>highest average reconstruction score${bestScore ? ` (${bestScore.score})` : ""}</span></div>
-        <div class="metric"><strong>${scoreSpread}</strong><span>point spread between best and weakest model</span></div>
-        <div class="metric"><strong>${escapeHtml(bestValue ? modelLabel(bestValue.modelId) : "n/a")}</strong><span>best score per dollar in this run</span></div>
-        <div class="metric"><strong>${escapeHtml(fastestPerPoint ? modelLabel(fastestPerPoint.modelId) : "n/a")}</strong><span>best score per sampled second</span></div>
+      <h2>Reconstruction Fidelity, Cost, and Model-call Duration</h2>
+      <div class="figure">
+        <div class="figure-title">Figure 1. Reconstruction score by operating metric</div>
+        ${interactiveChart(summaries, inferenceCallCount)}
+        <div class="caption">Switch the x-axis between estimated inference cost, summed model-call duration, and inference output tokens. Each total covers ${inferenceCallCount} model calls. Duration is the sum of individual calls, not parallel benchmark wall-clock time. These operating metrics do not affect the reconstruction-fidelity score.</div>
       </div>
-      <p>The key tradeoff is not just raw intelligence. A useful document conversion model must be accurate, economical, and predictable enough for repeated production use. The score measures reconstruction fidelity; cost, sampled latency, output length, and run-to-run variance describe whether that fidelity is practical.</p>
     </section>
 
     <section>
       <h2>Result Table</h2>
-      <table>
+      <div class="table-scroll"><table>
         <thead>
-          <tr><th>Model</th><th class="num">Score</th><th class="num">Cost</th><th class="num">Sampled Time</th><th class="num">Output Tokens</th><th class="num">Mean Case Stddev</th><th class="num">Samples</th></tr>
+          <tr><th>Model</th><th class="num">Fidelity</th><th class="num">Full-suite SD</th><th class="num">Full-suite range</th><th class="num">Estimated inference cost<br><span class="muted">${inferenceCallCount} calls</span></th><th class="num">Summed model-call duration<br><span class="muted">${inferenceCallCount} calls</span></th><th class="num">Inference output tokens<br><span class="muted">${inferenceCallCount} calls</span></th><th class="num">Model failures</th><th class="num">Token-limit finishes</th></tr>
         </thead>
         <tbody>${modelTable}</tbody>
-      </table>
-      <p class="note">Scores are averaged across ${sampleCount} runs per model/case and then page-weighted across cases. Cost and time are totals across all samples in this report, not the wall-clock time of a parallel run.</p>
+      </table></div>
+      <p class="note">For each sample slot, scores are averaged equally across cases; the reported fidelity is the mean of those ${samplesPerCase} full-suite scores. SD is the sample standard deviation (n−1), and the range is their minimum–maximum. Scoreable response-level model failures remain in the cohort as zero-score samples; provider or transport invocation errors make the cohort incomplete. Token-limit finishes are scoreable responses whose provider finish reason was <code>length</code>.</p>
     </section>
 
     <section>
-      <h2>Intelligence, Cost, And Time</h2>
-      <div class="figure">
-        <div class="figure-title">Figure 1. Reconstruction score versus benchmark cost</div>
-        ${scatterSvg(summaries, "cost")}
-        <div class="caption">A model on the upper-left is preferable: higher fidelity at lower cost. This view highlights whether accuracy gains are economically meaningful.</div>
-      </div>
-      <div class="figure">
-        <div class="figure-title">Figure 2. Reconstruction score versus sampled model time</div>
-        ${scatterSvg(summaries, "time")}
-        <div class="caption">Time is the sum of reported sample durations. The benchmark executes in parallel, but summed model time is still useful for comparing latency burden.</div>
-      </div>
+      <h2>Per-case Appendix</h2>
+      <p>Each cell shows the per-case mean followed by its minimum–maximum across ${samplesPerCase} samples.</p>
+      <div class="table-scroll"><table class="appendix-table">
+        <thead><tr><th>Case</th>${summaries.map((summary) => `<th class="num">${escapeHtml(modelLabel(summary.modelId))}</th>`).join("")}</tr></thead>
+        <tbody>${caseAppendix}</tbody>
+      </table></div>
     </section>
 
     <section>
       <h2>Method</h2>
       <p>The benchmark sends native PDF files directly to providers and asks for one faithful Markdown reconstruction. It does not convert official inputs into page images inside the harness. This means the score reflects the end-to-end provider experience: the model, the provider's PDF ingestion path, and the model's ability to preserve document information.</p>
-      <p>Each case has a human-authored gold answer key and weighted fact obligations. The evaluator compares the candidate Markdown against that answer key and marks facts as correct, partial, missing, or incorrect. Wrong information is penalized more harshly than omission because downstream systems can often detect missing information, but wrong extracted facts silently corrupt later reasoning.</p>
-      <p>The report is deterministic. It reads existing <code>summary.json</code> files, recomputes no model outputs, calls no judge, and writes a fresh HTML page every time the benchmark command completes.</p>
-    </section>
-
-    <section>
-      <h2>Case-Level Separation</h2>
-      <table>
-        <thead>
-          <tr><th>Case</th><th>Document</th><th class="num">Pages</th>${caseTableHeader}<th class="num">Spread</th></tr>
-        </thead>
-        <tbody>${caseTableRows}</tbody>
-      </table>
-      <p>Cases with high spread are currently doing the most leaderboard work. Cases where all models score near 100 are still useful as capability or regression checks, but they contribute less to ranking strong and weak document parsers.</p>
-    </section>
-
-    <section>
-      <h2>What The Cases Test</h2>
-      <div class="case-list">${caseSections}</div>
-    </section>
-
-    <section>
-      <h2>Interpretation</h2>
-      <p>Doc2MD is intentionally not a plain OCR benchmark. The hard cases stress compound document reconstruction: page order, table continuation, chart semantics, source-state conflicts, maps, forms, lab panels, regulated release decisions, and dense operational packets. The main failure mode for weaker models is not merely reading text incorrectly; it is dropping whole regions, collapsing structured tables into prose, binding values to the wrong labels, or inventing a plausible but false final state.</p>
-      <p>Because LLM outputs are not precision instruments, the benchmark uses repeated samples. The reported score should be read as an estimate of expected reconstruction quality, while the per-case range and standard deviation show reliability. A model that sometimes solves a case and sometimes omits entire sections is less production-worthy than a model with the same mean score and tighter variance.</p>
+      <p>Each case has a source-audited reference reconstruction and page-anchored atomic obligations grouped into bounded document regions. To prevent answer leakage, the evaluator receives the audited obligations and numbered candidate lines, but not the PDF or reference text; every non-missing judgment must cite candidate lines. Wrong information is penalized more harshly than omission because downstream systems can often detect missing information, while incorrect extracted facts can silently corrupt later work.</p>
+      <p>Doc2MD is intentionally not a plain OCR benchmark. The cases stress compound document reconstruction: page order, table continuation, chart semantics, source-state conflicts, maps, forms, scientific notation, regulated workflows, and realistic mixed-modality packets. The main failure mode for weaker models is not merely reading text incorrectly; it is dropping whole regions, collapsing structured relationships into prose, binding values to the wrong labels, or inventing a plausible but false final state.</p>
+      <p>Because model outputs vary, the benchmark uses repeated samples. It first computes a complete suite score for each sample slot by weighting every case equally, then reports the mean, sample standard deviation, minimum, and maximum of those suite scores. Per-case ranges in the appendix expose localized instability without substituting a mean of case-level deviations for full-suite uncertainty.</p>
     </section>
   </main>
 </body>
@@ -559,34 +830,96 @@ function renderReport(manifest: Manifest, summaries: Summary[]) {
 export async function generateReport(summaries?: Summary[], options: { outPath?: string; manifestPath?: string } = {}) {
   const manifestPath = options.manifestPath ?? "benchmark/manifest.json";
   const outPath = options.outPath ?? "reports/index.html";
-  const manifest = await readJson<Manifest>(manifestPath);
-  const loadedSummaries = summaries ?? (await loadSummaries());
+  const manifest = (await loadBenchmarkManifest(manifestPath)).manifest as Manifest;
+  const fingerprint = await buildBenchmarkFingerprint({
+    manifestPath,
+    promptHash: sha256(prompt),
+    scoringContractFingerprint,
+  });
+  const loadedSummaries = summaries ?? (await loadSummaries(manifest, manifestPath, fingerprint.benchmarkFingerprint));
   if (loadedSummaries.length === 0) {
-    throw new Error("No benchmark summaries found. Run the benchmark before generating the report.");
+    throw new Error("No complete summaries match the current benchmark fingerprint. Run the benchmark before generating the report.");
   }
+  const invalidSummaries = (
+    await Promise.all(
+      loadedSummaries.map(async (summary) => ({
+        modelId: summary.modelId,
+        reason: validSummary(
+          summary,
+          manifest,
+          fingerprint.benchmarkFingerprint,
+          await currentSummaryFreshness(summary, manifest, manifestPath),
+        ),
+      })),
+    )
+  ).filter((entry) => entry.reason);
+  if (invalidSummaries.length > 0) {
+    throw new Error(
+      `Cannot generate a report from stale or incomplete summaries: ${invalidSummaries
+        .map((entry) => `${entry.modelId}: ${entry.reason}`)
+        .join("; ")}`,
+    );
+  }
+  const assertStillFresh = async () => {
+    const currentFingerprint = await buildBenchmarkFingerprint({
+      manifestPath,
+      promptHash: sha256(prompt),
+      scoringContractFingerprint,
+    });
+    if (currentFingerprint.benchmarkFingerprint !== fingerprint.benchmarkFingerprint) {
+      throw new Error("Benchmark artifacts changed while generating the report; retry after active work completes.");
+    }
+    const stale = (
+      await Promise.all(
+        loadedSummaries.map(async (summary) => ({
+          modelId: summary.modelId,
+          reason: validSummary(
+            summary,
+            manifest,
+            currentFingerprint.benchmarkFingerprint,
+            await currentSummaryFreshness(summary, manifest, manifestPath),
+          ),
+        })),
+      )
+    ).filter((entry) => entry.reason);
+    if (stale.length > 0) {
+      throw new Error(`Summary/cohort artifacts changed while generating the report: ${stale.map((entry) => `${entry.modelId}: ${entry.reason}`).join("; ")}`);
+    }
+  };
   await mkdir(path.dirname(outPath), { recursive: true });
   const html = renderReport(manifest, loadedSummaries);
-  await writeFile(outPath, html, "utf-8");
+  await assertStillFresh();
+  await atomicWriteText(outPath, html);
+  try {
+    await assertStillFresh();
+  } catch (error) {
+    await rm(outPath, { force: true }).catch(() => undefined);
+    throw error;
+  }
   return { outPath, summaries: loadedSummaries.length };
 }
 
-function parseArgs() {
-  const args = new Map<string, string>();
-  for (let i = 2; i < process.argv.length; i += 1) {
-    const arg = process.argv[i];
-    if (!arg.startsWith("--")) continue;
-    const key = arg.slice(2);
-    const next = process.argv[i + 1];
-    args.set(key, next && !next.startsWith("--") ? process.argv[++i] : "true");
+function parseCli(argv: string[]) {
+  const values = new Map<string, string>();
+  for (let index = 0; index < argv.length; index += 1) {
+    const argument = argv[index]!;
+    if (!argument.startsWith("--")) throw new Error(`Unexpected positional argument ${argument}.`);
+    const key = argument.slice(2);
+    if (key !== "out" && key !== "manifest") throw new Error(`Unknown option --${key}.`);
+    if (values.has(key)) throw new Error(`Duplicate option --${key}.`);
+    const value = argv[index + 1];
+    if (!value || value.startsWith("--")) throw new Error(`--${key} requires a value.`);
+    values.set(key, value);
+    index += 1;
   }
-  return args;
+  return { outPath: values.get("out"), manifestPath: values.get("manifest") };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const args = parseArgs();
+  const cli = parseCli(process.argv.slice(2));
   const result = await generateReport(undefined, {
-    outPath: args.get("out"),
-    manifestPath: args.get("manifest"),
+    outPath: cli.outPath,
+    manifestPath: cli.manifestPath,
   });
   console.log(`Wrote ${result.outPath} from ${result.summaries} model summaries`);
 }

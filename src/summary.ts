@@ -1,66 +1,262 @@
-import { access, readFile, writeFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildRunContext, models, runCacheKey, samplesPerModelCase } from "./run.js";
+import { buildBenchmarkFingerprint } from "./benchmarkFingerprint.js";
+import { sha256, stableJson } from "./cache.js";
+import { buildCohortArtifactFingerprint } from "./cohortFingerprint.js";
+import { aggregateSampleFirst, type AggregationCase, type AggregationSample } from "./aggregation.js";
+export { aggregateSampleFirst, sampleStddev, type AggregationCase, type AggregationSample } from "./aggregation.js";
+import {
+  buildRunContext,
+  buildRunCacheExpectation,
+  modelConfigFingerprint,
+  modelPricingFingerprint,
+  models,
+  priceReport,
+  prompt,
+  readCurrentCachedRun,
+  runCacheKey,
+  samplesPerModelCase,
+} from "./run.js";
+import { acquireSampleLock, atomicWriteJson } from "./runRuntime.js";
+import { loadBenchmarkManifest } from "./manifest.js";
+import {
+  normalizeRunOutcome,
+  evaluatorPriceReport,
+  parseFactFile,
+  scoreAtomicRegions,
+  scoringCacheKey,
+  scoringContractFingerprint,
+  scoringContractVersion,
+  validateJudgeResult,
+  type FactFile,
+  type ManifestCase,
+} from "./score.js";
 
-type Score = {
+type Manifest = {
+  name?: string;
+  suite?: string;
+  scoreName?: string;
+  inputProtocol?: string;
+  cases: ManifestCase[];
+};
+
+export type ScoreArtifact = {
   caseId: string;
-  title?: string;
-  family?: string;
-  tags?: string[];
-  score: number;
-  uncappedScore?: number;
-  dimensions?: {
-    accuracy?: number;
-    completeness?: number;
-    structure?: number;
-    markdownQuality?: number;
-  };
-  factScore?: {
-    rawScore?: number | null;
-    statusWeights?: Record<string, number>;
-  };
-  caps?: {
-    appliedCap?: number | null;
-  };
-  unsupported?: {
-    penalty?: number;
-  };
-  estimatedCostUsd: number;
-  elapsedMs: number;
-  usage: { inputTokens?: number; outputTokens?: number; totalTokens?: number } | null;
-  finishReason: string;
+  modelId: string;
   sample?: string | null;
-  runCache?: { runKey?: string };
-  error?: string;
+  suite?: string;
+  manifestPath?: string;
+  inputProtocol?: string;
+  score: number | null;
+  valid?: boolean;
+  modelCallFailed?: boolean;
+  evaluatorFailure?: boolean;
+  scoringContractVersion?: string;
+  scoringContractFingerprint?: string;
+  runCache?: Record<string, unknown> | null;
+  atomicScore?: unknown;
+  judgeResult?: unknown;
+  finishReason?: unknown;
+  scorer?: {
+    status?: string;
+    estimatedCostUsd?: number;
+    elapsedMs?: number;
+    attempts?: number;
+    errors?: unknown;
+    judgeReused?: boolean;
+    usage?: { inputTokens?: number; outputTokens?: number; totalTokens?: number } | null;
+    pricing?: Record<string, unknown>;
+    resolved?: Record<string, unknown> | null;
+    cache?: Record<string, unknown> & { scoreKey?: string; judgeKey?: string };
+  };
 };
 
-type ManifestCase = {
-  id: string;
-  title?: string;
-  family?: string;
-  tags?: string[];
-  pages?: number;
-  pdf: string;
+export type ScoreArtifactExpectation = {
+  caseId: string;
+  modelId: string;
+  sample: string;
+  suite: string;
+  manifestPath: string;
+  inputProtocol: string;
+  modelCallFailed: boolean;
+  finishReason?: unknown;
+  runCache: unknown;
+  scoreCache: Record<string, unknown> & { scoreKey: string; judgeKey: string };
+  prediction: string;
 };
 
-function mean(values: number[]) {
-  return values.length === 0 ? 0 : values.reduce((sum, value) => sum + value, 0) / values.length;
+export type EvaluatorValidationStatus = "valid" | "failed" | "missing_invalid" | "not_required";
+export type ScoreArtifactValidationKind = "evaluator_valid" | "evaluator_failed" | "model_failure" | "missing_invalid";
+
+export type ScoreArtifactValidation = {
+  kind: ScoreArtifactValidationKind;
+  evaluatorStatus: EvaluatorValidationStatus;
+  valid: boolean;
+  score: number | null;
+  reason?: string;
+  artifact: ScoreArtifact | null;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
 
-function stddev(values: number[]) {
-  if (values.length <= 1) return 0;
-  const avg = mean(values);
-  return Math.sqrt(mean(values.map((value) => (value - avg) ** 2)));
+function canonicalJson(value: unknown): string | null {
+  try {
+    const serialized = JSON.stringify(value);
+    return serialized === undefined ? null : stableJson(JSON.parse(serialized));
+  } catch {
+    return null;
+  }
 }
 
-function weightedMean(values: Array<{ value: number; weight: number }>) {
-  const totalWeight = values.reduce((sum, item) => sum + item.weight, 0);
-  if (totalWeight === 0) return 0;
-  return values.reduce((sum, item) => sum + item.value * item.weight, 0) / totalWeight;
+function exactJsonEqual(left: unknown, right: unknown): boolean {
+  const leftJson = canonicalJson(left);
+  return leftJson !== null && leftJson === canonicalJson(right);
 }
 
-function round(value: number, digits = 1) {
+function nonNegativeFinite(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0;
+}
+
+function validEvaluatorTelemetry(scorer: ScoreArtifact["scorer"]): boolean {
+  if (!scorer || !nonNegativeFinite(scorer.estimatedCostUsd) || !nonNegativeFinite(scorer.elapsedMs)) return false;
+  if (!Number.isInteger(scorer.attempts) || (scorer.attempts ?? -1) < 0) return false;
+  if (!Array.isArray(scorer.errors) || !scorer.errors.every((error) => typeof error === "string")) return false;
+  if (scorer.usage !== null) {
+    if (!isRecord(scorer.usage)) return false;
+    if (![scorer.usage.inputTokens, scorer.usage.outputTokens, scorer.usage.totalTokens].every(nonNegativeFinite)) return false;
+  }
+  const currentPricing = evaluatorPriceReport(scorer.usage);
+  return scorer.estimatedCostUsd === currentPricing.estimatedCostUsd && exactJsonEqual(scorer.pricing, currentPricing);
+}
+
+export function validateCurrentScoreArtifact(
+  facts: FactFile,
+  value: unknown,
+  expected: ScoreArtifactExpectation,
+): ScoreArtifactValidation {
+  const invalid = (reason: string, artifact: ScoreArtifact | null = null): ScoreArtifactValidation => ({
+    kind: "missing_invalid",
+    evaluatorStatus: expected.modelCallFailed ? "not_required" : "missing_invalid",
+    valid: false,
+    score: null,
+    reason,
+    artifact,
+  });
+
+  if (!isRecord(value)) return invalid("missing score artifact");
+  const artifact = value as ScoreArtifact;
+  if (artifact.caseId !== expected.caseId || artifact.modelId !== expected.modelId || artifact.sample !== expected.sample) {
+    return invalid("score identity mismatch", artifact);
+  }
+  if (artifact.suite !== expected.suite || artifact.manifestPath !== expected.manifestPath || artifact.inputProtocol !== expected.inputProtocol) {
+    return invalid("score run-context mismatch", artifact);
+  }
+  if (artifact.finishReason !== expected.finishReason) return invalid("score finish reason does not match run artifact", artifact);
+  if (!exactJsonEqual(artifact.runCache, expected.runCache)) return invalid("score references a stale or altered model run cache", artifact);
+  if (artifact.scoringContractVersion !== scoringContractVersion || artifact.scoringContractFingerprint !== scoringContractFingerprint) {
+    return invalid("scoring contract fingerprint is stale", artifact);
+  }
+  if (!artifact.scorer?.cache) return invalid("missing scorer cache identity", artifact);
+  if (
+    artifact.scorer.cache.scoreKey !== expected.scoreCache.scoreKey ||
+    artifact.scorer.cache.judgeKey !== expected.scoreCache.judgeKey ||
+    !exactJsonEqual(artifact.scorer.cache, expected.scoreCache)
+  ) {
+    return invalid("score cache fingerprint is stale or altered", artifact);
+  }
+  if (artifact.modelCallFailed !== expected.modelCallFailed) return invalid("model failure state does not match run artifact", artifact);
+
+  if (expected.modelCallFailed) {
+    if (
+      artifact.valid !== true ||
+      artifact.evaluatorFailure !== false ||
+      artifact.score !== 0 ||
+      artifact.scorer.status !== "not_run_model_failure" ||
+      artifact.scorer.attempts !== 0 ||
+      !Array.isArray(artifact.scorer.errors) ||
+      artifact.scorer.errors.length !== 0 ||
+      artifact.scorer.elapsedMs !== 0 ||
+      artifact.scorer.estimatedCostUsd !== 0 ||
+      artifact.scorer.usage !== null ||
+      artifact.scorer.judgeReused !== false
+    ) {
+      return invalid("model failure must be a valid zero score with a not-run evaluator envelope", artifact);
+    }
+    try {
+      const judgeResult = validateJudgeResult(facts, artifact.judgeResult, expected.prediction);
+      if (judgeResult.leafResults.some((leaf) => leaf.status !== "missing") || judgeResult.unsupportedClaims.length !== 0) {
+        return invalid("model failure judgment must mark every leaf missing without unsupported claims", artifact);
+      }
+      const recomputed = scoreAtomicRegions(facts, judgeResult, expected.prediction);
+      if (recomputed.score !== 0 || artifact.score !== recomputed.score) {
+        return invalid("model failure score does not match recomputed atomic score", artifact);
+      }
+      if (!exactJsonEqual(artifact.atomicScore, recomputed)) return invalid("stored atomic score does not match recomputed atomic score", artifact);
+    } catch {
+      return invalid("model failure judgment is invalid", artifact);
+    }
+    return { kind: "model_failure", evaluatorStatus: "not_required", valid: true, score: 0, artifact };
+  }
+
+  if (artifact.scorer.status === "failed") {
+    if (
+      artifact.valid !== false ||
+      artifact.evaluatorFailure !== true ||
+      artifact.score !== null ||
+      artifact.atomicScore !== null ||
+      artifact.judgeResult !== null ||
+      artifact.scorer.judgeReused !== false ||
+      !validEvaluatorTelemetry(artifact.scorer) ||
+      (artifact.scorer.attempts ?? 0) < 1
+    ) {
+      return invalid("evaluator failure envelope is invalid", artifact);
+    }
+    return {
+      kind: "evaluator_failed",
+      evaluatorStatus: "failed",
+      valid: false,
+      score: null,
+      reason: "evaluator failure",
+      artifact,
+    };
+  }
+
+  if (
+    artifact.scorer.status !== "valid" ||
+    artifact.valid !== true ||
+    artifact.evaluatorFailure !== false ||
+    !validEvaluatorTelemetry(artifact.scorer) ||
+    !isRecord(artifact.scorer.resolved) ||
+    typeof artifact.scorer.resolved.modelId !== "string" ||
+    artifact.scorer.resolved.modelId.length === 0
+  ) {
+    return invalid("successful model call lacks a valid evaluator envelope", artifact);
+  }
+  if (typeof artifact.score !== "number" || !Number.isFinite(artifact.score) || artifact.score < 0 || artifact.score > 100) {
+    return invalid("stored score is outside [0, 100]", artifact);
+  }
+  try {
+    const judgeResult = validateJudgeResult(facts, artifact.judgeResult, expected.prediction);
+    const recomputed = scoreAtomicRegions(facts, judgeResult, expected.prediction);
+    if (!Number.isFinite(recomputed.score) || recomputed.score < 0 || recomputed.score > 100) {
+      return invalid("recomputed score is outside [0, 100]", artifact);
+    }
+    if (artifact.score !== recomputed.score) return invalid("stored score does not match recomputed atomic score", artifact);
+    if (!exactJsonEqual(artifact.atomicScore, recomputed)) return invalid("stored atomic score does not match recomputed atomic score", artifact);
+    return { kind: "evaluator_valid", evaluatorStatus: "valid", valid: true, score: recomputed.score, artifact };
+  } catch {
+    return invalid("cached judge result is invalid", artifact);
+  }
+}
+
+function mean(values: number[]): number {
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function round(value: number, digits = 1): number {
   const factor = 10 ** digits;
   return Math.round(value * factor) / factor;
 }
@@ -76,139 +272,327 @@ async function exists(filePath: string) {
 
 async function readJsonIfExists(filePath: string) {
   if (!(await exists(filePath))) return null;
-  return JSON.parse(await readFile(filePath, "utf-8")) as any;
-}
-
-function parseArgs() {
-  const args = new Map<string, string>();
-  const positionals: string[] = [];
-  for (let i = 2; i < process.argv.length; i += 1) {
-    const arg = process.argv[i];
-    if (arg.startsWith("--")) {
-      const key = arg.slice(2);
-      const next = process.argv[i + 1];
-      args.set(key, next && !next.startsWith("--") ? process.argv[++i] : "true");
-    } else {
-      positionals.push(arg);
-    }
+  try {
+    return JSON.parse(await readFile(filePath, "utf-8")) as any;
+  } catch {
+    return null;
   }
-  return { args, positionals };
 }
 
-function rejectUnknownArgs(args: Map<string, string>, allowed: string[]) {
-  const allowedSet = new Set(allowed);
-  const unknown = [...args.keys()].filter((key) => !allowedSet.has(key));
-  if (unknown.length > 0) throw new Error(`Unknown argument(s): ${unknown.map((key) => `--${key}`).join(", ")}`);
+function expectedSampleIds() {
+  return Array.from({ length: samplesPerModelCase }, (_, index) => String(index + 1).padStart(3, "0"));
 }
 
-export async function summarizeModel(modelId: string, options: { manifestPath?: string } = {}) {
+export async function deriveModelSummary(
+  modelId: string,
+  options: { manifestPath?: string; lockSamples?: boolean } = {},
+) {
   const runRoot = path.join("runs", modelId);
   const manifestPath = options.manifestPath ?? "benchmark/manifest.json";
-  const manifest = JSON.parse(await readFile(manifestPath, "utf-8")) as {
-    name?: string;
-    suite?: string;
-    scoreName?: string;
-    inputProtocol?: string;
-    cases: ManifestCase[];
-  };
+  const manifest = (await loadBenchmarkManifest(manifestPath)).manifest as Manifest;
   const spec = models[modelId];
   if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
   const context = await buildRunContext(spec, manifest as any, manifestPath);
   const suite = manifest.suite ?? "official";
-  const caseScores = [];
+  const fingerprint = await buildBenchmarkFingerprint({
+    manifestPath,
+    promptHash: sha256(prompt),
+    scoringContractFingerprint,
+  });
+  const cohortArtifactFingerprintBefore = await buildCohortArtifactFingerprint(
+    modelId,
+    suite,
+    manifest.cases,
+    samplesPerModelCase,
+  );
+  const sampleIds = expectedSampleIds();
+  const aggregationCases: AggregationCase[] = [];
+  const caseDetails: any[] = [];
+  const observedResults: any[] = [];
+  const validatedEvaluatorArtifacts: ScoreArtifact[] = [];
+  const artifactValidations: ScoreArtifactValidation[] = [];
 
   for (const testCase of manifest.cases) {
-    const activeRun = await runCacheKey(testCase as any, spec, context);
-    const samples: Score[] = [];
-    for (let index = 1; index <= samplesPerModelCase; index += 1) {
-      const sample = String(index).padStart(3, "0");
-      const score = (await readJsonIfExists(path.join(runRoot, testCase.id, "samples", sample, "score.json"))) as Score | null;
-      if (score?.runCache?.runKey === activeRun.runKey) samples.push(score);
-    }
-    if (samples.length === 0) continue;
-
-    const latest = samples.at(-1)!;
-    const scores = samples.map((score) => score.score);
-    caseScores.push({
+    if (!testCase.facts) throw new Error(`Case ${testCase.id} has no facts path.`);
+    const facts = parseFactFile(JSON.parse(await readFile(testCase.facts, "utf-8")), {
       caseId: testCase.id,
-      title: latest.title ?? testCase.title,
-      family: latest.family ?? testCase.family,
-      tags: testCase.tags ?? latest.tags ?? [],
-      pages: testCase.pages ?? 1,
-      samples: samples.length,
-      score: round(mean(scores)),
-      scoreMin: round(Math.min(...scores)),
-      scoreMax: round(Math.max(...scores)),
-      scoreStddev: round(stddev(scores), 2),
-      sampleScores: samples.map((score) => ({ sample: score.sample, score: score.score })),
-      uncappedScore: round(mean(samples.map((score) => score.uncappedScore ?? score.score))),
-      accuracy: round(mean(samples.map((score) => score.dimensions?.accuracy ?? 0))),
-      completeness: round(mean(samples.map((score) => score.dimensions?.completeness ?? 0))),
-      structure: round(mean(samples.map((score) => score.dimensions?.structure ?? 0))),
-      markdownQuality: round(mean(samples.map((score) => score.dimensions?.markdownQuality ?? 0))),
-      rawFactScore: round(mean(samples.map((score) => score.factScore?.rawScore ?? 0))),
-      appliedCap: latest.caps?.appliedCap ?? null,
-      missingWeight: round(mean(samples.map((score) => score.factScore?.statusWeights?.missing ?? 0))),
-      incorrectWeight: round(mean(samples.map((score) => score.factScore?.statusWeights?.incorrect ?? 0))),
-      unsupportedPenalty: round(mean(samples.map((score) => score.unsupported?.penalty ?? 0))),
-      elapsedMs: Math.round(mean(samples.map((score) => score.elapsedMs))),
-      costUsd: round(mean(samples.map((score) => score.estimatedCostUsd)), 6),
-      inputTokens: Math.round(mean(samples.map((score) => score.usage?.inputTokens ?? 0))),
-      outputTokens: Math.round(mean(samples.map((score) => score.usage?.outputTokens ?? 0))),
-      finishReason: latest.finishReason,
-      error: latest.error,
+      pages: testCase.pages,
     });
+    const samples: AggregationSample[] = [];
+    const detailSamples: any[] = [];
+
+    for (const sample of sampleIds) {
+      const sampleDir = path.join(runRoot, testCase.id, "samples", sample);
+      const resultPath = path.join(sampleDir, "result.json");
+      const predictionPath = path.join(sampleDir, "prediction.md");
+      const scorePath = path.join(sampleDir, "score.json");
+      const snapshotLock = options.lockSamples ? await acquireSampleLock(path.join(sampleDir, ".run.lock")) : null;
+      try {
+      const activeRun = await runCacheKey(testCase as any, spec, context, sample);
+      const result = await readCurrentCachedRun(
+        resultPath,
+        predictionPath,
+        buildRunCacheExpectation(testCase as any, spec, context, sample, activeRun),
+      );
+      if (!result) {
+        samples.push({ sample, score: null, valid: false, reason: "missing, stale, or integrity-invalid model result" });
+        detailSamples.push({ sample, score: null, valid: false, reason: "missing, stale, or integrity-invalid model result" });
+        continue;
+      }
+
+      observedResults.push(result);
+      const modelCallFailed = normalizeRunOutcome(result).kind === "model_failure";
+      const prediction = await readFile(predictionPath, "utf-8");
+      const expectedCache = await scoringCacheKey(testCase, predictionPath, result);
+      const rawScore = await readJsonIfExists(scorePath);
+      const validation = validateCurrentScoreArtifact(facts, rawScore, {
+        caseId: testCase.id,
+        modelId,
+        sample,
+        suite: context.suite,
+        manifestPath: context.manifestPath,
+        inputProtocol: context.inputProtocol,
+        modelCallFailed,
+        finishReason: result.finishReason,
+        runCache: result.cache,
+        scoreCache: expectedCache,
+        prediction,
+      });
+      artifactValidations.push(validation);
+      if ((validation.evaluatorStatus === "valid" || validation.evaluatorStatus === "failed") && validation.artifact) {
+        validatedEvaluatorArtifacts.push(validation.artifact);
+      }
+      samples.push({
+        sample,
+        score: validation.score,
+        valid: validation.valid,
+        modelCallFailed,
+        evaluatorFailure: validation.evaluatorStatus === "failed",
+        evaluatorMissingInvalid: validation.evaluatorStatus === "missing_invalid",
+        evaluatorStatus: validation.evaluatorStatus,
+        reason: validation.reason,
+      });
+      detailSamples.push({
+        sample,
+        score: validation.score,
+        valid: validation.valid,
+        reason: validation.reason,
+        modelCallFailed,
+        evaluatorFailure: validation.evaluatorStatus === "failed",
+        evaluatorMissingInvalid: validation.evaluatorStatus === "missing_invalid",
+        evaluatorStatus: validation.evaluatorStatus,
+        scoreArtifactKind: validation.kind,
+        finishReason: result.finishReason ?? "unknown",
+        error: result.error,
+        elapsedMs: result.elapsedMs ?? 0,
+        costUsd: priceReport(spec, result.usage).estimatedCostUsd,
+        inputTokens: result.usage?.inputTokens ?? 0,
+        outputTokens: result.usage?.outputTokens ?? 0,
+      });
+      } finally {
+        if (snapshotLock) await snapshotLock.release();
+      }
+    }
+
+    aggregationCases.push({ caseId: testCase.id, samples });
+    caseDetails.push({ testCase, samples: detailSamples });
   }
 
-  caseScores.sort((a, b) => a.caseId.localeCompare(b.caseId));
-  const scoredCaseIds = new Set(caseScores.map((score) => score.caseId));
-  const missingCaseIds = manifest.cases.map((testCase) => testCase.id).filter((caseId) => !scoredCaseIds.has(caseId));
-  const failed = caseScores.filter((score) => score.error || score.finishReason === "error");
-  const totalCostUsd = caseScores.reduce((sum, score) => sum + score.costUsd * score.samples, 0);
-  const totalElapsedMs = caseScores.reduce((sum, score) => sum + score.elapsedMs * score.samples, 0);
-  const totalInputTokens = caseScores.reduce((sum, score) => sum + score.inputTokens * score.samples, 0);
-  const totalOutputTokens = caseScores.reduce((sum, score) => sum + score.outputTokens * score.samples, 0);
-  const sampleCount = caseScores.reduce((sum, score) => sum + score.samples, 0);
+  const aggregate = aggregateSampleFirst(aggregationCases, sampleIds);
+  const aggregateByCase = new Map(aggregate.caseAggregates.map((item) => [item.caseId, item]));
+  const caseScores = caseDetails.map(({ testCase, samples }) => {
+    const scoreAggregate = aggregateByCase.get(testCase.id)!;
+    const current = samples.filter((sample: any) => sample.valid);
+    const observed = samples.filter((sample: any) => sample.finishReason !== undefined);
+    return {
+      caseId: testCase.id,
+      title: testCase.title,
+      family: testCase.family,
+      tags: testCase.tags ?? [],
+      pages: testCase.pages ?? 1,
+      samples: current.length,
+      expectedSamples: samplesPerModelCase,
+      complete: scoreAggregate.complete,
+      score: scoreAggregate.score === null ? null : round(scoreAggregate.score, 6),
+      scoreMin: scoreAggregate.scoreMin === null ? null : round(scoreAggregate.scoreMin, 6),
+      scoreMax: scoreAggregate.scoreMax === null ? null : round(scoreAggregate.scoreMax, 6),
+      scoreStddev: scoreAggregate.scoreStddev === null ? null : round(scoreAggregate.scoreStddev, 6),
+      sampleScores: samples.map((sample: any) => ({
+        sample: sample.sample,
+        score: sample.score,
+        valid: sample.valid,
+        reason: sample.reason,
+        modelCallFailed: sample.modelCallFailed,
+        evaluatorFailure: sample.evaluatorFailure,
+        evaluatorMissingInvalid: sample.evaluatorMissingInvalid,
+        evaluatorStatus: sample.evaluatorStatus,
+        scoreArtifactKind: sample.scoreArtifactKind,
+      })),
+      modelFailureCount: samples.filter((sample: any) => sample.modelCallFailed).length,
+      evaluatorValidCount: samples.filter((sample: any) => sample.evaluatorStatus === "valid").length,
+      evaluatorFailureCount: samples.filter((sample: any) => sample.evaluatorFailure).length,
+      evaluatorMissingInvalidCount: samples.filter((sample: any) => sample.evaluatorStatus === "missing_invalid").length,
+      elapsedMs: observed.length === 0 ? 0 : Math.round(mean(observed.map((sample: any) => sample.elapsedMs))),
+      costUsd: observed.length === 0 ? 0 : round(mean(observed.map((sample: any) => sample.costUsd)), 6),
+      inputTokens: observed.length === 0 ? 0 : Math.round(mean(observed.map((sample: any) => sample.inputTokens))),
+      outputTokens: observed.length === 0 ? 0 : Math.round(mean(observed.map((sample: any) => sample.outputTokens))),
+      finishReasons: observed.map((sample: any) => ({ sample: sample.sample, finishReason: sample.finishReason, error: sample.error })),
+    };
+  });
+
+  const modelFailureCount = observedResults.filter((result) => normalizeRunOutcome(result).kind === "model_failure").length;
+  const evaluatorRequiredCount = observedResults.length - modelFailureCount;
+  const evaluatorValidCount = artifactValidations.filter((validation) => validation.evaluatorStatus === "valid").length;
+  const evaluatorFailureCount = artifactValidations.filter((validation) => validation.evaluatorStatus === "failed").length;
+  const evaluatorMissingInvalidCount = artifactValidations.filter((validation) => validation.evaluatorStatus === "missing_invalid").length;
+  const totalCostUsd = observedResults.reduce((sum, result) => sum + priceReport(spec, result.usage).estimatedCostUsd, 0);
+  const totalElapsedMs = observedResults.reduce((sum, result) => sum + (result.elapsedMs ?? 0), 0);
+  const totalInputTokens = observedResults.reduce((sum, result) => sum + (result.usage?.inputTokens ?? 0), 0);
+  const totalOutputTokens = observedResults.reduce((sum, result) => sum + (result.usage?.outputTokens ?? 0), 0);
+  const evaluatorCostUsd = validatedEvaluatorArtifacts.reduce(
+    (sum, score) => sum + evaluatorPriceReport(score.scorer?.usage ?? null).estimatedCostUsd,
+    0,
+  );
+  const evaluatorElapsedMs = validatedEvaluatorArtifacts.reduce((sum, score) => sum + (score.scorer?.elapsedMs ?? 0), 0);
+  const evaluatorInputTokens = validatedEvaluatorArtifacts.reduce((sum, score) => sum + (score.scorer?.usage?.inputTokens ?? 0), 0);
+  const evaluatorOutputTokens = validatedEvaluatorArtifacts.reduce((sum, score) => sum + (score.scorer?.usage?.outputTokens ?? 0), 0);
+  const validSampleCount = aggregationCases.reduce((sum, testCase) => sum + testCase.samples.filter((sample) => sample.valid).length, 0);
+  const incompleteCaseIds = caseScores.filter((testCase) => !testCase.complete).map((testCase) => testCase.caseId);
+  const rawResolvedInferenceModelIds: unknown[] = observedResults.map((result) => result.providerMetadata?.resolved?.modelId);
+  const rawResolvedEvaluatorModelIds: unknown[] = validatedEvaluatorArtifacts
+    .filter((artifact) => artifact.scorer?.status === "valid")
+    .map((artifact) => artifact.scorer?.resolved?.modelId);
+  if (rawResolvedInferenceModelIds.some((value) => typeof value !== "string")) {
+    throw new Error(`Inference cohort for ${modelId} contains missing or mixed resolved model identities.`);
+  }
+  if (rawResolvedEvaluatorModelIds.some((value) => typeof value !== "string")) {
+    throw new Error(`Evaluator cohort for ${modelId} contains missing or mixed resolved model identities.`);
+  }
+  const resolvedInferenceModelIds = [...new Set(rawResolvedInferenceModelIds as string[])];
+  const resolvedEvaluatorModelIds = [...new Set(rawResolvedEvaluatorModelIds as string[])];
+  if (resolvedInferenceModelIds.length > 1) throw new Error(`Inference cohort for ${modelId} mixes resolved model revisions.`);
+  if (resolvedEvaluatorModelIds.length > 1) throw new Error(`Evaluator cohort for ${modelId} mixes resolved model revisions.`);
+  const cohortArtifactFingerprint = await buildCohortArtifactFingerprint(
+    modelId,
+    suite,
+    manifest.cases,
+    samplesPerModelCase,
+  );
+  if (cohortArtifactFingerprint !== cohortArtifactFingerprintBefore) {
+    throw new Error(`Run/score artifacts changed while summarizing ${modelId}; retry after active work completes.`);
+  }
+  const finalBenchmarkFingerprint = await buildBenchmarkFingerprint({
+    manifestPath,
+    promptHash: sha256(prompt),
+    scoringContractFingerprint,
+  });
+  if (finalBenchmarkFingerprint.benchmarkFingerprint !== fingerprint.benchmarkFingerprint) {
+    throw new Error(`Benchmark artifacts changed while summarizing ${modelId}; retry after regeneration completes.`);
+  }
 
   const summary = {
     modelId,
+    provider: spec.provider,
     suite,
     manifestPath,
+    benchmarkFingerprint: fingerprint.benchmarkFingerprint,
+    inferenceBenchmarkFingerprint: context.inferenceBenchmarkFingerprint,
+    inferenceProtocolFingerprint: context.protocolHash,
+    modelConfigFingerprint: modelConfigFingerprint(spec),
+    resolvedInferenceModelId: resolvedInferenceModelIds[0] ?? null,
+    resolvedEvaluatorModelId: resolvedEvaluatorModelIds[0] ?? null,
+    pricingFingerprint: modelPricingFingerprint(spec),
+    pricingVersion: spec.pricingVersion,
+    scoringContractVersion,
+    scoringContractFingerprint,
+    cohortArtifactFingerprint,
     benchmarkName: manifest.name ?? "Doc2MD",
     scoreName: manifest.scoreName ?? "Doc2MD Native PDF Score",
     inputProtocol: manifest.inputProtocol ?? "native_pdf",
-    caseCount: caseScores.length,
+    caseCount: manifest.cases.length,
     expectedCaseCount: manifest.cases.length,
-    complete: missingCaseIds.length === 0,
-    missingCaseIds,
+    complete: aggregate.complete,
+    missingCaseIds: incompleteCaseIds,
+    invalidSamples: aggregate.invalidSamples,
     samplesPerModelCase,
-    sampleCount,
-    score: round(weightedMean(caseScores.map((score) => ({ value: score.score, weight: score.pages })))),
-    scoreCaseMean: round(mean(caseScores.map((score) => score.score))),
-    scoreStddevCaseMean: round(mean(caseScores.map((score) => score.scoreStddev)), 2),
-    scoreAggregation: "page_weighted_case_scores",
+    expectedSampleCount: manifest.cases.length * samplesPerModelCase,
+    sampleCount: validSampleCount,
+    score: aggregate.score === null ? null : round(aggregate.score),
+    suiteSampleScores: aggregate.suiteSampleScores.map((item) => ({ sample: item.sample, score: round(item.score, 6) })),
+    scoreStddev: aggregate.scoreStddev === null ? null : round(aggregate.scoreStddev, 6),
+    scoreMin: aggregate.scoreMin === null ? null : round(aggregate.scoreMin, 6),
+    scoreMax: aggregate.scoreMax === null ? null : round(aggregate.scoreMax, 6),
+    scoreAggregation: "equal_case_sample_first" as const,
     costUsd: round(totalCostUsd, 6),
-    meanCostUsdPerSample: sampleCount === 0 ? 0 : round(totalCostUsd / sampleCount, 6),
+    meanCostUsdPerSample: observedResults.length === 0 ? 0 : round(totalCostUsd / observedResults.length, 6),
     totalElapsedMs,
-    meanElapsedMsPerSample: sampleCount === 0 ? 0 : Math.round(totalElapsedMs / sampleCount),
+    meanElapsedMsPerSample: observedResults.length === 0 ? 0 : Math.round(totalElapsedMs / observedResults.length),
     totalInputTokens,
     totalOutputTokens,
-    meanOutputTokensPerSample: sampleCount === 0 ? 0 : Math.round(totalOutputTokens / sampleCount),
-    failureRate: caseScores.length === 0 ? 0 : round((failed.length / caseScores.length) * 100),
+    meanOutputTokensPerSample: observedResults.length === 0 ? 0 : Math.round(totalOutputTokens / observedResults.length),
+    modelCallCount: observedResults.length,
+    modelFailureCount,
+    modelFailureRate: observedResults.length === 0 ? 0 : round((modelFailureCount / observedResults.length) * 100, 2),
+    evaluatorRequiredCount,
+    evaluatorValidCount,
+    evaluatorFailureCount,
+    evaluatorMissingInvalidCount,
+    evaluatorStatusCounts: {
+      valid: evaluatorValidCount,
+      failed: evaluatorFailureCount,
+      missingInvalid: evaluatorMissingInvalidCount,
+    },
+    evaluatorFailureRate: evaluatorRequiredCount === 0 ? 0 : round((evaluatorFailureCount / evaluatorRequiredCount) * 100, 2),
+    evaluatorMissingInvalidRate:
+      evaluatorRequiredCount === 0 ? 0 : round((evaluatorMissingInvalidCount / evaluatorRequiredCount) * 100, 2),
+    evaluatorCostUsd: round(evaluatorCostUsd, 6),
+    evaluatorElapsedMs,
+    evaluatorInputTokens,
+    evaluatorOutputTokens,
     caseScores,
   };
 
-  const suiteSummaryPath = path.join(runRoot, `summary.${suite}.json`);
-  await writeFile(suiteSummaryPath, JSON.stringify(summary, null, 2) + "\n", "utf-8");
-  if (suite === "official") {
-    await writeFile(path.join(runRoot, "summary.json"), JSON.stringify(summary, null, 2) + "\n", "utf-8");
-  }
   return summary;
 }
 
+export async function summarizeModel(modelId: string, options: { manifestPath?: string } = {}) {
+  const summary = await deriveModelSummary(modelId, { manifestPath: options.manifestPath, lockSamples: true });
+  const runRoot = path.join("runs", modelId);
+  const suiteSummaryPath = path.join(runRoot, `summary.${summary.suite}.json`);
+  await atomicWriteJson(suiteSummaryPath, summary);
+  if (summary.suite === "official") await atomicWriteJson(path.join(runRoot, "summary.json"), summary);
+  return summary;
+}
+
+function parseCli(argv: string[]) {
+  let positionalModel: string | undefined;
+  let model: string | undefined;
+  let manifestPath: string | undefined;
+  let sawOption = false;
+  const seen = new Set<string>();
+  for (let index = 0; index < argv.length; index += 1) {
+    const argument = argv[index]!;
+    if (!argument.startsWith("--")) {
+      if (sawOption || positionalModel) throw new Error(`Unexpected positional argument ${argument}.`);
+      positionalModel = argument;
+      continue;
+    }
+    sawOption = true;
+    const key = argument.slice(2);
+    if (key !== "model" && key !== "manifest") throw new Error(`Unknown option --${key}.`);
+    if (seen.has(key)) throw new Error(`Duplicate option --${key}.`);
+    seen.add(key);
+    const value = argv[index + 1];
+    if (!value || value.startsWith("--")) throw new Error(`--${key} requires a value.`);
+    if (key === "model") model = value;
+    else manifestPath = value;
+    index += 1;
+  }
+  if (positionalModel && model) throw new Error("Do not specify the model both positionally and with --model.");
+  return { modelId: positionalModel ?? model ?? "vertex-gemini-3.1-flash-lite", manifestPath };
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const { args, positionals } = parseArgs();
-  rejectUnknownArgs(args, ["model", "manifest"]);
-  const modelId = positionals[0] ?? args.get("model") ?? "vertex-gemini-3.1-flash-lite";
-  console.log(JSON.stringify(await summarizeModel(modelId, { manifestPath: args.get("manifest") }), null, 2));
+  const cli = parseCli(process.argv.slice(2));
+  console.log(JSON.stringify(await summarizeModel(cli.modelId, { manifestPath: cli.manifestPath }), null, 2));
 }

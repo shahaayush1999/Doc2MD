@@ -1,84 +1,84 @@
-# Orion Biologics Lab Network Renovation Packet
+# Suite 214 Laboratory Coordination Set
 
-Rev C dated 2026-06-12 controls. Rev B labels Lab B door as D-214A, but Rev C changes the corridor door to D-214B and adds card reader CR-6 on the corridor side.
+## Coordination transmittal
 
-## Floor Plan A2.14
+Revision C controls and was issued 2026-06-12. Revision B used D-214A; Revision C uses D-214B, adds CR-6, and assigns L2-15.
 
-Suite 214 contains 214 Clean Prep measuring 18 ft 6 in x 12 ft 0 in, 215 Lab B measuring 16 ft 0 in x 12 ft 0 in, 216 Freezer measuring 10 ft 6 in x 12 ft 0 in, C2 Corridor, 217 Wash measuring 12 ft 0 in x 10 ft 0 in, and 218 IT Closet measuring 10 ft 6 in x 10 ft 0 in.
+| Sheet | Title | Revision | Issue date | Status |
+| --- | --- | --- | --- | --- |
+| A2.14 | Suite 214 floor plan | C | 12 Jun 2026 | Coordinated |
+| T4.08 | Rack R2 elevation and ports | C | 12 Jun 2026 | Coordinated |
+| N1.07 | Laboratory network topology | C | 12 Jun 2026 | Coordinated |
+| E6.02 | Panel LP-2 schedule | C | 12 Jun 2026 | Coordinated |
+| RFI-214B | Lab B corridor door | Answered | 12 Jun 2026 | Attached scan |
 
-The egress arrow exits from Clean Prep toward C2 Corridor. Callout 6 is card reader CR-6 at the Lab B corridor door. Callout 9 is rack R2 in 218 IT Closet. Callout 11 is freezer FZ-3 in 216 Freezer. Door schedule: D-214B is the Lab B corridor door; D-214A is the old Rev B label and is superseded.
+| Revision | Date | Change | Issued by |
+| --- | --- | --- | --- |
+| A | 28 May | Existing-condition backgrounds | M. Song |
+| B | 07 Jun | Lab B door shown as D-214A | M. Song |
+| C | 12 Jun | Door D-214B; CR-6; circuit L2-15 | A. Verma |
 
-Door and room coordination schedule:
+## A2.14 - Suite 214 floor plan
 
-| Room/door | Rev C field condition | Linked artifact |
+The suite is 45 ft 0 in wide and 22 ft 0 in deep. Rooms are 214 Clean Prep (18 ft 6 in x 12 ft 0 in), 215 Lab B (16 ft 0 in x 12 ft 0 in), 216 Freezer (10 ft 6 in x 12 ft 0 in), C2 Corridor, 217 Wash (12 ft 0 in x 10 ft 0 in), and 218 IT Closet (10 ft 6 in x 10 ft 0 in). The south wall of 215 Lab B directly adjoins C2 Corridor. D-214B is set in that shared wall, with reader CR-6 on the corridor side. The egress arrow runs from Clean Prep toward C2 Corridor. Callout 6 identifies CR-6 at D-214B; callout 9 is rack R2 in room 218; callout 11 is FZ-3 in room 216.
+
+| Location | Field condition | Coordinated artifact |
 | --- | --- | --- |
-| 214 Clean Prep | tablet dock on D214-01 | rack port CS-2/01 |
-| 215 Lab B / D-214B | CR-6 corridor side; panel L2-15 | RFI-214B final |
-| 216 Freezer | FZ-3 monitor at callout 11 | VLAN 240 + L2-17 |
-| 218 IT Closet | rack R2, UPS A | panel L2-19 |
+| 214 Clean Prep | D214-01 tablet dock | CS-2/01; VLAN 210 |
+| 215 Lab B | D-214B; CR-6 corridor side | CS-2/07; L2-15 |
+| 216 Freezer | FZ-3 at callout 11 | CS-2/12; VLAN 240; L2-17 |
+| 218 IT Closet | Rack R2 at callout 9 | CS-2/19; L2-19 |
 
-Field measurement note: overall suite width is 45 ft 0 in; overall depth is 22 ft 0 in. Door D-214B is the only door label revised by RFI-214B.
+## T4.08 - Rack R2 elevation
 
-## Rack Elevation R2
-
-Core switch CS-2 occupies U42-U43 and is a 48-port PoE switch. Patch panel PP-7 occupies U36-U37 for lab drops 214-218. Firewall FW-02 occupies U30-U31 and is HA secondary. UPS A occupies U24-U26 and is 2.2 kVA. Freezer monitor GW-3 is at U18. NVR camera bridge occupies U12-U13 and belongs to VLAN 240.
+Rack placements: CS-2 U42-U43; PP-7 U36-U37; FW-02 U30-U31; UPS A U24-U26; GW-3 U18; NVR bridge U12-U13.
 
 | Port | Drop | Room | Device | VLAN |
 | --- | --- | --- | --- | --- |
-| CS-2/01 | D214-01 | 214 Clean Prep | tablet dock | 210 |
-| CS-2/07 | D215-03 | 215 Lab B | card reader CR-6 | 230 |
-| CS-2/12 | D216-02 | 216 Freezer | FZ-3 monitor | 240 |
-| CS-2/19 | D218-01 | 218 IT Closet | FW-02 mgmt | 99 |
+| CS-2/01 | D214-01 | 214 | Tablet dock | 210 |
+| CS-2/07 | D215-03 | 215 | Card reader CR-6 | 230 |
+| CS-2/12 | D216-02 | 216 | Freezer monitor FZ-3 | 240 |
+| CS-2/19 | D218-01 | 218 | FW-02 management | 99 |
 
-## Network Topology N1.07
+## N1.07 - Laboratory network topology
 
-FW-02 connects to CS-2 over trunk VLAN 99/210/230/240. CS-2 connects to CR-6 over VLAN 230 access control. CS-2 connects to FZ-3 over VLAN 240 / 10.42.40.0/24. CS-2 connects to QA subnet over VLAN 210 / 10.42.10.0/24. CR-6 connects to NVR via badge event mirror. A dashed optional alert overlay runs from FZ-3 to NVR. VLAN 240 maps to freezer and camera telemetry; VLAN 230 is access control; VLAN 210 is QA devices.
+Directed links: FW-02 -> CS-2 trunk 99/210/230/240; CS-2 -> CR-6 VLAN 230; CS-2 -> FZ-3 VLAN 240; CS-2 -> QA subnet VLAN 210; CR-6 -> NVR badge event mirror; dashed optional FZ-3 -> NVR alert overlay.
 
-Port and firewall rule extract:
-
-| Rule/port | Source | Destination | VLAN | State |
+| Rule | Source | Destination | VLAN | State |
 | --- | --- | --- | --- | --- |
-| ACL-230-06 | CR-6 | NVR event mirror | 230 to 240 | permit one-way |
-| ACL-240-11 | FZ-3 | QA subnet telemetry | 240 to 210 | deny except broker |
-| TRK-CS2-FW02 | CS-2 | FW-02 | 99/210/230/240 | tagged trunk |
-| OPT-CAM | FZ-3 optional overlay | NVR | 240 | dashed / not base scope |
+| ACL-230-06 | CR-6 | NVR event mirror | 230 -> 240 | Permit one-way |
+| SVC-210-QA | CS-2 | QA subnet | 210 | Permit telemetry |
+| TRK-FW02-CS2 | FW-02 | CS-2 | 99/210/230/240 | Tagged trunk |
+| OPT-CAM | FZ-3 | NVR | 240 | Optional / dashed |
 
-## Electrical Panel LP-2 Schedule
+## E6.02 - Panel LP-2 schedule
 
-| Circuit | Load | Breaker | Emergency? | Room | Note |
+| Circuit | Load | Breaker | Emergency | Room | Note |
 | --- | --- | --- | --- | --- | --- |
-| L2-11 | Bench outlets B | 20A/1P | No | 215 Lab B | GFCI |
-| L2-13 | Autoclave AC-1 | 30A/2P | No | 217 Wash | dedicated |
-| L2-15 | Door controller DC-6 | 20A/1P | Yes | 215 Lab B | feeds CR-6 |
-| L2-17 | Freezer FZ-3 | 20A/1P | Yes | 216 Freezer | monitor required |
-| L2-19 | Rack R2 UPS | 20A/1P | Yes | 218 IT Closet | UPS A |
-| L2-21 | Spare | 20A/1P | No | - | hold for Rev D |
+| L2-11 | Bench outlets B | 20A/1P | No | 215 | GFCI |
+| L2-13 | Autoclave AC-1 | 30A/2P | No | 217 | Dedicated |
+| L2-15 | Door controller DC-6 | 20A/1P | Yes | 215 | Feeds CR-6 |
+| L2-17 | Freezer FZ-3 | 20A/1P | Yes | 216 | Monitor required |
+| L2-19 | Rack R2 UPS | 20A/1P | Yes | 218 | UPS A |
+| L2-21 | Spare | 20A/1P | No | - | Hold for Rev D |
 
-Emergency circuits are L2-15, L2-17, and L2-19. L2-17 is Freezer FZ-3 and matches floor-plan callout 11.
-
-Load summary and emergency branch check:
-
-| Branch | Connected load | Emergency load | Reviewer note |
-| --- | ---: | ---: | --- |
-| Normal receptacles | 3.2 kVA | 0.0 kVA | bench + autoclave only |
+| Branch | Connected | Emergency | Coordination note |
+| --- | --- | --- | --- |
+| Normal receptacles | 3.2 kVA | 0.0 kVA | Bench and autoclave |
 | Access control | 0.4 kVA | 0.4 kVA | DC-6 on L2-15 |
 | Cold storage | 0.7 kVA | 0.7 kVA | FZ-3 on L2-17 |
 | IT / UPS | 1.1 kVA | 1.1 kVA | R2 UPS on L2-19 |
 | Spare capacity | 2.6 kVA | - | L2-21 held for Rev D |
 
-Emergency branch labels match floor plan callouts is checked. L2-21 released for construction is unchecked. Freezer monitor moved to normal power is unchecked.
+Issue checks: Emergency labels match floor-plan callouts is checked. L2-21 released for construction is unchecked. Freezer monitor moved to normal power is unchecked.
 
-## RFI-214B
+## RFI-214B - Lab B corridor door
 
-Question: CAD Rev B shows D-214A at Lab B corridor. Field sticker and security rough-in show D-214B. Which label controls for access control schedule?
+The scanned response strikes the Revision B answer D-214A and corrects it to D-214B. Revision C uses D-214B, adds CR-6 on the corridor side, assigns LP-2 circuit L2-15, and updates the access-control schedule. A. Verma signed on 2026-06-12; security reviewer TN and the contractor acknowledged the response.
 
-Final answer: Use D-214B for the Lab B corridor door. Add CR-6 card reader on corridor side. Update access control schedule and panel LP-2 circuit L2-15. Rev C dated 2026-06-12 controls.
-
-Revision cloud text: D-214B + CR-6.
-
-| Field | Rev B | Rev C final |
+| Field | Revision B | Revision C |
 | --- | --- | --- |
-| Door label | D-214A | D-214B |
-| Reader | none | CR-6 corridor side |
-| Circuit | unassigned | L2-15 |
-| Schedule status | draft | issued |
+| Door identifier | D-214A | D-214B |
+| Reader | None | CR-6 corridor side |
+| Circuit | Unassigned | L2-15 |
+| Schedule | Draft | Issued |

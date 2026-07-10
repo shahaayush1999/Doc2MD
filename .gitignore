@@ -1,9 +1,12 @@
 .env
 .env.*
+!.env.example
 .DS_Store
 node_modules/
+.venv/
 tmp/
 benchmark/rendered/
-scripts/__pycache__/
+**/__pycache__/
+*.py[cod]
 runs/
 reports/

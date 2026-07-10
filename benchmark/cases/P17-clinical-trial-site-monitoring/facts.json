@@ -1,223 +1,2681 @@
 {
+  "schemaVersion": 2,
   "id": "P17-clinical-trial-site-monitoring",
-  "title": "Clinical Trial Site Monitoring Binder",
-  "family": "clinical-trial",
+  "title": "HTX-204 Site 014 Monitoring File",
+  "family": "clinical trial site operations",
   "tags": [
-    "multi-page",
-    "clinical-trial",
-    "forms",
+    "native-pdf",
+    "longitudinal-records",
     "labs",
-    "source-precedence",
-    "drug-accountability",
-    "queries"
+    "deviations",
+    "corrected-ecrf",
+    "accountability-form",
+    "source-state"
   ],
-  "facts": [
+  "regions": [
     {
-      "id": "p17.final.state",
-      "category": "source_state",
-      "weight": 14,
-      "expectation": "Final monitor state is not clean-ready; blockers include DEV-014-03 missed W2 ECG for 014-003, K-204-153 temperature excursion/do not dose, central lab issues for 014-008/014-011/014-016, visit-window query Q-86, repeat-lab query Q-88, masking query Q-93, and open queries Q-77/Q-84/Q-86/Q-88/Q-93.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p01.visit",
+      "page": 1,
+      "label": "Visit record",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p01.visit.schema",
+          "expectation": "The region preserves the source field schema in order: Field, Value.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.visit.row-order",
+          "expectation": "The source row order is recoverable as: Site -> Visit date -> Data cut -> Monitor -> Principal investigator -> Subjects reviewed.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.visit.site.value",
+          "expectation": "For Site, Value is 014 / Harbor Endocrine.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.visit.visit-date.value",
+          "expectation": "For Visit date, Value is 8 May 2026.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.visit.data-cut.value",
+          "expectation": "For Data cut, Value is 6 May 2026.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.visit.monitor.value",
+          "expectation": "For Monitor, Value is L. Sen.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.visit.principal-investigator.value",
+          "expectation": "For Principal investigator, Value is Dr. Neha Rao.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.visit.subjects-reviewed.value",
+          "expectation": "For Subjects reviewed, Value is 014-001 through 014-016.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.overview",
-      "category": "structure",
-      "weight": 6,
-      "expectation": "Overview preserves site 014 / Harbor Endocrine, monitor L. Sen, visit 2026-05-08, data cut 2026-05-06, and the section/risk map from enrollment through queries/final.",
-      "guidance": "",
-      "modality": "structure",
-      "severity": "major"
+      "id": "p01.inventory",
+      "page": 1,
+      "label": "Source inventory",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p01.inventory.schema",
+          "expectation": "The region preserves the source field schema in order: Source set, Date range, Custodian, State.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.inventory.row-order",
+          "expectation": "The source row order is recoverable as: Enrollment and visits -> Central laboratory -> AE and deviation logs -> IP accountability -> eCRF corrections.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.inventory.enrollment-and-visits.date-range",
+          "expectation": "For Enrollment and visits, Date range is 2026-04-03\u20132026-05-06.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.enrollment-and-visits.custodian",
+          "expectation": "For Enrollment and visits, Custodian is Coordinator.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.enrollment-and-visits.state",
+          "expectation": "For Enrollment and visits, State is Complete to cut.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.central-laboratory.date-range",
+          "expectation": "For Central laboratory, Date range is 2026-04-05\u20132026-05-06.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.central-laboratory.custodian",
+          "expectation": "For Central laboratory, Custodian is Lab portal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.central-laboratory.state",
+          "expectation": "For Central laboratory, State is Three follow-ups.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.ae-and-deviation-logs.date-range",
+          "expectation": "For AE and deviation logs, Date range is 2026-04-10\u20132026-05-06.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.ae-and-deviation-logs.custodian",
+          "expectation": "For AE and deviation logs, Custodian is PI / coordinator.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.ae-and-deviation-logs.state",
+          "expectation": "For AE and deviation logs, State is Open items noted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.ip-accountability.date-range",
+          "expectation": "For IP accountability, Date range is 2026-04-05\u20132026-05-04.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.ip-accountability.custodian",
+          "expectation": "For IP accountability, Custodian is Pharmacy.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.ip-accountability.state",
+          "expectation": "For IP accountability, State is One quarantine.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.ecrf-corrections.date-range",
+          "expectation": "For eCRF corrections, Date range is 2026-04-21\u20132026-05-08.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.ecrf-corrections.custodian",
+          "expectation": "For eCRF corrections, Custodian is Data management.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.inventory.ecrf-corrections.state",
+          "expectation": "For eCRF corrections, State is Q-77 open.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.enrollment.screenfail",
-      "category": "table_cell",
-      "weight": 8,
-      "expectation": "Enrollment log preserves 014-001 screen fail because HbA1c 9.1 and 014-006 screen fail because eGFR 42, both not randomized.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p02.enrollment",
+      "page": 2,
+      "label": "Enrollment and subject disposition",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p02.enrollment.schema",
+          "expectation": "The region preserves the source field schema in order: Subject, Enrollment, Status, Arm / reason, Current disposition.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.enrollment.row-order",
+          "expectation": "The source row order is recoverable as: 014-001 -> 014-002 -> 014-003 -> 014-004 -> 014-005 -> 014-006 -> 014-007 -> 014-008 -> 014-009 -> 014-010 -> 014-011 -> 014-012 -> 014-013 -> 014-014 -> 014-015 -> 014-016.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.enrollment.014-001.enrollment",
+          "expectation": "For 014-001, Enrollment is 03 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-001.status",
+          "expectation": "For 014-001, Status is Screen fail.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-001.arm-reason",
+          "expectation": "For 014-001, Arm / reason is HbA1c 9.1%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-001.current-disposition",
+          "expectation": "For 014-001, Current disposition is Not randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-002.enrollment",
+          "expectation": "For 014-002, Enrollment is 05 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-002.status",
+          "expectation": "For 014-002, Status is Randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-002.arm-reason",
+          "expectation": "For 014-002, Arm / reason is Arm B.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-002.current-disposition",
+          "expectation": "For 014-002, Current disposition is Completed W4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-003.enrollment",
+          "expectation": "For 014-003, Enrollment is 07 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-003.status",
+          "expectation": "For 014-003, Status is Randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-003.arm-reason",
+          "expectation": "For 014-003, Arm / reason is Arm A.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-003.current-disposition",
+          "expectation": "For 014-003, Current disposition is W2 ECG unresolved.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-004.enrollment",
+          "expectation": "For 014-004, Enrollment is 10 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-004.status",
+          "expectation": "For 014-004, Status is Randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-004.arm-reason",
+          "expectation": "For 014-004, Arm / reason is Arm B.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-004.current-disposition",
+          "expectation": "For 014-004, Current disposition is Withdrew 24 Apr / dizziness.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-005.enrollment",
+          "expectation": "For 014-005, Enrollment is 12 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-005.status",
+          "expectation": "For 014-005, Status is Randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-005.arm-reason",
+          "expectation": "For 014-005, Arm / reason is Arm A.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-005.current-disposition",
+          "expectation": "For 014-005, Current disposition is Completed W4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-006.enrollment",
+          "expectation": "For 014-006, Enrollment is 15 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-006.status",
+          "expectation": "For 014-006, Status is Screen fail.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-006.arm-reason",
+          "expectation": "For 014-006, Arm / reason is eGFR 42.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-006.current-disposition",
+          "expectation": "For 014-006, Current disposition is Not randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-007.enrollment",
+          "expectation": "For 014-007, Enrollment is 18 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-007.status",
+          "expectation": "For 014-007, Status is Randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-007.arm-reason",
+          "expectation": "For 014-007, Arm / reason is Arm B.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-007.current-disposition",
+          "expectation": "For 014-007, Current disposition is Kit quarantine.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-008.enrollment",
+          "expectation": "For 014-008, Enrollment is 20 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-008.status",
+          "expectation": "For 014-008, Status is Randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-008.arm-reason",
+          "expectation": "For 014-008, Arm / reason is Arm A.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-008.current-disposition",
+          "expectation": "For 014-008, Current disposition is Central lab pending.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-009.enrollment",
+          "expectation": "For 014-009, Enrollment is 19 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-009.status",
+          "expectation": "For 014-009, Status is Randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-009.arm-reason",
+          "expectation": "For 014-009, Arm / reason is Arm B.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-009.current-disposition",
+          "expectation": "For 014-009, Current disposition is W2 06 May outside window.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-010.enrollment",
+          "expectation": "For 014-010, Enrollment is 23 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-010.status",
+          "expectation": "For 014-010, Status is Screen fail.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-010.arm-reason",
+          "expectation": "For 014-010, Arm / reason is QTc 486 ms.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-010.current-disposition",
+          "expectation": "For 014-010, Current disposition is Not randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-011.enrollment",
+          "expectation": "For 014-011, Enrollment is 26 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-011.status",
+          "expectation": "For 014-011, Status is Randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-011.arm-reason",
+          "expectation": "For 014-011, Arm / reason is Arm A.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-011.current-disposition",
+          "expectation": "For 014-011, Current disposition is Repeat lab pending.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-012.enrollment",
+          "expectation": "For 014-012, Enrollment is 28 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-012.status",
+          "expectation": "For 014-012, Status is Randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-012.arm-reason",
+          "expectation": "For 014-012, Arm / reason is Arm B / waiver W-14.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-012.current-disposition",
+          "expectation": "For 014-012, Current disposition is Active.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-013.enrollment",
+          "expectation": "For 014-013, Enrollment is 29 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-013.status",
+          "expectation": "For 014-013, Status is Randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-013.arm-reason",
+          "expectation": "For 014-013, Arm / reason is Arm A.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-013.current-disposition",
+          "expectation": "For 014-013, Current disposition is Lost to follow-up 05 May.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-014.enrollment",
+          "expectation": "For 014-014, Enrollment is 01 May.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-014.status",
+          "expectation": "For 014-014, Status is Randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-014.arm-reason",
+          "expectation": "For 014-014, Arm / reason is Arm A.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-014.current-disposition",
+          "expectation": "For 014-014, Current disposition is ePRO retraining.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-015.enrollment",
+          "expectation": "For 014-015, Enrollment is 02 May.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-015.status",
+          "expectation": "For 014-015, Status is Screen fail.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-015.arm-reason",
+          "expectation": "For 014-015, Arm / reason is BP 168/98.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-015.current-disposition",
+          "expectation": "For 014-015, Current disposition is Not randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-016.enrollment",
+          "expectation": "For 014-016, Enrollment is 04 May.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-016.status",
+          "expectation": "For 014-016, Status is Randomized.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-016.arm-reason",
+          "expectation": "For 014-016, Arm / reason is Arm B.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.enrollment.014-016.current-disposition",
+          "expectation": "For 014-016, Current disposition is Masking review open.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.enrollment.randomized",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "Enrollment log preserves randomized subjects 014-002 Arm B completed W4, 014-003 Arm A missed W2 ECG, 014-005 Arm A completed W4, 014-007 Arm B IP temperature excursion, 014-008 Arm A central lab pending, 014-009 Arm B W2 diary window late, 014-011 Arm A central lab repeat pending, 014-012 Arm B waiver W-14, 014-014 Arm A ePRO not activated, and 014-016 Arm B unblinded pharmacist note.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p03.visits",
+      "page": 3,
+      "label": "Longitudinal visit record",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p03.visits.schema",
+          "expectation": "The region preserves the source field schema in order: Subject, Visit, Date, State, Kit, Source note.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.visits.row-order",
+          "expectation": "The source row order is recoverable as: 05 Apr -> 19 Apr -> 03 May -> 07 Apr -> 21 Apr -> 10 Apr -> 24 Apr -> 18 Apr -> 02 May -> 20 Apr -> 06 May -> 26 Apr -> 01 May -> 04 May.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.visits.05-apr.subject",
+          "expectation": "For 05 Apr, Subject is 014-002.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.05-apr.visit",
+          "expectation": "For 05 Apr, Visit is V1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.05-apr.state",
+          "expectation": "For 05 Apr, State is Done.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.05-apr.kit",
+          "expectation": "For 05 Apr, Kit is K-204-118.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.05-apr.source-note",
+          "expectation": "For 05 Apr, Source note is ECG normal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.19-apr.subject",
+          "expectation": "For 19 Apr, Subject is 014-002.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.19-apr.visit",
+          "expectation": "For 19 Apr, Visit is W2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.19-apr.state",
+          "expectation": "For 19 Apr, State is Done.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.19-apr.kit",
+          "expectation": "For 19 Apr, Kit is K-204-142.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.19-apr.source-note",
+          "expectation": "For 19 Apr, Source note is Diary returned.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.03-may.subject",
+          "expectation": "For 03 May, Subject is 014-002.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.03-may.visit",
+          "expectation": "For 03 May, Visit is W4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.03-may.state",
+          "expectation": "For 03 May, State is Done.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.03-may.kit",
+          "expectation": "For 03 May, Kit is K-204-166.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.03-may.source-note",
+          "expectation": "For 03 May, Source note is Dose reduced.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.07-apr.subject",
+          "expectation": "For 07 Apr, Subject is 014-003.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.07-apr.visit",
+          "expectation": "For 07 Apr, Visit is V1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.07-apr.state",
+          "expectation": "For 07 Apr, State is Done.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.07-apr.kit",
+          "expectation": "For 07 Apr, Kit is K-204-121.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.07-apr.source-note",
+          "expectation": "For 07 Apr, Source note is Baseline ECG filed.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.21-apr.subject",
+          "expectation": "For 21 Apr, Subject is 014-003.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.21-apr.visit",
+          "expectation": "For 21 Apr, Visit is W2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.21-apr.state",
+          "expectation": "For 21 Apr, State is Partial.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.21-apr.kit",
+          "expectation": "For 21 Apr, Kit is K-204-146.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.21-apr.source-note",
+          "expectation": "For 21 Apr, Source note is ECG not performed.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.10-apr.subject",
+          "expectation": "For 10 Apr, Subject is 014-004.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.10-apr.visit",
+          "expectation": "For 10 Apr, Visit is V1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.10-apr.state",
+          "expectation": "For 10 Apr, State is Done.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.10-apr.kit",
+          "expectation": "For 10 Apr, Kit is K-204-128.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.10-apr.source-note",
+          "expectation": "For 10 Apr, Source note is Dizziness began 11 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.24-apr.subject",
+          "expectation": "For 24 Apr, Subject is 014-004.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.24-apr.visit",
+          "expectation": "For 24 Apr, Visit is Early term.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.24-apr.state",
+          "expectation": "For 24 Apr, State is Withdrawn.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.24-apr.kit",
+          "expectation": "For 24 Apr, Kit is -.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.24-apr.source-note",
+          "expectation": "For 24 Apr, Source note is Related dizziness.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.18-apr.subject",
+          "expectation": "For 18 Apr, Subject is 014-007.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.18-apr.visit",
+          "expectation": "For 18 Apr, Visit is V1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.18-apr.state",
+          "expectation": "For 18 Apr, State is Hold.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.18-apr.kit",
+          "expectation": "For 18 Apr, Kit is K-204-153.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.18-apr.source-note",
+          "expectation": "For 18 Apr, Source note is Temperature excursion.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.02-may.subject",
+          "expectation": "For 02 May, Subject is 014-007.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.02-may.visit",
+          "expectation": "For 02 May, Visit is W2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.02-may.state",
+          "expectation": "For 02 May, State is Partial.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.02-may.kit",
+          "expectation": "For 02 May, Kit is -.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.02-may.source-note",
+          "expectation": "For 02 May, Source note is Repeat potassium normal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.20-apr.subject",
+          "expectation": "For 20 Apr, Subject is 014-008.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.20-apr.visit",
+          "expectation": "For 20 Apr, Visit is V1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.20-apr.state",
+          "expectation": "For 20 Apr, State is Done.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.20-apr.kit",
+          "expectation": "For 20 Apr, Kit is K-204-158.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.20-apr.source-note",
+          "expectation": "For 20 Apr, Source note is Central lab pending.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.06-may.subject",
+          "expectation": "For 06 May, Subject is 014-009.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.06-may.visit",
+          "expectation": "For 06 May, Visit is W2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.06-may.state",
+          "expectation": "For 06 May, State is Late.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.06-may.kit",
+          "expectation": "For 06 May, Kit is K-204-181.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.06-may.source-note",
+          "expectation": "For 06 May, Source note is Day +17; +2 max.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.26-apr.subject",
+          "expectation": "For 26 Apr, Subject is 014-011.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.26-apr.visit",
+          "expectation": "For 26 Apr, Visit is V1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.26-apr.state",
+          "expectation": "For 26 Apr, State is Done.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.26-apr.kit",
+          "expectation": "For 26 Apr, Kit is K-204-171.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.26-apr.source-note",
+          "expectation": "For 26 Apr, Source note is Repeat creatinine ordered.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.01-may.subject",
+          "expectation": "For 01 May, Subject is 014-014.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.01-may.visit",
+          "expectation": "For 01 May, Visit is V1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.01-may.state",
+          "expectation": "For 01 May, State is Done.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.01-may.kit",
+          "expectation": "For 01 May, Kit is K-204-184.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.01-may.source-note",
+          "expectation": "For 01 May, Source note is ePRO not activated.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.04-may.subject",
+          "expectation": "For 04 May, Subject is 014-016.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.04-may.visit",
+          "expectation": "For 04 May, Visit is V1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.04-may.state",
+          "expectation": "For 04 May, State is Done.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.04-may.kit",
+          "expectation": "For 04 May, Kit is K-204-190.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.visits.04-may.source-note",
+          "expectation": "For 04 May, Source note is Masking note sealed.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.enrollment.additional",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "Enrollment log preserves added screen/withdrawal states: 014-010 screen fail QTc 486 ms, 014-015 screen fail BP 168/98, 014-013 withdrawn/lost to follow-up before W4, and 014-012 eligible with waiver W-14.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p04.labs",
+      "page": 4,
+      "label": "Central laboratory table",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p04.labs.schema",
+          "expectation": "The region preserves the source field schema in order: Subject / test, Result, Flag, Reference, Unit.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.labs.row-order",
+          "expectation": "The source row order is recoverable as: 014-002 / ALT -> 014-003 / ALT -> 014-003 / eGFR -> 014-004 / Hemoglobin -> 014-007 / Potassium -> 014-009 / ALT -> 014-011 / Creatinine -> 014-016 / Glucose.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.labs.014-002-alt.result",
+          "expectation": "For 014-002 / ALT, Result is 38.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-002-alt.flag",
+          "expectation": "For 014-002 / ALT, Flag is -.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-002-alt.reference",
+          "expectation": "For 014-002 / ALT, Reference is 0-45.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-002-alt.unit",
+          "expectation": "For 014-002 / ALT, Unit is U/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-003-alt.result",
+          "expectation": "For 014-003 / ALT, Result is 67.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-003-alt.flag",
+          "expectation": "For 014-003 / ALT, Flag is H.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-003-alt.reference",
+          "expectation": "For 014-003 / ALT, Reference is 0-45.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-003-alt.unit",
+          "expectation": "For 014-003 / ALT, Unit is U/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-003-egfr.result",
+          "expectation": "For 014-003 / eGFR, Result is 58.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-003-egfr.flag",
+          "expectation": "For 014-003 / eGFR, Flag is L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-003-egfr.reference",
+          "expectation": "For 014-003 / eGFR, Reference is >=60.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-003-egfr.unit",
+          "expectation": "For 014-003 / eGFR, Unit is mL/min.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-004-hemoglobin.result",
+          "expectation": "For 014-004 / Hemoglobin, Result is 10.8.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-004-hemoglobin.flag",
+          "expectation": "For 014-004 / Hemoglobin, Flag is L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-004-hemoglobin.reference",
+          "expectation": "For 014-004 / Hemoglobin, Reference is 12.0-16.0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-004-hemoglobin.unit",
+          "expectation": "For 014-004 / Hemoglobin, Unit is g/dL.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-007-potassium.result",
+          "expectation": "For 014-007 / Potassium, Result is 5.6.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-007-potassium.flag",
+          "expectation": "For 014-007 / Potassium, Flag is H.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-007-potassium.reference",
+          "expectation": "For 014-007 / Potassium, Reference is 3.5-5.1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-007-potassium.unit",
+          "expectation": "For 014-007 / Potassium, Unit is mmol/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-009-alt.result",
+          "expectation": "For 014-009 / ALT, Result is 49.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-009-alt.flag",
+          "expectation": "For 014-009 / ALT, Flag is H.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-009-alt.reference",
+          "expectation": "For 014-009 / ALT, Reference is 0-45.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-009-alt.unit",
+          "expectation": "For 014-009 / ALT, Unit is U/L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-011-creatinine.result",
+          "expectation": "For 014-011 / Creatinine, Result is 1.34.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-011-creatinine.flag",
+          "expectation": "For 014-011 / Creatinine, Flag is H.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-011-creatinine.reference",
+          "expectation": "For 014-011 / Creatinine, Reference is 0.60-1.30.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-011-creatinine.unit",
+          "expectation": "For 014-011 / Creatinine, Unit is mg/dL.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-016-glucose.result",
+          "expectation": "For 014-016 / Glucose, Result is 62.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-016-glucose.flag",
+          "expectation": "For 014-016 / Glucose, Flag is L.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-016-glucose.reference",
+          "expectation": "For 014-016 / Glucose, Reference is 70-110.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.labs.014-016-glucose.unit",
+          "expectation": "For 014-016 / Glucose, Unit is mg/dL.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.enrollment.withdrawn",
-      "category": "table_cell",
-      "weight": 8,
-      "expectation": "Enrollment log preserves 014-004 withdrawn on 2026-04-10 from Arm B due AE dizziness and 014-013 withdrawn/lost to follow-up before W4.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p04.aes",
+      "page": 4,
+      "label": "Adverse-event table",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p04.aes.schema",
+          "expectation": "The region preserves the source field schema in order: AE, Subject, Term, Severity, Relatedness, Outcome.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.aes.row-order",
+          "expectation": "The source row order is recoverable as: AE-014-01 -> AE-014-02 -> AE-014-03 -> AE-014-04 -> AE-014-05.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.aes.ae-014-01.subject",
+          "expectation": "For AE-014-01, Subject is 014-004.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-01.term",
+          "expectation": "For AE-014-01, Term is Dizziness.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-01.severity",
+          "expectation": "For AE-014-01, Severity is Moderate.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-01.relatedness",
+          "expectation": "For AE-014-01, Relatedness is Related.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-01.outcome",
+          "expectation": "For AE-014-01, Outcome is Withdrew 24 Apr.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-02.subject",
+          "expectation": "For AE-014-02, Subject is 014-002.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-02.term",
+          "expectation": "For AE-014-02, Term is Nausea.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-02.severity",
+          "expectation": "For AE-014-02, Severity is Mild.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-02.relatedness",
+          "expectation": "For AE-014-02, Relatedness is Possible.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-02.outcome",
+          "expectation": "For AE-014-02, Outcome is Dose reduced W4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-03.subject",
+          "expectation": "For AE-014-03, Subject is 014-007.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-03.term",
+          "expectation": "For AE-014-03, Term is Hyperkalemia.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-03.severity",
+          "expectation": "For AE-014-03, Severity is Moderate.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-03.relatedness",
+          "expectation": "For AE-014-03, Relatedness is Unrelated.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-03.outcome",
+          "expectation": "For AE-014-03, Outcome is Repeat normal.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-04.subject",
+          "expectation": "For AE-014-04, Subject is 014-011.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-04.term",
+          "expectation": "For AE-014-04, Term is Creatinine increased.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-04.severity",
+          "expectation": "For AE-014-04, Severity is Mild.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-04.relatedness",
+          "expectation": "For AE-014-04, Relatedness is Possible.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-04.outcome",
+          "expectation": "For AE-014-04, Outcome is Repeat pending.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-05.subject",
+          "expectation": "For AE-014-05, Subject is 014-016.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-05.term",
+          "expectation": "For AE-014-05, Term is Hypoglycemia.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-05.severity",
+          "expectation": "For AE-014-05, Severity is Moderate.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-05.relatedness",
+          "expectation": "For AE-014-05, Relatedness is Related.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.aes.ae-014-05.outcome",
+          "expectation": "For AE-014-05, Outcome is Safety call done.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.visit.014002",
-      "category": "table_cell",
-      "weight": 8,
-      "expectation": "Visit grid preserves subject 014-002 V1/W2/W4 rows, dates 04-05/04-19/05-03, kits K-204-118/K-204-142/K-204-166, and notes ECG normal/diary returned/dose reduced.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "major"
+      "id": "p05.deviations",
+      "page": 5,
+      "label": "Protocol deviation log",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p05.deviations.schema",
+          "expectation": "The region preserves the source field schema in order: Deviation, Subject, Description, Class, Current action.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.deviations.row-order",
+          "expectation": "The source row order is recoverable as: DEV-014-03 -> DEV-014-07 -> DEV-014-02 -> DEV-014-08 -> DEV-014-09 -> DEV-014-10 -> DEV-014-11.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.deviations.dev-014-03.subject",
+          "expectation": "For DEV-014-03, Subject is 014-003.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-03.description",
+          "expectation": "For DEV-014-03, Description is W2 ECG not performed.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-03.class",
+          "expectation": "For DEV-014-03, Class is Major.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-03.current-action",
+          "expectation": "For DEV-014-03, Current action is Q-77 open.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-07.subject",
+          "expectation": "For DEV-014-07, Subject is 014-007.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-07.description",
+          "expectation": "For DEV-014-07, Description is Kit at 9.1 C for 3 h.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-07.class",
+          "expectation": "For DEV-014-07, Class is Major.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-07.current-action",
+          "expectation": "For DEV-014-07, Current action is Do not dose K-204-153.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-02.subject",
+          "expectation": "For DEV-014-02, Subject is 014-002.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-02.description",
+          "expectation": "For DEV-014-02, Description is Diary page late.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-02.class",
+          "expectation": "For DEV-014-02, Class is Minor.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-02.current-action",
+          "expectation": "For DEV-014-02, Current action is Resolved.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-08.subject",
+          "expectation": "For DEV-014-08, Subject is 014-009.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-08.description",
+          "expectation": "For DEV-014-08, Description is W2 06 May; +2 max 05 May.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-08.class",
+          "expectation": "For DEV-014-08, Class is Minor.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-08.current-action",
+          "expectation": "For DEV-014-08, Current action is Q-86 open.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-09.subject",
+          "expectation": "For DEV-014-09, Subject is 014-011.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-09.description",
+          "expectation": "For DEV-014-09, Description is Repeat central lab not filed.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-09.class",
+          "expectation": "For DEV-014-09, Class is Major.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-09.current-action",
+          "expectation": "For DEV-014-09, Current action is Q-88 open.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-10.subject",
+          "expectation": "For DEV-014-10, Subject is 014-014.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-10.description",
+          "expectation": "For DEV-014-10, Description is ePRO not activated.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-10.class",
+          "expectation": "For DEV-014-10, Class is Minor.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-10.current-action",
+          "expectation": "For DEV-014-10, Current action is Retraining done.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-11.subject",
+          "expectation": "For DEV-014-11, Subject is 014-016.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-11.description",
+          "expectation": "For DEV-014-11, Description is Unblinded pharmacy note.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-11.class",
+          "expectation": "For DEV-014-11, Class is Major.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.deviations.dev-014-11.current-action",
+          "expectation": "For DEV-014-11, Current action is Q-93 open.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.visit.problem.rows",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "Visit grid preserves 014-003 W2 partial kit K-204-146 ECG not done, 014-004 W2 withdrawn with no kit/early termination, 014-007 V1 kit K-204-153 temp excursion, 014-007 W2 hold/repeat lab required, 014-009 W2 late outside +2 day window, 014-014 V1 ePRO not activated, and 014-016 V1 pharmacist note sealed.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p05.queries",
+      "page": 5,
+      "label": "Data query log",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p05.queries.schema",
+          "expectation": "The region preserves the source field schema in order: Query, Subject, Issue, State.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.queries.row-order",
+          "expectation": "The source row order is recoverable as: Q-74 -> Q-77 -> Q-81 -> Q-84 -> Q-86 -> Q-88 -> Q-91 -> Q-93.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p05.queries.q-74.subject",
+          "expectation": "For Q-74, Subject is 014-004.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-74.issue",
+          "expectation": "For Q-74, Issue is AE stop date.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-74.state",
+          "expectation": "For Q-74, State is Answered 26 Apr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-77.subject",
+          "expectation": "For Q-77, Subject is 014-003.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-77.issue",
+          "expectation": "For Q-77, Issue is W2 ECG correction.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-77.state",
+          "expectation": "For Q-77, State is Open / PI response.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-81.subject",
+          "expectation": "For Q-81, Subject is 014-007.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-81.issue",
+          "expectation": "For Q-81, Issue is Excursion dosing.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-81.state",
+          "expectation": "For Q-81, State is Answered: do not dose.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-84.subject",
+          "expectation": "For Q-84, Subject is 014-008.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-84.issue",
+          "expectation": "For Q-84, Issue is Central lab receipt.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-84.state",
+          "expectation": "For Q-84, State is Open.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-86.subject",
+          "expectation": "For Q-86, Subject is 014-009.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-86.issue",
+          "expectation": "For Q-86, Issue is 06 May; window ended 05 May.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-86.state",
+          "expectation": "For Q-86, State is Open.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-88.subject",
+          "expectation": "For Q-88, Subject is 014-011.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-88.issue",
+          "expectation": "For Q-88, Issue is Repeat report missing.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-88.state",
+          "expectation": "For Q-88, State is Open.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-91.subject",
+          "expectation": "For Q-91, Subject is 014-014.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-91.issue",
+          "expectation": "For Q-91, Issue is ePRO activation.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-91.state",
+          "expectation": "For Q-91, State is Answered: retrained.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-93.subject",
+          "expectation": "For Q-93, Subject is 014-016.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-93.issue",
+          "expectation": "For Q-93, Issue is Masking note.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.queries.q-93.state",
+          "expectation": "For Q-93, State is Open.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.labs.flags",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "Lab table preserves abnormal flags and units: 014-003 ALT 67 H U/L and eGFR 58 L mL/min, 014-004 hemoglobin 10.8 L g/dL, 014-007 potassium 5.6 H mmol/L, 014-009 ALT 49 H U/L, 014-011 creatinine 1.34 H mg/dL, 014-013 hemoglobin 11.7 L g/dL, and 014-016 glucose 62 L mg/dL.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p06.accountability",
+      "page": 6,
+      "label": "Investigational-product accountability",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p06.accountability.schema",
+          "expectation": "The region preserves the source field schema in order: Kit, Subject, Dispensed, Returned, Temperature, Final inventory state.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p06.accountability.row-order",
+          "expectation": "The source row order is recoverable as: K-204-118 -> K-204-142 -> K-204-166 -> K-204-121 -> K-204-146 -> K-204-153 -> K-204-158 -> K-204-160 -> K-204-171 -> K-204-184 -> K-204-190.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p06.accountability.k-204-118.subject",
+          "expectation": "For K-204-118, Subject is 014-002.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-118.dispensed",
+          "expectation": "For K-204-118, Dispensed is 30.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-118.returned",
+          "expectation": "For K-204-118, Returned is 4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-118.temperature",
+          "expectation": "For K-204-118, Temperature is In range.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-118.final-inventory-state",
+          "expectation": "For K-204-118, Final inventory state is Accounted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-142.subject",
+          "expectation": "For K-204-142, Subject is 014-002.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-142.dispensed",
+          "expectation": "For K-204-142, Dispensed is 30.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-142.returned",
+          "expectation": "For K-204-142, Returned is 6.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-142.temperature",
+          "expectation": "For K-204-142, Temperature is In range.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-142.final-inventory-state",
+          "expectation": "For K-204-142, Final inventory state is Accounted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-166.subject",
+          "expectation": "For K-204-166, Subject is 014-002.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-166.dispensed",
+          "expectation": "For K-204-166, Dispensed is 15.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-166.returned",
+          "expectation": "For K-204-166, Returned is 2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-166.temperature",
+          "expectation": "For K-204-166, Temperature is In range.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-166.final-inventory-state",
+          "expectation": "For K-204-166, Final inventory state is Dose reduced.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-121.subject",
+          "expectation": "For K-204-121, Subject is 014-003.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-121.dispensed",
+          "expectation": "For K-204-121, Dispensed is 30.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-121.returned",
+          "expectation": "For K-204-121, Returned is 5.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-121.temperature",
+          "expectation": "For K-204-121, Temperature is In range.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-121.final-inventory-state",
+          "expectation": "For K-204-121, Final inventory state is Accounted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-146.subject",
+          "expectation": "For K-204-146, Subject is 014-003.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-146.dispensed",
+          "expectation": "For K-204-146, Dispensed is 30.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-146.returned",
+          "expectation": "For K-204-146, Returned is Not returned.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-146.temperature",
+          "expectation": "For K-204-146, Temperature is In range.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-146.final-inventory-state",
+          "expectation": "For K-204-146, Final inventory state is Open reconciliation.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-153.subject",
+          "expectation": "For K-204-153, Subject is 014-007.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-153.dispensed",
+          "expectation": "For K-204-153, Dispensed is 0.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-153.returned",
+          "expectation": "For K-204-153, Returned is N/A \u2014 never dispensed.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-153.temperature",
+          "expectation": "For K-204-153, Temperature is 9.1 C / 3 h.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-153.final-inventory-state",
+          "expectation": "For K-204-153, Final inventory state is Quarantined.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-158.subject",
+          "expectation": "For K-204-158, Subject is 014-008.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-158.dispensed",
+          "expectation": "For K-204-158, Dispensed is 30.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-158.returned",
+          "expectation": "For K-204-158, Returned is Pending.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-158.temperature",
+          "expectation": "For K-204-158, Temperature is In range.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-158.final-inventory-state",
+          "expectation": "For K-204-158, Final inventory state is Await lab receipt.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-160.subject",
+          "expectation": "For K-204-160, Subject is 014-009.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-160.dispensed",
+          "expectation": "For K-204-160, Dispensed is 30.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-160.returned",
+          "expectation": "For K-204-160, Returned is 3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-160.temperature",
+          "expectation": "For K-204-160, Temperature is In range.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-160.final-inventory-state",
+          "expectation": "For K-204-160, Final inventory state is Visit-window query.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-171.subject",
+          "expectation": "For K-204-171, Subject is 014-011.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-171.dispensed",
+          "expectation": "For K-204-171, Dispensed is 30.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-171.returned",
+          "expectation": "For K-204-171, Returned is Pending.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-171.temperature",
+          "expectation": "For K-204-171, Temperature is In range.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-171.final-inventory-state",
+          "expectation": "For K-204-171, Final inventory state is Hold repeat lab.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-184.subject",
+          "expectation": "For K-204-184, Subject is 014-014.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-184.dispensed",
+          "expectation": "For K-204-184, Dispensed is 30.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-184.returned",
+          "expectation": "For K-204-184, Returned is 0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-184.temperature",
+          "expectation": "For K-204-184, Temperature is In range.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-184.final-inventory-state",
+          "expectation": "For K-204-184, Final inventory state is ePRO retrained.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-190.subject",
+          "expectation": "For K-204-190, Subject is 014-016.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-190.dispensed",
+          "expectation": "For K-204-190, Dispensed is 30.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-190.returned",
+          "expectation": "For K-204-190, Returned is 2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-190.temperature",
+          "expectation": "For K-204-190, Temperature is In range.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability.k-204-190.final-inventory-state",
+          "expectation": "For K-204-190, Final inventory state is Masking review.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.labs.normal",
-      "category": "table_cell",
-      "weight": 5,
-      "expectation": "Lab table preserves normal 014-002 ALT 38 U/L reference 0-45 and creatinine 1.11 mg/dL reference 0.60-1.30 with blank flags.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "major"
+      "id": "p06.accountability-note",
+      "page": 6,
+      "label": "K-204-153 inventory and disposition note",
+      "kind": "text",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p06.accountability-note.inventory",
+          "expectation": "K-204-153 remained in pharmacy inventory and was never dispensed.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.accountability-note.disposition",
+          "expectation": "K-204-153 is quarantined under a Do not dose disposition.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.aes",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "AE log preserves AE IDs bound to subjects/terms: AE-014-01 014-004 dizziness moderate related withdrawn 2026-04-24; AE-014-02 014-002 nausea mild possibly related dose reduced W4; AE-014-03 014-007 hyperkalemia moderate unrelated repeat lab normal; AE-014-04 014-009 headache resolved; AE-014-05 014-011 creatinine increased repeat lab pending; AE-014-06 014-013 lost contact not AE; AE-014-07 014-016 hypoglycemia related safety call completed.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p07.ecrf",
+      "page": 7,
+      "label": "Corrected ECG eCRF scan",
+      "kind": "form",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p07.ecrf.subject",
+          "expectation": "The corrected eCRF belongs to subject 014-003 at W2 on 2026-04-21.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.ecrf.original",
+          "expectation": "The original ECG performed = Yes box is crossed out.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.ecrf.corrected",
+          "expectation": "The final ECG performed = No box is checked.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.ecrf.reason",
+          "expectation": "The ECG was not performed because the machine was unavailable.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.ecrf.query",
+          "expectation": "Q-77 remains open pending PI response.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.ecrf.audit.correction",
+          "expectation": "Coordinator MK corrected the form on 2026-04-22 at 14:18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.ecrf.audit.verification",
+          "expectation": "Monitor LS verified the form on 2026-05-08.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.ecrf.pi",
+          "expectation": "PI review of DEV-014-03 is not completed.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.deviations",
-      "category": "source_state",
-      "weight": 12,
-      "expectation": "Deviation log preserves DEV-014-03 W2 ECG missed major/open Q-77, DEV-014-07 IP temp 9.1C for 3h major/do not dose K-204-153, DEV-014-02 diary page late minor/resolved, DEV-014-08 W2 outside +2 day window open Q-86, DEV-014-09 repeat central lab not filed major/open Q-88, DEV-014-10 ePRO not activated/retrain coordinator, and DEV-014-11 unblinded pharmacist note major/masking review open.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p08.excursion",
+      "page": 8,
+      "label": "Temperature excursion form",
+      "kind": "form",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p08.excursion.kit",
+          "expectation": "The excursion form is for kit K-204-153 and subject 014-007.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.excursion.peak",
+          "expectation": "Peak recorded temperature is 9.1 C at 10:10 on 2026-04-18.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.excursion.final-reading",
+          "expectation": "The final reading is 4.7 C at 13:40.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.excursion.quarantine",
+          "expectation": "Quarantine remains in force after the final reading.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.excursion.disposition.do-not-dose",
+          "expectation": "Do not dose is checked.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.excursion.disposition.return-to-stock",
+          "expectation": "Return to stock is unchecked.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.excursion.disposition.destroy",
+          "expectation": "Destroy is unchecked.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.excursion.dispensed",
+          "expectation": "Dispensed quantity is 0.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.excursion.inventory-state",
+          "expectation": "Final inventory state is quarantined.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.ip.accountability.returned",
-      "category": "table_cell",
-      "weight": 8,
-      "expectation": "IP accountability preserves returned counts/states for K-204-118 = 4, K-204-142 = 6, K-204-166 = 2, K-204-121 = 5, K-204-146 = not returned/open, K-204-158 pending/reconcile after lab, K-204-160 returned 3/diary window late, K-204-171 pending/hold repeat lab, K-204-184 returned 0/ePRO activation open, and K-204-190 returned 2/masking review.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p08.shipments",
+      "page": 8,
+      "label": "Sample shipment manifest",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p08.shipments.schema",
+          "expectation": "The region preserves the source field schema in order: Shipment, Subject, Tube, Drawn, Received, State.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p08.shipments.row-order",
+          "expectation": "The source row order is recoverable as: SH-204-44 -> SH-204-45 -> SH-204-46 -> SH-204-47 -> SH-204-48 -> SH-204-49.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p08.shipments.sh-204-44.subject",
+          "expectation": "For SH-204-44, Subject is 014-002.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-44.tube",
+          "expectation": "For SH-204-44, Tube is PK-2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-44.drawn",
+          "expectation": "For SH-204-44, Drawn is 19 Apr 08:12.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-44.received",
+          "expectation": "For SH-204-44, Received is 20 Apr 09:02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-44.state",
+          "expectation": "For SH-204-44, State is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-45.subject",
+          "expectation": "For SH-204-45, Subject is 014-003.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-45.tube",
+          "expectation": "For SH-204-45, Tube is PK-2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-45.drawn",
+          "expectation": "For SH-204-45, Drawn is 21 Apr 08:44.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-45.received",
+          "expectation": "For SH-204-45, Received is 23 Apr 16:40.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-45.state",
+          "expectation": "For SH-204-45, State is Accepted / late temp.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-46.subject",
+          "expectation": "For SH-204-46, Subject is 014-008.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-46.tube",
+          "expectation": "For SH-204-46, Tube is Central lab.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-46.drawn",
+          "expectation": "For SH-204-46, Drawn is 20 Apr 09:15.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-46.received",
+          "expectation": "For SH-204-46, Received is Pending.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-46.state",
+          "expectation": "For SH-204-46, State is Not reviewed.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-47.subject",
+          "expectation": "For SH-204-47, Subject is 014-009.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-47.tube",
+          "expectation": "For SH-204-47, Tube is PK-2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-47.drawn",
+          "expectation": "For SH-204-47, Drawn is 06 May 09:04.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-47.received",
+          "expectation": "For SH-204-47, Received is 06 May 11:20.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-47.state",
+          "expectation": "For SH-204-47, State is Accepted / 1 d late.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-48.subject",
+          "expectation": "For SH-204-48, Subject is 014-011.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-48.tube",
+          "expectation": "For SH-204-48, Tube is Chemistry.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-48.drawn",
+          "expectation": "For SH-204-48, Drawn is 26 Apr 08:52.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-48.received",
+          "expectation": "For SH-204-48, Received is 27 Apr 10:05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-48.state",
+          "expectation": "For SH-204-48, State is Repeat requested.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-49.subject",
+          "expectation": "For SH-204-49, Subject is 014-016.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-49.tube",
+          "expectation": "For SH-204-49, Tube is Glucose.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-49.drawn",
+          "expectation": "For SH-204-49, Drawn is 04 May 07:58.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-49.received",
+          "expectation": "For SH-204-49, Received is 05 May 09:44.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.shipments.sh-204-49.state",
+          "expectation": "For SH-204-49, State is Safety call done.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.ip.accountability.quarantine",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "IP accountability preserves K-204-153 for 014-007 dispensed 0, returned quarantined, temp flag 9.1C for 3h, final state do not dose.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p09.readiness",
+      "page": 9,
+      "label": "Data-cleaning readiness",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p09.readiness.schema",
+          "expectation": "The region preserves the source field schema in order: Domain, Open items, Controlling evidence, State.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p09.readiness.row-order",
+          "expectation": "The source row order is recoverable as: Enrollment -> ECG -> IP accountability -> Central laboratory -> AE follow-up -> Visit windows -> Masking.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p09.readiness.enrollment.open-items",
+          "expectation": "For Enrollment, Open items is 0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.enrollment.controlling-evidence",
+          "expectation": "For Enrollment, Controlling evidence is Disposition log current.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.enrollment.state",
+          "expectation": "For Enrollment, State is Ready.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.ecg.open-items",
+          "expectation": "For ECG, Open items is 1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.ecg.controlling-evidence",
+          "expectation": "For ECG, Controlling evidence is Q-77 / 014-003.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.ecg.state",
+          "expectation": "For ECG, State is Open.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.ip-accountability.open-items",
+          "expectation": "For IP accountability, Open items is 1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.ip-accountability.controlling-evidence",
+          "expectation": "For IP accountability, Controlling evidence is K-204-153 quarantine.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.ip-accountability.state",
+          "expectation": "For IP accountability, State is Open.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.central-laboratory.open-items",
+          "expectation": "For Central laboratory, Open items is 3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.central-laboratory.controlling-evidence",
+          "expectation": "For Central laboratory, Controlling evidence is 014-008, 014-011, 014-016.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.central-laboratory.state",
+          "expectation": "For Central laboratory, State is Open.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.ae-follow-up.open-items",
+          "expectation": "For AE follow-up, Open items is 1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.ae-follow-up.controlling-evidence",
+          "expectation": "For AE follow-up, Controlling evidence is AE-014-04 repeat lab.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.ae-follow-up.state",
+          "expectation": "For AE follow-up, State is Open.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.visit-windows.open-items",
+          "expectation": "For Visit windows, Open items is 1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.visit-windows.controlling-evidence",
+          "expectation": "For Visit windows, Controlling evidence is Q-86 / 014-009.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.visit-windows.state",
+          "expectation": "For Visit windows, State is Open.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.masking.open-items",
+          "expectation": "For Masking, Open items is 1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.masking.controlling-evidence",
+          "expectation": "For Masking, Controlling evidence is Q-93 / 014-016.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.readiness.masking.state",
+          "expectation": "For Masking, State is Open.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p17.temperature.timeline",
-      "category": "table_cell",
-      "weight": 8,
-      "expectation": "Temperature excursion source preserves 04-18 09:10 8.4C alarm, 10:10 9.1C quarantine K-204-153, 11:10 8.8C pharmacy notified, 12:10 7.8C still above range, 13:05 5.2C returned to range, and 13:40 4.7C back in range while the kit remains quarantined.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "major"
-    },
-    {
-      "id": "p17.ecg.query",
-      "category": "form_state",
-      "weight": 10,
-      "expectation": "ECG source preserves subject 014-003 W2 / 2026-04-21, ECG checkbox unchecked, reason machine unavailable, and query Q-77 open with PI response pending.",
-      "guidance": "",
-      "modality": "form",
-      "severity": "critical"
-    },
-    {
-      "id": "p17.conmed",
-      "category": "table_cell",
-      "weight": 7,
-      "expectation": "Concomitant medication review preserves metformin allowed for 014-002, meclizine 04-11 to 04-24 for 014-004 AE dizziness, potassium supplement 04-01 to 04-19 for 014-007 hyperkalemia context, ibuprofen 014-009 headache, lisinopril 014-011 renal context, and glipizide 014-016 hypoglycemia context.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "major"
-    },
-    {
-      "id": "p17.query.log",
-      "category": "source_state",
-      "weight": 9,
-      "expectation": "Monitor query log preserves Q-74 answered, Q-77 open for 014-003 W2 ECG missing, Q-81 answered do not dose for 014-007 temperature excursion dosing, Q-84 open for 014-008 central lab pending, Q-86 open for 014-009 W2 visit outside window, Q-88 open for 014-011 repeat lab report missing, Q-91 answered retrained for 014-014 ePRO activation evidence, and Q-93 open for 014-016 pharmacist masking note.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
-    },
-    {
-      "id": "p17.ecrf.checkboxes",
-      "category": "form_state",
-      "weight": 10,
-      "expectation": "eCRF checkbox audit preserves W2 ECG performed unchecked for 014-003, withdrawal due AE checked for 014-004, kit dispensed unchecked for 014-007, central lab reviewed unchecked for 014-008, visit in window unchecked for 014-009, repeat lab attached unchecked for 014-011, ePRO activated unchecked for 014-014, and masking reviewed unchecked for 014-016.",
-      "guidance": "",
-      "modality": "form",
-      "severity": "critical"
-    },
-    {
-      "id": "p17.shipments",
-      "category": "table_cell",
-      "weight": 9,
-      "expectation": "Shipment manifest preserves SH-204-44 accepted with received 04-20 09:02, SH-204-45 received 04-23 16:40 with temperature late state accepted/not rejected, SH-204-46 pending/not reviewed, SH-204-47 accepted late draw, SH-204-48 repeat requested, and SH-204-49 safety call done.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "major"
-    },
-    {
-      "id": "p17.readiness",
-      "category": "table_cell",
-      "weight": 9,
-      "expectation": "Data cleaning readiness preserves Enrollment open 0 none, ECG open 1 Q-77/014-003, Drug accountability open 1 K-204-153 quarantine, Central lab open 3 for 014-008/014-011/014-016, AE open 1 AE-014-05 repeat lab pending, Visit windows open 1 Q-86/014-009, and Masking open 1 Q-93/014-016.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
-    },
-    {
-      "id": "p17.pi.signoff",
-      "category": "form_state",
-      "weight": 8,
-      "expectation": "PI signoff preserves AE-014-01 checked, DEV-014-03 unchecked, DEV-014-07 checked, DEV-014-09 unchecked, DEV-014-11 unchecked, clean-ready attestation unchecked, signed Dr. Neha Rao 2026-05-08.",
-      "guidance": "",
-      "modality": "form",
-      "severity": "critical"
-    },
-    {
-      "id": "p17.final.recap",
-      "category": "source_state",
-      "weight": 9,
-      "expectation": "Final monitor recap preserves site clean-ready No, critical subject 014-003, critical kit K-204-153, open queries Q-77/Q-84/Q-86/Q-88/Q-93, withdrawn subjects 014-004 related dizziness and 014-013 lost to follow-up, do not dose K-204-153, masking review open for 014-016, and central lab repeats for 014-008/014-011/014-016.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p09.signoff",
+      "page": 9,
+      "label": "PI signoff and clean-ready state",
+      "kind": "form",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p09.signoff.ae",
+          "expectation": "PI reviewed AE-014-01 is checked.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.signoff.dev03",
+          "expectation": "PI reviewed DEV-014-03 is unchecked.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.signoff.dev07",
+          "expectation": "PI reviewed DEV-014-07 is checked.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.signoff.dev09",
+          "expectation": "PI reviewed DEV-014-09 is unchecked.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.signoff.dev11",
+          "expectation": "PI reviewed DEV-014-11 is unchecked.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.signoff.clean.attestation",
+          "expectation": "Site clean-ready attestation is unchecked.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.signoff.clean.determination",
+          "expectation": "The final monitor state is not clean-ready.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p09.signoff.pi",
+          "expectation": "Dr. Neha Rao signed on 2026-05-08.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     }
   ]
 }

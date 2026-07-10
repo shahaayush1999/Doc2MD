@@ -1,132 +1,125 @@
-# Aster Microdevices Lot Q8R7-22 Disposition File
+# Lot Q8R7-22 Material Review File
 
-Product AMX-4100, Fab 3, LVT gate flow, MRB 2026-06-11. Final MRB state: release wafers 01, 02, 04, 06, 08, 10, and 11; wafer 09 is conditional pending REL-22-A; wafers 03, 05, and 12 remain on engineering hold; wafer 07 is scrap and must not be counted in ship yield.
+## Lot traveler and process source
 
-## Wafer Summary
-| Wafer | Good die | Defect % | Probe yield | Final state | Note |
+| Step | Tool | Recipe | Start | End | Recorded state |
 | --- | --- | --- | --- | --- | --- |
-| 01 | 18,420 | 0.83 | 97.8 | release | center-edge normal |
-| 02 | 18,216 | 0.86 | 97.1 | release | one edge cluster |
-| 03 | 17,604 | 1.24 | 93.8 | hold | map quadrant B4 |
-| 04 | 18,390 | 0.81 | 97.6 | release | normal |
-| 05 | 17,118 | 1.42 | 91.9 | hold | scratch arc |
-| 06 | 18,275 | 0.88 | 96.9 | release | normal |
-| 07 | 16,902 | 1.58 | 90.6 | scrap | metal flakes |
-| 08 | 18,301 | 0.79 | 97.4 | release | normal |
-| 09 | 17,880 | 1.06 | 95.5 | conditional | param drift |
-| 10 | 18,144 | 0.90 | 96.8 | release | normal |
-| 11 | 18,013 | 0.95 | 96.2 | release | normal |
-| 12 | 17,422 | 1.31 | 92.7 | hold | edge bead |
+| Implant P3 | IMP-17 | BORON_LVT_042 | 05:12 | 05:58 | Accepted |
+| Ash | ASH-04 | ASH_STD_18 | 06:10 | 06:34 | Accepted |
+| Wet clean | WET-12 | SC1_SC2_09 | 06:48 | 07:22 | Accepted |
+| PVD TiN | PVD-03 | TIN_GATE_31 | 08:06 | 09:44 | Alarm 09:18 |
+| Anneal | RTP-08 | RTP_LVT_22 | 10:01 | 10:29 | Accepted |
+| Metrology | CDSEM-06 | GATE_LVT_QC | 10:45 | 11:56 | Reviewed |
 
-## Traveler and Route
-| Step | Tool | Recipe | Start | End | Visible state |
-| --- | --- | --- | --- | --- | --- |
-| Implant P3 | IMP-17 | BORON_LVT_042 | 05:12 | 05:58 | accepted |
-| Ash | ASH-04 | ASH_STD_18 | 06:10 | 06:34 | accepted |
-| Wet clean | WET-12 | SC1_SC2_09 | 06:48 | 07:22 | accepted |
-| PVD TiN | PVD-03 | TIN_GATE_31 | 08:06 | 09:44 | alarm at 09:18 |
-| Anneal | RTP-08 | RTP_LVT_22 | 10:01 | 10:29 | accepted |
-| Metrology | CDSEM-06 | GATE_LVT_QC | 10:45 | 11:56 | reviewed |
-PVD-03 alarm at 09:18 triggered containment. The lot continued to RTP-08 only after engineering released the already-loaded chamber sequence.
-
-## Recipe Source Conflict
-| Source | Recipe shown | Status | Meaning |
+| Source | Recipe shown | State | Use for this lot |
 | --- | --- | --- | --- |
-| Traveler page | TIN_GATE_31 | current | used for lot |
-| Tool alarm printout | TIN_GATE_30 | stale header | screen cache |
-| MES audit | TIN_GATE_31 | confirmed | controls |
-| Engineer note | increase clamp purge | future only | not used for this lot |
-TIN_GATE_31 controls the actual run; TIN_GATE_30 appears only on a stale tool-alarm header.
+| Traveler page | TIN_GATE_31 | Current | Yes |
+| PVD alarm printout | TIN_GATE_30 | Stale cached header | No |
+| MES audit event | TIN_GATE_31 | Confirmed | Yes / controls |
+| Engineer note | Increase clamp purge | Future revision | Not used |
 
-## Wafer Maps
-Wafer 03 has C3 cluster at B4, C4, and B5. Wafer 05 has S2 scratch cells E2, F2, and E3. Wafer 07 has M1 metal-flake cells D5, D6, and E5. Wafer 09 has P4 at F3. Wafer 12 has E1 edge cells A6 and B6. Wafer 02 has one edge-marked A1 cell.
+TIN_GATE_31 controls the actual lot run; TIN_GATE_30 is a stale alarm-printout header and the clamp-purge change is future only.
 
-## Metrology
-| Wafer | Site | CD nm | Delta | Flag | Reviewer note |
+## Wafer-map review
+
+Wafer 03 C3 cells: B4, C4, B5. Wafer 05 S2 cells: E2, F2, E3. Wafer 07 M1 cells: D5, D6, E5. Wafer 09 P4 cell: F3. Wafer 12 E1 cells: A6, B6. Wafer 02 E0 reference cell: A1.
+
+| Code | Class | Map color | Disposition gate |
+| --- | --- | --- | --- |
+| M1 | Metal flake | Red | Scrap cluster |
+| S2 | Scratch | Orange | Engineering hold |
+| E1 | Edge bead | Yellow | Engineering hold |
+| P4 | Parametric drift | Blue | Reliability condition |
+| C3 | Center CD cluster | Violet | Remeasure / MRB |
+| E0 | Edge mark | Gray | Reference only |
+
+## CD-SEM metrology review
+
+| Wafer / site | CD nm | Delta nm | Flag | Image ref | Reviewer note |
 | --- | --- | --- | --- | --- | --- |
-| Wafer | Site | CD nm | Delta | Flag | Reviewer note |
-| 03 | B4 | 27.8 | +2.9 | H | matches map cluster |
-| 03 | C4 | 27.4 | +2.5 | H | adjacent high |
-| 05 | E2 | 24.1 | -1.8 | L | scratch path |
-| 07 | D5 | 29.6 | +4.7 | H | flake shadow |
-| 07 | D6 | 29.1 | +4.2 | H | flake shadow |
-| 09 | F3 | 26.8 | +1.9 | watch | param drift only |
-| 12 | A6 | 23.9 | -2.0 | L | edge bead |
+| 03 / B4 | 27.8 | +2.9 | H | IMG-221 | Matches C3 map |
+| 03 / C4 | 27.4 | +2.5 | H | IMG-222 | Adjacent high |
+| 05 / E2 | 24.1 | -0.8 | L-map | IMG-223 | Scratch path |
+| 07 / D5 | 29.6 | +4.7 | H | IMG-224 | Flake shadow |
+| 07 / D6 | 29.1 | +4.2 | H | IMG-225 | Adjacent flake |
+| 09 / F3 | 26.8 | +1.9 | Watch | IMG-226 | Parametric only |
+| 12 / A6 | 22.9 | -2.0 | L | IMG-227 | Edge bead |
 
-## SPC Trend
-| Run | Time | TiN thickness | Limit state | Comment |
+| Rule | Condition | Required action |
+| --- | --- | --- |
+| CD-H | Delta >= +2.5 nm | MRB disposition |
+| CD-L | Delta <= -2.0 nm | MRB disposition |
+| Map correlation | Defect code at measured site | Review image and map together |
+| Yield exception | Wafer yield >93% | Does not waive action-limit review |
+
+## PVD thickness SPC and alarm interlocks
+
+SPC points: R-2241 41.2 nm (Inside), R-2242 42.0 nm (Inside), R-2243 43.8 nm (Inside), R-2244 45.6 nm (Warning), R-2245 47.4 nm (Above UCL), R-2246 46.2 nm (Warning), R-2247 44.1 nm (Recovered). Warning is 45.0 nm and UCL is 47.0 nm.
+
+| Interlock | Observed | Threshold | State | Disposition |
 | --- | --- | --- | --- | --- |
-| R-2241 | 08:06 | 41.2 | inside | start |
-| R-2242 | 08:22 | 42.0 | inside | stable |
-| R-2243 | 08:38 | 43.8 | inside | rising |
-| R-2244 | 08:54 | 45.6 | warning | near UCL |
-| R-2245 | 09:10 | 47.4 | above UCL | alarm follows |
-| R-2246 | 09:26 | 46.2 | warning | post alarm |
-| R-2247 | 09:42 | 44.1 | inside | recovered |
-R-2245 is above UCL at 47.4 nm. R-2244 and R-2246 are warning-state points but not rejects by themselves.
+| Chamber pressure | 4.8 mTorr | <=5.0 | Pass | Not root cause |
+| Clamp purge | 18.1 slm | >=19.0 | Fail | Future increase only |
+| Ti target age | 81.4 kWh | <=85 | Watch | Clean then continue |
+| Monitor residual | +1.7 nm | +/-1.0 | Fail | R-2245 review |
+| Alarm ack | 09:18 / J. Kwon | Required | Complete | Containment starts |
 
-SPC alarm interlocks:
-| Interlock | Observed value | Threshold | State | Disposition |
+## SEM review contact sheet
+
+IMG-224 / W07 D5 shows two bright irregular metal flakes, including an adjacent smaller flake. IMG-223 / W05 E2 shows a long diagonal scratch crossing the field. IMG-227 / W12 A6 shows a bright edge-residue band with small bead deposits. IMG-226 / W09 F3 is visually clean apart from low-level background specks; its P4 issue is parametric rather than a visible particle.
+
+## Defect classification and MRB decisions
+
+| Code | Class | Count | Wafer | Gate |
 | --- | --- | --- | --- | --- |
-| PVD-03 chamber pressure | 4.8 mTorr | <=5.0 mTorr | pass | not root cause |
-| Clamp purge flow | 18.1 slm | >=19.0 slm | fail | future purge increase only |
-| Ti target age | 81.4 kWh | <=85 kWh | watch | continue after clean |
-| Thickness monitor residual | +1.7 nm | +/-1.0 nm | fail | drives R-2245 review |
-| Alarm acknowledgment | 09:18 by J. Kwon | required | complete | containment clock starts |
+| M1 | Metal flake | 44 | 07 | Scrap |
+| S2 | Scratch | 31 | 05 | Engineering hold |
+| E1 | Edge bead | 27 | 12 | Engineering hold |
+| P4 | Parametric drift | 19 | 09 | Conditional |
+| C3 | Center CD cluster | 16 | 03 | Remeasure / hold |
 
-## Defects
-| Code | Class | Count | Affected wafer | Disposition |
-| --- | --- | --- | --- | --- |
-| M1 | metal flake | 44 | 07 | scrap wafer 07 |
-| S2 | scratch | 31 | 05 | hold for review |
-| E1 | edge bead | 27 | 12 | hold |
-| P4 | parametric drift | 19 | 09 | conditional release |
-| C3 | center cluster | 16 | 03 | hold |
-
-Defect containment actions:
-| Gate | Trigger | Wafer/site | Required action | Owner |
-| --- | --- | --- | --- | --- |
-| DCT-1 | M1 count > 20 | W07 D5/D6/E5 | scrap wafer; do not sample for REL | MRB |
-| DCT-2 | S2 scratch crossing active cells | W05 E2/F2/E3 | engineering hold; inspect sister lot Q8R7-23 | Yield Eng |
-| DCT-3 | E1 edge bead two adjacent cells | W12 A6/B6 | hold pending edge-bead review | Process Eng |
-| DCT-4 | P4 drift with clean SEM image | W09 F3 | conditional release; REL-22-A required | Reliability |
-| DCT-5 | C3 high-CD cluster | W03 B4/C4/B5 | hold pending CD remeasure | Metrology |
-
-## Photo Register
-IMG-221 W07 D5 and IMG-222 W07 D6 show M1 metal flakes and support scrap W07. IMG-223 W05 E2 shows S2 scratch and supports hold W05. IMG-224 W12 A6 shows E1 edge bead and supports hold W12. IMG-225 W09 F3 is clean visually but has P4 electrical drift and supports conditional W09.
-
-## MRB Matrix
 | Item | Decision | Reason | Owner |
 | --- | --- | --- | --- |
-| Wafer 07 | scrap | metal flakes M1 at D5/D6 | Y. Nishida |
-| Wafer 05 | hold | scratch S2 crosses E2-F2 | A. Roy |
-| Wafer 03 | hold | CD high at B4/C4 | M. Alvarez |
-| Wafer 12 | hold | edge bead at A6 | K. Stone |
-| Wafer 09 | conditional release | parametric drift P4, REL sample required | S. Han |
-| Wafers 01,02,04,06,08,10,11 | release | within disposition limits | MRB |
+| Wafer 07 | Scrap | M1 at D5/D6/E5 | Y. Nishida |
+| Wafer 05 | Hold | S2 crosses E2/F2/E3 | A. Roy |
+| Wafer 03 | Hold | C3 high CD B4/C4/B5 | M. Alvarez |
+| Wafer 12 | Hold | E1 at A6/B6 | K. Stone |
+| Wafer 09 | Conditional | P4; REL-22-A required | S. Han |
+| 01,02,04,06,08,10,11 | Release | Inside disposition limits | MRB |
 
-## Reliability and Shipping
-| Sample | Wafer | Stress | Result | Use |
+## Reliability conditions and shipping allocation
+
+| Sample | Wafer | Stress | Result | Disposition use |
 | --- | --- | --- | --- | --- |
-| REL-22-A | 09 | HTOL 168h | pending | condition for release |
-| REL-22-B | 02 | TC 100 cyc | pass | reference |
-| REL-22-C | 11 | HAST 96h | pass | reference |
-| REL-22-D | 07 | not built | scrap | no reliability credit |
-| Ship bucket | Wafers | Die count | Condition |
-| --- | --- | --- | --- |
-| Release now | 01,02,04,06,08,10,11 | 127,759 | standard COA |
-| Conditional | 09 | 17,880 | hold shipment until REL-22-A pass |
-| Engineering hold | 03,05,12 | 52,144 | do not ship |
-| Scrap | 07 | 16,902 | do not include in yield |
+| REL-22-A | 09 | HTOL 168 h | Pending | Condition for shipment |
+| REL-22-B | 02 | TC 100 cycles | Pass | Reference |
+| REL-22-C | 11 | HAST 96 h | Pass | Reference |
+| REL-22-D | 07 | Not built | Scrap | No reliability credit |
 
-## COA Holdback
-Released wafers are 01,02,04,06,08,10,11. Conditional wafer 09 ships only after REL-22-A passes. Engineering hold wafers 03,05,12 and scrap wafer 07 are excluded from shipment. Signed COA must not use the preliminary all-wafer draft.
-
-## Audit Trail
-| Timestamp | Actor | Entry | Effect |
+| Bucket | Wafers | Good die | Shipment condition |
 | --- | --- | --- | --- |
-| 2026-06-10 12:18 | MES | PVD alarm attached | containment starts |
-| 2026-06-10 14:40 | Yield eng | wafer map review complete | W03/W05/W07/W12 flagged |
-| 2026-06-11 08:55 | MRB | W07 scrap, W09 conditional | controls final state |
-| 2026-06-11 10:20 | Quality | COA holdback added | prevents draft all-wafer ship |
-| 2026-06-11 13:30 | Planning | ship bucket split | 127,759 die release now |
+| Release now | 01,02,04,06,08,10,11 | 127,759 | Standard COA |
+| Conditional | 09 | 17,880 | Wait for REL-22-A pass |
+| Engineering hold | 03,05,12 | 52,144 | Do not ship |
+| Scrap | 07 | 16,902 | Exclude from yield and COA |
+
+## Certificate holdback and final audit trail
+
+| COA field | Signed value | Application |
+| --- | --- | --- |
+| Lot | Q8R7-22 | All wafers |
+| Released wafers | 01,02,04,06,08,10,11 | Ship now |
+| Conditional wafer | 09 | After REL-22-A pass |
+| Engineering hold | 03,05,12 | Excluded |
+| Scrap | 07 | Excluded from yield and COA |
+| Executed recipe | TIN_GATE_31 | MES confirmed |
+
+| Time | Actor | Entry | Effect |
+| --- | --- | --- | --- |
+| 10 Jun 12:18 | MES | PVD alarm attached | Containment starts |
+| 10 Jun 14:40 | Yield engineering | Map review complete | 03/05/07/12 flagged |
+| 11 Jun 08:55 | MRB | 07 scrap; 09 conditional | Disposition controls |
+| 11 Jun 10:20 | Quality | COA holdback signed | Draft all-wafer COA void |
+| 11 Jun 13:30 | Planning | Ship buckets created | 127,759 die release |
+
+The preliminary all-wafer COA is void; only the signed COA values authorize shipment.

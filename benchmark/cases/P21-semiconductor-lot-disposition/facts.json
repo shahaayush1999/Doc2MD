@@ -1,168 +1,1833 @@
 {
+  "schemaVersion": 2,
   "id": "P21-semiconductor-lot-disposition",
-  "title": "Semiconductor Lot Disposition File",
-  "family": "semiconductor-quality",
+  "title": "Lot Q8R7-22 Material Review File",
+  "family": "semiconductor manufacturing quality",
   "tags": [
-    "multi-page",
-    "semiconductor",
-    "wafer-map",
+    "native-pdf",
+    "wafer-maps",
+    "metrology",
     "spc",
-    "source-precedence",
-    "visual-relation"
+    "sem-images",
+    "mrb",
+    "source-precedence"
   ],
-  "facts": [
+  "regions": [
     {
-      "id": "p21.final.disposition",
-      "category": "source_state",
-      "weight": 14,
-      "expectation": "Final MRB state is release wafers 01,02,04,06,08,10,11; wafer 09 conditional pending REL-22-A; wafers 03,05,12 engineering hold; wafer 07 scrap and excluded from ship yield.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p01.route",
+      "page": 1,
+      "label": "Process traveler",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p01.route.schema",
+          "expectation": "The region preserves the source field schema in order: Step, Tool, Recipe, Start, End, Recorded state.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.route.row-order",
+          "expectation": "The source row order is recoverable as: Implant P3 -> Ash -> Wet clean -> PVD TiN -> Anneal -> Metrology.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.route.implant-p3.tool",
+          "expectation": "For Implant P3, Tool is IMP-17.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.implant-p3.recipe",
+          "expectation": "For Implant P3, Recipe is BORON_LVT_042.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.implant-p3.start",
+          "expectation": "For Implant P3, Start is 05:12.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.implant-p3.end",
+          "expectation": "For Implant P3, End is 05:58.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.implant-p3.recorded-state",
+          "expectation": "For Implant P3, Recorded state is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.ash.tool",
+          "expectation": "For Ash, Tool is ASH-04.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.ash.recipe",
+          "expectation": "For Ash, Recipe is ASH_STD_18.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.ash.start",
+          "expectation": "For Ash, Start is 06:10.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.ash.end",
+          "expectation": "For Ash, End is 06:34.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.ash.recorded-state",
+          "expectation": "For Ash, Recorded state is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.wet-clean.tool",
+          "expectation": "For Wet clean, Tool is WET-12.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.wet-clean.recipe",
+          "expectation": "For Wet clean, Recipe is SC1_SC2_09.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.wet-clean.start",
+          "expectation": "For Wet clean, Start is 06:48.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.wet-clean.end",
+          "expectation": "For Wet clean, End is 07:22.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.wet-clean.recorded-state",
+          "expectation": "For Wet clean, Recorded state is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.pvd-tin.tool",
+          "expectation": "For PVD TiN, Tool is PVD-03.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.pvd-tin.recipe",
+          "expectation": "For PVD TiN, Recipe is TIN_GATE_31.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.pvd-tin.start",
+          "expectation": "For PVD TiN, Start is 08:06.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.pvd-tin.end",
+          "expectation": "For PVD TiN, End is 09:44.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.pvd-tin.recorded-state",
+          "expectation": "For PVD TiN, Recorded state is Alarm 09:18.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.anneal.tool",
+          "expectation": "For Anneal, Tool is RTP-08.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.anneal.recipe",
+          "expectation": "For Anneal, Recipe is RTP_LVT_22.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.anneal.start",
+          "expectation": "For Anneal, Start is 10:01.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.anneal.end",
+          "expectation": "For Anneal, End is 10:29.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.anneal.recorded-state",
+          "expectation": "For Anneal, Recorded state is Accepted.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.metrology.tool",
+          "expectation": "For Metrology, Tool is CDSEM-06.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.metrology.recipe",
+          "expectation": "For Metrology, Recipe is GATE_LVT_QC.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.metrology.start",
+          "expectation": "For Metrology, Start is 10:45.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.metrology.end",
+          "expectation": "For Metrology, End is 11:56.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.route.metrology.recorded-state",
+          "expectation": "For Metrology, Recorded state is Reviewed.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.wafer.summary",
-      "category": "table_cell",
-      "weight": 12,
-      "expectation": "Wafer summary preserves good die, defect %, probe yield, final state, and notes for all twelve wafers.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p01.recipe",
+      "page": 1,
+      "label": "Recipe source reconciliation",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p01.recipe.schema",
+          "expectation": "The region preserves the source field schema in order: Source, Recipe shown, State, Use for this lot.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.recipe.row-order",
+          "expectation": "The source row order is recoverable as: Traveler page -> PVD alarm printout -> MES audit event -> Engineer note.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p01.recipe.traveler-page.recipe-shown",
+          "expectation": "For Traveler page, Recipe shown is TIN_GATE_31.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.recipe.traveler-page.state",
+          "expectation": "For Traveler page, State is Current.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.recipe.traveler-page.use-for-this-lot",
+          "expectation": "For Traveler page, Use for this lot is Yes.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.recipe.pvd-alarm-printout.recipe-shown",
+          "expectation": "For PVD alarm printout, Recipe shown is TIN_GATE_30.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.recipe.pvd-alarm-printout.state",
+          "expectation": "For PVD alarm printout, State is Stale cached header.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.recipe.pvd-alarm-printout.use-for-this-lot",
+          "expectation": "For PVD alarm printout, Use for this lot is No.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.recipe.mes-audit-event.recipe-shown",
+          "expectation": "For MES audit event, Recipe shown is TIN_GATE_31.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.recipe.mes-audit-event.state",
+          "expectation": "For MES audit event, State is Confirmed.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.recipe.mes-audit-event.use-for-this-lot",
+          "expectation": "For MES audit event, Use for this lot is Yes / controls.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.recipe.engineer-note.recipe-shown",
+          "expectation": "For Engineer note, Recipe shown is Increase clamp purge.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.recipe.engineer-note.state",
+          "expectation": "For Engineer note, State is Future revision.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p01.recipe.engineer-note.use-for-this-lot",
+          "expectation": "For Engineer note, Use for this lot is Not used.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.route",
-      "category": "table_cell",
-      "weight": 7,
-      "expectation": "Traveler route preserves all six process steps/tools/recipes/times/states, including PVD-03 TIN_GATE_31 alarm at 09:18 and metrology reviewed.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "major"
+      "id": "p02.maps",
+      "page": 2,
+      "label": "Wafer-map contact sheet",
+      "kind": "diagram",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p02.map.w03.b4",
+          "expectation": "Wafer 03 cell B4 is marked C3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.map.w03.c4",
+          "expectation": "Wafer 03 cell C4 is marked C3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.map.w03.b5",
+          "expectation": "Wafer 03 cell B5 is marked C3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.map.w05.e2",
+          "expectation": "Wafer 05 cell E2 is marked S2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.map.w05.f2",
+          "expectation": "Wafer 05 cell F2 is marked S2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.map.w05.e3",
+          "expectation": "Wafer 05 cell E3 is marked S2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.map.w07.d5",
+          "expectation": "Wafer 07 cell D5 is marked M1.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.map.w07.d6",
+          "expectation": "Wafer 07 cell D6 is marked M1.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.map.w07.e5",
+          "expectation": "Wafer 07 cell E5 is marked M1.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.map.w09.f3",
+          "expectation": "Wafer 09 cell F3 is marked P4.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.map.w12.a6",
+          "expectation": "Wafer 12 cell A6 is marked E1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.map.w12.b6",
+          "expectation": "Wafer 12 cell B6 is marked E1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.map.w02.a1",
+          "expectation": "Wafer 02 cell A1 is marked E0.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.recipe.conflict",
-      "category": "source_state",
-      "weight": 10,
-      "expectation": "Recipe conflict is resolved correctly: TIN_GATE_31 controls from traveler/MES; TIN_GATE_30 is a stale tool printout header; clamp purge change is future only.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p02.legend",
+      "page": 2,
+      "label": "Wafer-map legend",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p02.legend.schema",
+          "expectation": "The region preserves the source field schema in order: Code, Class, Map color, Disposition gate.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.legend.row-order",
+          "expectation": "The source row order is recoverable as: M1 -> S2 -> E1 -> P4 -> C3 -> E0.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p02.legend.m1.class",
+          "expectation": "For M1, Class is Metal flake.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.m1.map-color",
+          "expectation": "For M1, Map color is Red.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.m1.disposition-gate",
+          "expectation": "For M1, Disposition gate is Scrap cluster.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.s2.class",
+          "expectation": "For S2, Class is Scratch.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.s2.map-color",
+          "expectation": "For S2, Map color is Orange.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.s2.disposition-gate",
+          "expectation": "For S2, Disposition gate is Engineering hold.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.e1.class",
+          "expectation": "For E1, Class is Edge bead.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.e1.map-color",
+          "expectation": "For E1, Map color is Yellow.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.e1.disposition-gate",
+          "expectation": "For E1, Disposition gate is Engineering hold.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.p4.class",
+          "expectation": "For P4, Class is Parametric drift.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.p4.map-color",
+          "expectation": "For P4, Map color is Blue.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.p4.disposition-gate",
+          "expectation": "For P4, Disposition gate is Reliability condition.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.c3.class",
+          "expectation": "For C3, Class is Center CD cluster.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.c3.map-color",
+          "expectation": "For C3, Map color is Violet.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.c3.disposition-gate",
+          "expectation": "For C3, Disposition gate is Remeasure / MRB.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.e0.class",
+          "expectation": "For E0, Class is Edge mark.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.e0.map-color",
+          "expectation": "For E0, Map color is Gray.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p02.legend.e0.disposition-gate",
+          "expectation": "For E0, Disposition gate is Reference only.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.wafer.map",
-      "category": "visual_relation",
-      "weight": 14,
-      "expectation": "Wafer map coordinates and defect codes are preserved: W03 B4/C4/B5 C3, W05 E2/F2/E3 S2, W07 D5/D6/E5 M1, W09 F3 P4, W12 A6/B6 E1, W02 A1 edge.",
-      "guidance": "",
-      "modality": "visual",
-      "severity": "critical"
+      "id": "p03.metrology",
+      "page": 3,
+      "label": "CD-SEM metrology",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p03.metrology.schema",
+          "expectation": "The region preserves the source field schema in order: Wafer / site, CD nm, Delta nm, Flag, Image ref, Reviewer note.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.metrology.row-order",
+          "expectation": "The source row order is recoverable as: 03 / B4 -> 03 / C4 -> 05 / E2 -> 07 / D5 -> 07 / D6 -> 09 / F3 -> 12 / A6.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.metrology.03-b4.cd-nm",
+          "expectation": "For 03 / B4, CD nm is 27.8.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.03-b4.delta-nm",
+          "expectation": "For 03 / B4, Delta nm is +2.9.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.03-b4.flag",
+          "expectation": "For 03 / B4, Flag is H.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.03-b4.image-ref",
+          "expectation": "For 03 / B4, Image ref is IMG-221.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.03-b4.reviewer-note",
+          "expectation": "For 03 / B4, Reviewer note is Matches C3 map.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.03-c4.cd-nm",
+          "expectation": "For 03 / C4, CD nm is 27.4.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.03-c4.delta-nm",
+          "expectation": "For 03 / C4, Delta nm is +2.5.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.03-c4.flag",
+          "expectation": "For 03 / C4, Flag is H.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.03-c4.image-ref",
+          "expectation": "For 03 / C4, Image ref is IMG-222.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.03-c4.reviewer-note",
+          "expectation": "For 03 / C4, Reviewer note is Adjacent high.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.05-e2.cd-nm",
+          "expectation": "For 05 / E2, CD nm is 24.1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.05-e2.delta-nm",
+          "expectation": "For 05 / E2, Delta nm is -0.8.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.05-e2.flag",
+          "expectation": "For 05 / E2, Flag is L-map.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.05-e2.image-ref",
+          "expectation": "For 05 / E2, Image ref is IMG-223.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.05-e2.reviewer-note",
+          "expectation": "For 05 / E2, Reviewer note is Scratch path.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.07-d5.cd-nm",
+          "expectation": "For 07 / D5, CD nm is 29.6.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.07-d5.delta-nm",
+          "expectation": "For 07 / D5, Delta nm is +4.7.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.07-d5.flag",
+          "expectation": "For 07 / D5, Flag is H.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.07-d5.image-ref",
+          "expectation": "For 07 / D5, Image ref is IMG-224.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.07-d5.reviewer-note",
+          "expectation": "For 07 / D5, Reviewer note is Flake shadow.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.07-d6.cd-nm",
+          "expectation": "For 07 / D6, CD nm is 29.1.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.07-d6.delta-nm",
+          "expectation": "For 07 / D6, Delta nm is +4.2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.07-d6.flag",
+          "expectation": "For 07 / D6, Flag is H.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.07-d6.image-ref",
+          "expectation": "For 07 / D6, Image ref is IMG-225.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.07-d6.reviewer-note",
+          "expectation": "For 07 / D6, Reviewer note is Adjacent flake.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.09-f3.cd-nm",
+          "expectation": "For 09 / F3, CD nm is 26.8.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.09-f3.delta-nm",
+          "expectation": "For 09 / F3, Delta nm is +1.9.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.09-f3.flag",
+          "expectation": "For 09 / F3, Flag is Watch.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.09-f3.image-ref",
+          "expectation": "For 09 / F3, Image ref is IMG-226.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.09-f3.reviewer-note",
+          "expectation": "For 09 / F3, Reviewer note is Parametric only.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.12-a6.cd-nm",
+          "expectation": "For 12 / A6, CD nm is 22.9.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.12-a6.delta-nm",
+          "expectation": "For 12 / A6, Delta nm is -2.0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.12-a6.flag",
+          "expectation": "For 12 / A6, Flag is L.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.12-a6.image-ref",
+          "expectation": "For 12 / A6, Image ref is IMG-227.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.metrology.12-a6.reviewer-note",
+          "expectation": "For 12 / A6, Reviewer note is Edge bead.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.metrology",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "CD-SEM metrology preserves wafer/site/CD/delta/flag/reviewer notes for W03 B4/C4, W05 E2, W07 D5/D6, W09 F3, and W12 A6.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p03.rules",
+      "page": 3,
+      "label": "Metrology disposition rules",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p03.rules.schema",
+          "expectation": "The region preserves the source field schema in order: Rule, Condition, Required action.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.rules.row-order",
+          "expectation": "The source row order is recoverable as: CD-H -> CD-L -> Map correlation -> Yield exception.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p03.rules.cd-h.condition",
+          "expectation": "For CD-H, Condition is Delta >= +2.5 nm.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.rules.cd-h.required-action",
+          "expectation": "For CD-H, Required action is MRB disposition.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.rules.cd-l.condition",
+          "expectation": "For CD-L, Condition is Delta <= -2.0 nm.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.rules.cd-l.required-action",
+          "expectation": "For CD-L, Required action is MRB disposition.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.rules.map-correlation.condition",
+          "expectation": "For Map correlation, Condition is Defect code at measured site.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.rules.map-correlation.required-action",
+          "expectation": "For Map correlation, Required action is Review image and map together.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.rules.yield-exception.condition",
+          "expectation": "For Yield exception, Condition is Wafer yield >93%.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p03.rules.yield-exception.required-action",
+          "expectation": "For Yield exception, Required action is Does not waive action-limit review.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.spec.rule",
-      "category": "source_state",
-      "weight": 6,
-      "expectation": "CD target 24.9 nm and action limits -2.0/+2.5 nm are preserved, including rule that action-limit sites require MRB disposition even above 93% yield.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "major"
+      "id": "p04.spc",
+      "page": 4,
+      "label": "PVD thickness SPC chart",
+      "kind": "chart",
+      "budget": 2,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p04.spc.r-2241",
+          "expectation": "R-2241 is 41.2 nm with state Inside.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.spc.r-2242",
+          "expectation": "R-2242 is 42.0 nm with state Inside.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.spc.r-2243",
+          "expectation": "R-2243 is 43.8 nm with state Inside.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.spc.r-2244",
+          "expectation": "R-2244 is 45.6 nm with state Warning.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.spc.r-2245",
+          "expectation": "R-2245 is 47.4 nm with state Above UCL.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.spc.r-2246",
+          "expectation": "R-2246 is 46.2 nm with state Warning.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.spc.r-2247",
+          "expectation": "R-2247 is 44.1 nm with state Recovered.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.spc.chart",
-      "category": "chart",
-      "weight": 12,
-      "expectation": "SPC trend preserves R-2241 through R-2247 values and states, especially R-2245 47.4 above UCL, R-2244/R-2246 warning, and recovered R-2247 44.1.",
-      "guidance": "",
-      "modality": "chart",
-      "severity": "critical"
+      "id": "p04.interlocks",
+      "page": 4,
+      "label": "PVD alarm interlocks",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p04.interlocks.schema",
+          "expectation": "The region preserves the source field schema in order: Interlock, Observed, Threshold, State, Disposition.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.interlocks.row-order",
+          "expectation": "The source row order is recoverable as: Chamber pressure -> Clamp purge -> Ti target age -> Monitor residual -> Alarm ack.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p04.interlocks.chamber-pressure.observed",
+          "expectation": "For Chamber pressure, Observed is 4.8 mTorr.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.chamber-pressure.threshold",
+          "expectation": "For Chamber pressure, Threshold is <=5.0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.chamber-pressure.state",
+          "expectation": "For Chamber pressure, State is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.chamber-pressure.disposition",
+          "expectation": "For Chamber pressure, Disposition is Not root cause.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.clamp-purge.observed",
+          "expectation": "For Clamp purge, Observed is 18.1 slm.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.clamp-purge.threshold",
+          "expectation": "For Clamp purge, Threshold is >=19.0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.clamp-purge.state",
+          "expectation": "For Clamp purge, State is Fail.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.clamp-purge.disposition",
+          "expectation": "For Clamp purge, Disposition is Future increase only.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.ti-target-age.observed",
+          "expectation": "For Ti target age, Observed is 81.4 kWh.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.ti-target-age.threshold",
+          "expectation": "For Ti target age, Threshold is <=85.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.ti-target-age.state",
+          "expectation": "For Ti target age, State is Watch.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.ti-target-age.disposition",
+          "expectation": "For Ti target age, Disposition is Clean then continue.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.monitor-residual.observed",
+          "expectation": "For Monitor residual, Observed is +1.7 nm.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.monitor-residual.threshold",
+          "expectation": "For Monitor residual, Threshold is +/-1.0.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.monitor-residual.state",
+          "expectation": "For Monitor residual, State is Fail.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.monitor-residual.disposition",
+          "expectation": "For Monitor residual, Disposition is R-2245 review.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.alarm-ack.observed",
+          "expectation": "For Alarm ack, Observed is 09:18 / J. Kwon.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.alarm-ack.threshold",
+          "expectation": "For Alarm ack, Threshold is Required.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.alarm-ack.state",
+          "expectation": "For Alarm ack, State is Complete.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p04.interlocks.alarm-ack.disposition",
+          "expectation": "For Alarm ack, Disposition is Containment starts.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.spc.interlocks",
-      "category": "table_cell",
-      "weight": 10,
-      "expectation": "SPC interlock table preserves chamber pressure 4.8 mTorr pass/not root cause, clamp purge 18.1 slm below >=19.0 fail/future purge increase only, Ti target age 81.4 kWh watch, thickness monitor residual +1.7 nm fail driving R-2245 review, and alarm acknowledgment 09:18 by J. Kwon complete/containment clock starts.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p05.image.224",
+      "page": 5,
+      "label": "IMG-224 metal-flake SEM",
+      "kind": "image",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p05.img224.binding",
+          "expectation": "IMG-224 is bound to wafer 07 site D5.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.img224.finding",
+          "expectation": "IMG-224 visibly shows two bright irregular metal flakes, one smaller and adjacent.",
+          "harm": 2,
+          "allowPartial": true
+        }
+      ]
     },
     {
-      "id": "p21.defects",
-      "category": "table_cell",
-      "weight": 9,
-      "expectation": "Defect Pareto preserves codes/classes/counts/affected wafers/dispositions for M1, S2, E1, P4, and C3.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p05.image.223",
+      "page": 5,
+      "label": "IMG-223 scratch SEM",
+      "kind": "image",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p05.img223.binding",
+          "expectation": "IMG-223 is bound to wafer 05 site E2.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.img223.finding",
+          "expectation": "IMG-223 visibly shows a long diagonal scratch crossing the field.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.defect.actions",
-      "category": "source_state",
-      "weight": 10,
-      "expectation": "Defect containment actions preserve DCT-1 M1 >20 W07 scrap/no REL sample, DCT-2 S2 W05 engineering hold and sister lot Q8R7-23 inspect, DCT-3 E1 W12 hold pending edge-bead review, DCT-4 P4 W09 conditional release requiring REL-22-A, and DCT-5 C3 W03 hold pending CD remeasure.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p05.image.227",
+      "page": 5,
+      "label": "IMG-227 edge-bead SEM",
+      "kind": "image",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p05.img227.binding",
+          "expectation": "IMG-227 is bound to wafer 12 site A6.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.img227.finding",
+          "expectation": "IMG-227 visibly shows a bright edge-residue band with bead deposits.",
+          "harm": 1,
+          "allowPartial": true
+        }
+      ]
     },
     {
-      "id": "p21.photo.register",
-      "category": "visual_relation",
-      "weight": 9,
-      "expectation": "Photo review register binds frames to wafer/site/finding/disposition: IMG-221/222 W07 M1 scrap, IMG-223 W05 S2 hold, IMG-224 W12 E1 hold, IMG-225 W09 P4 conditional.",
-      "guidance": "",
-      "modality": "visual",
-      "severity": "critical"
+      "id": "p05.image.226",
+      "page": 5,
+      "label": "IMG-226 clean SEM",
+      "kind": "image",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p05.img226.binding",
+          "expectation": "IMG-226 is bound to wafer 09 site F3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.img226.finding",
+          "expectation": "IMG-226 is visually clean apart from low-level background specks.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p05.img226.parametric",
+          "expectation": "The P4 issue for IMG-226 is parametric rather than a visible particle.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.mrb",
-      "category": "source_state",
-      "weight": 12,
-      "expectation": "MRB matrix preserves decisions, reasons, and owners for W07 scrap, W05 hold, W03 hold, W12 hold, W09 conditional release, and release group 01/02/04/06/08/10/11.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p06.defects",
+      "page": 6,
+      "label": "Defect classification",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p06.defects.schema",
+          "expectation": "The region preserves the source field schema in order: Code, Class, Count, Wafer, Gate.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p06.defects.row-order",
+          "expectation": "The source row order is recoverable as: M1 -> S2 -> E1 -> P4 -> C3.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p06.defects.m1.class",
+          "expectation": "For M1, Class is Metal flake.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.m1.count",
+          "expectation": "For M1, Count is 44.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.m1.wafer",
+          "expectation": "For M1, Wafer is 07.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.m1.gate",
+          "expectation": "For M1, Gate is Scrap.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.s2.class",
+          "expectation": "For S2, Class is Scratch.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.s2.count",
+          "expectation": "For S2, Count is 31.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.s2.wafer",
+          "expectation": "For S2, Wafer is 05.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.s2.gate",
+          "expectation": "For S2, Gate is Engineering hold.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.e1.class",
+          "expectation": "For E1, Class is Edge bead.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.e1.count",
+          "expectation": "For E1, Count is 27.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.e1.wafer",
+          "expectation": "For E1, Wafer is 12.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.e1.gate",
+          "expectation": "For E1, Gate is Engineering hold.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.p4.class",
+          "expectation": "For P4, Class is Parametric drift.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.p4.count",
+          "expectation": "For P4, Count is 19.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.p4.wafer",
+          "expectation": "For P4, Wafer is 09.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.p4.gate",
+          "expectation": "For P4, Gate is Conditional.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.c3.class",
+          "expectation": "For C3, Class is Center CD cluster.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.c3.count",
+          "expectation": "For C3, Count is 16.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.c3.wafer",
+          "expectation": "For C3, Wafer is 03.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.defects.c3.gate",
+          "expectation": "For C3, Gate is Remeasure / hold.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.reliability",
-      "category": "table_cell",
-      "weight": 8,
-      "expectation": "Reliability plan preserves REL-22-A wafer 09 HTOL 168h pending as condition for release, REL-22-B/C pass references, and REL-22-D wafer 07 not built/scrap/no credit.",
-      "guidance": "",
-      "modality": "table",
-      "severity": "critical"
+      "id": "p06.mrb",
+      "page": 6,
+      "label": "MRB decisions",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p06.mrb.schema",
+          "expectation": "The region preserves the source field schema in order: Item, Decision, Reason, Owner.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p06.mrb.row-order",
+          "expectation": "The source row order is recoverable as: Wafer 07 -> Wafer 05 -> Wafer 03 -> Wafer 12 -> Wafer 09 -> 01,02,04,06,08,10,11.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p06.mrb.wafer-07.decision",
+          "expectation": "For Wafer 07, Decision is Scrap.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-07.reason",
+          "expectation": "For Wafer 07, Reason is M1 at D5/D6/E5.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-07.owner",
+          "expectation": "For Wafer 07, Owner is Y. Nishida.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-05.decision",
+          "expectation": "For Wafer 05, Decision is Hold.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-05.reason",
+          "expectation": "For Wafer 05, Reason is S2 crosses E2/F2/E3.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-05.owner",
+          "expectation": "For Wafer 05, Owner is A. Roy.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-03.decision",
+          "expectation": "For Wafer 03, Decision is Hold.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-03.reason",
+          "expectation": "For Wafer 03, Reason is C3 high CD B4/C4/B5.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-03.owner",
+          "expectation": "For Wafer 03, Owner is M. Alvarez.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-12.decision",
+          "expectation": "For Wafer 12, Decision is Hold.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-12.reason",
+          "expectation": "For Wafer 12, Reason is E1 at A6/B6.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-12.owner",
+          "expectation": "For Wafer 12, Owner is K. Stone.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-09.decision",
+          "expectation": "For Wafer 09, Decision is Conditional.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-09.reason",
+          "expectation": "For Wafer 09, Reason is P4; REL-22-A required.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.wafer-09.owner",
+          "expectation": "For Wafer 09, Owner is S. Han.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.01-02-04-06-08-10-11.decision",
+          "expectation": "For 01,02,04,06,08,10,11, Decision is Release.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.01-02-04-06-08-10-11.reason",
+          "expectation": "For 01,02,04,06,08,10,11, Reason is Inside disposition limits.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p06.mrb.01-02-04-06-08-10-11.owner",
+          "expectation": "For 01,02,04,06,08,10,11, Owner is MRB.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.shipping",
-      "category": "source_state",
-      "weight": 10,
-      "expectation": "Shipping allocation preserves release-now wafers and die count 127,759, conditional W09 17,880, engineering hold W03/W05/W12 52,144, and scrap W07 16,902 excluded.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p07.reliability",
+      "page": 7,
+      "label": "Reliability sample plan",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p07.reliability.schema",
+          "expectation": "The region preserves the source field schema in order: Sample, Wafer, Stress, Result, Disposition use.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p07.reliability.row-order",
+          "expectation": "The source row order is recoverable as: REL-22-A -> REL-22-B -> REL-22-C -> REL-22-D.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p07.reliability.rel-22-a.wafer",
+          "expectation": "For REL-22-A, Wafer is 09.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-a.stress",
+          "expectation": "For REL-22-A, Stress is HTOL 168 h.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-a.result",
+          "expectation": "For REL-22-A, Result is Pending.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-a.disposition-use",
+          "expectation": "For REL-22-A, Disposition use is Condition for shipment.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-b.wafer",
+          "expectation": "For REL-22-B, Wafer is 02.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-b.stress",
+          "expectation": "For REL-22-B, Stress is TC 100 cycles.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-b.result",
+          "expectation": "For REL-22-B, Result is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-b.disposition-use",
+          "expectation": "For REL-22-B, Disposition use is Reference.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-c.wafer",
+          "expectation": "For REL-22-C, Wafer is 11.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-c.stress",
+          "expectation": "For REL-22-C, Stress is HAST 96 h.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-c.result",
+          "expectation": "For REL-22-C, Result is Pass.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-c.disposition-use",
+          "expectation": "For REL-22-C, Disposition use is Reference.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-d.wafer",
+          "expectation": "For REL-22-D, Wafer is 07.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-d.stress",
+          "expectation": "For REL-22-D, Stress is Not built.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-d.result",
+          "expectation": "For REL-22-D, Result is Scrap.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.reliability.rel-22-d.disposition-use",
+          "expectation": "For REL-22-D, Disposition use is No reliability credit.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.coa",
-      "category": "source_state",
-      "weight": 8,
-      "expectation": "COA holdback preserves that preliminary all-wafer draft is not shipping authority and signed COA must list released wafers plus conditional wafer separately.",
-      "guidance": "",
-      "modality": "source-precedence",
-      "severity": "critical"
+      "id": "p07.shipping",
+      "page": 7,
+      "label": "Shipping allocation",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p07.shipping.schema",
+          "expectation": "The region preserves the source field schema in order: Bucket, Wafers, Good die, Shipment condition.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p07.shipping.row-order",
+          "expectation": "The source row order is recoverable as: Release now -> Conditional -> Engineering hold -> Scrap.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p07.shipping.release-now.wafers",
+          "expectation": "For Release now, Wafers is 01,02,04,06,08,10,11.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.shipping.release-now.good-die",
+          "expectation": "For Release now, Good die is 127,759.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.shipping.release-now.shipment-condition",
+          "expectation": "For Release now, Shipment condition is Standard COA.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.shipping.conditional.wafers",
+          "expectation": "For Conditional, Wafers is 09.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.shipping.conditional.good-die",
+          "expectation": "For Conditional, Good die is 17,880.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.shipping.conditional.shipment-condition",
+          "expectation": "For Conditional, Shipment condition is Wait for REL-22-A pass.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.shipping.engineering-hold.wafers",
+          "expectation": "For Engineering hold, Wafers is 03,05,12.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.shipping.engineering-hold.good-die",
+          "expectation": "For Engineering hold, Good die is 52,144.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.shipping.engineering-hold.shipment-condition",
+          "expectation": "For Engineering hold, Shipment condition is Do not ship.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.shipping.scrap.wafers",
+          "expectation": "For Scrap, Wafers is 07.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.shipping.scrap.good-die",
+          "expectation": "For Scrap, Good die is 16,902.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p07.shipping.scrap.shipment-condition",
+          "expectation": "For Scrap, Shipment condition is Exclude from yield and COA.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
     },
     {
-      "id": "p21.audit",
-      "category": "structure",
-      "weight": 6,
-      "expectation": "Audit trail preserves timestamp/actor/entry/effect sequence from PVD alarm through planning ship-bucket split.",
-      "guidance": "",
-      "modality": "structure",
-      "severity": "major"
+      "id": "p08.coa",
+      "page": 8,
+      "label": "Signed COA holdback",
+      "kind": "table",
+      "budget": 2,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p08.coa.schema",
+          "expectation": "The region preserves the source field schema in order: COA field, Signed value, Application.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p08.coa.row-order",
+          "expectation": "The source row order is recoverable as: Lot -> Released wafers -> Conditional wafer -> Engineering hold -> Scrap -> Executed recipe.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p08.coa.lot.signed-value",
+          "expectation": "For Lot, Signed value is Q8R7-22.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.coa.lot.application",
+          "expectation": "For Lot, Application is All wafers.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.coa.released-wafers.signed-value",
+          "expectation": "For Released wafers, Signed value is 01,02,04,06,08,10,11.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.coa.released-wafers.application",
+          "expectation": "For Released wafers, Application is Ship now.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.coa.conditional-wafer.signed-value",
+          "expectation": "For Conditional wafer, Signed value is 09.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.coa.conditional-wafer.application",
+          "expectation": "For Conditional wafer, Application is After REL-22-A pass.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.coa.engineering-hold.signed-value",
+          "expectation": "For Engineering hold, Signed value is 03,05,12.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.coa.engineering-hold.application",
+          "expectation": "For Engineering hold, Application is Excluded.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.coa.scrap.signed-value",
+          "expectation": "For Scrap, Signed value is 07.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.coa.scrap.application",
+          "expectation": "For Scrap, Application is Excluded from yield and COA.",
+          "harm": 2,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.coa.executed-recipe.signed-value",
+          "expectation": "For Executed recipe, Signed value is TIN_GATE_31.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.coa.executed-recipe.application",
+          "expectation": "For Executed recipe, Application is MES confirmed.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p08.audit",
+      "page": 8,
+      "label": "Lot-disposition audit trail",
+      "kind": "table",
+      "budget": 1,
+      "closedWorld": true,
+      "leaves": [
+        {
+          "id": "p08.audit.schema",
+          "expectation": "The region preserves the source field schema in order: Time, Actor, Entry, Effect.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p08.audit.row-order",
+          "expectation": "The source row order is recoverable as: 10 Jun 12:18 -> 10 Jun 14:40 -> 11 Jun 08:55 -> 11 Jun 10:20 -> 11 Jun 13:30.",
+          "harm": 1,
+          "allowPartial": true
+        },
+        {
+          "id": "p08.audit.10-jun-12-18.actor",
+          "expectation": "For 10 Jun 12:18, Actor is MES.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.10-jun-12-18.entry",
+          "expectation": "For 10 Jun 12:18, Entry is PVD alarm attached.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.10-jun-12-18.effect",
+          "expectation": "For 10 Jun 12:18, Effect is Containment starts.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.10-jun-14-40.actor",
+          "expectation": "For 10 Jun 14:40, Actor is Yield engineering.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.10-jun-14-40.entry",
+          "expectation": "For 10 Jun 14:40, Entry is Map review complete.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.10-jun-14-40.effect",
+          "expectation": "For 10 Jun 14:40, Effect is 03/05/07/12 flagged.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.11-jun-08-55.actor",
+          "expectation": "For 11 Jun 08:55, Actor is MRB.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.11-jun-08-55.entry",
+          "expectation": "For 11 Jun 08:55, Entry is 07 scrap; 09 conditional.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.11-jun-08-55.effect",
+          "expectation": "For 11 Jun 08:55, Effect is Disposition controls.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.11-jun-10-20.actor",
+          "expectation": "For 11 Jun 10:20, Actor is Quality.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.11-jun-10-20.entry",
+          "expectation": "For 11 Jun 10:20, Entry is COA holdback signed.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.11-jun-10-20.effect",
+          "expectation": "For 11 Jun 10:20, Effect is Draft all-wafer COA void.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.11-jun-13-30.actor",
+          "expectation": "For 11 Jun 13:30, Actor is Planning.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.11-jun-13-30.entry",
+          "expectation": "For 11 Jun 13:30, Entry is Ship buckets created.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.audit.11-jun-13-30.effect",
+          "expectation": "For 11 Jun 13:30, Effect is 127,759 die release.",
+          "harm": 1,
+          "allowPartial": false
+        }
+      ]
+    },
+    {
+      "id": "p08.authority",
+      "page": 8,
+      "label": "Shipment-authority statement",
+      "kind": "text",
+      "budget": 1,
+      "closedWorld": false,
+      "leaves": [
+        {
+          "id": "p08.authority.void",
+          "expectation": "The preliminary all-wafer COA is void.",
+          "harm": 1,
+          "allowPartial": false
+        },
+        {
+          "id": "p08.authority.signed",
+          "expectation": "Only the signed COA values on page 8 authorize shipment.",
+          "harm": 2,
+          "allowPartial": false
+        }
+      ]
     }
   ]
 }

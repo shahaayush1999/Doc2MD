@@ -1,7 +1,9 @@
-# Semiconductor Lot Disposition File
+# Lot Q8R7-22 Material Review File
 
-Source modality: Thirteen-page semiconductor MRB packet with traveler, wafer maps, metrology, SPC trend, defect Pareto, recipe conflict, photo register, MRB matrix, reliability plan, COA holdback, and audit trail.
+Source modality: born-digital native manufacturing file with embedded wafer and SEM-like inspection imagery
 
-Family: `semiconductor-quality`
+Family: `semiconductor manufacturing quality`
 
-Tags: `multi-page`, `semiconductor`, `wafer-map`, `spc`, `source-precedence`, `visual-relation`
+Purpose: Test wafer-coordinate bindings, process-source conflicts, metrology and SPC state, real SEM-like image regions, MRB decisions, and shipment authority.
+
+Tags: `native-pdf`, `wafer-maps`, `metrology`, `spc`, `sem-images`, `mrb`, `source-precedence`

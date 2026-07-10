@@ -1,79 +1,104 @@
-# Northwest Pilot Launch Dossier
+# Northwest Pilot Readiness Review
 
-Prepared for the Retail Operations Steering Committee. Packet date: 2026-08-10. Status: conditional go.
+## Executive memo and decision register
 
-## Executive Memo
+The launch covers six stores, two fulfillment nodes, and three payment partners. Friday's activation target is 4,850 devices. Spokane North completed training after the scheduled cutover rehearsal; Bend still has one open POS-to-gateway exception.
 
-The Northwest pilot is a conditional go. The visible steering decision supersedes the draft appendix. Hold criteria are: Bend POS exception open after 2026-08-12 17:00, payment-switch error rate above 1.2%, or Tier 2 backlog above 22 at launch review.
+Finance approved reserve use for gateway freight and temporary floor support only. The Portland service desk remains above its Tier 2 launch threshold after the weekend migration. Signage reprint is deferred and is not reserve eligible.
 
-| Decision item | Owner | Due | State | Condition |
+Authorize the six-store pilot for the 14 August 2026 launch window, subject to closure of the Bend gateway exception and recovery of Tier 2 service-desk backlog to the approved limit.
+
+Decision: **CONDITIONAL GO**. Hold conditions are Bend open after 2026-08-12 17:00, payment-switch errors above 1.2%, or Tier 2 backlog above 22.
+
+| Item | Owner | Due | State | Condition |
 | --- | --- | --- | --- | --- |
-| Gateway freight reserve | Iris | 2026-08-11 | Approved | $18.4k cap |
-| Bend POS exception | Mateo | 2026-08-12 17:00 | Open | must close before go |
-| Service desk staffing | Priya | 2026-08-13 09:00 | Conditional | Tier 2 backlog <= 22 |
-| Signage reprint | Noah | deferred | Not funded | do not include in reserve |
+| Gateway freight reserve | Iris Wu | 11 Aug | Approved | $18.4k cap |
+| Bend POS exception | Mateo Ruiz | 12 Aug 17:00 | Open | close before go |
+| Service desk staffing | Priya Nair | 13 Aug 09:00 | Conditional | Tier 2 <= 22 |
+| Signage reprint | Noah Klein | Deferred | Not funded | outside reserve |
 
-## Launch Metrics Dashboard
+## Launch metrics
 
-Device activations by day: Monday 920, Tuesday 1280, Wednesday 1740, Thursday 2510, Friday 3220.
+Device activations: Mon 920, Tue 1280, Wed 1740, Thu 2510, Fri 3220.
 
-Backlog by queue: Tier 1 has 31 open and 12 blocked; Tier 2 has 19 open and 8 blocked; Partner has 9 open and 4 blocked; Fraud has 6 open and 2 blocked.
+Backlog values are open / blocked: Tier 1 31 / 12, Tier 2 27 / 8, Partner 9 / 4, Fraud 6 / 2. Blocked counts are subsets of open backlog, not additional queue totals. The traffic-light convention is Inside = limit met, Watch = caution, and Outside = limit missed. Snapshot is through Friday 16:00 PT.
 
-| Guardrail | Limit | Current | State |
+| Guardrail | Current | Limit | State |
 | --- | --- | --- | --- |
-| Payment-switch error rate | <=1.2% | 0.9% | OK |
-| Tier 2 backlog | <=22 | 27 | At risk |
-| Gateway inventory buffer | >=140 | 126 | Breach |
-| Store training completion | >=95% | 92% | At risk |
+| Payment-switch errors | 0.9% | <= 1.2% | Inside |
+| Tier 2 backlog | 27 | <= 22 | Outside |
+| Gateway spare units | 126 | >= 140 | Outside |
+| Training completion | 92% | >= 95% | Outside |
 
-Dashboard warning: review the guardrail table before launch review. From the guardrail table, gateway inventory buffer is breached at 126 and Tier 2 backlog is at risk at 27. Conditional go remains valid only if Bend POS closes and service-desk load returns inside threshold.
+## Payment and device dependencies
 
-## Dependency Map
+Required directed edges are POS terminals -> Edge gateway; Handheld scanners -> Edge gateway; Edge gateway -> Payment switch; Payment switch -> Acquirer A, Risk rules, and Settlement ledger; and Risk rules -> Fraud desk. A dashed monitoring-only event-copy path runs from Handheld scanners -> Settlement ledger. EX-214 is the open Bend POS-to-gateway handshake exception.
 
-Required solid dependencies: POS terminals to Edge gateway; Handheld scanners to Edge gateway; Edge gateway to Payment switch; Payment switch to Acquirer A; Payment switch to Risk rules; Risk rules to Fraud desk; Payment switch to Settlement ledger. A dashed fallback path runs from Handheld scanners to Settlement ledger, but it does not satisfy payment authorization.
+| Mark | Meaning | State |
+| --- | --- | --- |
+| Solid | Authorization or control path | Required |
+| Dashed | Scanner event copy to settlement | Monitoring only |
+| EX-214 | Bend POS-to-gateway handshake | Open |
 
-Bend POS exception is on the POS terminals to Edge gateway dependency.
+## Store readiness
 
-## Store Readiness Register
+| Store | Owner | Training | Gateways | Signage | POS | Staffing | Open item |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| PDX-02 Pearl | Lena | OK | 144 | OK | OK | OK | partner token |
+| PDX-05 East | Owen | Watch | 148 | OK | OK | OK | coach shift |
+| SEA-04 Ballard | Nia | OK | 151 | OK | OK | Watch | late coverage |
+| SPK-03 North | Eli | Watch | 146 | OK | OK | OK | retest logged |
+| BND-01 Bend | Mateo | OK | 126 | OK | Blocked | OK | EX-214 gateway |
+| EUG-02 River | Sara | OK | 143 | Watch | OK | OK | signage ETA |
 
-| Store | Mgr | Training | Gateways | Signage | POS | Staffing | Open issue |
-| --- | --- | --- | ---: | --- | --- | --- | --- |
-| SEA-01 Pike | Mina | OK | 148 | OK | OK | OK | none |
-| SEA-04 Ballard | Ravi | OK | 136 | OK | OK | AR | temp floor support |
-| PDX-02 Pearl | Jon | OK | 142 | OK | OK | OK | none |
-| PDX-05 East | Lena | AR | 131 | OK | OK | OK | training makeup Thu |
-| BND-01 Bend | Mateo | OK | 126 | OK | BLK | OK | gateway exception |
-| SPK-03 North | Asha | AR | 144 | OK | OK | AR | late completion |
+- PDX-05 coach shift is scheduled before the Thursday close rehearsal.
+- SPK-03 training retest is logged; the dashboard still shows the packet-time Watch state.
+- BND-01 replacement gateway is staged at the Redmond depot; courier release remains pending EX-214 closure.
+- EUG-02 signage ETA does not use gateway reserve funds.
 
-BND-01 Bend is the only blocked POS row and has the lowest gateway count at 126. PDX-05 East and SPK-03 North are training risks. SEA-04 Ballard has staffing risk but training is OK.
+Owners reconvene 13 August at 09:00 PT. Store states are frozen to the 10 August 15:30 PT packet cut; later field updates require an annotated change record.
 
-## Escalation Matrix
+## Escalation matrix
 
-Legend: G green clear; Y yellow watch; R red blocked. Slash means executive escalation. Dot means external partner required.
+Legend: G = clear; Y = watch; R = blocked; slash = executive escalation; dot = external-partner action.
 
-| Store | Training | Gateway | POS | Staffing | Partner |
+| Store | Gateway | POS | Staffing | Partner |
+| --- | --- | --- | --- | --- |
+| PDX-02 | G | G | G | Y. |
+| PDX-05 | Y/ | G | G | G |
+| SEA-04 | G | G | Y | G |
+| SPK-03 | G | Y | G | G |
+| BND-01 | R | R/ | Y | R/. |
+| EUG-02 | G | G | G | Y |
+
+## Launch reserve ledger
+
+| Vendor | Purpose | Invoice | Eligibility | Paid | Exposure |
 | --- | --- | --- | --- | --- | --- |
-| SEA-01 | G | G | G | G | G |
-| SEA-04 | G | Y | G | Y | G |
-| PDX-02 | G | G | G | G | Y with dot |
-| PDX-05 | Y | Y with slash | G | G | G |
-| BND-01 | G | R | R with slash | Y | R with slash and dot |
-| SPK-03 | Y | G | G | Y | G |
+| LumenWorks | gateway freight | $12,640 | Eligible | $0 | $12,640 |
+| FieldBridge | floor support | $5,760 | Eligible | $2,000 | $3,760 |
+| SignPro | signage reprint | $3,480 | Not eligible | $0 | $0 |
+| SwitchOps | monitoring cover | $2,900 | Not eligible | $0 | $0 |
+| Northstar Print | counter cards | $740 | Not eligible | $740 | $0 |
 
-Matrix reading: BND-01 has red Gateway, red POS with slash, and red Partner with slash and dot. PDX-05 Gateway is yellow with slash, not red.
+| Line | Amount |
+| --- | --- |
+| Eligible invoices before payments | $18,400 |
+| FieldBridge payment applied | -$2,000 |
+| Remaining eligible exposure | $16,400 |
 
-## Procurement and Reserve Ledger
+Partial payment applies only to FieldBridge. Non-eligible invoices do not consume launch reserve.
 
-| Line | Vendor | Purpose | Amount | Reserve eligible | Paid |
-| --- | --- | --- | ---: | --- | --- |
-| 1 | LumenWorks | gateway freight expedite | $12,640 | Yes | No |
-| 2 | FieldBridge | temporary floor support | $5,760 | Yes | Partial $2,000 |
-| 3 | SignPro | signage reprint | $3,480 | No | No |
-| 4 | SwitchOps | payment monitor extension | $2,900 | Yes | No |
-| 5 | Northstar Print | training packet reprint | $740 | No | Paid |
+Finance controller Iris Wu approved the $18,400 eligible invoice base on 9 August. The $2,000 FieldBridge payment posted on 10 August at 12:40 PT; the reconciliation above is after that posting.
 
-Reserve subtotal before payment is $21,300. FieldBridge partial payment is -$2,000. Remaining eligible reserve exposure is $19,300. PARTIAL PAID applies only to FieldBridge, not to the whole ledger. Signage reprint is not reserve eligible.
+## Superseded appendix
 
-## Draft Appendix
+Appendix C version 0.7 was superseded in full by OPS-NW-26-08 on 2026-08-10 at 09:15 PT. Its values remain historical and are not current.
 
-The draft appendix is superseded and retained only for audit context. Draft GO, Tier 2 backlog 18, gateway inventory 158, Bend POS OK, and reserve exposure $17,300 must not replace final visible values: CONDITIONAL GO, Tier 2 backlog 27, gateway inventory 126, Bend POS BLK/open exception, and reserve exposure $19,300.
+| Field | Working value | Status on 7 Aug |
+| --- | --- | --- |
+| Steering decision | GO | draft |
+| Tier 2 backlog | 18 | draft |
+| Gateway spare units | 158 | draft |
+| Bend POS | OK | draft |
+| Reserve exposure | $17,300 | draft |

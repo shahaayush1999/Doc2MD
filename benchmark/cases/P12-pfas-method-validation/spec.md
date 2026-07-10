@@ -1,7 +1,9 @@
-# Regulatory PFAS Method Validation Supplement
+# PFAS Method Validation Supplement
 
-Source modality: Eight-page PFAS method validation supplement with tables, equations, charts, QC states, and final result cross-references.
+Source modality: born-digital native PDF with an embedded chromatogram plate and one scanned sequence sheet
 
-Family: `scientific-regulatory`
+Family: `environmental analytical laboratory`
 
-Tags: `multi-page`, `scientific`, `regulatory`, `tables`, `continuation`, `equations`, `chromatograms`, `qc`
+Purpose: Test scientific notation, nested calibration fields, a continued precision table, a scanned sequence sheet, and analytical visual panels.
+
+Tags: `native-pdf`, `scientific`, `equations`, `nested-table`, `continuation`, `scan`, `chromatograms`
