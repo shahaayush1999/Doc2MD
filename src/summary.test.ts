@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { evaluatorPriceReport, parseFactFile, scoreAtomicRegions, scoringContractFingerprint, scoringContractVersion } from "./score.js";
 import {
+  aggregateDiagnosticSampleFirst,
   aggregateSampleFirst,
   sampleStddev,
   validateCurrentScoreArtifact,
@@ -12,17 +13,32 @@ import {
 const sampleIds = ["001", "002", "003"];
 
 const facts = parseFactFile({
-  schemaVersion: 2,
+  schemaVersion: 3,
   id: "case-a",
+  title: "Case A",
   regions: [
     {
       id: "p01.memo",
-      page: 1,
       label: "Memo",
+      sourceAnchors: [{ page: 1, layer: "native_text", sectionPath: ["Memo"] }],
+      goldSection: "Memo",
       kind: "text",
+      modality: "native_text",
+      uniqueEvidence: true,
+      primaryAxis: "precise_recall",
+      secondaryAxes: [],
+      textOnlyRecoverable: true,
       budget: 1,
-      closedWorld: false,
-      leaves: [{ id: "p01.memo.value", expectation: "Value is 7.", harm: 1, allowPartial: false }],
+      leaves: [
+        {
+          id: "p01.memo.value",
+          canonicalClaimId: "memo-value",
+          claimType: "scalar",
+          expectation: "Value is 7.",
+          harm: 1,
+          evidencePolicy: { type: "lexical", allOf: [["Value"], ["7"]] },
+        },
+      ],
     },
   ],
 });
@@ -104,6 +120,100 @@ test("score artifact validation rejects out-of-range and tampered atomic evidenc
 
 test("sample standard deviation uses n minus one", () => {
   assert.equal(sampleStddev([1, 2, 3]), 1);
+  assert.equal(sampleStddev([1]), null);
+});
+
+test("one-sample aggregation does not fabricate variability", () => {
+  const aggregate = aggregateSampleFirst(
+    [
+      { caseId: "a", samples: [{ sample: "001", score: 40, valid: true }] },
+      { caseId: "b", samples: [{ sample: "001", score: 80, valid: true }] },
+    ],
+    ["001"],
+  );
+  assert.equal(aggregate.complete, true);
+  assert.equal(aggregate.score, 60);
+  assert.equal(aggregate.scoreStddev, null);
+  assert.equal(aggregate.scoreMin, null);
+  assert.equal(aggregate.scoreMax, null);
+  assert.deepEqual(
+    aggregate.caseAggregates.map(({ scoreStddev, scoreMin, scoreMax }) => ({ scoreStddev, scoreMin, scoreMax })),
+    [
+      { scoreStddev: null, scoreMin: null, scoreMax: null },
+      { scoreStddev: null, scoreMin: null, scoreMax: null },
+    ],
+  );
+});
+
+test("diagnostic aggregation is evidence-budget weighted, sample-first, and preserves signed utility", () => {
+  const aggregate = aggregateDiagnosticSampleFirst(
+    [
+      {
+        caseId: "a",
+        samples: [
+          {
+            sample: "001",
+            diagnostics: {
+              byPrimaryAxis: [{ key: "precise_recall", regionCount: 1, totalBudget: 1, score: 100, rawScore: 100 }],
+              byModality: [{ key: "raster", regionCount: 1, totalBudget: 2, score: 0, rawScore: -50 }],
+            },
+          },
+        ],
+      },
+      {
+        caseId: "b",
+        samples: [
+          {
+            sample: "001",
+            diagnostics: {
+              byPrimaryAxis: [
+                { key: "precise_recall", regionCount: 2, totalBudget: 3, score: 0, rawScore: 0 },
+                { key: "table_reconstruction", regionCount: 1, totalBudget: 2, score: 75, rawScore: 75 },
+              ],
+              byModality: [{ key: "native_text", regionCount: 1, totalBudget: 1, score: 50, rawScore: 50 }],
+            },
+          },
+        ],
+      },
+    ],
+    ["001"],
+  );
+
+  assert.equal(aggregate.complete, true);
+  assert.deepEqual(aggregate.byPrimaryAxis[0], {
+    key: "precise_recall",
+    caseCount: 2,
+    regionCount: 3,
+    totalBudget: 4,
+    score: 25,
+    rawScore: 25,
+    sampleScores: [{ sample: "001", score: 25, rawScore: 25 }],
+    scoreStddev: null,
+    scoreMin: null,
+    scoreMax: null,
+  });
+  assert.deepEqual(aggregate.byModality.find((row) => row.key === "raster"), {
+    key: "raster",
+    caseCount: 1,
+    regionCount: 1,
+    totalBudget: 2,
+    score: 0,
+    rawScore: -50,
+    sampleScores: [{ sample: "001", score: 0, rawScore: -50 }],
+    scoreStddev: null,
+    scoreMin: null,
+    scoreMax: null,
+  });
+});
+
+test("diagnostic aggregation rejects incomplete evidence cohorts", () => {
+  const aggregate = aggregateDiagnosticSampleFirst(
+    [{ caseId: "a", samples: [{ sample: "001", diagnostics: null }] }],
+    ["001"],
+  );
+  assert.equal(aggregate.complete, false);
+  assert.deepEqual(aggregate.byPrimaryAxis, []);
+  assert.deepEqual(aggregate.byModality, []);
 });
 
 test("suite aggregation is equal-case and sample-first", () => {

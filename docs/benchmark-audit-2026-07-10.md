@@ -1,5 +1,7 @@
 # Benchmark Audit and Iteration Record — 2026-07-10
 
+> **Historical baseline:** This file records the superseded saturated corpus and its six-model, three-sample experiment. It is retained to explain why the benchmark is being rebuilt; it does not describe the current development protocol. Current development uses only GPT-5 Nano and Gemini 3.1 Flash-Lite, one sample per model/case, and reports no SD/range or reliability estimate. The old run artifacts are invalid under the current sample-protocol fingerprint.
+
 ## Executive verdict
 
 The rebuilt Doc2MD suite is a defensible development benchmark for faithful, end-to-end PDF-to-Markdown reconstruction. Its corpus, facts contract, inference cache, scorer, aggregation, and report now have explicit integrity checks. It is useful for comparing provider PDF pipelines, finding truncation and reliability failures, and separating the cheapest models from stronger low-cost models.

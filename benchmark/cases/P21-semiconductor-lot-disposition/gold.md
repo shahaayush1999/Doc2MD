@@ -33,6 +33,15 @@ Wafer 03 C3 cells: B4, C4, B5. Wafer 05 S2 cells: E2, F2, E3. Wafer 07 M1 cells:
 | C3 | Center CD cluster | Violet | Remeasure / MRB |
 | E0 | Edge mark | Gray | Reference only |
 
+Integrated reference conclusions:
+
+- Wafer 03 marks a three-cell C3 cluster at B4, C4, and B5.
+- Wafer 05 marks an S2 path at E2, F2, and E3.
+- Wafer 07 marks an adjacent M1 cluster at D5, D6, and E5.
+- Wafer 09 marks only F3 as P4.
+- Wafer 12 marks the A6 and B6 edge cells as E1.
+- Wafer 02 marks only A1 as the gray E0 reference cell.
+
 ## CD-SEM metrology review
 
 | Wafer / site | CD nm | Delta nm | Flag | Image ref | Reviewer note |
@@ -56,6 +65,8 @@ Wafer 03 C3 cells: B4, C4, B5. Wafer 05 S2 cells: E2, F2, E3. Wafer 07 M1 cells:
 
 SPC points: R-2241 41.2 nm (Inside), R-2242 42.0 nm (Inside), R-2243 43.8 nm (Inside), R-2244 45.6 nm (Warning), R-2245 47.4 nm (Above UCL), R-2246 46.2 nm (Warning), R-2247 44.1 nm (Recovered). Warning is 45.0 nm and UCL is 47.0 nm.
 
+Chart reconstruction: the horizontal x-axis is run sequence and the vertical y-axis is TiN thickness in nm. The blue solid line is the PVD-03 measured TiN-thickness series. Blue points mean inside or recovered below the warning threshold; amber points mean warning at or above 45.0 nm but below 47.0 nm; a red point means above the 47.0 nm UCL. The amber dashed line is the 45.0 nm warning threshold and the red dashed line is the 47.0 nm UCL. The series rises from R-2241 through a 47.4 nm peak at R-2245, then falls through R-2246 to a recovered 44.1 nm at R-2247.
+
 | Interlock | Observed | Threshold | State | Disposition |
 | --- | --- | --- | --- | --- |
 | Chamber pressure | 4.8 mTorr | <=5.0 | Pass | Not root cause |
@@ -66,7 +77,7 @@ SPC points: R-2241 41.2 nm (Inside), R-2242 42.0 nm (Inside), R-2243 43.8 nm (In
 
 ## SEM review contact sheet
 
-IMG-224 / W07 D5 shows two bright irregular metal flakes, including an adjacent smaller flake. IMG-223 / W05 E2 shows a long diagonal scratch crossing the field. IMG-227 / W12 A6 shows a bright edge-residue band with small bead deposits. IMG-226 / W09 F3 is visually clean apart from low-level background specks; its P4 issue is parametric rather than a visible particle.
+The page labels only the archive frame and inspected site; the morphology must be recovered from each image. IMG-224 / W07 D5 shows two bright irregular metal flakes, including an adjacent smaller flake. IMG-223 / W05 E2 shows a long diagonal scratch crossing the field. IMG-227 / W12 A6 shows a bright edge-residue band with small bead deposits. IMG-226 / W09 F3 is visually clean apart from low-level background specks.
 
 ## Defect classification and MRB decisions
 
@@ -80,11 +91,11 @@ IMG-224 / W07 D5 shows two bright irregular metal flakes, including an adjacent 
 
 | Item | Decision | Reason | Owner |
 | --- | --- | --- | --- |
-| Wafer 07 | Scrap | M1 at D5/D6/E5 | Y. Nishida |
-| Wafer 05 | Hold | S2 crosses E2/F2/E3 | A. Roy |
-| Wafer 03 | Hold | C3 high CD B4/C4/B5 | M. Alvarez |
-| Wafer 12 | Hold | E1 at A6/B6 | K. Stone |
-| Wafer 09 | Conditional | P4; REL-22-A required | S. Han |
+| Wafer 07 | Scrap | Map W07-M1 plus IMG-224/225 | Y. Nishida |
+| Wafer 05 | Hold | Map W05-S2 plus IMG-223 | A. Roy |
+| Wafer 03 | Hold | Map W03-C3 plus metrology | M. Alvarez |
+| Wafer 12 | Hold | Map W12-E1 plus IMG-227 | K. Stone |
+| Wafer 09 | Conditional | P4 parametric; REL-22-A required | S. Han |
 | 01,02,04,06,08,10,11 | Release | Inside disposition limits | MRB |
 
 ## Reliability conditions and shipping allocation
@@ -102,6 +113,19 @@ IMG-224 / W07 D5 shows two bright irregular metal flakes, including an adjacent 
 | Conditional | 09 | 17,880 | Wait for REL-22-A pass |
 | Engineering hold | 03,05,12 | 52,144 | Do not ship |
 | Scrap | 07 | 16,902 | Exclude from yield and COA |
+
+The scanned HTOL load ticket binds REL-22-A / wafer 09 to chamber H-17 and tray C4, loaded 2026-06-11 14:22. KT witnessed the door seal; humidity logger HL-88 is attached. The 24 h observation reports no electrical reject, but the final 168 h result remains pending and wafer 09 remains segregated. S. Han and M. Alvarez signed custody at 14:22 and 14:31.
+
+## Defect-image verification worksheet
+
+The scanned IQC-071 worksheet covers lot Q8R7-22 and image set IMG-223/224/226/227. Wafer-map comparison and neighboring-die review are checked. Independent morphology confirmation is unchecked. Preliminary all-wafer COA release is unchecked. Reticle excursion review is disabled as not applicable to the PVD-origin event. IMG-224's initial count of one is struck and corrected to two reportable objects; the worksheet defers morphology to the controlled image archive. R. Kim signed 2026-06-11 09:42 and A. Roy reviewed at 11:06.
+
+| Archive object | Custodian | Checksum state | Packet role |
+| --- | --- | --- | --- |
+| IQC-071 | Incoming quality | Signed | Inspection worksheet |
+| IMG set 223/224/226/227 | Fab image archive | Matched | Visual evidence |
+| MAP-11JUN | Yield engineering | Matched | Coordinate source |
+| COA-DRAFT-02 | Quality systems | Void | Not shipment authority |
 
 ## Certificate holdback and final audit trail
 
@@ -122,4 +146,8 @@ IMG-224 / W07 D5 shows two bright irregular metal flakes, including an adjacent 
 | 11 Jun 10:20 | Quality | COA holdback signed | Draft all-wafer COA void |
 | 11 Jun 13:30 | Planning | Ship buckets created | 127,759 die release |
 
-The preliminary all-wafer COA is void; only the signed COA values authorize shipment.
+The preliminary all-wafer COA is void; only the signed COA values authorize shipment. Cross-source joins remain explicit: wafer 07's M1 map cluster and IMG-224/225 evidence support scrap; wafer 09's visually clean IMG-226 does not negate its P4 parametric condition and REL-22-A shipment gate; the W12 E1 edge map and IMG-227 support engineering hold.
+
+Integrated reference conclusions:
+
+- Wafer 07's M1 map cluster and IMG-224 and IMG-225 evidence are explicitly linked to the scrap decision.

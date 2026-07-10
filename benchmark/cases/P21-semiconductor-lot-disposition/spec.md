@@ -1,6 +1,6 @@
 # Lot Q8R7-22 Material Review File
 
-Source modality: born-digital native manufacturing file with embedded wafer and SEM-like inspection imagery
+Source modality: mixed manufacturing file with native records, two full-page scanned reviews, SEM imagery, and scanned inspection forms
 
 Family: `semiconductor manufacturing quality`
 

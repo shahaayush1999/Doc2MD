@@ -5,42 +5,25 @@
   "scoreName": "Doc2MD Native PDF Score",
   "inputProtocol": "native_pdf",
   "providerFileModePolicy": "Send the native PDF file to the provider and record the provider's documented PDF ingestion mode separately. Do not convert official inputs to page images in the harness.",
-  "version": "0.2.0",
-  "description": "A compact mixed-modality benchmark for faithful reconstruction of realistic born-digital, scanned-region, technical-visual, stateful, and malformed-office PDFs into Markdown.",
-  "caseCount": 7,
-  "pageCount": 49,
+  "version": "1.0.0",
+  "description": "An unsaturated mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
+  "caseCount": 5,
+  "pageCount": 84,
   "cases": [
     {
-      "id": "P07-launch-readiness-dossier",
-      "title": "Northwest Pilot Readiness Review",
-      "family": "retail operations",
-      "tags": [
-        "native-pdf",
-        "dashboard",
-        "dependency-map",
-        "heatmap",
-        "source-precedence"
-      ],
-      "pages": 7,
-      "pdf": "benchmark/cases/P07-launch-readiness-dossier/source.pdf",
-      "gold": "benchmark/cases/P07-launch-readiness-dossier/gold.md",
-      "spec": "benchmark/cases/P07-launch-readiness-dossier/spec.md",
-      "facts": "benchmark/cases/P07-launch-readiness-dossier/facts.json"
-    },
-    {
       "id": "P12-pfas-method-validation",
-      "title": "PFAS Method Validation Supplement",
+      "title": "PFAS Method Validation and Batch Release Packet",
       "family": "environmental analytical laboratory",
       "tags": [
-        "native-pdf",
+        "mixed-modality",
         "scientific",
-        "equations",
-        "nested-table",
-        "continuation",
-        "scan",
-        "chromatograms"
+        "calibration",
+        "continued-table",
+        "full-page-scans",
+        "chromatograms",
+        "source-precedence"
       ],
-      "pages": 7,
+      "pages": 12,
       "pdf": "benchmark/cases/P12-pfas-method-validation/source.pdf",
       "gold": "benchmark/cases/P12-pfas-method-validation/gold.md",
       "spec": "benchmark/cases/P12-pfas-method-validation/spec.md",
@@ -51,14 +34,17 @@
       "title": "Suite 214 Laboratory Coordination Set",
       "family": "architectural and building systems",
       "tags": [
-        "native-pdf",
-        "floorplan",
+        "mixed-pdf",
+        "floorplan-overlay",
+        "reflected-ceiling-plan",
         "rack-elevation",
         "directed-topology",
         "panel-schedule",
-        "scanned-rfi"
+        "scanned-rfi",
+        "field-photos",
+        "source-precedence"
       ],
-      "pages": 6,
+      "pages": 10,
       "pdf": "benchmark/cases/P15-architecture-floorplan-diagrams/source.pdf",
       "gold": "benchmark/cases/P15-architecture-floorplan-diagrams/gold.md",
       "spec": "benchmark/cases/P15-architecture-floorplan-diagrams/spec.md",
@@ -66,42 +52,24 @@
     },
     {
       "id": "P17-clinical-trial-site-monitoring",
-      "title": "HTX-204 Site 014 Monitoring File",
-      "family": "clinical trial site operations",
+      "title": "HTX-204 Site 014 Monitoring Source Packet",
+      "family": "regulated clinical site monitoring",
       "tags": [
-        "native-pdf",
-        "longitudinal-records",
-        "labs",
-        "deviations",
-        "corrected-ecrf",
-        "accountability-form",
-        "source-state"
+        "long-context",
+        "mixed-modality",
+        "full-page-scans",
+        "continued-tables",
+        "source-precedence",
+        "corrected-entries",
+        "checkbox-state",
+        "longitudinal-entities",
+        "tail-obligations"
       ],
-      "pages": 9,
+      "pages": 48,
       "pdf": "benchmark/cases/P17-clinical-trial-site-monitoring/source.pdf",
       "gold": "benchmark/cases/P17-clinical-trial-site-monitoring/gold.md",
       "spec": "benchmark/cases/P17-clinical-trial-site-monitoring/spec.md",
       "facts": "benchmark/cases/P17-clinical-trial-site-monitoring/facts.json"
-    },
-    {
-      "id": "P20-utility-outage-restoration",
-      "title": "Feeder 12R Outage Investigation",
-      "family": "electric utility incident operations",
-      "tags": [
-        "native-pdf",
-        "scada",
-        "switching-log",
-        "one-line",
-        "restoration-chart",
-        "field-photos",
-        "redline",
-        "source-precedence"
-      ],
-      "pages": 8,
-      "pdf": "benchmark/cases/P20-utility-outage-restoration/source.pdf",
-      "gold": "benchmark/cases/P20-utility-outage-restoration/gold.md",
-      "spec": "benchmark/cases/P20-utility-outage-restoration/spec.md",
-      "facts": "benchmark/cases/P20-utility-outage-restoration/facts.json"
     },
     {
       "id": "P21-semiconductor-lot-disposition",
@@ -116,7 +84,7 @@
         "mrb",
         "source-precedence"
       ],
-      "pages": 8,
+      "pages": 9,
       "pdf": "benchmark/cases/P21-semiconductor-lot-disposition/source.pdf",
       "gold": "benchmark/cases/P21-semiconductor-lot-disposition/gold.md",
       "spec": "benchmark/cases/P21-semiconductor-lot-disposition/spec.md",
@@ -124,17 +92,19 @@
     },
     {
       "id": "P23-native-text-layer-recovery",
-      "title": "West Region Logistics Exception Control Packet",
+      "title": "Northstar Cold Chain Supplier Cutover Authorization",
       "family": "office export recovery",
       "tags": [
         "native-pdf",
         "libreoffice-export",
         "malformed-layout",
         "native-text-recovery",
+        "mixed-modality",
         "tables",
-        "source-precedence"
+        "source-precedence",
+        "reading-order"
       ],
-      "pages": 4,
+      "pages": 5,
       "pdf": "benchmark/cases/P23-native-text-layer-recovery/source.pdf",
       "gold": "benchmark/cases/P23-native-text-layer-recovery/gold.md",
       "spec": "benchmark/cases/P23-native-text-layer-recovery/spec.md",

@@ -4,8 +4,8 @@ import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { fileURLToPath } from "node:url";
 import { generateText } from "ai";
-import { createGoogleVertex, googleVertex } from "@ai-sdk/google-vertex";
-import { openai } from "@ai-sdk/openai";
+import { createGoogleVertex } from "@ai-sdk/google-vertex";
+import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
 import { fileSha256, hashObject, sha256, sha256Bytes } from "./cache.js";
 import { runBoundedJobs } from "./concurrency.js";
@@ -16,6 +16,7 @@ import {
   calculateTokenCostUsd,
   parseRunCliArgs,
   runUsage,
+  writeImmutableJson,
 } from "./runRuntime.js";
 import { canonicalProjectReference, loadBenchmarkManifest } from "./manifest.js";
 
@@ -53,6 +54,28 @@ const runCacheSchema = z.strictObject({
   providerFileMode: z.string().min(1),
   predictionHash: z.string().length(64),
 });
+const inferenceAttemptMarkerSchema = z.strictObject({
+  schemaVersion: z.literal(1),
+  kind: z.literal("paid_inference_attempt_reserved"),
+  runKey: z.string().length(64),
+  caseId: z.string().min(1),
+  modelId: z.string().min(1),
+  sample: z.string().regex(/^\d{3}$/),
+  logicalSampleDraw: z.literal(1),
+  transportMaxRetries: nonnegativeInteger,
+  runMode: z.enum(["development_anchor", "final_validation"]),
+  authorizationHash: z.string().length(64).nullable(),
+  createdAt: z.string().min(1),
+});
+const inferenceAttemptReferenceSchema = z.strictObject({
+  markerPath: z.string().min(1),
+  markerHash: z.string().length(64),
+  logicalSampleDraw: z.literal(1),
+  logicalGenerationCalls: z.literal(1),
+  transportMaxRetries: nonnegativeInteger,
+  transportRequestAttempts: z.number().int().positive(),
+  retriesAreCohortSamples: z.literal(false),
+});
 const currentRunArtifactSchema = z.object({
   artifactStatus: z.literal("scoreable_model_response"),
   responseReceived: z.literal(true),
@@ -77,6 +100,12 @@ const currentRunArtifactSchema = z.object({
     transportEpoch: z.string().min(1),
     providerPayloadMode: z.string().min(1),
     samplingMode: z.string().min(1),
+    logicalSampleDraw: z.literal(1),
+    logicalGenerationCalls: z.literal(1),
+    transportRequestAttempts: z.number().int().positive(),
+    retriesAreCohortSamples: z.literal(false),
+    runMode: z.enum(["development_anchor", "final_validation"]),
+    authorizationHash: z.string().length(64).nullable(),
     sdkVersions: z.strictObject({
       ai: z.string().min(1),
       providerPackage: z.string().min(1),
@@ -108,6 +137,7 @@ const currentRunArtifactSchema = z.object({
   outputLength: nonnegativeInteger,
   sample: z.string().regex(/^\d{3}$/),
   cache: runCacheSchema,
+  inferenceAttempt: inferenceAttemptReferenceSchema,
   inputMode: z.string().min(1),
 }).passthrough();
 
@@ -223,10 +253,56 @@ export const models: Record<string, ModelSpec> = {
 
 export const benchmarkModelIds = ["openai-gpt-5-nano", "vertex-gemini-3.1-flash-lite"] as const;
 
-export const samplesPerModelCase = 3;
-export const maxOutputTokens = 24000;
+export const finalValidationAuthorizationEnvironment = "DOC2MD_FINAL_VALIDATION_AUTHORIZATION";
+const finalValidationAuthorizationPrefix = "final-validation:";
+
+export type PaidInferenceAuthorization = {
+  runMode: "development_anchor" | "final_validation";
+  authorizationHash: string | null;
+};
+
+/**
+ * Central authorization gate for every paid inference path. A non-anchor model
+ * requires the same checkpoint id from both the caller and the environment, so
+ * selecting a registry model by name alone can never start a paid request.
+ */
+export function authorizePaidInference(
+  modelId: string,
+  suppliedAuthorization?: string,
+  environment: NodeJS.ProcessEnv = process.env,
+): PaidInferenceAuthorization {
+  if ((benchmarkModelIds as readonly string[]).includes(modelId)) {
+    return { runMode: "development_anchor", authorizationHash: null };
+  }
+  const configuredAuthorization = environment[finalValidationAuthorizationEnvironment]?.trim();
+  const supplied = suppliedAuthorization?.trim();
+  if (
+    !configuredAuthorization ||
+    !supplied ||
+    configuredAuthorization !== supplied ||
+    !configuredAuthorization.startsWith(finalValidationAuthorizationPrefix) ||
+    configuredAuthorization.length <= finalValidationAuthorizationPrefix.length
+  ) {
+    throw new Error(
+      `${modelId} is not a development anchor. A non-anchor final-validation run requires a checkpoint id beginning ` +
+        `with ${JSON.stringify(finalValidationAuthorizationPrefix)} supplied both through --final-validation-authorization and ` +
+        `${finalValidationAuthorizationEnvironment}.`,
+    );
+  }
+  return { runMode: "final_validation", authorizationHash: sha256(configuredAuthorization) };
+}
+
+// Development runs intentionally use one stochastic draw. Repeated cohorts are
+// reserved for an explicitly approved final-validation checkpoint; changing
+// this value is part of the hashed inference protocol, so prior multi-sample
+// artifacts cannot be mistaken for current development evidence.
+export const samplesPerModelCase = 1;
+// Both development anchors support at least 65,535 output tokens. Keep enough
+// headroom for exhaustive long-document reconstruction so a 48-page case is
+// measuring model fidelity rather than an artificial harness truncation.
+export const maxOutputTokens = 60_000;
 export const inputMode = "native_pdf";
-export const inferenceProtocolVersion = "native-pdf-v2";
+export const inferenceProtocolVersion = "native-pdf-v3-immutable-attempt-ledger";
 export const inferenceMaxRetries = 2;
 export const inferenceConcurrency = positiveIntegerEnvironment("DOC2MD_INFERENCE_CONCURRENCY", 6);
 const pdfMediaType = "application/pdf";
@@ -305,17 +381,28 @@ export function vertexProviderRoute(spec: ModelSpec, environment: NodeJS.Process
   } as const;
 }
 
-function providerModel(spec: ModelSpec) {
+type TransportAttemptCounter = { requests: number };
+
+function countedFetch(counter: TransportAttemptCounter): typeof globalThis.fetch {
+  return async (input, init) => {
+    counter.requests += 1;
+    return globalThis.fetch(input, init);
+  };
+}
+
+function providerModel(spec: ModelSpec, counter: TransportAttemptCounter) {
+  const fetch = countedFetch(counter);
   switch (spec.provider) {
     case "google-vertex": {
       const route = vertexProviderRoute(spec);
-      if (spec.location || spec.baseURL) {
-        return createGoogleVertex({ location: route.location ?? undefined, baseURL: route.baseURL ?? undefined })(spec.modelName);
-      }
-      return googleVertex(spec.modelName);
+      return createGoogleVertex({
+        location: route.location ?? undefined,
+        baseURL: route.baseURL ?? undefined,
+        fetch,
+      })(spec.modelName);
     }
     case "openai":
-      return openai(spec.modelName);
+      return createOpenAI({ fetch })(spec.modelName);
   }
 }
 
@@ -405,7 +492,7 @@ export type InferenceProtocol = {
 
 const require = createRequire(import.meta.url);
 const aiSdkVersion = (require("ai/package.json") as { version: string }).version;
-const inferenceTransportEpoch = "generate-text-native-pdf-buffer-v2";
+const inferenceTransportEpoch = "generate-text-native-pdf-buffer-v3-counted-transport";
 const inferenceProviderPayloadMode = "messages.user.content.file.buffer";
 const inferenceSamplingMode = "provider-default-sampling";
 
@@ -561,6 +648,10 @@ export function buildRunCacheExpectation(
   };
 }
 
+export function inferenceAttemptMarkerPath(sampleDirectory: string, runKey: string): string {
+  return path.join(sampleDirectory, "attempts", `${runKey}.json`);
+}
+
 export async function readCurrentCachedRun(resultPath: string, predictionPath: string, expected: RunCacheExpectation) {
   const rawResult = await readJsonIfExists(resultPath);
   const parsed = currentRunArtifactSchema.safeParse(rawResult);
@@ -609,6 +700,40 @@ export async function readCurrentCachedRun(resultPath: string, predictionPath: s
   // Legacy artifacts used one broad catch block and could record disk/configuration
   // failures as model errors. They are not trustworthy scoreable responses.
   if (result.error) return null;
+  const expectedAttemptPath = inferenceAttemptMarkerPath(path.dirname(resultPath), expected.runKey);
+  if (canonicalProjectReference(result.inferenceAttempt.markerPath) !== canonicalProjectReference(expectedAttemptPath)) return null;
+  const rawAttemptMarker = await readJsonIfExists(expectedAttemptPath);
+  const parsedAttemptMarker = inferenceAttemptMarkerSchema.safeParse(rawAttemptMarker);
+  if (!parsedAttemptMarker.success) return null;
+  const attemptMarker = parsedAttemptMarker.data;
+  const anchorRun = (benchmarkModelIds as readonly string[]).includes(expected.modelId);
+  if (
+    attemptMarker.runKey !== expected.runKey ||
+    attemptMarker.caseId !== expected.caseId ||
+    attemptMarker.modelId !== expected.modelId ||
+    attemptMarker.sample !== expected.sample ||
+    attemptMarker.transportMaxRetries !== expected.protocol.maxRetries ||
+    attemptMarker.runMode !== (anchorRun ? "development_anchor" : "final_validation") ||
+    (anchorRun ? attemptMarker.authorizationHash !== null : attemptMarker.authorizationHash === null) ||
+    result.inferenceAttempt.logicalSampleDraw !== 1 ||
+    result.inferenceAttempt.logicalGenerationCalls !== 1 ||
+    result.inferenceAttempt.transportMaxRetries !== expected.protocol.maxRetries ||
+    result.inferenceAttempt.transportRequestAttempts > expected.protocol.maxRetries + 1 ||
+    result.inferenceAttempt.retriesAreCohortSamples !== false ||
+    result.executionProvenance.logicalSampleDraw !== 1 ||
+    result.executionProvenance.logicalGenerationCalls !== 1 ||
+    result.executionProvenance.transportRequestAttempts !== result.inferenceAttempt.transportRequestAttempts ||
+    result.executionProvenance.retriesAreCohortSamples !== false ||
+    result.executionProvenance.runMode !== attemptMarker.runMode ||
+    result.executionProvenance.authorizationHash !== attemptMarker.authorizationHash
+  ) {
+    return null;
+  }
+  try {
+    if ((await fileSha256(expectedAttemptPath)) !== result.inferenceAttempt.markerHash) return null;
+  } catch {
+    return null;
+  }
   if (!(await exists(predictionPath))) return null;
   const prediction = await readFile(predictionPath, "utf-8");
   if (prediction.length !== result.outputLength || sha256(prediction) !== result.cache.predictionHash) return null;
@@ -643,7 +768,35 @@ function sampleId(index: number) {
   return String(index).padStart(3, "0");
 }
 
-async function runCaseSample(testCase: ManifestCase, spec: ModelSpec, context: RunContext, sample: string, options: { force?: boolean } = {}) {
+async function reserveInferenceAttempt(
+  markerPath: string,
+  marker: z.infer<typeof inferenceAttemptMarkerSchema>,
+): Promise<{ markerPath: string; markerHash: string }> {
+  try {
+    await writeImmutableJson(markerPath, marker);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "EEXIST") {
+      throw new RunInfrastructureError(
+        `An immutable paid-attempt marker already exists for ${marker.modelId} ${marker.caseId}#${marker.sample} ` +
+          `and run key ${marker.runKey}. The harness will not issue another stochastic draw. Investigate the prior attempt marker instead.`,
+        { cause: error },
+      );
+    }
+    throw new RunInfrastructureError(
+      `Cannot reserve the immutable paid-attempt marker for ${marker.modelId} ${marker.caseId}#${marker.sample}; provider call was not started.`,
+      { cause: error },
+    );
+  }
+  return { markerPath: canonicalProjectReference(markerPath), markerHash: await fileSha256(markerPath) };
+}
+
+async function runCaseSample(
+  testCase: ManifestCase,
+  spec: ModelSpec,
+  context: RunContext,
+  sample: string,
+  authorization: PaidInferenceAuthorization,
+) {
   const outputDir = path.join("runs", spec.id, testCase.id, "samples", sample);
   await mkdir(outputDir, { recursive: true });
   const cache = await runCacheKey(testCase, spec, context, sample);
@@ -654,7 +807,7 @@ async function runCaseSample(testCase: ManifestCase, spec: ModelSpec, context: R
   try {
     // The cache must be checked only after exclusive ownership: another runner
     // may have completed this exact sample while this process waited.
-    const cached = options.force ? null : await readCurrentCachedRun(resultPath, predictionPath, expectedRun);
+    const cached = await readCurrentCachedRun(resultPath, predictionPath, expectedRun);
     if (cached) {
       await refreshPriceReport(resultPath, cached, spec);
       console.log(`${spec.id} ${testCase.id}#${sample}: skip cached${cached.finishReason === "error" ? " model response failure" : ""}`);
@@ -673,9 +826,10 @@ async function runCaseSample(testCase: ManifestCase, spec: ModelSpec, context: R
       );
     }
 
+    const transportAttemptCounter: TransportAttemptCounter = { requests: 0 };
     let model: ReturnType<typeof providerModel>;
     try {
-      model = providerModel(spec);
+      model = providerModel(spec, transportAttemptCounter);
     } catch (error) {
       throw new RunInfrastructureError(`Cannot configure provider model ${spec.id}.`, { cause: error });
     }
@@ -690,6 +844,24 @@ async function runCaseSample(testCase: ManifestCase, spec: ModelSpec, context: R
         cause: error,
       });
     }
+
+    const attemptMarker = inferenceAttemptMarkerSchema.parse({
+      schemaVersion: 1,
+      kind: "paid_inference_attempt_reserved",
+      runKey: cache.runKey,
+      caseId: testCase.id,
+      modelId: spec.id,
+      sample,
+      logicalSampleDraw: 1,
+      transportMaxRetries: inferenceMaxRetries,
+      runMode: authorization.runMode,
+      authorizationHash: authorization.authorizationHash,
+      createdAt: new Date().toISOString(),
+    });
+    const attemptReference = await reserveInferenceAttempt(
+      inferenceAttemptMarkerPath(outputDir, cache.runKey),
+      attemptMarker,
+    );
 
     const started = performance.now();
     const result = await (async () => {
@@ -717,6 +889,12 @@ async function runCaseSample(testCase: ManifestCase, spec: ModelSpec, context: R
       }
     })();
     const elapsedMs = Math.round(performance.now() - started);
+    if (transportAttemptCounter.requests < 1 || transportAttemptCounter.requests > inferenceMaxRetries + 1) {
+      throw new RunInfrastructureError(
+        `Provider transport-attempt telemetry was invalid for ${spec.id} ${testCase.id}#${sample}; ` +
+          `recorded ${transportAttemptCounter.requests} request(s) with maxRetries=${inferenceMaxRetries}. No scoreable artifact was written.`,
+      );
+    }
     const predictionHash = sha256(result.text);
     const pricing = priceReport(spec, result.usage);
     const summary = {
@@ -743,6 +921,12 @@ async function runCaseSample(testCase: ManifestCase, spec: ModelSpec, context: R
         transportEpoch: context.protocol.transportEpoch,
         providerPayloadMode: context.protocol.providerPayloadMode,
         samplingMode: context.protocol.samplingMode,
+        logicalSampleDraw: 1,
+        logicalGenerationCalls: 1,
+        transportRequestAttempts: transportAttemptCounter.requests,
+        retriesAreCohortSamples: false,
+        runMode: authorization.runMode,
+        authorizationHash: authorization.authorizationHash,
         sdkVersions: context.protocol.sdkVersions,
         promptHash: context.promptHash,
         protocolHash: context.protocolHash,
@@ -785,6 +969,14 @@ async function runCaseSample(testCase: ManifestCase, spec: ModelSpec, context: R
       outputLength: result.text.length,
       sample,
       cache: { ...cache, predictionHash },
+      inferenceAttempt: {
+        ...attemptReference,
+        logicalSampleDraw: 1,
+        logicalGenerationCalls: 1,
+        transportMaxRetries: inferenceMaxRetries,
+        transportRequestAttempts: transportAttemptCounter.requests,
+        retriesAreCohortSamples: false,
+      },
       inputMode,
     };
     const validatedSummary = currentRunArtifactSchema.safeParse(summary);
@@ -814,14 +1006,20 @@ async function runCaseSample(testCase: ManifestCase, spec: ModelSpec, context: R
 
 export async function runModel(
   modelId: string,
-  options: { caseId?: string; force?: boolean; manifestPath?: string; skipPreflight?: boolean } = {},
+  options: {
+    caseId?: string;
+    manifestPath?: string;
+    skipPreflight?: boolean;
+    finalValidationAuthorization?: string;
+  } = {},
 ) {
+  const spec = models[modelId];
+  if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
+  const authorization = authorizePaidInference(modelId, options.finalValidationAuthorization);
   if (!options.skipPreflight) {
     const { preflightBenchmark } = await import("./preflight.js");
     await preflightBenchmark(options.manifestPath ?? "benchmark/manifest.json");
   }
-  const spec = models[modelId];
-  if (!spec) throw new Error(`Unknown model ${modelId}. Options: ${Object.keys(models).join(", ")}`);
 
   const manifestPath = options.manifestPath ?? "benchmark/manifest.json";
   const manifest = (await loadBenchmarkManifest(manifestPath)).manifest as Manifest;
@@ -836,7 +1034,7 @@ export async function runModel(
   );
   const jobs = selected.flatMap((testCase) =>
     Array.from({ length: samplesPerModelCase }, (_, index) => () =>
-      runCaseSample(testCase, spec, context, sampleId(index + 1), { force: options.force }),
+      runCaseSample(testCase, spec, context, sampleId(index + 1), authorization),
     ),
   );
   const results = await runBoundedJobs(jobs, inferenceConcurrency);
@@ -846,13 +1044,18 @@ export async function runModel(
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const args = parseRunCliArgs(process.argv.slice(2));
-  if (args.help) {
-    console.log(runUsage);
-  } else {
-    await runModel(args.modelId, {
-      caseId: args.caseId,
-      force: args.force,
-      manifestPath: args.manifestPath,
-    });
+  const keepAlive = setInterval(() => undefined, 1_000);
+  try {
+    if (args.help) {
+      console.log(runUsage);
+    } else {
+      await runModel(args.modelId, {
+        caseId: args.caseId,
+        manifestPath: args.manifestPath,
+        finalValidationAuthorization: args.finalValidationAuthorization,
+      });
+    }
+  } finally {
+    clearInterval(keepAlive);
   }
 }

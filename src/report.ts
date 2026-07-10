@@ -3,11 +3,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildBenchmarkFingerprint } from "./benchmarkFingerprint.js";
 import { sha256, stableJson } from "./cache.js";
-import { models, prompt, samplesPerModelCase } from "./run.js";
+import { buildCohortArtifactFingerprint } from "./cohortFingerprint.js";
+import { benchmarkModelIds, models, prompt, samplesPerModelCase } from "./run.js";
 import { scoringContractFingerprint } from "./score.js";
 import { atomicWriteText } from "./runRuntime.js";
 import { loadBenchmarkManifest } from "./manifest.js";
-import { deriveModelSummary } from "./summary.js";
+import { deriveModelSummary, type DiagnosticAggregate, type SummaryDiagnostics } from "./summary.js";
 
 export type CaseScore = {
   caseId: string;
@@ -25,6 +26,10 @@ export type CaseScore = {
   sampleScores: Array<{ sample: string; score: number; valid?: boolean; modelCallFailed?: boolean }>;
   finishReasons?: Array<{ sample: string; finishReason: string }>;
   outputTokens?: number;
+  logicalGenerationCalls?: number;
+  transportRequestAttempts?: number;
+  transportRetryCount?: number;
+  transportRetriesAreCohortSamples?: false;
 };
 
 export type Summary = {
@@ -59,6 +64,11 @@ export type Summary = {
   totalElapsedMs: number;
   totalInputTokens: number;
   totalOutputTokens: number;
+  modelCallCount: number;
+  logicalGenerationCallCount: number;
+  totalTransportRequestAttempts: number;
+  transportRetryCount: number;
+  transportRetriesAreCohortSamples: false;
   modelFailureCount?: number;
   modelFailureRate?: number;
   evaluatorFailureCount?: number;
@@ -66,6 +76,7 @@ export type Summary = {
   complete: boolean;
   missingCaseIds?: string[];
   invalidSamples?: unknown[];
+  diagnostics: SummaryDiagnostics;
   caseScores: CaseScore[];
 };
 
@@ -145,8 +156,86 @@ function approximatelyEqual(left: number, right: number, tolerance = 0.000005) {
   return Math.abs(left - right) <= tolerance;
 }
 
+function variabilityMatches(
+  values: number[],
+  scoreStddev: number | null,
+  scoreMin: number | null,
+  scoreMax: number | null,
+) {
+  if (values.length <= 1) return scoreStddev === null && scoreMin === null && scoreMax === null;
+  return (
+    typeof scoreStddev === "number" &&
+    Number.isFinite(scoreStddev) &&
+    typeof scoreMin === "number" &&
+    Number.isFinite(scoreMin) &&
+    typeof scoreMax === "number" &&
+    Number.isFinite(scoreMax) &&
+    approximatelyEqual(scoreStddev, round(sampleStddev(values)!, 6)) &&
+    approximatelyEqual(scoreMin, round(Math.min(...values), 6)) &&
+    approximatelyEqual(scoreMax, round(Math.max(...values), 6))
+  );
+}
+
 function canonicalPersistedJson(value: unknown) {
   return stableJson(JSON.parse(JSON.stringify(value)));
+}
+
+function validateDiagnosticDimension(
+  rows: DiagnosticAggregate[],
+  expectedSampleIds: string[],
+  label: string,
+): string | null {
+  if (!Array.isArray(rows) || rows.length === 0) return `${label} diagnostics are missing`;
+  if (new Set(rows.map((row) => row.key)).size !== rows.length) return `${label} diagnostic keys are duplicated`;
+  for (const row of rows) {
+    if (
+      typeof row.key !== "string" ||
+      row.key.length === 0 ||
+      !Number.isInteger(row.caseCount) ||
+      row.caseCount <= 0 ||
+      !Number.isInteger(row.regionCount) ||
+      row.regionCount <= 0 ||
+      !Number.isFinite(row.totalBudget) ||
+      row.totalBudget <= 0 ||
+      !Number.isFinite(row.score) ||
+      row.score < 0 ||
+      row.score > 100 ||
+      !Number.isFinite(row.rawScore)
+    ) {
+      return `${label} diagnostic metadata is invalid for ${row.key || "unknown"}`;
+    }
+    if (!Array.isArray(row.sampleScores) || row.sampleScores.length !== expectedSampleIds.length) {
+      return `${label} diagnostic sample cohort is incomplete for ${row.key}`;
+    }
+    const bySample = new Map<string, { score: number; rawScore: number }>();
+    for (const sample of row.sampleScores) {
+      if (
+        !expectedSampleIds.includes(sample.sample) ||
+        bySample.has(sample.sample) ||
+        !Number.isFinite(sample.score) ||
+        sample.score < 0 ||
+        sample.score > 100 ||
+        !Number.isFinite(sample.rawScore) ||
+        !approximatelyEqual(sample.score, round(Math.max(0, Math.min(100, sample.rawScore)), 6))
+      ) {
+        return `${label} diagnostic sample is invalid for ${row.key}`;
+      }
+      bySample.set(sample.sample, sample);
+    }
+    if (expectedSampleIds.some((sample) => !bySample.has(sample))) {
+      return `${label} diagnostic sample ids are invalid for ${row.key}`;
+    }
+    const sampleScores = expectedSampleIds.map((sample) => bySample.get(sample)!.score);
+    const rawScores = expectedSampleIds.map((sample) => bySample.get(sample)!.rawScore);
+    if (
+      !approximatelyEqual(row.score, round(mean(sampleScores), 6)) ||
+      !approximatelyEqual(row.rawScore, round(mean(rawScores), 6)) ||
+      !variabilityMatches(sampleScores, row.scoreStddev, row.scoreMin, row.scoreMax)
+    ) {
+      return `${label} diagnostic aggregate arithmetic is invalid for ${row.key}`;
+    }
+  }
+  return null;
 }
 
 export function validateSummaryArithmetic(summary: Summary, manifest: Manifest): string | null {
@@ -183,9 +272,7 @@ export function validateSummaryArithmetic(summary: Summary, manifest: Manifest):
     const values = expectedSampleIds.map((sample) => bySample.get(sample)!);
     if (
       !approximatelyEqual(caseScore.score!, round(mean(values), 6)) ||
-      !approximatelyEqual(caseScore.scoreMin!, round(Math.min(...values), 6)) ||
-      !approximatelyEqual(caseScore.scoreMax!, round(Math.max(...values), 6)) ||
-      !approximatelyEqual(caseScore.scoreStddev!, round(sampleStddev(values), 6))
+      !variabilityMatches(values, caseScore.scoreStddev, caseScore.scoreMin, caseScore.scoreMax)
     ) {
       return `case aggregate arithmetic is invalid for ${caseScore.caseId}`;
     }
@@ -203,12 +290,21 @@ export function validateSummaryArithmetic(summary: Summary, manifest: Manifest):
   }
   if (
     !approximatelyEqual(summary.score!, round(mean(recomputedSuiteScores))) ||
-    !approximatelyEqual(summary.scoreStddev!, round(sampleStddev(recomputedSuiteScores), 6)) ||
-    !approximatelyEqual(summary.scoreMin!, round(Math.min(...recomputedSuiteScores), 6)) ||
-    !approximatelyEqual(summary.scoreMax!, round(Math.max(...recomputedSuiteScores), 6))
+    !variabilityMatches(recomputedSuiteScores, summary.scoreStddev, summary.scoreMin, summary.scoreMax)
   ) {
     return "full-suite aggregate arithmetic is invalid";
   }
+  if (
+    !summary.diagnostics ||
+    summary.diagnostics.aggregation !== "evidence_budget_sample_first" ||
+    summary.diagnostics.complete !== true
+  ) {
+    return "diagnostic cohort is missing or incomplete";
+  }
+  const primaryAxisError = validateDiagnosticDimension(summary.diagnostics.byPrimaryAxis, expectedSampleIds, "primary-axis");
+  if (primaryAxisError) return primaryAxisError;
+  const modalityError = validateDiagnosticDimension(summary.diagnostics.byModality, expectedSampleIds, "modality");
+  if (modalityError) return modalityError;
   return null;
 }
 
@@ -242,16 +338,6 @@ export function validSummary(
   }
   if (summary.suite !== (manifest.suite ?? "official")) return "suite does not match the manifest";
   if (typeof summary.score !== "number" || !Number.isFinite(summary.score)) return "aggregate score is missing";
-  if (
-    typeof summary.scoreStddev !== "number" ||
-    !Number.isFinite(summary.scoreStddev) ||
-    typeof summary.scoreMin !== "number" ||
-    !Number.isFinite(summary.scoreMin) ||
-    typeof summary.scoreMax !== "number" ||
-    !Number.isFinite(summary.scoreMax)
-  ) {
-    return "full-suite variability fields are missing";
-  }
   if (!models[summary.modelId]) return "model is not in the current registry";
   if (summary.provider !== models[summary.modelId].provider) return "provider metadata does not match the current model registry";
   if (typeof summary.resolvedInferenceModelId !== "string" || summary.resolvedInferenceModelId.length === 0) {
@@ -269,6 +355,18 @@ export function validSummary(
   }
   if (summary.samplesPerModelCase !== samplesPerModelCase) return "sample count does not match the current protocol";
   if (summary.sampleCount !== manifest.cases.length * summary.samplesPerModelCase) return "sample count is incomplete";
+  if (
+    summary.samplesPerModelCase === 1
+      ? summary.scoreStddev !== null || summary.scoreMin !== null || summary.scoreMax !== null
+      : typeof summary.scoreStddev !== "number" ||
+        !Number.isFinite(summary.scoreStddev) ||
+        typeof summary.scoreMin !== "number" ||
+        !Number.isFinite(summary.scoreMin) ||
+        typeof summary.scoreMax !== "number" ||
+        !Number.isFinite(summary.scoreMax)
+  ) {
+    return "full-suite variability fields do not match the sample protocol";
+  }
   if (!Array.isArray(summary.suiteSampleScores) || summary.suiteSampleScores.length !== summary.samplesPerModelCase) {
     return "full-suite sample scores are incomplete";
   }
@@ -286,8 +384,9 @@ export function validSummary(
     summary.caseScores.some(
       (caseScore) =>
         !Number.isFinite(caseScore.score) ||
-        !Number.isFinite(caseScore.scoreMin) ||
-        !Number.isFinite(caseScore.scoreMax) ||
+        (summary.samplesPerModelCase === 1
+          ? caseScore.scoreStddev !== null || caseScore.scoreMin !== null || caseScore.scoreMax !== null
+          : !Number.isFinite(caseScore.scoreStddev) || !Number.isFinite(caseScore.scoreMin) || !Number.isFinite(caseScore.scoreMax)) ||
         !Array.isArray(caseScore.sampleScores) ||
         caseScore.sampleScores.length !== summary.samplesPerModelCase ||
         new Set(caseScore.sampleScores.map((sampleScore) => sampleScore.sample)).size !== expectedSampleIds.size ||
@@ -296,7 +395,7 @@ export function validSummary(
         ),
     )
   ) {
-    return "per-case score ranges are incomplete";
+    return "per-case variability fields do not match the sample protocol";
   }
   if (
     [summary.costUsd, summary.totalElapsedMs, summary.totalInputTokens, summary.totalOutputTokens].some(
@@ -304,6 +403,27 @@ export function validSummary(
     )
   ) {
     return "inference operating totals are invalid";
+  }
+  if (
+    !Number.isSafeInteger(summary.modelCallCount) ||
+    summary.modelCallCount !== summary.sampleCount ||
+    !Number.isSafeInteger(summary.logicalGenerationCallCount) ||
+    summary.logicalGenerationCallCount !== summary.sampleCount ||
+    !Number.isSafeInteger(summary.totalTransportRequestAttempts) ||
+    summary.totalTransportRequestAttempts < summary.logicalGenerationCallCount ||
+    !Number.isSafeInteger(summary.transportRetryCount) ||
+    summary.transportRetryCount !== summary.totalTransportRequestAttempts - summary.logicalGenerationCallCount ||
+    summary.transportRetriesAreCohortSamples !== false ||
+    summary.caseScores.some(
+      (caseScore) =>
+        caseScore.logicalGenerationCalls !== summary.samplesPerModelCase ||
+        !Number.isSafeInteger(caseScore.transportRequestAttempts) ||
+        caseScore.transportRequestAttempts! < caseScore.logicalGenerationCalls! ||
+        caseScore.transportRetryCount !== caseScore.transportRequestAttempts! - caseScore.logicalGenerationCalls! ||
+        caseScore.transportRetriesAreCohortSamples !== false,
+    )
+  ) {
+    return "logical-generation and transport-attempt telemetry is invalid";
   }
   const arithmeticError = validateSummaryArithmetic(summary, manifest);
   if (arithmeticError) return arithmeticError;
@@ -325,32 +445,41 @@ async function currentSummaryFreshness(summary: Summary, manifest: Manifest, man
 }
 
 async function loadSummaries(manifest: Manifest, manifestPath: string, benchmarkFingerprint: string): Promise<Summary[]> {
+  const allowedModelIds = new Set(defaultReportModelIds);
   const entries = await readdir("runs", { withFileTypes: true }).catch(() => []);
-  const summaries: Summary[] = [];
   const summaryFile = `summary.${manifest.suite ?? "official"}.json`;
-  for (const entry of entries) {
-    if (!entry.isDirectory()) continue;
-    const summaryPath = path.join("runs", entry.name, summaryFile);
-    try {
-      const summary = await readJson<Summary>(summaryPath);
-      if (summary.modelId !== entry.name) {
-        console.warn(`Ignoring ${summaryPath}: model id does not match its run directory`);
-        continue;
-      }
-      const freshness = await currentSummaryFreshness(summary, manifest, manifestPath);
-      const invalidReason = validSummary(summary, manifest, benchmarkFingerprint, freshness);
-      if (invalidReason) {
-        console.warn(`Ignoring ${summaryPath}: ${invalidReason}`);
-      } else {
-        summaries.push(summary);
-      }
-    } catch (error) {
-      const detail = error instanceof Error ? error.message : String(error);
-      console.warn(`Ignoring ${summaryPath}: cannot read or validate summary (${detail})`);
-    }
-  }
+  const summaries = (
+    await Promise.all(
+      entries
+        .filter((entry) => entry.isDirectory() && allowedModelIds.has(entry.name as (typeof benchmarkModelIds)[number]))
+        .map(async (entry): Promise<Summary | null> => {
+          const summaryPath = path.join("runs", entry.name, summaryFile);
+          try {
+            const summary = await readJson<Summary>(summaryPath);
+            if (summary.modelId !== entry.name) {
+              console.warn(`Ignoring ${summaryPath}: model id does not match its run directory`);
+              return null;
+            }
+            const freshness = await currentSummaryFreshness(summary, manifest, manifestPath);
+            const invalidReason = validSummary(summary, manifest, benchmarkFingerprint, freshness);
+            if (invalidReason) {
+              console.warn(`Ignoring ${summaryPath}: ${invalidReason}`);
+              return null;
+            }
+            return summary;
+          } catch (error) {
+            const detail = error instanceof Error ? error.message : String(error);
+            console.warn(`Ignoring ${summaryPath}: cannot read or validate summary (${detail})`);
+            return null;
+          }
+        }),
+    )
+  ).filter((summary): summary is Summary => summary !== null);
   return summaries.sort((a, b) => (b.score ?? -Infinity) - (a.score ?? -Infinity) || (a.modelId < b.modelId ? -1 : a.modelId > b.modelId ? 1 : 0));
 }
+
+/** Standalone and normal-iteration reports are anchor-only by default. */
+export const defaultReportModelIds = [...benchmarkModelIds] as const;
 
 function bar(value: number, max = 100) {
   const pct = Math.max(0, Math.min(100, (value / max) * 100));
@@ -359,6 +488,81 @@ function bar(value: number, max = 100) {
 
 function scoreBar(value: number) {
   return `<span class="score-cell">${bar(value)}<span class="score-value">${value}</span></span>`;
+}
+
+function diagnosticLabel(key: string) {
+  return key
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function renderDiagnosticTable(
+  summaries: Summary[],
+  dimension: "byPrimaryAxis" | "byModality",
+  firstColumn: string,
+) {
+  const baseline = summaries[0]?.diagnostics?.[dimension];
+  if (!baseline || baseline.length === 0) throw new Error(`Cannot render missing ${dimension} diagnostics`);
+  const baselineByKey = new Map(baseline.map((row) => [row.key, row]));
+  const maps = summaries.map((summary) => {
+    if (!summary.diagnostics?.complete) throw new Error(`Cannot render incomplete diagnostics for ${summary.modelId}`);
+    const rows = summary.diagnostics[dimension];
+    const byKey = new Map(rows.map((row) => [row.key, row]));
+    if (
+      byKey.size !== baselineByKey.size ||
+      [...baselineByKey.keys()].some((key) => {
+        const expected = baselineByKey.get(key)!;
+        const actual = byKey.get(key);
+        return (
+          !actual ||
+          actual.totalBudget !== expected.totalBudget ||
+          actual.regionCount !== expected.regionCount ||
+          actual.caseCount !== expected.caseCount
+        );
+      })
+    ) {
+      throw new Error(`Cannot compare summaries with different ${dimension} evidence cohorts`);
+    }
+    return byKey;
+  });
+  const rows = [...baselineByKey.keys()]
+    .map((key) => {
+      const values = maps.map((map) => map.get(key)!);
+      const boundedScores = values.map((value) => value.score);
+      const rawScores = values.map((value) => value.rawScore);
+      return {
+        key,
+        values,
+        boundedSpread: Math.max(...boundedScores) - Math.min(...boundedScores),
+        rawSpread: Math.max(...rawScores) - Math.min(...rawScores),
+      };
+    })
+    .sort((left, right) => right.rawSpread - left.rawSpread || left.key.localeCompare(right.key));
+  const spreadHeader = summaries.length > 1 ? '<th class="num">Observed spread<br><span class="muted">bounded / raw</span></th>' : "";
+  return `<div class="table-scroll"><table class="appendix-table diagnostic-table">
+    <thead><tr><th>${escapeHtml(firstColumn)}</th><th class="num">Budget</th><th class="num">Regions</th>${summaries
+      .map((summary) => `<th class="num">${escapeHtml(modelLabel(summary.modelId))}<br><span class="muted">bounded / raw signed</span></th>`)
+      .join("")}${spreadHeader}</tr></thead>
+    <tbody>${rows
+      .map((row) => {
+        const evidence = baselineByKey.get(row.key)!;
+        const modelCells = row.values
+          .map(
+            (value) =>
+              `<td class="num"><strong>${value.score.toFixed(1)}</strong><div class="muted">raw ${value.rawScore.toFixed(1)}</div></td>`,
+          )
+          .join("");
+        const spreadCell =
+          summaries.length > 1
+            ? `<td class="num"><strong>${row.boundedSpread.toFixed(1)}</strong><div class="muted">raw ${row.rawSpread.toFixed(1)}</div></td>`
+            : "";
+        return `<tr><td><strong>${escapeHtml(diagnosticLabel(row.key))}</strong><div class="muted"><code>${escapeHtml(
+          row.key,
+        )}</code>; ${evidence.caseCount} ${evidence.caseCount === 1 ? "case" : "cases"}</div></td><td class="num">${evidence.totalBudget}</td><td class="num">${evidence.regionCount}</td>${modelCells}${spreadCell}</tr>`;
+      })
+      .join("\n")}</tbody>
+  </table></div>`;
 }
 
 function chartDataScript(summaries: Summary[]) {
@@ -727,6 +931,7 @@ export function renderReport(manifest: Manifest, summaries: Summary[]) {
   }
   const samplesPerCase = [...samplesPerCaseValues][0];
   const inferenceCallCount = [...inferenceCallCounts][0];
+  const hasObservedVariability = samplesPerCase > 1;
   const tokenLimitFinishes = (summary: Summary) =>
     summary.caseScores.reduce(
       (count, caseScore) => count + (caseScore.finishReasons ?? []).filter((item) => item.finishReason === "length").length,
@@ -738,11 +943,13 @@ export function renderReport(manifest: Manifest, summaries: Summary[]) {
       (summary) => `<tr>
         <td><strong>${escapeHtml(modelLabel(summary.modelId))}</strong><div class="muted">${escapeHtml(summary.modelId)}</div></td>
         <td class="num">${scoreBar(summary.score!)}</td>
-        <td class="num">${summary.scoreStddev!.toFixed(2)}</td>
-        <td class="num">${summary.scoreMin!.toFixed(1)}–${summary.scoreMax!.toFixed(1)}</td>
+        <td class="num">${hasObservedVariability ? summary.scoreStddev!.toFixed(1) : '<span class="muted">N/A</span>'}</td>
+        <td class="num">${hasObservedVariability ? `${summary.scoreMin!.toFixed(1)}–${summary.scoreMax!.toFixed(1)}` : '<span class="muted">N/A</span>'}</td>
         <td class="num">${fmtMoney(summary.costUsd)}</td>
         <td class="num">${fmtSeconds(summary.totalElapsedMs)}</td>
         <td class="num">${summary.totalOutputTokens.toLocaleString("en-US")}</td>
+        <td class="num">${summary.logicalGenerationCallCount}</td>
+        <td class="num">${summary.totalTransportRequestAttempts}<div class="muted">${summary.transportRetryCount} retries</div></td>
         <td class="num">${summary.modelFailureCount ?? 0}/${summary.sampleCount}</td>
         <td class="num">${tokenLimitFinishes(summary)}/${summary.sampleCount}</td>
       </tr>`,
@@ -757,7 +964,11 @@ export function renderReport(manifest: Manifest, summaries: Summary[]) {
       const cells = summaries
         .map((summary) => {
           const caseScore = caseScoreMaps.get(summary.modelId)!.get(testCase.id)!;
-          return `<td class="num"><strong>${caseScore.score!.toFixed(1)}</strong> <span class="muted">(${caseScore.scoreMin!.toFixed(1)}–${caseScore.scoreMax!.toFixed(1)})</span></td>`;
+          return `<td class="num"><strong>${caseScore.score!.toFixed(1)}</strong>${
+            hasObservedVariability
+              ? ` <span class="muted">(${caseScore.scoreMin!.toFixed(1)}–${caseScore.scoreMax!.toFixed(1)})</span>`
+              : ""
+          }</td>`;
         })
         .join("");
       return `<tr><td><strong>${escapeHtml(testCase.id)}</strong><div class="muted">${escapeHtml(testCase.title)}</div></td>${cells}</tr>`;
@@ -781,7 +992,7 @@ export function renderReport(manifest: Manifest, summaries: Summary[]) {
       <div class="meta">
         <span>${manifest.cases.length} cases</span>
         <span>${totalPages} pages</span>
-        <span>${samplesPerCase} samples per model/case</span>
+        <span>${samplesPerCase} ${samplesPerCase === 1 ? "sample" : "samples"} per model/case</span>
         <span>Input protocol: ${escapeHtml(manifest.inputProtocol ?? "native_pdf")}</span>
       </div>
     </header>
@@ -799,16 +1010,38 @@ export function renderReport(manifest: Manifest, summaries: Summary[]) {
       <h2>Result Table</h2>
       <div class="table-scroll"><table>
         <thead>
-          <tr><th>Model</th><th class="num">Fidelity</th><th class="num">Full-suite SD</th><th class="num">Full-suite range</th><th class="num">Estimated inference cost<br><span class="muted">${inferenceCallCount} calls</span></th><th class="num">Summed model-call duration<br><span class="muted">${inferenceCallCount} calls</span></th><th class="num">Inference output tokens<br><span class="muted">${inferenceCallCount} calls</span></th><th class="num">Model failures</th><th class="num">Token-limit finishes</th></tr>
+          <tr><th>Model</th><th class="num">Fidelity</th><th class="num">Full-suite SD</th><th class="num">Full-suite range</th><th class="num">Estimated inference cost<br><span class="muted">${inferenceCallCount} calls</span></th><th class="num">Summed model-call duration<br><span class="muted">${inferenceCallCount} calls</span></th><th class="num">Inference output tokens<br><span class="muted">${inferenceCallCount} calls</span></th><th class="num">Logical draws</th><th class="num">Transport requests</th><th class="num">Model failures</th><th class="num">Token-limit finishes</th></tr>
         </thead>
         <tbody>${modelTable}</tbody>
       </table></div>
-      <p class="note">For each sample slot, scores are averaged equally across cases; the reported fidelity is the mean of those ${samplesPerCase} full-suite scores. SD is the sample standard deviation (n−1), and the range is their minimum–maximum. Scoreable response-level model failures remain in the cohort as zero-score samples; provider or transport invocation errors make the cohort incomplete. Token-limit finishes are scoreable responses whose provider finish reason was <code>length</code>.</p>
+      <p class="note">${
+        hasObservedVariability
+          ? `For each sample slot, scores are averaged equally across cases; the reported fidelity is the mean of those ${samplesPerCase} full-suite scores. SD is the sample standard deviation (n−1), and the range is their minimum–maximum.`
+          : "This development report uses one stochastic sample per model/case. Fidelity is the equal-case score from that single observed cohort; SD and range are unavailable, and this report makes no repeatability or reliability claim. Treat small score differences as directional rather than precise."
+      } Scoreable response-level model failures remain in the cohort as zero-score samples; provider or transport invocation errors make the cohort incomplete. Transport retries are attempts to complete the same reserved logical draw, are recorded separately, and never become additional cohort samples. Estimated cost uses provider-reported token usage; a failed transport attempt that returns no usage cannot be priced by the harness. Token-limit finishes are scoreable responses whose provider finish reason was <code>length</code>.</p>
+    </section>
+
+    <section>
+      <h2>Capability and Modality Diagnostics</h2>
+      <p>These slices explain where the observed model separation comes from; they are not additional benchmark scores and do not alter the official equal-case fidelity. Within each sample slot, signed region utility is weighted by the evidence budget belonging to that slice across cases, bounded to 0–100 for display, and then aggregated sample-first. The signed raw value remains visible so the diagnostic does not hide differences below the public zero floor.</p>
+      <p class="note">${
+        hasObservedVariability
+          ? `The diagnostic ranges in the persisted summaries describe only this explicitly repeated ${samplesPerCase}-sample cohort.`
+          : "Every diagnostic value and gap below comes from the same single stochastic draw per model/case. No uncertainty, repeatability, or reliability estimate is inferred."
+      }</p>
+      <h3>Primary capability axis</h3>
+      ${renderDiagnosticTable(summaries, "byPrimaryAxis", "Capability axis")}
+      <h3>Evidence modality</h3>
+      ${renderDiagnosticTable(summaries, "byModality", "Modality")}
     </section>
 
     <section>
       <h2>Per-case Appendix</h2>
-      <p>Each cell shows the per-case mean followed by its minimum–maximum across ${samplesPerCase} samples.</p>
+      <p>${
+        hasObservedVariability
+          ? `Each cell shows the per-case mean followed by its minimum–maximum across ${samplesPerCase} samples.`
+          : "Each cell shows the observed score from one stochastic sample. No per-case range is inferred."
+      }</p>
       <div class="table-scroll"><table class="appendix-table">
         <thead><tr><th>Case</th>${summaries.map((summary) => `<th class="num">${escapeHtml(modelLabel(summary.modelId))}</th>`).join("")}</tr></thead>
         <tbody>${caseAppendix}</tbody>
@@ -820,7 +1053,11 @@ export function renderReport(manifest: Manifest, summaries: Summary[]) {
       <p>The benchmark sends native PDF files directly to providers and asks for one faithful Markdown reconstruction. It does not convert official inputs into page images inside the harness. This means the score reflects the end-to-end provider experience: the model, the provider's PDF ingestion path, and the model's ability to preserve document information.</p>
       <p>Each case has a source-audited reference reconstruction and page-anchored atomic obligations grouped into bounded document regions. To prevent answer leakage, the evaluator receives the audited obligations and numbered candidate lines, but not the PDF or reference text; every non-missing judgment must cite candidate lines. Wrong information is penalized more harshly than omission because downstream systems can often detect missing information, while incorrect extracted facts can silently corrupt later work.</p>
       <p>Doc2MD is intentionally not a plain OCR benchmark. The cases stress compound document reconstruction: page order, table continuation, chart semantics, source-state conflicts, maps, forms, scientific notation, regulated workflows, and realistic mixed-modality packets. The main failure mode for weaker models is not merely reading text incorrectly; it is dropping whole regions, collapsing structured relationships into prose, binding values to the wrong labels, or inventing a plausible but false final state.</p>
-      <p>Because model outputs vary, the benchmark uses repeated samples. It first computes a complete suite score for each sample slot by weighting every case equally, then reports the mean, sample standard deviation, minimum, and maximum of those suite scores. Per-case ranges in the appendix expose localized instability without substituting a mean of case-level deviations for full-suite uncertainty.</p>
+      <p>${
+        hasObservedVariability
+          ? "For this explicitly repeated cohort, the benchmark computes one complete suite score per sample slot by weighting every case equally, then reports the mean, sample standard deviation, minimum, and maximum."
+          : "Normal iteration deliberately uses one sample per model/case to control spend and avoid tuning the corpus to stochastic wording. The equal-case score is a directional observation, not an uncertainty estimate. Repeated runs are reserved for a separately approved final-validation checkpoint."
+      }</p>
     </section>
   </main>
 </body>
@@ -836,23 +1073,26 @@ export async function generateReport(summaries?: Summary[], options: { outPath?:
     promptHash: sha256(prompt),
     scoringContractFingerprint,
   });
+  const summariesWerePrevalidated = summaries === undefined;
   const loadedSummaries = summaries ?? (await loadSummaries(manifest, manifestPath, fingerprint.benchmarkFingerprint));
   if (loadedSummaries.length === 0) {
     throw new Error("No complete summaries match the current benchmark fingerprint. Run the benchmark before generating the report.");
   }
-  const invalidSummaries = (
-    await Promise.all(
-      loadedSummaries.map(async (summary) => ({
-        modelId: summary.modelId,
-        reason: validSummary(
-          summary,
-          manifest,
-          fingerprint.benchmarkFingerprint,
-          await currentSummaryFreshness(summary, manifest, manifestPath),
-        ),
-      })),
-    )
-  ).filter((entry) => entry.reason);
+  const invalidSummaries = summariesWerePrevalidated
+    ? []
+    : (
+        await Promise.all(
+          loadedSummaries.map(async (summary) => ({
+            modelId: summary.modelId,
+            reason: validSummary(
+              summary,
+              manifest,
+              fingerprint.benchmarkFingerprint,
+              await currentSummaryFreshness(summary, manifest, manifestPath),
+            ),
+          })),
+        )
+      ).filter((entry) => entry.reason);
   if (invalidSummaries.length > 0) {
     throw new Error(
       `Cannot generate a report from stale or incomplete summaries: ${invalidSummaries
@@ -873,12 +1113,15 @@ export async function generateReport(summaries?: Summary[], options: { outPath?:
       await Promise.all(
         loadedSummaries.map(async (summary) => ({
           modelId: summary.modelId,
-          reason: validSummary(
-            summary,
-            manifest,
-            currentFingerprint.benchmarkFingerprint,
-            await currentSummaryFreshness(summary, manifest, manifestPath),
-          ),
+          reason:
+            (await buildCohortArtifactFingerprint(
+              summary.modelId,
+              manifest.suite ?? "official",
+              manifest.cases,
+              samplesPerModelCase,
+            )) === summary.cohortArtifactFingerprint
+              ? null
+              : "run/score cohort artifacts changed",
         })),
       )
     ).filter((entry) => entry.reason);

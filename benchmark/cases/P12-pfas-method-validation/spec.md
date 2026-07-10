@@ -1,9 +1,9 @@
-# PFAS Method Validation Supplement
+# PFAS Method Validation and Batch Release Packet
 
-Source modality: born-digital native PDF with an embedded chromatogram plate and one scanned sequence sheet
+Source modality: six native-only pages, three full-page raster scans, and three mixed pages with raster evidence; page images and native text are both necessary
 
 Family: `environmental analytical laboratory`
 
-Purpose: Test scientific notation, nested calibration fields, a continued precision table, a scanned sequence sheet, and analytical visual panels.
+Purpose: Test exact scientific reconstruction across native tables, visual-only plots, full-page bench scans, continued tables, QC calculations, and a signed correction chain that changes one final result.
 
-Tags: `native-pdf`, `scientific`, `equations`, `nested-table`, `continuation`, `scan`, `chromatograms`
+Tags: `mixed-modality`, `scientific`, `calibration`, `continued-table`, `full-page-scans`, `chromatograms`, `source-precedence`

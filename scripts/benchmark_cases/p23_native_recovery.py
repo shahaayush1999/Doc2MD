@@ -9,8 +9,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from docx import Document
-from docx.enum.section import WD_SECTION
-from docx.enum.table import WD_ALIGN_VERTICAL, WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE, WD_TABLE_ALIGNMENT
+from docx.enum.section import WD_ORIENT, WD_SECTION
+from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_ROW_HEIGHT_RULE, WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
@@ -18,58 +18,210 @@ from docx.shared import Inches, Pt, RGBColor
 from PIL import Image, ImageDraw, ImageFont
 from pypdf import PdfReader, PdfWriter
 
-from .common import REPO_ROOT, leaf, markdown_table, table_leaves
+from .common import (
+    REPO_ROOT,
+    finalize_fact_regions,
+    leaf,
+    markdown_table,
+    source_precedence_leaf,
+    table_leaves,
+    visual_leaf,
+)
 
 
 CASE_ID = "P23-native-text-layer-recovery"
-TITLE = "West Region Logistics Exception Control Packet"
+TITLE = "Northstar Cold Chain Supplier Cutover Authorization"
 FAMILY = "office export recovery"
 TAGS = [
     "native-pdf",
     "libreoffice-export",
     "malformed-layout",
     "native-text-recovery",
+    "mixed-modality",
     "tables",
     "source-precedence",
+    "reading-order",
 ]
 
 
-DECISION_HEADERS = ["ID", "Scope", "Disposition", "Owner", "Due"]
-DECISION_ROWS = [
-    ["D-17", "Reno consolidation", "HOLD — dock crew exception", "Ravi Mehta", "12 Jul 16:00 PT"],
-    ["D-18", "Boise overflow", "APPROVE — cross-dock slot B7", "Lena Ortiz", "09 Jul"],
-    ["D-19", "Tacoma weekend linehaul", "RETAIN — current carrier allocation", "Mira Chen", "11 Jul"],
+CONTROL_HEADERS = ["Field", "Controlled value", "Field", "Controlled value"]
+CONTROL_ROWS = [
+    ["File", "SV-2048", "Revision", "D"],
+    ["Prepared", "08 Jul 2026", "Effective", "10 Jul 2026 09:30 MST"],
+    ["Sites", "Phoenix and Tucson", "Coordinator", "Avery Kim"],
 ]
 
-LANE_HEADERS = ["Lane", "Pallets", "Constraint", "State", "Control / next gate"]
-LANE_ROWS = [
-    ["Reno → SFO", "41", "Dock crew short by 3", "BLOCKED", "Ravi closes D-17"],
-    ["Boise → SEA", "18", "Overflow slot B7", "RELEASED", "Cutoff 09 Jul 18:00"],
-    ["Tacoma → PDX", "27", "Carrier capacity tight", "WATCH", "Confirm 11 Jul 10:00"],
-    ["Spokane → SEA", "12", "None", "CLEAR", "No action"],
+AUTHORITY_HEADERS = ["Priority", "Record", "Controls", "Does not control"]
+AUTHORITY_ROWS = [
+    ["1", "Page 5 final authorization", "GO/HOLD state and release conditions", "Individual rate details"],
+    ["2", "Page 4 exception register", "Exception scope, owner, and closure evidence", "Commercial ceiling"],
+    ["3", "Page 3 finance validation", "Authorized cost ceiling and invoice route", "Operational release"],
+    ["4", "Page 2 cutover workplan", "Task sequence, windows, and task gates", "Final authorization"],
+    ["Reference", "Email and meeting notes", "Context only when cited by a controlled row", "Any approval or closure"],
 ]
 
-RESERVE_HEADERS = ["Reserve line", "Amount", "Eligibility", "Control basis"]
-RESERVE_ROWS = [
-    ["Temporary slot B7", "$2,400", "Eligible", "Approval LO-551"],
-    ["Reno labor standby", "$3,850", "Conditional", "Only if D-17 extends past 12 Jul 16:00 PT"],
-    ["Tacoma weekend premium", "$1,175", "Not eligible", "Existing carrier allocation retained"],
+WORKPLAN_HEADERS = ["ID", "Site / asset", "Activity", "Owner", "Planned window", "Gate / evidence", "State"]
+WORKPLAN_ROWS = [
+    [
+        "T-01",
+        "Phoenix / Dock 4",
+        "Reserve the temperature-controlled bay; retain Kestrel access until EX-07 is signed.",
+        "Avery Kim",
+        "14 Jul 22:00-23:00 MST",
+        "Facilities call FC-119 and access list AC-44",
+        "READY",
+    ],
+    [
+        "T-02",
+        "Phoenix / Sensor P-14",
+        "Move telemetry from Kestrel gateway KG-2 to Boreal gateway BG-5; preserve 15-minute data.",
+        "Lin Chen",
+        "14 Jul 23:00-23:40 MST",
+        "Parallel-read delta <=0.3 C for 30 minutes",
+        "CONDITIONAL",
+    ],
+    [
+        "T-03",
+        "Tucson / Cage C",
+        "Seal returned Kestrel inventory and complete a dual count before carrier release.",
+        "Mateo Soto",
+        "15 Jul 00:15-01:00 MST",
+        "Dual count sheet IC-882",
+        "READY",
+    ],
+    [
+        "T-04",
+        "Phoenix / Lot PX-771",
+        "Transfer 48 pallets only after the T-02 telemetry gate passes.",
+        "Rina Singh",
+        "15 Jul 00:30-02:10 MST",
+        "Scan batch SC-77; zero orphan pallets",
+        "BLOCKED BY T-02",
+    ],
+    [
+        "T-05",
+        "Tucson / Lot TZ-219",
+        "Transfer 26 pallets and exclude six quarantined cases held under QA-61.",
+        "Jordan Cole",
+        "15 Jul 01:20-02:20 MST",
+        "QA release QR-203 for eligible stock",
+        "READY",
+    ],
+    [
+        "T-06",
+        "Both sites / credentials",
+        "Close Kestrel credentials after inventory reconciliation and legal waiver confirmation.",
+        "Avery Kim",
+        "15 Jul 04:30 MST",
+        "REC-2048 has zero unresolved items and EX-07 is signed",
+        "PENDING",
+    ],
 ]
 
-SIGNOFF_HEADERS = ["Role", "Name", "State", "Timestamp"]
+HANDOFF_HEADERS = ["Trigger", "Notify", "Channel", "Required content"]
+HANDOFF_ROWS = [
+    ["T-02 passes", "Phoenix floor lead", "Bridge BR-2048", "P-14 delta and validation end time"],
+    ["T-04 completes", "Inventory control", "Queue IC-WEST", "PX-771 pallet count and orphan count"],
+    ["Any temperature breach", "Quality on-call", "QA hotline", "Sensor, duration, peak delta, and lot"],
+    ["Rollback invoked", "Both site leads", "Bridge BR-2048", "Last completed task and custody location"],
+]
+
+COST_HEADERS = ["Line", "Basis", "Amount", "Approval condition"]
+COST_ROWS = [
+    ["Boreal implementation", "Quote Q-884 revision C", "$18,600", "Fixed fee"],
+    ["Kestrel overlap", "Two nights at $2,160", "$4,320", "Maximum two nights"],
+    ["Sensor validation", "Work order TV-19", "$2,150", "P-14 parallel read"],
+    ["Contingency", "Legal-delay allowance", "$3,000", "Available only if EX-07 extends"],
+]
+
+INVOICE_HEADERS = ["Vendor", "PO", "Cost center", "Reviewer", "Route"]
+INVOICE_ROWS = [
+    ["Boreal Storage", "44018-3", "CC-7420", "Jonah Mercer", "AP-West / transition"],
+    ["Kestrel Logistics", "44007-9", "CC-7420", "Jonah Mercer", "AP-West / overlap"],
+    ["ThermoVision", "43991-2", "CC-7314", "Nadia Brooks", "AP-Quality / validation"],
+]
+
+EXCEPTION_HEADERS = [
+    "Exception",
+    "Affected obligation",
+    "Current finding",
+    "Owner",
+    "Due",
+    "Accepted closure evidence",
+    "State",
+]
+EXCEPTION_ROWS = [
+    [
+        "E-05",
+        "T-02 telemetry gate",
+        "Parallel baseline differs by 0.2 C after probe alignment.",
+        "Lin Chen",
+        "09 Jul 15:00 MST",
+        "Signed TV-19 trace with 30-minute comparison",
+        "CLOSED",
+    ],
+    [
+        "EX-07",
+        "T-06 credential closure",
+        "Kestrel access waiver is with counsel; physical cutover may proceed while access is retained.",
+        "Isha Patel",
+        "14 Jul 18:00 MST",
+        "Countersigned waiver WA-771",
+        "OPEN",
+    ],
+    [
+        "E-08",
+        "T-05 Tucson inventory",
+        "Six QA-61 cases remain quarantined and are outside the eligible transfer quantity.",
+        "Dara Nwosu",
+        "15 Jul 01:00 MST",
+        "QR-203 release or segregated custody receipt",
+        "OPEN - EXCLUDE",
+    ],
+    [
+        "E-09",
+        "Boreal invoice route",
+        "Draft purchase order omitted the transition suffix.",
+        "Jonah Mercer",
+        "09 Jul 12:00 MST",
+        "Issued PO 44018-3",
+        "CLOSED",
+    ],
+    [
+        "E-11",
+        "T-03 carrier release",
+        "Carrier arrival is forecast at 01:10, ten minutes after the planned count window.",
+        "Mateo Soto",
+        "15 Jul 00:30 MST",
+        "Dispatch update in BR-2048 and revised custody time",
+        "WATCH",
+    ],
+    [
+        "E-12",
+        "Tucson backup power",
+        "Backup power transfer test passed in 46 seconds against the 60 second limit.",
+        "Jordan Cole",
+        "09 Jul 17:00 MST",
+        "Facilities test certificate FT-662",
+        "CLOSED",
+    ],
+]
+
+CONDITION_HEADERS = ["Condition", "Required state before action", "Action governed", "Failure response"]
+CONDITION_ROWS = [
+    ["C-1", "P-14 parallel-read delta <=0.3 C for 30 minutes", "Start T-04", "Hold PX-771 at Phoenix"],
+    ["C-2", "Six QA-61 cases remain segregated unless QR-203 releases them", "Start T-05", "Move eligible stock only"],
+    ["C-3", "EX-07 signed and REC-2048 has zero unresolved items", "Close Kestrel credentials", "Retain access and escalate"],
+    ["C-4", "No temperature deviation >1.0 C for 10 continuous minutes", "Continue physical transfer", "Invoke rollback RB-12"],
+]
+
+SIGNOFF_HEADERS = ["Role", "Name", "Decision", "Recorded"]
 SIGNOFF_ROWS = [
-    ["Operations", "Lena Ortiz", "Approved", "10 Jul 15:05 PT"],
-    ["Finance", "M. Okafor", "Concurred", "10 Jul 14:18 PT"],
-    ["Exception owner", "Ravi Mehta", "Open — not signed", "Next review 12 Jul 16:00 PT"],
-    ["Document control", "S. Bell", "Revision 3 effective", "10 Jul 15:10 PT"],
+    ["Executive sponsor", "Mara Velez", "Approved", "10 Jul 2026 09:12 MST"],
+    ["Cutover lead", "Avery Kim", "Accepted", "10 Jul 2026 09:18 MST"],
+    ["Quality", "Dara Nwosu", "Approved with QA-61 exclusion", "10 Jul 2026 09:26 MST"],
+    ["Legal exception owner", "Isha Patel", "EX-07 remains open; not a release signature", "Review due 14 Jul 18:00 MST"],
 ]
-
-
-def _set_repeat_header(row) -> None:
-    tr_pr = row._tr.get_or_add_trPr()
-    repeat = OxmlElement("w:tblHeader")
-    repeat.set(qn("w:val"), "true")
-    tr_pr.append(repeat)
 
 
 def _set_cell_shading(cell, fill: str) -> None:
@@ -81,7 +233,7 @@ def _set_cell_shading(cell, fill: str) -> None:
     shading.set(qn("w:fill"), fill)
 
 
-def _set_cell_margins(cell, *, top: int = 45, start: int = 55, bottom: int = 45, end: int = 55) -> None:
+def _set_cell_margins(cell, *, top: int = 50, start: int = 60, bottom: int = 45, end: int = 60) -> None:
     tc_pr = cell._tc.get_or_add_tcPr()
     tc_mar = tc_pr.first_child_found_in("w:tcMar")
     if tc_mar is None:
@@ -96,9 +248,16 @@ def _set_cell_margins(cell, *, top: int = 45, start: int = 55, bottom: int = 45,
         node.set(qn("w:type"), "dxa")
 
 
+def _set_repeat_header(row) -> None:
+    tr_pr = row._tr.get_or_add_trPr()
+    repeat = OxmlElement("w:tblHeader")
+    repeat.set(qn("w:val"), "true")
+    tr_pr.append(repeat)
+
+
 def _set_table_fixed(table) -> None:
-    table.autofit = False
     table.alignment = WD_TABLE_ALIGNMENT.LEFT
+    table.autofit = False
     tbl_pr = table._tbl.tblPr
     layout = tbl_pr.find(qn("w:tblLayout"))
     if layout is None:
@@ -109,288 +268,383 @@ def _set_table_fixed(table) -> None:
     if borders is None:
         borders = OxmlElement("w:tblBorders")
         tbl_pr.append(borders)
-    for edge in ("top", "left", "bottom", "right", "insideH"):
+    for edge in ("top", "left", "bottom", "right", "insideH", "insideV"):
         node = OxmlElement(f"w:{edge}")
         node.set(qn("w:val"), "single")
         node.set(qn("w:sz"), "3")
-        node.set(qn("w:color"), "B7BDC3")
+        node.set(qn("w:color"), "B8C0C7")
         borders.append(node)
-    inside_v = OxmlElement("w:insideV")
-    inside_v.set(qn("w:val"), "nil")
-    borders.append(inside_v)
 
 
-def _write_cell(cell, value: str, *, header: bool, compressed: bool) -> None:
+def _write_cell(cell, value: str, *, header: bool = False, compact: bool = False) -> None:
     cell.text = ""
     cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
-    _set_cell_margins(cell, top=28 if compressed else 48, bottom=24 if compressed else 48)
+    _set_cell_margins(cell, top=28 if compact else 45, bottom=24 if compact else 40)
     paragraph = cell.paragraphs[0]
     paragraph.paragraph_format.space_before = Pt(0)
     paragraph.paragraph_format.space_after = Pt(0)
-    paragraph.paragraph_format.line_spacing = Pt(5.7 if compressed else 9.7)
-    paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    lines = str(value).split("\n")
-    for index, line in enumerate(lines):
-        if index:
-            run = paragraph.add_run()
-            run.add_break()
-        run = paragraph.add_run(line)
-        run.bold = header
-        run.font.name = "Verdana"
-        run.font.size = Pt(7.4 if compressed else 7.8)
-        run.font.color.rgb = RGBColor(25, 31, 36)
+    paragraph.paragraph_format.line_spacing = Pt(7.8 if compact else 9.3)
+    run = paragraph.add_run(str(value))
+    run.bold = header
+    run.font.name = "Arial"
+    run.font.size = Pt(6.7 if compact else 7.5)
+    run.font.color.rgb = RGBColor(25, 35, 43)
 
 
-def _add_table(document: Document, headers, rows, widths, *, compressed: bool = False):
+def _add_table(
+    document: Document,
+    headers: list[str],
+    rows: list[list[str]],
+    widths: list[float],
+    *,
+    exact_rows: bool = False,
+    row_height: float = 0.31,
+    compact: bool = False,
+):
     table = document.add_table(rows=1, cols=len(headers))
     _set_table_fixed(table)
+    for grid_col, width in zip(table._tbl.tblGrid.gridCol_lst, widths, strict=True):
+        grid_col.set(qn("w:w"), str(int(width * 1440)))
     header = table.rows[0]
-    header.height = Inches(0.27)
+    header.height = Inches(0.29 if compact else 0.32)
     header.height_rule = WD_ROW_HEIGHT_RULE.EXACTLY
     _set_repeat_header(header)
-    for index, (cell, text, width) in enumerate(zip(header.cells, headers, widths, strict=True)):
+    for cell, text, width in zip(header.cells, headers, widths, strict=True):
         cell.width = Inches(width)
-        _set_cell_shading(cell, "DDE3E8")
-        _write_cell(cell, str(text), header=True, compressed=False)
+        _set_cell_shading(cell, "D9E2E8")
+        _write_cell(cell, text, header=True, compact=compact)
     for row_index, values in enumerate(rows):
         row = table.add_row()
-        row.height = Inches(0.24 if compressed else 0.38)
-        row.height_rule = WD_ROW_HEIGHT_RULE.EXACTLY
+        if exact_rows:
+            row.height = Inches(row_height)
+            row.height_rule = WD_ROW_HEIGHT_RULE.EXACTLY
         for cell, value, width in zip(row.cells, values, widths, strict=True):
             cell.width = Inches(width)
             if row_index % 2:
-                _set_cell_shading(cell, "F3F4F4")
-            _write_cell(cell, str(value), header=False, compressed=compressed)
+                _set_cell_shading(cell, "F2F5F6")
+            _write_cell(cell, value, compact=compact)
     return table
 
 
-def _set_keep_with_next(paragraph, value: bool = True) -> None:
+def _keep_with_next(paragraph) -> None:
     p_pr = paragraph._p.get_or_add_pPr()
     keep = p_pr.find(qn("w:keepNext"))
-    if value and keep is None:
+    if keep is None:
         keep = OxmlElement("w:keepNext")
         p_pr.append(keep)
-    elif not value and keep is not None:
-        p_pr.remove(keep)
 
 
 def _label(document: Document, text: str) -> None:
     paragraph = document.add_paragraph()
-    paragraph.paragraph_format.space_before = Pt(7)
-    paragraph.paragraph_format.space_after = Pt(3)
-    _set_keep_with_next(paragraph)
+    paragraph.paragraph_format.space_before = Pt(6)
+    paragraph.paragraph_format.space_after = Pt(2.5)
+    _keep_with_next(paragraph)
     run = paragraph.add_run(text.upper())
     run.bold = True
-    run.font.name = "Verdana"
-    run.font.size = Pt(6.6)
-    run.font.color.rgb = RGBColor(75, 86, 96)
+    run.font.name = "Arial"
+    run.font.size = Pt(6.4)
+    run.font.color.rgb = RGBColor(68, 82, 93)
 
 
-def _paragraph(document: Document, text: str, *, size: float = 8.6, bold: bool = False) -> None:
+def _paragraph(document: Document, text: str, *, size: float = 8.4, bold: bool = False) -> None:
     paragraph = document.add_paragraph()
     paragraph.paragraph_format.space_before = Pt(0)
     paragraph.paragraph_format.space_after = Pt(4)
-    paragraph.paragraph_format.line_spacing = Pt(size + 2.4)
+    paragraph.paragraph_format.line_spacing = Pt(size + 2.1)
     run = paragraph.add_run(text)
     run.bold = bold
-    run.font.name = "Verdana"
+    run.font.name = "Arial"
     run.font.size = Pt(size)
-    run.font.color.rgb = RGBColor(25, 31, 36)
+    run.font.color.rgb = RGBColor(25, 35, 43)
 
 
 def _page_title(document: Document, page: int, title: str, status: str) -> None:
     banner = document.add_table(rows=1, cols=2)
-    banner.alignment = WD_TABLE_ALIGNMENT.LEFT
     banner.autofit = False
-    banner.columns[0].width = Inches(5.9)
-    banner.columns[1].width = Inches(1.65)
+    banner.alignment = WD_TABLE_ALIGNMENT.LEFT
+    banner.columns[0].width = Inches(6.15 if page != 4 else 8.7)
+    banner.columns[1].width = Inches(1.25)
     for cell in banner.rows[0].cells:
-        _set_cell_margins(cell, top=15, bottom=15, start=0, end=0)
+        _set_cell_margins(cell, top=5, bottom=5, start=0, end=0)
     left = banner.cell(0, 0).paragraphs[0]
     left.paragraph_format.space_after = Pt(0)
-    run = left.add_run("WEST REGION LOGISTICS / OR-7712")
+    run = left.add_run("NORTHSTAR COLD CHAIN  |  SUPPLIER TRANSITION SV-2048")
     run.bold = True
-    run.font.name = "Verdana"
-    run.font.size = Pt(6.5)
-    run.font.color.rgb = RGBColor(69, 80, 90)
+    run.font.name = "Arial"
+    run.font.size = Pt(6.4)
+    run.font.color.rgb = RGBColor(60, 76, 87)
     right = banner.cell(0, 1).paragraphs[0]
     right.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     right.paragraph_format.space_after = Pt(0)
-    run = right.add_run(f"{status}  ·  {page} / 4")
+    run = right.add_run(f"{status}  |  {page}/5")
     run.bold = True
-    run.font.name = "Verdana"
-    run.font.size = Pt(6.5)
-    run.font.color.rgb = RGBColor(105, 46, 43)
+    run.font.name = "Arial"
+    run.font.size = Pt(6.4)
+    run.font.color.rgb = RGBColor(124, 55, 42)
     paragraph = document.add_paragraph()
     paragraph.paragraph_format.space_before = Pt(5)
-    paragraph.paragraph_format.space_after = Pt(4)
+    paragraph.paragraph_format.space_after = Pt(3)
     run = paragraph.add_run(title)
     run.bold = True
-    run.font.name = "Verdana"
-    run.font.size = Pt(17)
-    run.font.color.rgb = RGBColor(23, 32, 42)
+    run.font.name = "Arial"
+    run.font.size = Pt(16.5)
+    run.font.color.rgb = RGBColor(19, 38, 52)
     rule = document.add_paragraph()
-    rule.paragraph_format.space_after = Pt(3)
-    run = rule.add_run("━" * 74)
-    run.font.name = "Verdana"
+    rule.paragraph_format.space_after = Pt(2)
+    run = rule.add_run("_" * (96 if page == 4 else 72))
+    run.font.name = "Arial"
     run.font.size = Pt(5.6)
-    run.font.color.rgb = RGBColor(176, 184, 191)
+    run.font.color.rgb = RGBColor(170, 181, 188)
 
 
-def _add_control_rail(document: Document, lines: list[str]) -> None:
-    """Add a floating control rail that LibreOffice displaces over body content.
+def _configure_section(section, *, landscape: bool = False) -> None:
+    if landscape:
+        section.orientation = WD_ORIENT.LANDSCAPE
+        section.page_width = Inches(11)
+        section.page_height = Inches(8.5)
+        section.top_margin = Inches(0.38)
+        section.bottom_margin = Inches(0.35)
+        section.left_margin = Inches(0.42)
+        section.right_margin = Inches(0.42)
+    else:
+        section.orientation = WD_ORIENT.PORTRAIT
+        section.page_width = Inches(8.5)
+        section.page_height = Inches(11)
+        section.top_margin = Inches(0.42)
+        section.bottom_margin = Inches(0.42)
+        section.left_margin = Inches(0.5)
+        section.right_margin = Inches(0.5)
+    section.header_distance = Inches(0.15)
+    section.footer_distance = Inches(0.15)
 
-    Word's table-positioning properties and exact-height body rows interact poorly
-    in Writer's PDF filter. The resulting overlap is the intended, genuine office
-    conversion failure; all affected strings remain ordinary document text.
+
+def _add_reviewer_sidebar(document: Document) -> None:
+    """Add an ordinary floating review table anchored to its body position.
+
+    Word reserves a right-side wrap area for the page-anchored review note.
+    Writer shifts the note and the fixed-height table during DOCX import, leaving
+    compressed rows and altered reading order. Both layers remain native.
     """
-    table = document.add_table(rows=len(lines), cols=1)
+    table = document.add_table(rows=2, cols=1)
     table.autofit = False
-    table.alignment = WD_TABLE_ALIGNMENT.RIGHT
-    table.columns[0].width = Inches(1.38)
+    table.columns[0].width = Inches(2.05)
+    _set_table_fixed(table)
     tbl_pr = table._tbl.tblPr
     position = OxmlElement("w:tblpPr")
-    position.set(qn("w:leftFromText"), "80")
-    position.set(qn("w:rightFromText"), "80")
-    position.set(qn("w:topFromText"), "80")
-    position.set(qn("w:bottomFromText"), "80")
+    position.set(qn("w:leftFromText"), "180")
+    position.set(qn("w:rightFromText"), "180")
+    position.set(qn("w:topFromText"), "120")
+    position.set(qn("w:bottomFromText"), "120")
     position.set(qn("w:vertAnchor"), "page")
     position.set(qn("w:horzAnchor"), "page")
-    position.set(qn("w:tblpX"), "9100")
-    position.set(qn("w:tblpY"), "2450")
-    position.set(qn("w:tblpXSpec"), "center")
+    position.set(qn("w:tblpX"), "8200")
+    position.set(qn("w:tblpY"), "2760")
     tbl_pr.append(position)
-    for index, (row, text) in enumerate(zip(table.rows, lines, strict=True)):
-        row.height = Inches(0.28)
-        row.height_rule = WD_ROW_HEIGHT_RULE.EXACTLY
-        cell = row.cells[0]
-        _set_cell_shading(cell, "E2E5E7" if index else "BFC7CE")
-        _write_cell(cell, text, header=index == 0, compressed=True)
+    overlap = OxmlElement("w:tblOverlap")
+    overlap.set(qn("w:val"), "never")
+    tbl_pr.append(overlap)
+    header, note = table.rows
+    header.height = Inches(0.28)
+    header.height_rule = WD_ROW_HEIGHT_RULE.EXACTLY
+    _set_cell_shading(header.cells[0], "C9D6DE")
+    _write_cell(header.cells[0], "APPROVER SIDEBAR - 08 JUL", header=True)
+    note.height = Inches(0.82)
+    note.height_rule = WD_ROW_HEIGHT_RULE.AT_LEAST
+    _set_cell_shading(note.cells[0], "EEF3F5")
+    _write_cell(
+        note.cells[0],
+        "A. Kim: keep Kestrel Dock 4 access active until counsel signs EX-07. This margin note is advisory; page 5 controls release.",
+    )
 
 
-def _approval_stamp(path: Path) -> None:
-    image = Image.new("RGBA", (760, 250), (255, 255, 255, 0))
+def _font(size: int, *, bold: bool = False):
+    candidates = [
+        "/System/Library/Fonts/Supplemental/Arial Bold.ttf" if bold else "/System/Library/Fonts/Supplemental/Arial.ttf",
+        "/System/Library/Fonts/Supplemental/Verdana Bold.ttf" if bold else "/System/Library/Fonts/Supplemental/Verdana.ttf",
+    ]
+    for candidate in candidates:
+        if Path(candidate).exists():
+            return ImageFont.truetype(candidate, size=size)
+    return ImageFont.load_default(size=size)
+
+
+def _finance_stamp(path: Path) -> None:
+    image = Image.new("RGBA", (920, 300), (255, 255, 255, 0))
     draw = ImageDraw.Draw(image)
-    color = (46, 100, 74, 235)
-    draw.rounded_rectangle((15, 15, 745, 235), radius=22, outline=color, width=8)
-    draw.line((35, 82, 725, 82), fill=color, width=4)
-    font = ImageFont.load_default(size=34)
-    small = ImageFont.load_default(size=25)
-    draw.text((42, 34), "FINANCE CONCURRENCE", font=font, fill=color)
-    draw.text((42, 102), "M. OKAFOR / 10 JUL 2026 / 14:18 PT", font=small, fill=color)
-    draw.text((42, 153), "RESERVE CONTROL LO-551", font=small, fill=color)
+    green = (36, 104, 76, 238)
+    draw.rounded_rectangle((15, 15, 905, 285), radius=24, outline=green, width=9)
+    draw.line((42, 96, 878, 96), fill=green, width=4)
+    draw.text((46, 36), "FINANCE VALIDATED", font=_font(42, bold=True), fill=green)
+    draw.text((46, 120), "JONAH MERCER  |  09 JUL 2026 16:42 MST", font=_font(28), fill=green)
+    draw.text((46, 171), "CEILING $28,070  |  CONTROL VC-2048", font=_font(28, bold=True), fill=green)
+    draw.text((46, 222), "COST VALIDATION IS NOT OPERATIONAL RELEASE", font=_font(24), fill=green)
     image.save(path, format="PNG", optimize=True)
 
 
 def _configure_document(document: Document) -> None:
-    section = document.sections[0]
-    section.page_width = Inches(8.5)
-    section.page_height = Inches(11)
-    section.top_margin = Inches(0.38)
-    section.bottom_margin = Inches(0.38)
-    section.left_margin = Inches(0.46)
-    section.right_margin = Inches(0.46)
-    section.header_distance = Inches(0.15)
-    section.footer_distance = Inches(0.15)
+    _configure_section(document.sections[0])
     normal = document.styles["Normal"]
-    normal.font.name = "Verdana"
-    normal.font.size = Pt(8.4)
+    normal.font.name = "Arial"
+    normal.font.size = Pt(8.2)
     normal.paragraph_format.space_after = Pt(0)
-    document.core_properties.title = TITLE
-    document.core_properties.subject = "Operating exception control packet OR-7712"
-    document.core_properties.author = "West Region Logistics Document Control"
-    document.core_properties.keywords = "OR-7712, logistics, exception control"
-    document.core_properties.created = datetime(2026, 7, 10, 15, 10, tzinfo=timezone.utc)
-    document.core_properties.modified = datetime(2026, 7, 10, 15, 10, tzinfo=timezone.utc)
+    properties = document.core_properties
+    properties.title = TITLE
+    properties.subject = "Controlled supplier transition file SV-2048"
+    properties.author = "Northstar Cold Chain, Regional Operations"
+    properties.keywords = "SV-2048, supplier transition, cold storage, cutover"
+    properties.created = datetime(2026, 7, 8, 16, 20, tzinfo=timezone.utc)
+    properties.modified = datetime(2026, 7, 10, 16, 30, tzinfo=timezone.utc)
 
 
 def _build_docx(path: Path, stamp_path: Path) -> None:
     document = Document()
     _configure_document(document)
 
-    _page_title(document, 1, "Operating exception memo", "REV 03")
-    _label(document, "Control fields")
-    control_headers = ["Memo field", "Memo value", "Linked field", "Linked value"]
-    control_rows = [
-        ["Prepared", "10 Jul 2026", "Coordinator", "Lena Ortiz"],
-        ["Review window", "Through 12 Jul 16:00 PT", "Region", "West"],
-        ["Scope", "Cross-dock and linehaul exceptions", "Record", "OR-7712"],
-    ]
-    _add_table(document, control_headers, control_rows, [0.9, 2.15, 1.15, 3.25])
-    _label(document, "Operating note")
-    _paragraph(document, "Network planning opened OR-7712 after Reno dock staffing fell three crew positions below the consolidation plan. Boise overflow capacity and Tacoma weekend allocation are controlled separately; no blanket regional stop was issued.")
-    _label(document, "Decision register")
-    broken_decisions = [
-        [row[0], row[1], row[2].replace(" — ", "\n"), row[3], row[4]] for row in DECISION_ROWS
-    ]
-    _add_table(document, DECISION_HEADERS, broken_decisions, [0.55, 1.55, 2.25, 1.35, 1.65], compressed=True)
-    _add_control_rail(document, ["CONTROL", "REV 03", "WEST", "OR-7712"])
-    _label(document, "Routing")
-    _paragraph(document, "Distribute to network planning, Reno operations, transportation, and finance. D-17 is the only open blocking decision.")
-    document.add_page_break()
-
-    _page_title(document, 2, "Lane risk register", "CONTROLLED")
-    _label(document, "Lane state at 10 Jul 15:00 PT")
-    broken_lanes = [
-        [row[0], row[1], row[2].replace(" by ", "\nby "), row[3], row[4].replace(" ", "\n", 1)]
-        for row in LANE_ROWS
-    ]
-    _add_table(document, LANE_HEADERS, broken_lanes, [1.15, 0.7, 2.0, 1.0, 2.5], compressed=True)
-    _add_control_rail(document, ["LANE GRID", "10 JUL", "15:00 PT", "REV 03"])
-    _label(document, "Local controls")
-    local_headers = ["Location", "Release authority", "Evidence", "Limit"]
-    local_rows = [
-        ["Reno", "Ravi Mehta", "Crew roster RC-118", "No outbound consolidation"],
-        ["Boise", "Lena Ortiz", "Slot approval LO-551", "18 pallets / B7 only"],
-        ["Tacoma", "Mira Chen", "Carrier note TC-49", "Existing allocation"],
-        ["Spokane", "Dispatch desk", "Daily plan SP-210", "Standard cutoff"],
-    ]
-    _add_table(document, local_headers, local_rows, [1.2, 1.55, 2.1, 2.5])
-    _label(document, "Sequence note")
-    _paragraph(document, "Boise may release independently. Tacoma remains on watch without reserve eligibility. Spokane remains clear. Reno may not consolidate until the D-17 exception owner records closure.")
-    document.add_page_break()
-
-    _page_title(document, 3, "Cost reserve authorization", "FINANCE")
-    _label(document, "Reserve ledger")
-    broken_reserves = [
-        [row[0], row[1], row[2], row[3].replace(" ", "\n", 2)] for row in RESERVE_ROWS
-    ]
-    _add_table(document, RESERVE_HEADERS, broken_reserves, [2.0, 1.0, 1.35, 3.0], compressed=True)
-    _add_control_rail(document, ["RESERVE", "LO-551", "FINANCE", "REV 03"])
-    _label(document, "Authorized reserve scenarios")
-    scenario_headers = ["Scenario", "Eligible reserve", "Included lines"]
-    scenario_rows = [
-        ["D-17 closes by 12 Jul 16:00 PT", "$2,400", "Temporary slot B7"],
-        ["D-17 remains open after 12 Jul 16:00 PT", "$6,250", "Slot B7 + Reno labor standby"],
-    ]
-    _add_table(document, scenario_headers, scenario_rows, [3.15, 1.35, 2.85])
-    _label(document, "Finance annotation")
-    _paragraph(document, "Tacoma weekend premium is excluded because D-19 retains the existing carrier allocation. Labor standby becomes eligible only after the D-17 deadline passes while the hold remains open.")
-    document.add_picture(str(stamp_path), width=Inches(3.65))
-    document.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    document.add_page_break()
-
-    _page_title(document, 4, "Controlling disposition and signoff", "FINAL")
-    _label(document, "Controlling statement")
-    statement = "Reno outbound consolidation remains ON HOLD until Ravi Mehta closes the D-17 dock staffing exception."
-    paragraph = document.add_paragraph()
-    paragraph.paragraph_format.space_before = Pt(3)
-    paragraph.paragraph_format.space_after = Pt(9)
-    paragraph.paragraph_format.left_indent = Inches(0.18)
-    paragraph.paragraph_format.right_indent = Inches(0.18)
-    paragraph.paragraph_format.line_spacing = Pt(17)
-    run = paragraph.add_run(statement)
-    run.bold = True
-    run.font.name = "Verdana"
-    run.font.size = Pt(12)
-    run.font.color.rgb = RGBColor(120, 39, 36)
-    _label(document, "Signoff register")
-    _add_table(document, SIGNOFF_HEADERS, SIGNOFF_ROWS, [1.45, 1.55, 2.1, 2.25])
-    _add_control_rail(document, ["FINAL", "REV 03", "EFFECTIVE", "15:10 PT"])
-    _label(document, "State interpretation")
-    _paragraph(document, "Finance concurrence authorizes the reserve; it does not release Reno. Operations approval establishes the packet. Ravi Mehta's row remains open and unsigned, so the controlling statement remains in force.")
+    _page_title(document, 1, "Regional cold-storage cutover approval", "REV D")
     _label(document, "Document control")
-    _paragraph(document, "Revision 3 supersedes Revision 2 at 10 Jul 2026 15:10 PT. Next review: 12 Jul 2026 16:00 PT. Retention class: operations exception / seven years.")
+    _add_table(document, CONTROL_HEADERS, CONTROL_ROWS, [1.05, 2.55, 1.05, 2.85])
+    _label(document, "Change request")
+    _paragraph(
+        document,
+        "Northstar will transfer eligible Phoenix and Tucson inventory from Kestrel Logistics to Boreal Storage during the 14-15 July maintenance window. The change includes telemetry migration, physical custody transfer, invoice routing, and eventual closure of Kestrel credentials. Quarantined inventory remains under Northstar quality control.",
+    )
+    _label(document, "Record authority and precedence")
+    _add_table(document, AUTHORITY_HEADERS, AUTHORITY_ROWS, [0.65, 2.0, 2.5, 2.35], compact=True)
+    _label(document, "Review workflow")
+    workflow_headers = ["Step", "Owner", "Required review", "Exit record"]
+    workflow_rows = [
+        ["1", "Cutover lead", "Sequence and operational gates", "Page 2 workplan"],
+        ["2", "Finance", "Ceiling, PO, and invoice routing", "Page 3 validation"],
+        ["3", "Functional owners", "Exception scope and evidence", "Page 4 register"],
+        ["4", "Sponsor and quality", "Selective GO/HOLD authorization", "Page 5 final record"],
+    ]
+    _add_table(document, workflow_headers, workflow_rows, [0.6, 1.5, 3.1, 2.3])
+    _paragraph(
+        document,
+        "A lower-priority record may supply detail but cannot reverse a higher-priority state. Closure applies only to the obligation named in the exception row.",
+        bold=True,
+    )
+    document.add_page_break()
+
+    _page_title(document, 2, "Cutover workplan and handoff sequence", "CONTROLLED")
+    _paragraph(
+        document,
+        "All times are Mountain Standard Time. Start windows are targets; each task gate remains mandatory even if the prior task finishes early.",
+    )
+    _label(document, "Workplan")
+    _add_table(
+        document,
+        WORKPLAN_HEADERS,
+        WORKPLAN_ROWS,
+        [0.45, 1.05, 2.15, 0.9, 1.15, 1.35, 0.95],
+        exact_rows=True,
+        row_height=0.19,
+        compact=True,
+    )
+    _add_reviewer_sidebar(document)
+    _label(document, "Dependency interpretation")
+    _paragraph(
+        document,
+        "T-02 gates the PX-771 transfer in T-04. EX-07 does not block physical transfer; it blocks T-06 credential closure. T-05 may move only eligible Tucson stock while the six QA-61 cases remain segregated.",
+    )
+    _label(document, "Handoff matrix")
+    _add_table(document, HANDOFF_HEADERS, HANDOFF_ROWS, [1.4, 1.45, 1.65, 3.0], exact_rows=True, row_height=0.25, compact=True)
+    _label(document, "Rollback trigger")
+    _paragraph(
+        document,
+        "Invoke RB-12 if a temperature deviation exceeds 1.0 C for 10 continuous minutes. Stop the active transfer, preserve custody at the last confirmed location, and report the last completed task on bridge BR-2048.",
+    )
+    document.add_page_break()
+
+    _page_title(document, 3, "Commercial validation and invoice routing", "FINANCE")
+    _label(document, "Authorized cost build")
+    _add_table(document, COST_HEADERS, COST_ROWS, [1.55, 2.15, 1.05, 2.75], exact_rows=True, row_height=0.38)
+    total_headers = ["Control", "Value", "Interpretation"]
+    total_rows = [
+        ["Base committed cost", "$25,070", "Implementation, overlap, and sensor validation"],
+        ["Conditional contingency", "$3,000", "Usable only while EX-07 extends the overlap"],
+        ["Not-to-exceed ceiling", "$28,070", "Requires finance reapproval if exceeded"],
+    ]
+    _add_table(document, total_headers, total_rows, [1.65, 1.25, 4.6])
+    _label(document, "Invoice route")
+    _add_table(document, INVOICE_HEADERS, INVOICE_ROWS, [1.45, 1.0, 1.0, 1.45, 2.6])
+    _label(document, "Finance scope")
+    _paragraph(
+        document,
+        "Finance validates the ceiling and invoice route. It does not declare an exception closed, satisfy a task gate, or authorize physical release. Unused contingency is not committed spend.",
+    )
+    document.add_picture(str(stamp_path), width=Inches(4.25))
+    document.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+
+    landscape_section = document.add_section(WD_SECTION.NEW_PAGE)
+    _configure_section(landscape_section, landscape=True)
+    _page_title(document, 4, "Exception and closure-evidence register", "REV D")
+    _paragraph(
+        document,
+        "Read each state against its affected obligation. A closed row does not close another row, and a watch item does not become a hold unless the final authorization says so.",
+    )
+    _label(document, "Controlled register")
+    _add_table(
+        document,
+        EXCEPTION_HEADERS,
+        EXCEPTION_ROWS,
+        [0.75, 1.35, 2.7, 1.0, 1.25, 2.35, 1.0],
+        exact_rows=True,
+        row_height=0.23,
+        compact=True,
+    )
+    _label(document, "Register notes")
+    note_headers = ["Marker", "Meaning", "Operational consequence"]
+    note_rows = [
+        ["CLOSED", "Listed evidence was accepted for that row", "No effect on unrelated exceptions"],
+        ["OPEN - EXCLUDE", "Affected inventory stays out of the authorized quantity", "Eligible inventory may proceed"],
+        ["WATCH", "Monitor and update the stated evidence channel", "Continue unless a final condition fails"],
+    ]
+    _add_table(document, note_headers, note_rows, [1.2, 4.3, 4.9], compact=True)
+    footnote = document.add_paragraph()
+    footnote.paragraph_format.space_before = Pt(5)
+    footnote.paragraph_format.space_after = Pt(0)
+    footnote.paragraph_format.left_indent = Inches(0.15)
+    footnote.paragraph_format.right_indent = Inches(0.15)
+    footnote.paragraph_format.line_spacing = Pt(8.1)
+    run = footnote.add_run(
+        "Record note: Email acknowledgment is context only unless the relevant row cites it as accepted evidence. The signed page 5 authorization controls GO/HOLD state; the finance validation controls cost only."
+    )
+    run.italic = True
+    run.font.name = "Arial"
+    run.font.size = Pt(6.8)
+    run.font.color.rgb = RGBColor(61, 73, 81)
+
+    final_section = document.add_section(WD_SECTION.NEW_PAGE)
+    _configure_section(final_section)
+    _page_title(document, 5, "Final implementation authorization", "EFFECTIVE")
+    _label(document, "Controlling decision")
+    decision = document.add_table(rows=1, cols=2)
+    _set_table_fixed(decision)
+    decision.columns[0].width = Inches(1.2)
+    decision.columns[1].width = Inches(6.25)
+    _set_cell_shading(decision.cell(0, 0), "D6E7DD")
+    _set_cell_shading(decision.cell(0, 1), "EEF6F1")
+    _write_cell(decision.cell(0, 0), "PHYSICAL CUTOVER\nGO", header=True)
+    _write_cell(
+        decision.cell(0, 1),
+        "Begin at 14 Jul 2026 22:00 MST for eligible inventory only. Kestrel credential decommission remains HOLD until C-3 is satisfied.",
+        header=True,
+    )
+    _label(document, "Release conditions")
+    _add_table(document, CONDITION_HEADERS, CONDITION_ROWS, [0.75, 2.85, 1.7, 2.2], exact_rows=True, row_height=0.45, compact=True)
+    _label(document, "Authorization interpretation")
+    _paragraph(
+        document,
+        "The GO decision permits the physical cutover; it does not close EX-07, release the six QA-61 cases, or waive telemetry and rollback gates. The finance stamp validates cost only. Page 4 remains the source for exception ownership and evidence.",
+    )
+    _label(document, "Recorded approvals")
+    _add_table(document, SIGNOFF_HEADERS, SIGNOFF_ROWS, [1.45, 1.45, 2.85, 1.75], exact_rows=True, row_height=0.4, compact=True)
+    _label(document, "Document control")
+    _paragraph(
+        document,
+        "Revision D supersedes Draft C. This authorization became effective at 10 Jul 2026 09:30 MST. The next control event is the first failed condition, completed rollback, or closure of C-3, whichever occurs first.",
+    )
 
     document.save(path)
 
@@ -404,14 +658,7 @@ def _export_with_libreoffice(docx_path: Path, pdf_path: Path, work_dir: Path) ->
     export_dir.mkdir(parents=True, exist_ok=True)
     profile_dir.mkdir(parents=True, exist_ok=True)
     env = os.environ.copy()
-    env.update(
-        {
-            "LC_ALL": "C",
-            "LANG": "C",
-            "TZ": "UTC",
-            "SOURCE_DATE_EPOCH": "1783696200",
-        }
-    )
+    env.update({"LC_ALL": "C", "LANG": "C", "TZ": "UTC", "SOURCE_DATE_EPOCH": "1783696200"})
     result = subprocess.run(
         [
             soffice,
@@ -439,20 +686,20 @@ def _export_with_libreoffice(docx_path: Path, pdf_path: Path, work_dir: Path) ->
             + (result.stderr.strip() or result.stdout.strip() or f"exit {result.returncode}")
         )
 
-    normalized = work_dir / "normalized.pdf"
+    normalized = work_dir / "metadata-normalized.pdf"
     reader = PdfReader(str(converted))
-    if len(reader.pages) != 4:
-        raise ValueError(f"{CASE_ID}: LibreOffice generated {len(reader.pages)} pages; expected 4")
+    if len(reader.pages) != 5:
+        raise ValueError(f"{CASE_ID}: LibreOffice generated {len(reader.pages)} pages; expected 5")
     writer = PdfWriter()
     for page in reader.pages:
         writer.add_page(page)
     writer.add_metadata(
         {
             "/Title": TITLE,
-            "/Author": "West Region Logistics Document Control",
-            "/Subject": "Operating exception control packet OR-7712",
-            "/Creator": "LibreOffice Writer office export",
-            "/Producer": "LibreOffice PDF filter; normalized by Doc2MD generator",
+            "/Author": "Northstar Cold Chain, Regional Operations",
+            "/Subject": "Controlled supplier transition file SV-2048",
+            "/Creator": "LibreOffice Writer",
+            "/Producer": "LibreOffice PDF export",
         }
     )
     with normalized.open("wb") as stream:
@@ -469,138 +716,592 @@ def _export_with_libreoffice(docx_path: Path, pdf_path: Path, work_dir: Path) ->
     )
 
 
-def _regions() -> list[dict]:
-    def region(region_id, page, label, kind, leaves, *, budget=1, closed_world=False):
-        return {
-            "id": region_id,
-            "page": page,
-            "label": label,
-            "kind": kind,
-            "budget": budget,
-            "closedWorld": closed_world,
-            "leaves": leaves,
-        }
+GOLD_SECTIONS = {
+    1: "1. Regional cold-storage cutover approval",
+    2: "2. Cutover workplan and handoff sequence",
+    3: "3. Commercial validation and invoice routing",
+    4: "4. Exception and closure-evidence register",
+    5: "5. Final implementation authorization",
+}
 
-    control_headers = ["Memo field", "Memo value", "Linked field", "Linked value"]
-    control_rows = [
-        ["Prepared", "10 Jul 2026", "Coordinator", "Lena Ortiz"],
-        ["Review window", "Through 12 Jul 16:00 PT", "Region", "West"],
-        ["Scope", "Cross-dock and linehaul exceptions", "Record", "OR-7712"],
+
+def _source_anchor(page: int, label: str, layer: str) -> dict:
+    return {
+        "page": page,
+        "layer": layer,
+        "sectionPath": [TITLE, GOLD_SECTIONS[page], label],
+    }
+
+
+def _closed_table(keys: list[str]) -> dict:
+    return {"scope": "table_rows", "keys": keys}
+
+
+def _region(
+    region_id: str,
+    label: str,
+    kind: str,
+    leaves: list[dict],
+    *,
+    primary_axis: str,
+    page: int | None = None,
+    layer: str = "native_text",
+    modality: str | None = None,
+    secondary_axes: tuple[str, ...] = (),
+    text_only_recoverable: bool = True,
+    budget: int = 1,
+    unique_evidence: bool = True,
+    closed_world: dict | None = None,
+    source_anchors: list[dict] | None = None,
+    gold_section: str | None = None,
+) -> dict:
+    if source_anchors is None:
+        if page is None:
+            raise ValueError(f"{region_id}: page or source_anchors is required")
+        source_anchors = [_source_anchor(page, label, layer)]
+    primary_page = int(source_anchors[0]["page"])
+    region = {
+        "id": region_id,
+        "label": label,
+        "sourceAnchors": source_anchors,
+        "goldSection": gold_section or GOLD_SECTIONS[primary_page],
+        "kind": kind,
+        "modality": modality or layer,
+        "uniqueEvidence": unique_evidence,
+        "primaryAxis": primary_axis,
+        "secondaryAxes": list(secondary_axes),
+        "textOnlyRecoverable": text_only_recoverable,
+        "budget": budget,
+        "leaves": leaves,
+    }
+    if closed_world is not None:
+        region["closedWorld"] = closed_world
+    return region
+
+
+def _regions() -> list[dict]:
+    workflow_headers = ["Step", "Owner", "Required review", "Exit record"]
+    workflow_rows = [
+        ["1", "Cutover lead", "Sequence and operational gates", "Page 2 workplan"],
+        ["2", "Finance", "Ceiling, PO, and invoice routing", "Page 3 validation"],
+        ["3", "Functional owners", "Exception scope and evidence", "Page 4 register"],
+        ["4", "Sponsor and quality", "Selective GO/HOLD authorization", "Page 5 final record"],
     ]
-    local_headers = ["Location", "Release authority", "Evidence", "Limit"]
-    local_rows = [
-        ["Reno", "Ravi Mehta", "Crew roster RC-118", "No outbound consolidation"],
-        ["Boise", "Lena Ortiz", "Slot approval LO-551", "18 pallets / B7 only"],
-        ["Tacoma", "Mira Chen", "Carrier note TC-49", "Existing allocation"],
-        ["Spokane", "Dispatch desk", "Daily plan SP-210", "Standard cutoff"],
+    total_headers = ["Control", "Value", "Interpretation"]
+    total_rows = [
+        ["Base committed cost", "$25,070", "Implementation, overlap, and sensor validation"],
+        ["Conditional contingency", "$3,000", "Usable only while EX-07 extends the overlap"],
+        ["Not-to-exceed ceiling", "$28,070", "Requires finance reapproval if exceeded"],
     ]
-    scenario_headers = ["Scenario", "Eligible reserve", "Included lines"]
-    scenario_rows = [
-        ["D-17 closes by 12 Jul 16:00 PT", "$2,400", "Temporary slot B7"],
-        ["D-17 remains open after 12 Jul 16:00 PT", "$6,250", "Slot B7 + Reno labor standby"],
+    note_headers = ["Marker", "Meaning", "Operational consequence"]
+    note_rows = [
+        ["CLOSED", "Listed evidence was accepted for that row", "No effect on unrelated exceptions"],
+        ["OPEN - EXCLUDE", "Affected inventory stays out of the authorized quantity", "Eligible inventory may proceed"],
+        ["WATCH", "Monitor and update the stated evidence channel", "Continue unless a final condition fails"],
     ]
+    workplan_bindings = {
+        ("T-01", "Activity"),
+        ("T-02", "Activity"),
+        ("T-02", "Gate / evidence"),
+        ("T-04", "Activity"),
+        ("T-04", "State"),
+        ("T-05", "Activity"),
+        ("T-05", "Gate / evidence"),
+        ("T-06", "Activity"),
+        ("T-06", "Gate / evidence"),
+        ("T-06", "State"),
+    }
+    handoff_bindings = {(row[0], "Required content") for row in HANDOFF_ROWS}
+    cost_bindings = {(row[0], "Amount") for row in COST_ROWS} | {
+        ("Kestrel overlap", "Approval condition"),
+        ("Contingency", "Approval condition"),
+    }
+    total_bindings = {(row[0], "Value") for row in total_rows} | {
+        ("Conditional contingency", "Interpretation"),
+    }
+    invoice_bindings = {(row[0], "PO") for row in INVOICE_ROWS} | {
+        ("Boreal Storage", "Route"),
+        ("ThermoVision", "Route"),
+    }
+    exception_bindings = {(row[0], "State") for row in EXCEPTION_ROWS} | {
+        ("EX-07", "Affected obligation"),
+        ("EX-07", "Accepted closure evidence"),
+        ("E-08", "Current finding"),
+        ("E-08", "Accepted closure evidence"),
+        ("E-11", "Current finding"),
+    }
+    condition_bindings = {
+        (row[0], field)
+        for row in CONDITION_ROWS
+        for field in ("Required state before action", "Action governed", "Failure response")
+    }
+    signoff_bindings = {(row[0], "Decision") for row in SIGNOFF_ROWS} | {
+        ("Executive sponsor", "Recorded"),
+        ("Quality", "Recorded"),
+    }
     return [
-        region("p01.control", 1, "Memo control fields", "table", table_leaves("p01.control", control_headers, control_rows), closed_world=True),
-        region("p01.note", 1, "Operating note", "text", [
-            leaf("p01.note.trigger", "OR-7712 opened because Reno dock staffing was three crew positions below plan."),
-            leaf(
-                "p01.note.scope.local-controls",
-                "Boise overflow capacity and Tacoma weekend allocation are separately controlled.",
+        _region(
+            "p01.control",
+            "Document control",
+            "table",
+            [
+                leaf("p01.control.identity", "The controlled file is SV-2048 at Revision D.", evidence=["SV-2048", "Revision", "D"]),
+                leaf("p01.control.dates", "SV-2048 was prepared 08 Jul 2026 and became effective 10 Jul 2026 at 09:30 MST.", evidence=["SV-2048", "08 Jul 2026", "10 Jul 2026", "09:30 MST"]),
+                leaf("p01.control.scope", "The controlled sites are Phoenix and Tucson, coordinated by Avery Kim.", evidence=["Phoenix", "Tucson", "Avery Kim"]),
+            ],
+            page=1,
+            primary_axis="precise_recall",
+            secondary_axes=("table_reconstruction",),
+        ),
+        _region(
+            "p01.request",
+            "Change request and scope",
+            "text",
+            [
+                leaf("p01.request.sites", "The transfer covers eligible Phoenix and Tucson inventory."),
+                leaf("p01.request.functions", "The change covers telemetry migration, physical custody, invoice routing, and later credential closure."),
+                leaf("p01.request.quarantine", "Quarantined inventory remains under Northstar quality control.", harm=2),
+            ],
+            page=1,
+            primary_axis="precise_recall",
+        ),
+        _region(
+            "p01.authority",
+            "Record authority and precedence",
+            "table",
+            [
+                source_precedence_leaf(
+                    "p01.authority.order",
+                    "Source priority is page 5 final authorization, page 4 exception register, page 3 finance validation, page 2 workplan, then reference notes.",
+                    ["page 5 final authorization", "page 4", "page 3", "page 2", "reference"],
+                ),
+                leaf("p01.authority.final", "Page 5 controls GO/HOLD state and release conditions but not individual rate details.", harm=2, evidence=["Page 5", "GO/HOLD", "release conditions", ["but not", "not"], "rate details"]),
+                leaf("p01.authority.exceptions", "Page 4 controls exception scope, owner, and closure evidence but not the commercial ceiling.", harm=2, evidence=["Page 4", "exception scope", "closure evidence", ["but not", "not"], "commercial ceiling"]),
+                leaf("p01.authority.finance", "Page 3 controls the authorized cost ceiling and invoice route but not operational release.", harm=2, evidence=["Page 3", "cost ceiling", "invoice route", ["but not", "not"], "Operational release"]),
+                leaf("p01.authority.workplan", "Page 2 controls task sequence, windows, and task gates but not final authorization.", harm=2, evidence=["Page 2", "Task sequence", "task gates", ["but not", "not"], "Final authorization"]),
+                leaf("p01.authority.reference", "Email and meeting notes provide context only when cited and cannot approve or close an item.", evidence=["Email and meeting notes", "Context only", "approval", "closure"]),
+                leaf("p01.authority.scope", "A lower-priority record may supply detail but cannot reverse a higher-priority state; closure applies only to the obligation named in an exception row.", harm=2, evidence=["lower-priority", "cannot reverse", "higher-priority", ["only", "solely"], "obligation named"]),
+            ],
+            page=1,
+            primary_axis="source_precedence",
+            secondary_axes=("table_reconstruction", "reading_order"),
+            budget=3,
+            closed_world={"scope": "record_set", "keys": [row[1] for row in AUTHORITY_ROWS]},
+        ),
+        _region(
+            "p01.workflow",
+            "Review workflow",
+            "structure",
+            [
+                leaf(
+                    "p01.workflow.order",
+                    "Review proceeds from cutover lead to finance to functional owners to sponsor and quality.",
+                    claim_type="ordered_record",
+                    evidence_policy={"type": "ordered_tokens", "tokens": [["Cutover lead"], ["Finance"], ["Functional owners"], ["Sponsor and quality"]]},
+                ),
+                leaf(
+                    "p01.workflow.records",
+                    "The workflow exits through page 2 workplan, page 3 validation, page 4 register, then page 5 final record.",
+                    claim_type="ordered_record",
+                    evidence_policy={"type": "ordered_tokens", "tokens": [["Page 2 workplan"], ["Page 3 validation"], ["Page 4 register"], ["Page 5 final record"]]},
+                ),
+            ],
+            page=1,
+            primary_axis="reading_order",
+            secondary_axes=("structure_reconstruction",),
+        ),
+        _region(
+            "p02.workplan",
+            "Clipped native-layer workplan",
+            "table",
+            table_leaves(
+                "p02.workplan",
+                WORKPLAN_HEADERS,
+                WORKPLAN_ROWS,
+                consequential={("T-02", "Gate / evidence"), ("T-04", "State"), ("T-05", "Activity"), ("T-06", "Gate / evidence"), ("T-06", "State")},
+                scored_bindings=workplan_bindings,
             ),
-            leaf("p01.note.scope.regional-stop", "No blanket regional stop was issued."),
-        ]),
-        region("p01.decisions", 1, "Decision register", "table", table_leaves("p01.decisions", DECISION_HEADERS, DECISION_ROWS, consequential={("D-17", "Disposition"), ("D-17", "Owner")}), budget=2, closed_world=True),
-        region("p01.routing", 1, "Memo routing", "text", [
-            leaf(
-                "p01.routing.audience",
-                "The memo routes to network planning, Reno operations, transportation, and finance.",
-                allow_partial=True,
+            page=2,
+            layer="native_layer_recovery",
+            modality="native_layer_recovery",
+            primary_axis="native_layer_recovery",
+            secondary_axes=("table_reconstruction", "precise_recall", "reading_order"),
+            text_only_recoverable=False,
+            budget=4,
+            closed_world=_closed_table([row[0] for row in WORKPLAN_ROWS]),
+        ),
+        _region(
+            "p02.sidebar",
+            "Floating approver sidebar",
+            "text",
+            [
+                leaf("p02.sidebar.access", "Avery Kim's 08 Jul sidebar says to keep Kestrel Dock 4 access active until counsel signs EX-07."),
+                leaf("p02.sidebar.advisory", "The sidebar is advisory and says page 5 controls release.", harm=2),
+            ],
+            page=2,
+            primary_axis="precise_recall",
+            secondary_axes=("source_precedence",),
+        ),
+        _region(
+            "p02.dependencies",
+            "Cross-record dependency interpretation",
+            "text",
+            [
+                leaf("p02.dependencies.t02", "T-02 gates the T-04 transfer of PX-771.", harm=2),
+                leaf("p02.dependencies.ex07", "EX-07 blocks T-06 credential closure but does not block physical transfer.", harm=2),
+                leaf("p02.dependencies.qa61", "T-05 may move only eligible Tucson stock while six QA-61 cases stay segregated.", harm=2),
+            ],
+            page=2,
+            primary_axis="source_precedence",
+            secondary_axes=("cross_page_join",),
+            budget=3,
+        ),
+        _region(
+            "p02.reading-order",
+            "Recovered page-two reading order",
+            "structure",
+            [
+                leaf(
+                    "p02.reading-order.sections",
+                    "Reconstruct the logical order: workplan table, approver sidebar, dependency interpretation, handoff matrix, then rollback trigger.",
+                    harm=2,
+                    claim_type="ordered_record",
+                    evidence_policy={"type": "ordered_tokens", "tokens": [["T-01"], ["Approver sidebar"], ["T-02 gates"], ["Handoff matrix"], ["RB-12"]]},
+                )
+            ],
+            page=2,
+            layer="native_layer_recovery",
+            modality="native_layer_recovery",
+            primary_axis="reading_order",
+            secondary_axes=("native_layer_recovery", "structure_reconstruction"),
+            text_only_recoverable=False,
+            budget=2,
+        ),
+        _region(
+            "p02.handoff",
+            "Handoff matrix",
+            "table",
+            table_leaves(
+                "p02.handoff",
+                HANDOFF_HEADERS,
+                HANDOFF_ROWS,
+                consequential={("Any temperature breach", "Required content"), ("Rollback invoked", "Required content")},
+                scored_bindings=handoff_bindings,
             ),
-            leaf("p01.routing.blocker", "D-17 is the only open blocking decision.", harm=2),
-        ]),
-        region("p02.lanes", 2, "Lane risk register", "table", table_leaves("p02.lanes", LANE_HEADERS, LANE_ROWS, consequential={("Reno → SFO", "State"), ("Reno → SFO", "Control / next gate")}), budget=2, closed_world=True),
-        region("p02.controls", 2, "Local release controls", "table", table_leaves("p02.controls", local_headers, local_rows, consequential={("Reno", "Limit")}), budget=2, closed_world=True),
-        region("p02.sequence", 2, "Independent lane sequence", "text", [
-            leaf("p02.sequence.boise", "Boise may release independently."),
-            leaf("p02.sequence.tacoma", "Tacoma remains on watch without reserve eligibility."),
-            leaf("p02.sequence.spokane", "Spokane remains clear."),
-            leaf("p02.sequence.reno", "Reno may not consolidate until Ravi Mehta records D-17 closure.", harm=2),
-        ], budget=2),
-        region("p03.reserve", 3, "Reserve ledger", "table", table_leaves("p03.reserve", RESERVE_HEADERS, RESERVE_ROWS, consequential={("Reno labor standby", "Eligibility"), ("Tacoma weekend premium", "Eligibility")}), budget=2, closed_world=True),
-        region("p03.scenarios", 3, "Reserve scenarios", "table", table_leaves("p03.scenarios", scenario_headers, scenario_rows, consequential={("D-17 remains open after 12 Jul 16:00 PT", "Eligible reserve")}), budget=2, closed_world=True),
-        region("p03.annotation", 3, "Finance annotation", "text", [
-            leaf("p03.annotation.tacoma", "The Tacoma premium is excluded because D-19 retains the existing carrier allocation."),
-            leaf("p03.annotation.reno", "Reno labor standby becomes eligible only after the D-17 deadline passes while the hold remains open.", harm=2),
-        ]),
-        region("p03.stamp", 3, "Raster finance concurrence stamp", "image", [
-            leaf("p03.stamp.approver", "The stamp records finance concurrence by M. Okafor."),
-            leaf("p03.stamp.time", "The concurrence stamp is dated 10 Jul 2026 at 14:18 PT."),
-            leaf("p03.stamp.control", "The stamp names reserve control LO-551."),
-        ]),
-        region("p04.statement", 4, "Final controlling disposition", "text", [
-            leaf("p04.statement.hold", "Reno outbound consolidation remains ON HOLD.", harm=2),
-            leaf("p04.statement.release", "Release requires Ravi Mehta to close the D-17 dock staffing exception.", harm=2),
-        ], budget=2),
-        region("p04.signoff", 4, "Signoff register", "table", table_leaves("p04.signoff", SIGNOFF_HEADERS, SIGNOFF_ROWS, consequential={("Exception owner", "State")}), budget=2, closed_world=True),
-        region("p04.interpretation", 4, "Signoff state interpretation", "text", [
-            leaf("p04.interpretation.finance", "Finance concurrence authorizes the reserve but does not release Reno."),
-            leaf("p04.interpretation.owner-state", "Ravi Mehta remains open and unsigned."),
-            leaf(
-                "p04.interpretation.effect",
-                "Ravi Mehta's open, unsigned row keeps the controlling statement in force.",
-                harm=2,
+            page=2,
+            primary_axis="table_reconstruction",
+            secondary_axes=("precise_recall",),
+            closed_world=_closed_table([row[0] for row in HANDOFF_ROWS]),
+        ),
+        _region(
+            "p02.rollback",
+            "Rollback trigger",
+            "text",
+            [
+                leaf("p02.rollback.threshold", "RB-12 is invoked for a temperature deviation above 1.0 C lasting 10 continuous minutes.", harm=2),
+                leaf("p02.rollback.actions", "Rollback stops the active transfer and preserves custody at the last confirmed location.", harm=2),
+                leaf("p02.rollback.report", "The last completed task must be reported on bridge BR-2048."),
+            ],
+            page=2,
+            primary_axis="precise_recall",
+            secondary_axes=("long_context_coherence",),
+            budget=2,
+        ),
+        _region(
+            "p03.cost",
+            "Authorized cost build",
+            "table",
+            table_leaves(
+                "p03.cost",
+                COST_HEADERS,
+                COST_ROWS,
+                consequential={("Contingency", "Approval condition")},
+                scored_bindings=cost_bindings,
             ),
-        ], budget=2),
-        region("p04.control", 4, "Document control", "text", [
-            leaf("p04.control.supersession", "Revision 3 supersedes Revision 2 at 10 Jul 2026 15:10 PT."),
-            leaf("p04.control.review", "The next review is 12 Jul 2026 at 16:00 PT."),
-            leaf("p04.control.retention", "The retention class is operations exception / seven years."),
-        ]),
+            page=3,
+            primary_axis="table_reconstruction",
+            secondary_axes=("precise_recall",),
+            budget=2,
+            closed_world=_closed_table([row[0] for row in COST_ROWS]),
+        ),
+        _region(
+            "p03.total",
+            "Cost controls",
+            "table",
+            table_leaves(
+                "p03.total",
+                total_headers,
+                total_rows,
+                consequential={("Conditional contingency", "Interpretation"), ("Not-to-exceed ceiling", "Value")},
+                scored_bindings=total_bindings,
+            ),
+            page=3,
+            primary_axis="precise_recall",
+            secondary_axes=("table_reconstruction",),
+            budget=2,
+            closed_world=_closed_table([row[0] for row in total_rows]),
+        ),
+        _region(
+            "p03.invoice",
+            "Invoice route",
+            "table",
+            table_leaves("p03.invoice", INVOICE_HEADERS, INVOICE_ROWS, scored_bindings=invoice_bindings),
+            page=3,
+            primary_axis="table_reconstruction",
+            secondary_axes=("precise_recall",),
+            closed_world=_closed_table([row[0] for row in INVOICE_ROWS]),
+        ),
+        _region(
+            "p03.scope",
+            "Finance scope",
+            "text",
+            [
+                leaf("p03.scope.validation", "Finance validates the cost ceiling and invoice route."),
+                leaf("p03.scope.no-release", "Finance does not close exceptions, satisfy task gates, or authorize physical release.", harm=2),
+                leaf("p03.scope.contingency", "Unused contingency is not committed spend."),
+            ],
+            page=3,
+            primary_axis="source_precedence",
+            secondary_axes=("precise_recall",),
+            budget=2,
+        ),
+        _region(
+            "p03.stamp",
+            "Raster finance validation stamp",
+            "image",
+            [
+                visual_leaf("p03.stamp.signer-time", "The finance-validation stamp records Jonah Mercer on 09 Jul 2026 at 16:42 MST.", ["Jonah Mercer", "09 Jul 2026", "16:42 MST"]),
+                visual_leaf("p03.stamp.control", "The finance-validation stamp names control VC-2048.", ["VC-2048"]),
+                visual_leaf("p03.stamp.scope", "The finance-validation stamp says cost validation is not operational release.", ["COST VALIDATION", "NOT OPERATIONAL RELEASE"], harm=2),
+            ],
+            page=3,
+            layer="raster",
+            modality="raster",
+            primary_axis="image_description",
+            secondary_axes=("mixed_modality_fusion", "precise_recall"),
+            text_only_recoverable=False,
+            budget=2,
+        ),
+        _region(
+            "p04.exceptions",
+            "Landscape exception register",
+            "table",
+            table_leaves(
+                "p04.exceptions",
+                EXCEPTION_HEADERS,
+                EXCEPTION_ROWS,
+                consequential={("EX-07", "Affected obligation"), ("EX-07", "Accepted closure evidence"), ("EX-07", "State"), ("E-08", "Current finding"), ("E-08", "State")},
+                scored_bindings=exception_bindings,
+            ),
+            page=4,
+            primary_axis="source_precedence",
+            secondary_axes=("table_reconstruction", "precise_recall"),
+            budget=4,
+            closed_world=_closed_table([row[0] for row in EXCEPTION_ROWS]),
+        ),
+        _region(
+            "p04.notes",
+            "Register state semantics",
+            "table",
+            [
+                leaf("p04.notes.closed", "CLOSED means listed evidence was accepted for that row and has no effect on unrelated exceptions.", evidence=["CLOSED", "accepted", "No effect", "unrelated exceptions"]),
+                leaf("p04.notes.exclude", "OPEN - EXCLUDE keeps affected inventory out while eligible inventory may proceed.", harm=2, evidence=["OPEN - EXCLUDE", "Affected inventory", "Eligible inventory may proceed"]),
+                leaf("p04.notes.watch", "WATCH requires monitoring the evidence channel and continues unless a final condition fails.", evidence=["WATCH", "evidence channel", "Continue", "final condition fails"]),
+            ],
+            page=4,
+            primary_axis="source_precedence",
+            secondary_axes=("table_reconstruction",),
+            closed_world={"scope": "record_set", "keys": [row[0] for row in note_rows]},
+        ),
+        _region(
+            "p04.scope",
+            "Exception scope and authority note",
+            "text",
+            [
+                leaf("p04.scope.closed", "A closed row has no effect on unrelated exceptions.", harm=2),
+                leaf("p04.scope.email", "Email acknowledgment is context unless the relevant row cites it as accepted evidence."),
+                leaf("p04.scope.sources", "Page 5 controls GO/HOLD state while page 3 finance validation controls cost only.", harm=2),
+            ],
+            page=4,
+            primary_axis="source_precedence",
+            secondary_axes=("cross_page_join",),
+            budget=2,
+        ),
+        _region(
+            "p05.decision",
+            "Final selective authorization",
+            "text",
+            [
+                leaf("p05.decision.go", "Physical cutover is GO beginning 14 Jul 2026 at 22:00 MST for eligible inventory only.", harm=2),
+                leaf("p05.decision.hold", "Kestrel credential decommission remains HOLD until condition C-3 is satisfied.", harm=2),
+            ],
+            page=5,
+            primary_axis="source_precedence",
+            secondary_axes=("precise_recall", "summarization_coverage"),
+            budget=4,
+        ),
+        _region(
+            "p05.conditions",
+            "Release conditions",
+            "table",
+            table_leaves(
+                "p05.conditions",
+                CONDITION_HEADERS,
+                CONDITION_ROWS,
+                consequential={("C-1", "Required state before action"), ("C-3", "Required state before action"), ("C-4", "Failure response")},
+                scored_bindings=condition_bindings,
+            ),
+            page=5,
+            primary_axis="table_reconstruction",
+            secondary_axes=("source_precedence", "precise_recall"),
+            budget=4,
+            closed_world=_closed_table([row[0] for row in CONDITION_ROWS]),
+        ),
+        _region(
+            "p05.interpretation",
+            "Authorization interpretation",
+            "text",
+            [
+                leaf("p05.interpretation.ex07", "The GO decision does not close EX-07.", harm=2),
+                leaf("p05.interpretation.qa61", "The GO decision does not release the six QA-61 cases.", harm=2),
+                leaf("p05.interpretation.gates", "The GO decision does not waive telemetry or rollback gates.", harm=2),
+                leaf("p05.interpretation.sources", "Page 4 remains the source for exception ownership and closure evidence."),
+            ],
+            page=5,
+            primary_axis="source_precedence",
+            secondary_axes=("summarization_coverage",),
+            budget=2,
+        ),
+        _region(
+            "p05.signoff",
+            "Recorded approvals",
+            "table",
+            table_leaves(
+                "p05.signoff",
+                SIGNOFF_HEADERS,
+                SIGNOFF_ROWS,
+                consequential={("Legal exception owner", "Decision"), ("Quality", "Decision")},
+                scored_bindings=signoff_bindings,
+            ),
+            page=5,
+            primary_axis="precise_recall",
+            secondary_axes=("table_reconstruction", "source_precedence"),
+            budget=2,
+            closed_world=_closed_table([row[0] for row in SIGNOFF_ROWS]),
+        ),
+        _region(
+            "p05.control",
+            "Final document control",
+            "text",
+            [
+                leaf("p05.control.revision", "Revision D supersedes Draft C."),
+                leaf("p05.control.effective", "The authorization became effective at 10 Jul 2026 09:30 MST."),
+                leaf("p05.control.event", "The next control event is the first failed condition, completed rollback, or closure of C-3."),
+            ],
+            page=5,
+            primary_axis="precise_recall",
+            secondary_axes=("long_context_coherence",),
+        ),
+        _region(
+            "x01.selective-release",
+            "Cross-page selective-release synthesis",
+            "mixed",
+            [
+                leaf(
+                    "x01.selective-release.physical",
+                    "Physical cutover is GO only for eligible inventory and still requires the T-02 and T-04 telemetry gate and the T-05 QA-61 exclusion.",
+                    harm=2,
+                    claim_type="cross_page_join",
+                    evidence=["Physical cutover", "GO", ["only", "solely"], "eligible inventory", "T-02", "T-04", "T-05", "QA-61"],
+                ),
+                leaf(
+                    "x01.selective-release.credentials",
+                    "Kestrel credential closure remains HOLD because T-06 and C-3 require both signed EX-07 and zero unresolved REC-2048 items.",
+                    harm=2,
+                    claim_type="cross_page_join",
+                    evidence=["Kestrel", "HOLD", "T-06", "C-3", "signed EX-07", "REC-2048", "zero unresolved"],
+                ),
+                leaf(
+                    "x01.selective-release.finance",
+                    "Finance validation and its stamp authorize cost only; they cannot close an exception, satisfy a task gate, or override the final release state.",
+                    harm=2,
+                    claim_type="cross_page_join",
+                    evidence=["finance validation", "stamp", "cost", ["only", "solely"], "cannot", "exception", "task gate", "final release"],
+                ),
+            ],
+            primary_axis="long_context_coherence",
+            secondary_axes=("cross_page_join", "source_precedence", "mixed_modality_fusion"),
+            modality="mixed",
+            text_only_recoverable=False,
+            budget=4,
+            unique_evidence=False,
+            source_anchors=[
+                _source_anchor(1, "Record authority and precedence", "native_text"),
+                _source_anchor(2, "Clipped native-layer workplan", "native_layer_recovery"),
+                _source_anchor(3, "Finance scope", "native_text"),
+                _source_anchor(3, "Raster finance validation stamp", "raster"),
+                _source_anchor(4, "Landscape exception register", "native_text"),
+                _source_anchor(5, "Final selective authorization", "native_text"),
+            ],
+            gold_section=GOLD_SECTIONS[5],
+        ),
     ]
 
 
 def _gold() -> str:
-    control_headers = ["Memo field", "Memo value", "Linked field", "Linked value"]
-    control_rows = [
-        ["Prepared", "10 Jul 2026", "Coordinator", "Lena Ortiz"],
-        ["Review window", "Through 12 Jul 16:00 PT", "Region", "West"],
-        ["Scope", "Cross-dock and linehaul exceptions", "Record", "OR-7712"],
+    workflow_headers = ["Step", "Owner", "Required review", "Exit record"]
+    workflow_rows = [
+        ["1", "Cutover lead", "Sequence and operational gates", "Page 2 workplan"],
+        ["2", "Finance", "Ceiling, PO, and invoice routing", "Page 3 validation"],
+        ["3", "Functional owners", "Exception scope and evidence", "Page 4 register"],
+        ["4", "Sponsor and quality", "Selective GO/HOLD authorization", "Page 5 final record"],
     ]
-    local_headers = ["Location", "Release authority", "Evidence", "Limit"]
-    local_rows = [
-        ["Reno", "Ravi Mehta", "Crew roster RC-118", "No outbound consolidation"],
-        ["Boise", "Lena Ortiz", "Slot approval LO-551", "18 pallets / B7 only"],
-        ["Tacoma", "Mira Chen", "Carrier note TC-49", "Existing allocation"],
-        ["Spokane", "Dispatch desk", "Daily plan SP-210", "Standard cutoff"],
+    total_headers = ["Control", "Value", "Interpretation"]
+    total_rows = [
+        ["Base committed cost", "$25,070", "Implementation, overlap, and sensor validation"],
+        ["Conditional contingency", "$3,000", "Usable only while EX-07 extends the overlap"],
+        ["Not-to-exceed ceiling", "$28,070", "Requires finance reapproval if exceeded"],
     ]
-    scenario_headers = ["Scenario", "Eligible reserve", "Included lines"]
-    scenario_rows = [
-        ["D-17 closes by 12 Jul 16:00 PT", "$2,400", "Temporary slot B7"],
-        ["D-17 remains open after 12 Jul 16:00 PT", "$6,250", "Slot B7 + Reno labor standby"],
+    note_headers = ["Marker", "Meaning", "Operational consequence"]
+    note_rows = [
+        ["CLOSED", "Listed evidence was accepted for that row", "No effect on unrelated exceptions"],
+        ["OPEN - EXCLUDE", "Affected inventory stays out of the authorized quantity", "Eligible inventory may proceed"],
+        ["WATCH", "Monitor and update the stated evidence channel", "Continue unless a final condition fails"],
     ]
     return (
         f"# {TITLE}\n\n"
-        "## Operating exception memo\n\n"
-        + markdown_table(control_headers, control_rows)
-        + "\n\nNetwork planning opened OR-7712 after Reno dock staffing fell three crew positions below the consolidation plan. Boise overflow capacity and Tacoma weekend allocation are controlled separately; no blanket regional stop was issued.\n\n"
-        + markdown_table(DECISION_HEADERS, DECISION_ROWS)
-        + "\n\nDistribute to network planning, Reno operations, transportation, and finance. D-17 is the only open blocking decision.\n\n"
-        "## Lane risk register\n\n"
-        + markdown_table(LANE_HEADERS, LANE_ROWS)
+        "## 1. Regional cold-storage cutover approval\n\n"
+        + markdown_table(CONTROL_HEADERS, CONTROL_ROWS)
+        + "\n\nNorthstar will transfer eligible Phoenix and Tucson inventory from Kestrel Logistics to Boreal Storage during the 14-15 July maintenance window. The change includes telemetry migration, physical custody transfer, invoice routing, and eventual closure of Kestrel credentials. Quarantined inventory remains under Northstar quality control.\n\n"
+        + markdown_table(AUTHORITY_HEADERS, AUTHORITY_ROWS)
+        + "\n\nA lower-priority record may supply detail but cannot reverse a higher-priority state. Closure applies only to the obligation named in the exception row. SV-2048 was prepared 08 Jul 2026 and became effective 10 Jul 2026 at 09:30 MST.\n\n"
+        + markdown_table(workflow_headers, workflow_rows)
+        + "\n\n## 2. Cutover workplan and handoff sequence\n\n"
+        + markdown_table(WORKPLAN_HEADERS, WORKPLAN_ROWS)
+        + "\n\nApprover sidebar, 08 Jul - Avery Kim: keep Kestrel Dock 4 access active until counsel signs EX-07. This margin note is advisory; page 5 controls release.\n\n"
+        "T-02 gates the PX-771 transfer in T-04. EX-07 does not block physical transfer; it blocks T-06 credential closure. T-05 may move only eligible Tucson stock while the six QA-61 cases remain segregated.\n\n"
+        "**Handoff matrix**\n\n"
+        + markdown_table(HANDOFF_HEADERS, HANDOFF_ROWS)
+        + "\n\nInvoke RB-12 if a temperature deviation exceeds 1.0 C for 10 continuous minutes. Stop the active transfer, preserve custody at the last confirmed location, and report the last completed task on bridge BR-2048.\n\n"
+        "## 3. Commercial validation and invoice routing\n\n"
+        + markdown_table(COST_HEADERS, COST_ROWS)
         + "\n\n"
-        + markdown_table(local_headers, local_rows)
-        + "\n\nBoise may release independently. Tacoma remains on watch without reserve eligibility. Spokane remains clear. Reno may not consolidate until the D-17 exception owner records closure.\n\n"
-        "## Cost reserve authorization\n\n"
-        + markdown_table(RESERVE_HEADERS, RESERVE_ROWS)
+        + markdown_table(total_headers, total_rows)
         + "\n\n"
-        + markdown_table(scenario_headers, scenario_rows)
-        + "\n\nTacoma weekend premium is excluded because D-19 retains the existing carrier allocation. Labor standby becomes eligible only after the D-17 deadline passes while the hold remains open.\n\n"
-        "Finance concurrence stamp: M. Okafor; 10 Jul 2026 14:18 PT; reserve control LO-551.\n\n"
-        "## Controlling disposition and signoff\n\n"
-        "Reno outbound consolidation remains **ON HOLD** until Ravi Mehta closes the D-17 dock staffing exception.\n\n"
+        + markdown_table(INVOICE_HEADERS, INVOICE_ROWS)
+        + "\n\nFinance validates the ceiling and invoice route. It does not declare an exception closed, satisfy a task gate, or authorize physical release. Unused contingency is not committed spend.\n\n"
+        "Raster finance stamp: Jonah Mercer; 09 Jul 2026 16:42 MST; ceiling $28,070; control VC-2048; cost validation is not operational release.\n\n"
+        "## 4. Exception and closure-evidence register\n\n"
+        + markdown_table(EXCEPTION_HEADERS, EXCEPTION_ROWS)
+        + "\n\n"
+        + markdown_table(note_headers, note_rows)
+        + "\n\nEmail acknowledgment is context only unless the relevant row cites it as accepted evidence. The signed page 5 authorization controls GO/HOLD state; the finance validation controls cost only.\n\n"
+        "## 5. Final implementation authorization\n\n"
+        "**PHYSICAL CUTOVER: GO.** Begin at 14 Jul 2026 22:00 MST for eligible inventory only. **KESTREL CREDENTIAL DECOMMISSION: HOLD** until C-3 is satisfied.\n\n"
+        + markdown_table(CONDITION_HEADERS, CONDITION_ROWS)
+        + "\n\nThe GO decision permits the physical cutover; it does not close EX-07, release the six QA-61 cases, or waive telemetry and rollback gates. Kestrel credential closure remains HOLD because T-06 and C-3 require both signed EX-07 and zero unresolved REC-2048 items. Finance validation and its stamp authorize cost only; they cannot close an exception, satisfy a task gate, or override the final release state. Page 4 remains the source for exception ownership and evidence.\n\n"
         + markdown_table(SIGNOFF_HEADERS, SIGNOFF_ROWS)
-        + "\n\nFinance concurrence authorizes the reserve; it does not release Reno. Operations approval establishes the packet. Ravi Mehta's row remains open and unsigned, so the controlling statement remains in force.\n\n"
-        "Revision 3 supersedes Revision 2 at 10 Jul 2026 15:10 PT. Next review: 12 Jul 2026 16:00 PT. Retention class: operations exception / seven years.\n"
+        + "\n\nRevision D supersedes Draft C. This authorization became effective at 10 Jul 2026 09:30 MST. The next control event is the first failed condition, completed rollback, or closure of C-3, whichever occurs first.\n"
     )
 
 
@@ -611,18 +1312,20 @@ def build(output_root):
     source_pdf = case_dir / "source.pdf"
     with tempfile.TemporaryDirectory(prefix="p23-office-export-") as temp_name:
         work_dir = Path(temp_name)
-        docx_path = work_dir / "west-region-logistics-or-7712.docx"
-        stamp_path = work_dir / "finance-stamp.png"
-        _approval_stamp(stamp_path)
+        docx_path = work_dir / "northstar-supplier-transition-sv-2048.docx"
+        stamp_path = work_dir / "finance-validation.png"
+        _finance_stamp(stamp_path)
         _build_docx(docx_path, stamp_path)
         _export_with_libreoffice(docx_path, source_pdf, work_dir)
 
     regions = _regions()
-    (case_dir / "gold.md").write_text(_gold(), encoding="utf-8")
+    gold = _gold()
+    finalize_fact_regions(regions, gold)
+    (case_dir / "gold.md").write_text(gold, encoding="utf-8")
     (case_dir / "facts.json").write_text(
         json.dumps(
             {
-                "schemaVersion": 2,
+                "schemaVersion": 3,
                 "id": CASE_ID,
                 "title": TITLE,
                 "family": FAMILY,
@@ -636,10 +1339,10 @@ def build(output_root):
     )
     (case_dir / "spec.md").write_text(
         f"# {TITLE}\n\n"
-        "Source modality: born-digital DOCX exported through LibreOffice to native PDF, with a raster approval stamp and a genuinely malformed fixed-row/floating-table layout.\n\n"
+        "Source modality: five-page DOCX exported through LibreOffice to a native PDF. Four pages contain native text only; the finance page also contains one raster validation stamp.\n\n"
         f"Family: `{FAMILY}`\n\n"
-        "Purpose: Recover structured office-document content from legitimate native PDF objects when LibreOffice's handling of incompatible DOCX layout constraints produces clipping and overlap.\n\n"
-        "The source PDF is the unmodified office-export result apart from deterministic container normalization. It has no hidden answer layer or post-export content overlay.\n\n"
+        "Purpose: recover a realistic office workflow when fixed-height table rows, a wrapped floating reviewer sidebar, and portrait/landscape section conversion leave legitimate native text clipped and displaced in the visible export.\n\n"
+        "The source PDF contains the office export's own text and image objects. Container normalization changes metadata and serialization only; it does not add, hide, or replace page content.\n\n"
         "Tags: "
         + ", ".join(f"`{tag}`" for tag in TAGS)
         + "\n",
@@ -653,7 +1356,7 @@ def build(output_root):
         "title": TITLE,
         "family": FAMILY,
         "tags": TAGS,
-        "pages": 4,
+        "pages": 5,
         "pdf": f"{base}/source.pdf",
         "gold": f"{base}/gold.md",
         "spec": f"{base}/spec.md",

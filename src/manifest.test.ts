@@ -49,7 +49,7 @@ test("manifest references are canonicalized and confined to their own case direc
     assert.equal(loaded.manifest.cases[0]!.pdf, reference("source.pdf"));
     assert.equal(canonicalProjectReference("./benchmark/manifest.json"), "benchmark/manifest.json");
 
-    manifest.cases[0]!.pdf = "benchmark/cases/P07-launch-readiness-dossier/source.pdf";
+    manifest.cases[0]!.pdf = "benchmark/cases/P12-pfas-method-validation/source.pdf";
     await writeFile(manifestPath, `${JSON.stringify(manifest)}\n`, "utf8");
     await assert.rejects(loadBenchmarkManifest(canonicalProjectReference(manifestPath)), /fixture-case pdf must resolve to/);
   } finally {

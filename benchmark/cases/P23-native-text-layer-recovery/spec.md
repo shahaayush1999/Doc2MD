@@ -1,11 +1,11 @@
-# West Region Logistics Exception Control Packet
+# Northstar Cold Chain Supplier Cutover Authorization
 
-Source modality: born-digital DOCX exported through LibreOffice to native PDF, with a raster approval stamp and a genuinely malformed fixed-row/floating-table layout.
+Source modality: five-page DOCX exported through LibreOffice to a native PDF. Four pages contain native text only; the finance page also contains one raster validation stamp.
 
 Family: `office export recovery`
 
-Purpose: Recover structured office-document content from legitimate native PDF objects when LibreOffice's handling of incompatible DOCX layout constraints produces clipping and overlap.
+Purpose: recover a realistic office workflow when fixed-height table rows, a wrapped floating reviewer sidebar, and portrait/landscape section conversion leave legitimate native text clipped and displaced in the visible export.
 
-The source PDF is the unmodified office-export result apart from deterministic container normalization. It has no hidden answer layer or post-export content overlay.
+The source PDF contains the office export's own text and image objects. Container normalization changes metadata and serialization only; it does not add, hide, or replace page content.
 
-Tags: `native-pdf`, `libreoffice-export`, `malformed-layout`, `native-text-recovery`, `tables`, `source-precedence`
+Tags: `native-pdf`, `libreoffice-export`, `malformed-layout`, `native-text-recovery`, `mixed-modality`, `tables`, `source-precedence`, `reading-order`

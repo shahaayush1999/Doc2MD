@@ -4,7 +4,12 @@ import { fileURLToPath } from "node:url";
 import { buildBenchmarkFingerprint } from "./benchmarkFingerprint.js";
 import { sha256, stableJson } from "./cache.js";
 import { buildCohortArtifactFingerprint } from "./cohortFingerprint.js";
-import { aggregateSampleFirst, type AggregationCase, type AggregationSample } from "./aggregation.js";
+import {
+  aggregateSampleFirst,
+  sampleStddev as aggregationSampleStddev,
+  type AggregationCase,
+  type AggregationSample,
+} from "./aggregation.js";
 export { aggregateSampleFirst, sampleStddev, type AggregationCase, type AggregationSample } from "./aggregation.js";
 import {
   buildRunContext,
@@ -96,6 +101,55 @@ export type ScoreArtifactValidation = {
   score: number | null;
   reason?: string;
   artifact: ScoreArtifact | null;
+};
+
+export type AtomicDiagnosticRow = {
+  key: string;
+  regionCount: number;
+  totalBudget: number;
+  score: number;
+  rawScore: number;
+};
+
+export type AtomicDiagnostics = {
+  byPrimaryAxis: AtomicDiagnosticRow[];
+  byModality: AtomicDiagnosticRow[];
+};
+
+export type DiagnosticAggregationSample = {
+  sample: string;
+  diagnostics: AtomicDiagnostics | null;
+};
+
+export type DiagnosticAggregationCase = {
+  caseId: string;
+  samples: DiagnosticAggregationSample[];
+};
+
+export type DiagnosticSampleScore = {
+  sample: string;
+  score: number;
+  rawScore: number;
+};
+
+export type DiagnosticAggregate = {
+  key: string;
+  caseCount: number;
+  regionCount: number;
+  totalBudget: number;
+  score: number;
+  rawScore: number;
+  sampleScores: DiagnosticSampleScore[];
+  scoreStddev: number | null;
+  scoreMin: number | null;
+  scoreMax: number | null;
+};
+
+export type SummaryDiagnostics = {
+  aggregation: "evidence_budget_sample_first";
+  complete: boolean;
+  byPrimaryAxis: DiagnosticAggregate[];
+  byModality: DiagnosticAggregate[];
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -261,6 +315,142 @@ function round(value: number, digits = 1): number {
   return Math.round(value * factor) / factor;
 }
 
+function validAtomicDiagnosticRow(value: AtomicDiagnosticRow): boolean {
+  return (
+    typeof value.key === "string" &&
+    value.key.length > 0 &&
+    Number.isInteger(value.regionCount) &&
+    value.regionCount > 0 &&
+    Number.isFinite(value.totalBudget) &&
+    value.totalBudget > 0 &&
+    Number.isFinite(value.score) &&
+    value.score >= 0 &&
+    value.score <= 100 &&
+    Number.isFinite(value.rawScore)
+  );
+}
+
+function uniqueDiagnosticRows(rows: AtomicDiagnosticRow[]): boolean {
+  return rows.every(validAtomicDiagnosticRow) && new Set(rows.map((row) => row.key)).size === rows.length;
+}
+
+function aggregateDiagnosticDimension(
+  cases: DiagnosticAggregationCase[],
+  expectedSampleIds: string[],
+  dimension: keyof AtomicDiagnostics,
+): DiagnosticAggregate[] | null {
+  const perSample = new Map<
+    string,
+    Map<string, { caseCount: number; regionCount: number; totalBudget: number; weightedRawScore: number }>
+  >();
+
+  for (const sampleId of expectedSampleIds) {
+    const byKey = new Map<string, { caseCount: number; regionCount: number; totalBudget: number; weightedRawScore: number }>();
+    for (const testCase of cases) {
+      const matches = testCase.samples.filter((sample) => sample.sample === sampleId);
+      if (matches.length !== 1 || !matches[0]!.diagnostics) return null;
+      const rows = matches[0]!.diagnostics![dimension];
+      if (!Array.isArray(rows) || !uniqueDiagnosticRows(rows)) return null;
+      for (const row of rows) {
+        const current = byKey.get(row.key) ?? { caseCount: 0, regionCount: 0, totalBudget: 0, weightedRawScore: 0 };
+        current.caseCount += 1;
+        current.regionCount += row.regionCount;
+        current.totalBudget += row.totalBudget;
+        current.weightedRawScore += row.rawScore * row.totalBudget;
+        byKey.set(row.key, current);
+      }
+    }
+    perSample.set(sampleId, byKey);
+  }
+
+  const firstKeys = [...(perSample.get(expectedSampleIds[0]!)?.keys() ?? [])].sort();
+  if (firstKeys.length === 0) return null;
+  if (
+    expectedSampleIds.some((sampleId) => {
+      const keys = [...(perSample.get(sampleId)?.keys() ?? [])].sort();
+      return keys.length !== firstKeys.length || keys.some((key, index) => key !== firstKeys[index]);
+    })
+  ) {
+    return null;
+  }
+
+  return firstKeys.map((key) => {
+    const sampleScores = expectedSampleIds.map((sample) => {
+      const item = perSample.get(sample)!.get(key)!;
+      const rawScore = item.weightedRawScore / item.totalBudget;
+      return {
+        sample,
+        score: round(Math.max(0, Math.min(100, rawScore)), 6),
+        rawScore: round(rawScore, 6),
+      };
+    });
+    const metadata = expectedSampleIds.map((sample) => perSample.get(sample)!.get(key)!);
+    const first = metadata[0]!;
+    if (
+      metadata.some(
+        (item) =>
+          item.caseCount !== first.caseCount || item.regionCount !== first.regionCount || item.totalBudget !== first.totalBudget,
+      )
+    ) {
+      throw new Error(`Diagnostic evidence metadata changed across sample slots for ${dimension}:${key}.`);
+    }
+    const scores = sampleScores.map((sample) => sample.score);
+    const rawScores = sampleScores.map((sample) => sample.rawScore);
+    const hasObservedVariability = scores.length > 1;
+    return {
+      key,
+      caseCount: first.caseCount,
+      regionCount: first.regionCount,
+      totalBudget: first.totalBudget,
+      score: round(mean(scores), 6),
+      rawScore: round(mean(rawScores), 6),
+      sampleScores,
+      scoreStddev: hasObservedVariability ? round(aggregationSampleStddev(scores)!, 6) : null,
+      scoreMin: hasObservedVariability ? round(Math.min(...scores), 6) : null,
+      scoreMax: hasObservedVariability ? round(Math.max(...scores), 6) : null,
+    };
+  });
+}
+
+/**
+ * Build diagnostic slices from already-validated atomic scores. These slices do not
+ * contribute to the official equal-case benchmark score: within each sample slot,
+ * signed region utility is weighted only by the evidence budget for that slice.
+ */
+export function aggregateDiagnosticSampleFirst(
+  cases: DiagnosticAggregationCase[],
+  expectedSampleIds: string[],
+): SummaryDiagnostics {
+  const expectedSampleIdSet = new Set(expectedSampleIds);
+  const cohortShapeIsValid =
+    cases.length > 0 &&
+    expectedSampleIds.length > 0 &&
+    expectedSampleIdSet.size === expectedSampleIds.length &&
+    cases.every(
+      (testCase) =>
+        testCase.samples.length === expectedSampleIds.length &&
+        new Set(testCase.samples.map((sample) => sample.sample)).size === expectedSampleIds.length &&
+        testCase.samples.every((sample) => expectedSampleIdSet.has(sample.sample) && sample.diagnostics !== null),
+    );
+  if (!cohortShapeIsValid) {
+    return {
+      aggregation: "evidence_budget_sample_first",
+      complete: false,
+      byPrimaryAxis: [],
+      byModality: [],
+    };
+  }
+
+  const byPrimaryAxis = aggregateDiagnosticDimension(cases, expectedSampleIds, "byPrimaryAxis");
+  const byModality = aggregateDiagnosticDimension(cases, expectedSampleIds, "byModality");
+  return {
+    aggregation: "evidence_budget_sample_first",
+    complete: byPrimaryAxis !== null && byModality !== null,
+    byPrimaryAxis: byPrimaryAxis ?? [],
+    byModality: byModality ?? [],
+  };
+}
+
 async function exists(filePath: string) {
   try {
     await access(filePath);
@@ -336,7 +526,13 @@ export async function deriveModelSummary(
       );
       if (!result) {
         samples.push({ sample, score: null, valid: false, reason: "missing, stale, or integrity-invalid model result" });
-        detailSamples.push({ sample, score: null, valid: false, reason: "missing, stale, or integrity-invalid model result" });
+        detailSamples.push({
+          sample,
+          score: null,
+          valid: false,
+          reason: "missing, stale, or integrity-invalid model result",
+          diagnostics: null,
+        });
         continue;
       }
 
@@ -362,6 +558,10 @@ export async function deriveModelSummary(
       if ((validation.evaluatorStatus === "valid" || validation.evaluatorStatus === "failed") && validation.artifact) {
         validatedEvaluatorArtifacts.push(validation.artifact);
       }
+      const diagnostics =
+        validation.valid && validation.artifact
+          ? ((validation.artifact.atomicScore as ReturnType<typeof scoreAtomicRegions>).diagnostics as AtomicDiagnostics)
+          : null;
       samples.push({
         sample,
         score: validation.score,
@@ -388,6 +588,9 @@ export async function deriveModelSummary(
         costUsd: priceReport(spec, result.usage).estimatedCostUsd,
         inputTokens: result.usage?.inputTokens ?? 0,
         outputTokens: result.usage?.outputTokens ?? 0,
+        logicalGenerationCalls: result.inferenceAttempt.logicalGenerationCalls,
+        transportRequestAttempts: result.inferenceAttempt.transportRequestAttempts,
+        diagnostics,
       });
       } finally {
         if (snapshotLock) await snapshotLock.release();
@@ -399,6 +602,13 @@ export async function deriveModelSummary(
   }
 
   const aggregate = aggregateSampleFirst(aggregationCases, sampleIds);
+  const diagnostics = aggregateDiagnosticSampleFirst(
+    caseDetails.map(({ testCase, samples }) => ({
+      caseId: testCase.id,
+      samples: samples.map((sample: any) => ({ sample: sample.sample, diagnostics: sample.diagnostics ?? null })),
+    })),
+    sampleIds,
+  );
   const aggregateByCase = new Map(aggregate.caseAggregates.map((item) => [item.caseId, item]));
   const caseScores = caseDetails.map(({ testCase, samples }) => {
     const scoreAggregate = aggregateByCase.get(testCase.id)!;
@@ -436,6 +646,13 @@ export async function deriveModelSummary(
       costUsd: observed.length === 0 ? 0 : round(mean(observed.map((sample: any) => sample.costUsd)), 6),
       inputTokens: observed.length === 0 ? 0 : Math.round(mean(observed.map((sample: any) => sample.inputTokens))),
       outputTokens: observed.length === 0 ? 0 : Math.round(mean(observed.map((sample: any) => sample.outputTokens))),
+      logicalGenerationCalls: observed.reduce((sum: number, sample: any) => sum + (sample.logicalGenerationCalls ?? 0), 0),
+      transportRequestAttempts: observed.reduce((sum: number, sample: any) => sum + (sample.transportRequestAttempts ?? 0), 0),
+      transportRetryCount: observed.reduce(
+        (sum: number, sample: any) => sum + Math.max(0, (sample.transportRequestAttempts ?? 0) - (sample.logicalGenerationCalls ?? 0)),
+        0,
+      ),
+      transportRetriesAreCohortSamples: false as const,
       finishReasons: observed.map((sample: any) => ({ sample: sample.sample, finishReason: sample.finishReason, error: sample.error })),
     };
   });
@@ -449,6 +666,10 @@ export async function deriveModelSummary(
   const totalElapsedMs = observedResults.reduce((sum, result) => sum + (result.elapsedMs ?? 0), 0);
   const totalInputTokens = observedResults.reduce((sum, result) => sum + (result.usage?.inputTokens ?? 0), 0);
   const totalOutputTokens = observedResults.reduce((sum, result) => sum + (result.usage?.outputTokens ?? 0), 0);
+  const totalTransportRequestAttempts = observedResults.reduce(
+    (sum, result) => sum + result.inferenceAttempt.transportRequestAttempts,
+    0,
+  );
   const evaluatorCostUsd = validatedEvaluatorArtifacts.reduce(
     (sum, score) => sum + evaluatorPriceReport(score.scorer?.usage ?? null).estimatedCostUsd,
     0,
@@ -531,6 +752,10 @@ export async function deriveModelSummary(
     totalOutputTokens,
     meanOutputTokensPerSample: observedResults.length === 0 ? 0 : Math.round(totalOutputTokens / observedResults.length),
     modelCallCount: observedResults.length,
+    logicalGenerationCallCount: observedResults.length,
+    totalTransportRequestAttempts,
+    transportRetryCount: Math.max(0, totalTransportRequestAttempts - observedResults.length),
+    transportRetriesAreCohortSamples: false as const,
     modelFailureCount,
     modelFailureRate: observedResults.length === 0 ? 0 : round((modelFailureCount / observedResults.length) * 100, 2),
     evaluatorRequiredCount,
@@ -549,6 +774,7 @@ export async function deriveModelSummary(
     evaluatorElapsedMs,
     evaluatorInputTokens,
     evaluatorOutputTokens,
+    diagnostics,
     caseScores,
   };
 
@@ -594,5 +820,10 @@ function parseCli(argv: string[]) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const cli = parseCli(process.argv.slice(2));
-  console.log(JSON.stringify(await summarizeModel(cli.modelId, { manifestPath: cli.manifestPath }), null, 2));
+  const keepAlive = setInterval(() => undefined, 1_000);
+  try {
+    console.log(JSON.stringify(await summarizeModel(cli.modelId, { manifestPath: cli.manifestPath }), null, 2));
+  } finally {
+    clearInterval(keepAlive);
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "id": "P21-semiconductor-lot-disposition",
   "title": "Lot Q8R7-22 Material Review File",
   "family": "semiconductor manufacturing quality",
@@ -15,1817 +15,5377 @@
   "regions": [
     {
       "id": "p01.route",
-      "page": 1,
       "label": "Process traveler",
+      "sourceAnchors": [
+        {
+          "page": 1,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Lot traveler and process source"
+          ]
+        }
+      ],
+      "goldSection": "Lot traveler and process source",
       "kind": "table",
-      "budget": 2,
-      "closedWorld": true,
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
+      "budget": 1,
       "leaves": [
         {
           "id": "p01.route.schema",
+          "canonicalClaimId": "p01.route.schema",
+          "claimType": "structure",
           "expectation": "The region preserves the source field schema in order: Step, Tool, Recipe, Start, End, Recorded state.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Step"
+              ],
+              [
+                "Tool"
+              ],
+              [
+                "Recipe"
+              ],
+              [
+                "Start"
+              ],
+              [
+                "End"
+              ],
+              [
+                "Recorded state"
+              ]
+            ]
+          }
         },
         {
           "id": "p01.route.row-order",
+          "canonicalClaimId": "p01.route.row-order",
+          "claimType": "ordered_record",
           "expectation": "The source row order is recoverable as: Implant P3 -> Ash -> Wet clean -> PVD TiN -> Anneal -> Metrology.",
           "harm": 1,
-          "allowPartial": true
-        },
-        {
-          "id": "p01.route.implant-p3.tool",
-          "expectation": "For Implant P3, Tool is IMP-17.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.implant-p3.recipe",
-          "expectation": "For Implant P3, Recipe is BORON_LVT_042.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.implant-p3.start",
-          "expectation": "For Implant P3, Start is 05:12.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.implant-p3.end",
-          "expectation": "For Implant P3, End is 05:58.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.implant-p3.recorded-state",
-          "expectation": "For Implant P3, Recorded state is Accepted.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.ash.tool",
-          "expectation": "For Ash, Tool is ASH-04.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.ash.recipe",
-          "expectation": "For Ash, Recipe is ASH_STD_18.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.ash.start",
-          "expectation": "For Ash, Start is 06:10.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.ash.end",
-          "expectation": "For Ash, End is 06:34.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.ash.recorded-state",
-          "expectation": "For Ash, Recorded state is Accepted.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.wet-clean.tool",
-          "expectation": "For Wet clean, Tool is WET-12.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.wet-clean.recipe",
-          "expectation": "For Wet clean, Recipe is SC1_SC2_09.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.wet-clean.start",
-          "expectation": "For Wet clean, Start is 06:48.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.wet-clean.end",
-          "expectation": "For Wet clean, End is 07:22.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.wet-clean.recorded-state",
-          "expectation": "For Wet clean, Recorded state is Accepted.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Implant P3"
+              ],
+              [
+                "Ash"
+              ],
+              [
+                "Wet clean"
+              ],
+              [
+                "PVD TiN"
+              ],
+              [
+                "Anneal"
+              ],
+              [
+                "Metrology"
+              ]
+            ]
+          }
         },
         {
           "id": "p01.route.pvd-tin.tool",
+          "canonicalClaimId": "p01.route.pvd-tin.tool",
+          "claimType": "table_binding",
           "expectation": "For PVD TiN, Tool is PVD-03.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "PVD TiN"
+            ],
+            "column": [
+              "Tool"
+            ],
+            "value": [
+              "PVD-03"
+            ]
+          }
         },
         {
           "id": "p01.route.pvd-tin.recipe",
+          "canonicalClaimId": "p01.route.pvd-tin.recipe",
+          "claimType": "table_binding",
           "expectation": "For PVD TiN, Recipe is TIN_GATE_31.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "PVD TiN"
+            ],
+            "column": [
+              "Recipe"
+            ],
+            "value": [
+              "TIN_GATE_31"
+            ]
+          }
         },
         {
           "id": "p01.route.pvd-tin.start",
+          "canonicalClaimId": "p01.route.pvd-tin.start",
+          "claimType": "table_binding",
           "expectation": "For PVD TiN, Start is 08:06.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.pvd-tin.end",
-          "expectation": "For PVD TiN, End is 09:44.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "PVD TiN"
+            ],
+            "column": [
+              "Start"
+            ],
+            "value": [
+              "08:06"
+            ]
+          }
         },
         {
           "id": "p01.route.pvd-tin.recorded-state",
+          "canonicalClaimId": "p01.route.pvd-tin.recorded-state",
+          "claimType": "table_binding",
           "expectation": "For PVD TiN, Recorded state is Alarm 09:18.",
           "harm": 2,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.anneal.tool",
-          "expectation": "For Anneal, Tool is RTP-08.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.anneal.recipe",
-          "expectation": "For Anneal, Recipe is RTP_LVT_22.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.anneal.start",
-          "expectation": "For Anneal, Start is 10:01.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.anneal.end",
-          "expectation": "For Anneal, End is 10:29.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.anneal.recorded-state",
-          "expectation": "For Anneal, Recorded state is Accepted.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "PVD TiN"
+            ],
+            "column": [
+              "Recorded state"
+            ],
+            "value": [
+              "Alarm 09:18"
+            ]
+          }
         },
         {
           "id": "p01.route.metrology.tool",
+          "canonicalClaimId": "p01.route.metrology.tool",
+          "claimType": "table_binding",
           "expectation": "For Metrology, Tool is CDSEM-06.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.metrology.recipe",
-          "expectation": "For Metrology, Recipe is GATE_LVT_QC.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.metrology.start",
-          "expectation": "For Metrology, Start is 10:45.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.route.metrology.end",
-          "expectation": "For Metrology, End is 11:56.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Metrology"
+            ],
+            "column": [
+              "Tool"
+            ],
+            "value": [
+              "CDSEM-06"
+            ]
+          }
         },
         {
           "id": "p01.route.metrology.recorded-state",
+          "canonicalClaimId": "p01.route.metrology.recorded-state",
+          "claimType": "table_binding",
           "expectation": "For Metrology, Recorded state is Reviewed.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Metrology"
+            ],
+            "column": [
+              "Recorded state"
+            ],
+            "value": [
+              "Reviewed"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "Implant P3",
+          "Ash",
+          "Wet clean",
+          "PVD TiN",
+          "Anneal",
+          "Metrology"
+        ]
+      }
     },
     {
       "id": "p01.recipe",
-      "page": 1,
       "label": "Recipe source reconciliation",
+      "sourceAnchors": [
+        {
+          "page": 1,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Lot traveler and process source"
+          ]
+        }
+      ],
+      "goldSection": "Lot traveler and process source",
       "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "source_precedence",
+      "secondaryAxes": [
+        "table_reconstruction"
+      ],
+      "textOnlyRecoverable": true,
       "budget": 2,
-      "closedWorld": true,
       "leaves": [
         {
           "id": "p01.recipe.schema",
+          "canonicalClaimId": "p01.recipe.schema",
+          "claimType": "structure",
           "expectation": "The region preserves the source field schema in order: Source, Recipe shown, State, Use for this lot.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Source"
+              ],
+              [
+                "Recipe shown"
+              ],
+              [
+                "State"
+              ],
+              [
+                "Use for this lot"
+              ]
+            ]
+          }
         },
         {
           "id": "p01.recipe.row-order",
+          "canonicalClaimId": "p01.recipe.row-order",
+          "claimType": "ordered_record",
           "expectation": "The source row order is recoverable as: Traveler page -> PVD alarm printout -> MES audit event -> Engineer note.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Traveler page"
+              ],
+              [
+                "PVD alarm printout"
+              ],
+              [
+                "MES audit event"
+              ],
+              [
+                "Engineer note"
+              ]
+            ]
+          }
         },
         {
           "id": "p01.recipe.traveler-page.recipe-shown",
+          "canonicalClaimId": "p01.recipe.traveler-page.recipe-shown",
+          "claimType": "table_binding",
           "expectation": "For Traveler page, Recipe shown is TIN_GATE_31.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.recipe.traveler-page.state",
-          "expectation": "For Traveler page, State is Current.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Traveler page"
+            ],
+            "column": [
+              "Recipe shown"
+            ],
+            "value": [
+              "TIN_GATE_31"
+            ]
+          }
         },
         {
           "id": "p01.recipe.traveler-page.use-for-this-lot",
+          "canonicalClaimId": "p01.recipe.traveler-page.use-for-this-lot",
+          "claimType": "table_binding",
           "expectation": "For Traveler page, Use for this lot is Yes.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Traveler page"
+            ],
+            "column": [
+              "Use for this lot"
+            ],
+            "value": [
+              "Yes"
+            ]
+          }
         },
         {
           "id": "p01.recipe.pvd-alarm-printout.recipe-shown",
+          "canonicalClaimId": "p01.recipe.pvd-alarm-printout.recipe-shown",
+          "claimType": "table_binding",
           "expectation": "For PVD alarm printout, Recipe shown is TIN_GATE_30.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "PVD alarm printout"
+            ],
+            "column": [
+              "Recipe shown"
+            ],
+            "value": [
+              "TIN_GATE_30"
+            ]
+          }
         },
         {
           "id": "p01.recipe.pvd-alarm-printout.state",
+          "canonicalClaimId": "p01.recipe.pvd-alarm-printout.state",
+          "claimType": "table_binding",
           "expectation": "For PVD alarm printout, State is Stale cached header.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "PVD alarm printout"
+            ],
+            "column": [
+              "State"
+            ],
+            "value": [
+              "Stale cached header"
+            ]
+          }
         },
         {
           "id": "p01.recipe.pvd-alarm-printout.use-for-this-lot",
+          "canonicalClaimId": "p01.recipe.pvd-alarm-printout.use-for-this-lot",
+          "claimType": "table_binding",
           "expectation": "For PVD alarm printout, Use for this lot is No.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "PVD alarm printout"
+            ],
+            "column": [
+              "Use for this lot"
+            ],
+            "value": [
+              "No"
+            ]
+          }
         },
         {
           "id": "p01.recipe.mes-audit-event.recipe-shown",
+          "canonicalClaimId": "p01.recipe.mes-audit-event.recipe-shown",
+          "claimType": "table_binding",
           "expectation": "For MES audit event, Recipe shown is TIN_GATE_31.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "MES audit event"
+            ],
+            "column": [
+              "Recipe shown"
+            ],
+            "value": [
+              "TIN_GATE_31"
+            ]
+          }
         },
         {
           "id": "p01.recipe.mes-audit-event.state",
+          "canonicalClaimId": "p01.recipe.mes-audit-event.state",
+          "claimType": "table_binding",
           "expectation": "For MES audit event, State is Confirmed.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "MES audit event"
+            ],
+            "column": [
+              "State"
+            ],
+            "value": [
+              "Confirmed"
+            ]
+          }
         },
         {
           "id": "p01.recipe.mes-audit-event.use-for-this-lot",
+          "canonicalClaimId": "p01.recipe.mes-audit-event.use-for-this-lot",
+          "claimType": "table_binding",
           "expectation": "For MES audit event, Use for this lot is Yes / controls.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.recipe.engineer-note.recipe-shown",
-          "expectation": "For Engineer note, Recipe shown is Increase clamp purge.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "MES audit event"
+            ],
+            "column": [
+              "Use for this lot"
+            ],
+            "value": [
+              "Yes / controls"
+            ]
+          }
         },
         {
           "id": "p01.recipe.engineer-note.state",
+          "canonicalClaimId": "p01.recipe.engineer-note.state",
+          "claimType": "table_binding",
           "expectation": "For Engineer note, State is Future revision.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Engineer note"
+            ],
+            "column": [
+              "State"
+            ],
+            "value": [
+              "Future revision"
+            ]
+          }
         },
         {
           "id": "p01.recipe.engineer-note.use-for-this-lot",
+          "canonicalClaimId": "p01.recipe.engineer-note.use-for-this-lot",
+          "claimType": "table_binding",
           "expectation": "For Engineer note, Use for this lot is Not used.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Engineer note"
+            ],
+            "column": [
+              "Use for this lot"
+            ],
+            "value": [
+              "Not used"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "Traveler page",
+          "PVD alarm printout",
+          "MES audit event",
+          "Engineer note"
+        ]
+      }
     },
     {
       "id": "p02.maps",
-      "page": 2,
       "label": "Wafer-map contact sheet",
+      "sourceAnchors": [
+        {
+          "page": 2,
+          "layer": "raster",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Wafer-map review"
+          ]
+        }
+      ],
+      "goldSection": "Wafer-map review",
       "kind": "diagram",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
       "budget": 2,
-      "closedWorld": true,
       "leaves": [
         {
-          "id": "p02.map.w03.b4",
-          "expectation": "Wafer 03 cell B4 is marked C3.",
+          "id": "p02.map.w03.pattern",
+          "canonicalClaimId": "p02.map.w03.pattern",
+          "claimType": "scalar",
+          "expectation": "Wafer 03 marks a three-cell C3 cluster at B4, C4, and B5.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Wafer"
+              ],
+              [
+                "03",
+                "3"
+              ],
+              [
+                "marks"
+              ],
+              [
+                "three-cell",
+                "three cell",
+                "3-cell"
+              ],
+              [
+                "C3"
+              ],
+              [
+                "B4"
+              ],
+              [
+                "C4"
+              ],
+              [
+                "B5"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.map.w03.c4",
-          "expectation": "Wafer 03 cell C4 is marked C3.",
+          "id": "p02.map.w05.pattern",
+          "canonicalClaimId": "p02.map.w05.pattern",
+          "claimType": "scalar",
+          "expectation": "Wafer 05 marks an S2 path at E2, F2, and E3.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Wafer"
+              ],
+              [
+                "05",
+                "5"
+              ],
+              [
+                "marks"
+              ],
+              [
+                "S2"
+              ],
+              [
+                "path"
+              ],
+              [
+                "E2"
+              ],
+              [
+                "F2"
+              ],
+              [
+                "E3"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.map.w03.b5",
-          "expectation": "Wafer 03 cell B5 is marked C3.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.map.w05.e2",
-          "expectation": "Wafer 05 cell E2 is marked S2.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.map.w05.f2",
-          "expectation": "Wafer 05 cell F2 is marked S2.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.map.w05.e3",
-          "expectation": "Wafer 05 cell E3 is marked S2.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.map.w07.d5",
-          "expectation": "Wafer 07 cell D5 is marked M1.",
+          "id": "p02.map.w07.pattern",
+          "canonicalClaimId": "p02.map.w07.pattern",
+          "claimType": "scalar",
+          "expectation": "Wafer 07 marks an adjacent M1 cluster at D5, D6, and E5.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Wafer 07",
+                "WAFER 07",
+                "W07"
+              ],
+              [
+                "M1"
+              ],
+              [
+                "D5"
+              ],
+              [
+                "D6"
+              ],
+              [
+                "E5"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.map.w07.d6",
-          "expectation": "Wafer 07 cell D6 is marked M1.",
-          "harm": 2,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.map.w07.e5",
-          "expectation": "Wafer 07 cell E5 is marked M1.",
-          "harm": 2,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.map.w09.f3",
-          "expectation": "Wafer 09 cell F3 is marked P4.",
-          "harm": 2,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.map.w12.a6",
-          "expectation": "Wafer 12 cell A6 is marked E1.",
+          "id": "p02.map.w09.pattern",
+          "canonicalClaimId": "p02.map.w09.pattern",
+          "claimType": "scalar",
+          "expectation": "Wafer 09 marks only F3 as P4.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Wafer"
+              ],
+              [
+                "09",
+                "9"
+              ],
+              [
+                "marks"
+              ],
+              [
+                "only",
+                "solely"
+              ],
+              [
+                "F3"
+              ],
+              [
+                "P4"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.map.w12.b6",
-          "expectation": "Wafer 12 cell B6 is marked E1.",
-          "harm": 1,
-          "allowPartial": false
+          "id": "p02.map.w12.pattern",
+          "canonicalClaimId": "p02.map.w12.pattern",
+          "claimType": "scalar",
+          "expectation": "Wafer 12 marks the A6 and B6 edge cells as E1.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Wafer"
+              ],
+              [
+                "12"
+              ],
+              [
+                "marks"
+              ],
+              [
+                "A6"
+              ],
+              [
+                "B6"
+              ],
+              [
+                "edge cells",
+                "edge"
+              ],
+              [
+                "E1"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.map.w02.a1",
-          "expectation": "Wafer 02 cell A1 is marked E0.",
+          "id": "p02.map.w02.reference",
+          "canonicalClaimId": "p02.map.w02.reference",
+          "claimType": "scalar",
+          "expectation": "Wafer 02 marks only A1 as the gray E0 reference cell.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Wafer"
+              ],
+              [
+                "02",
+                "2"
+              ],
+              [
+                "marks"
+              ],
+              [
+                "only",
+                "solely"
+              ],
+              [
+                "A1"
+              ],
+              [
+                "gray",
+                "grey"
+              ],
+              [
+                "E0"
+              ],
+              [
+                "reference"
+              ]
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "edge_set",
+        "keys": [
+          "p02.map.w03.pattern",
+          "p02.map.w05.pattern",
+          "p02.map.w07.pattern",
+          "p02.map.w09.pattern",
+          "p02.map.w12.pattern",
+          "p02.map.w02.reference"
+        ]
+      }
     },
     {
       "id": "p02.legend",
-      "page": 2,
       "label": "Wafer-map legend",
+      "sourceAnchors": [
+        {
+          "page": 2,
+          "layer": "raster",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Wafer-map review"
+          ]
+        }
+      ],
+      "goldSection": "Wafer-map review",
       "kind": "table",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
       "budget": 1,
-      "closedWorld": true,
       "leaves": [
         {
           "id": "p02.legend.schema",
+          "canonicalClaimId": "p02.legend.schema",
+          "claimType": "structure",
           "expectation": "The region preserves the source field schema in order: Code, Class, Map color, Disposition gate.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Code"
+              ],
+              [
+                "Class"
+              ],
+              [
+                "Map color"
+              ],
+              [
+                "Disposition gate"
+              ]
+            ]
+          }
         },
         {
           "id": "p02.legend.row-order",
+          "canonicalClaimId": "p02.legend.row-order",
+          "claimType": "ordered_record",
           "expectation": "The source row order is recoverable as: M1 -> S2 -> E1 -> P4 -> C3 -> E0.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "M1"
+              ],
+              [
+                "S2"
+              ],
+              [
+                "E1"
+              ],
+              [
+                "P4"
+              ],
+              [
+                "C3"
+              ],
+              [
+                "E0"
+              ]
+            ]
+          }
         },
         {
           "id": "p02.legend.m1.class",
+          "canonicalClaimId": "p02.legend.m1.class",
+          "claimType": "table_binding",
           "expectation": "For M1, Class is Metal flake.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.legend.m1.map-color",
-          "expectation": "For M1, Map color is Red.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "M1"
+            ],
+            "column": [
+              "Class"
+            ],
+            "value": [
+              "Metal flake"
+            ]
+          }
         },
         {
           "id": "p02.legend.m1.disposition-gate",
+          "canonicalClaimId": "p02.legend.m1.disposition-gate",
+          "claimType": "table_binding",
           "expectation": "For M1, Disposition gate is Scrap cluster.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "M1"
+            ],
+            "column": [
+              "Disposition gate"
+            ],
+            "value": [
+              "Scrap cluster"
+            ]
+          }
         },
         {
           "id": "p02.legend.s2.class",
+          "canonicalClaimId": "p02.legend.s2.class",
+          "claimType": "table_binding",
           "expectation": "For S2, Class is Scratch.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.legend.s2.map-color",
-          "expectation": "For S2, Map color is Orange.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "S2"
+            ],
+            "column": [
+              "Class"
+            ],
+            "value": [
+              "Scratch"
+            ]
+          }
         },
         {
           "id": "p02.legend.s2.disposition-gate",
+          "canonicalClaimId": "p02.legend.s2.disposition-gate",
+          "claimType": "table_binding",
           "expectation": "For S2, Disposition gate is Engineering hold.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "S2"
+            ],
+            "column": [
+              "Disposition gate"
+            ],
+            "value": [
+              "Engineering hold"
+            ]
+          }
         },
         {
           "id": "p02.legend.e1.class",
+          "canonicalClaimId": "p02.legend.e1.class",
+          "claimType": "table_binding",
           "expectation": "For E1, Class is Edge bead.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.legend.e1.map-color",
-          "expectation": "For E1, Map color is Yellow.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E1"
+            ],
+            "column": [
+              "Class"
+            ],
+            "value": [
+              "Edge bead"
+            ]
+          }
         },
         {
           "id": "p02.legend.e1.disposition-gate",
+          "canonicalClaimId": "p02.legend.e1.disposition-gate",
+          "claimType": "table_binding",
           "expectation": "For E1, Disposition gate is Engineering hold.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E1"
+            ],
+            "column": [
+              "Disposition gate"
+            ],
+            "value": [
+              "Engineering hold"
+            ]
+          }
         },
         {
           "id": "p02.legend.p4.class",
+          "canonicalClaimId": "p02.legend.p4.class",
+          "claimType": "table_binding",
           "expectation": "For P4, Class is Parametric drift.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.legend.p4.map-color",
-          "expectation": "For P4, Map color is Blue.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "P4"
+            ],
+            "column": [
+              "Class"
+            ],
+            "value": [
+              "Parametric drift"
+            ]
+          }
         },
         {
           "id": "p02.legend.p4.disposition-gate",
+          "canonicalClaimId": "p02.legend.p4.disposition-gate",
+          "claimType": "table_binding",
           "expectation": "For P4, Disposition gate is Reliability condition.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "P4"
+            ],
+            "column": [
+              "Disposition gate"
+            ],
+            "value": [
+              "Reliability condition"
+            ]
+          }
         },
         {
           "id": "p02.legend.c3.class",
+          "canonicalClaimId": "p02.legend.c3.class",
+          "claimType": "table_binding",
           "expectation": "For C3, Class is Center CD cluster.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.legend.c3.map-color",
-          "expectation": "For C3, Map color is Violet.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "C3"
+            ],
+            "column": [
+              "Class"
+            ],
+            "value": [
+              "Center CD cluster"
+            ]
+          }
         },
         {
           "id": "p02.legend.c3.disposition-gate",
+          "canonicalClaimId": "p02.legend.c3.disposition-gate",
+          "claimType": "table_binding",
           "expectation": "For C3, Disposition gate is Remeasure / MRB.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.legend.e0.class",
-          "expectation": "For E0, Class is Edge mark.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.legend.e0.map-color",
-          "expectation": "For E0, Map color is Gray.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.legend.e0.disposition-gate",
-          "expectation": "For E0, Disposition gate is Reference only.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "C3"
+            ],
+            "column": [
+              "Disposition gate"
+            ],
+            "value": [
+              "Remeasure / MRB"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "M1",
+          "S2",
+          "E1",
+          "P4",
+          "C3",
+          "E0"
+        ]
+      }
     },
     {
       "id": "p03.metrology",
-      "page": 3,
       "label": "CD-SEM metrology",
+      "sourceAnchors": [
+        {
+          "page": 3,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "CD-SEM metrology review"
+          ]
+        }
+      ],
+      "goldSection": "CD-SEM metrology review",
       "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
       "budget": 2,
-      "closedWorld": true,
       "leaves": [
         {
           "id": "p03.metrology.schema",
+          "canonicalClaimId": "p03.metrology.schema",
+          "claimType": "structure",
           "expectation": "The region preserves the source field schema in order: Wafer / site, CD nm, Delta nm, Flag, Image ref, Reviewer note.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Wafer / site"
+              ],
+              [
+                "CD nm"
+              ],
+              [
+                "Delta nm"
+              ],
+              [
+                "Flag"
+              ],
+              [
+                "Image ref"
+              ],
+              [
+                "Reviewer note"
+              ]
+            ]
+          }
         },
         {
           "id": "p03.metrology.row-order",
+          "canonicalClaimId": "p03.metrology.row-order",
+          "claimType": "ordered_record",
           "expectation": "The source row order is recoverable as: 03 / B4 -> 03 / C4 -> 05 / E2 -> 07 / D5 -> 07 / D6 -> 09 / F3 -> 12 / A6.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "03 / B4"
+              ],
+              [
+                "03 / C4"
+              ],
+              [
+                "05 / E2"
+              ],
+              [
+                "07 / D5"
+              ],
+              [
+                "07 / D6"
+              ],
+              [
+                "09 / F3"
+              ],
+              [
+                "12 / A6"
+              ]
+            ]
+          }
         },
         {
           "id": "p03.metrology.03-b4.cd-nm",
+          "canonicalClaimId": "p03.metrology.03-b4.cd-nm",
+          "claimType": "table_binding",
           "expectation": "For 03 / B4, CD nm is 27.8.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "03 / B4"
+            ],
+            "column": [
+              "CD nm"
+            ],
+            "value": [
+              "27.8"
+            ]
+          }
         },
         {
           "id": "p03.metrology.03-b4.delta-nm",
+          "canonicalClaimId": "p03.metrology.03-b4.delta-nm",
+          "claimType": "table_binding",
           "expectation": "For 03 / B4, Delta nm is +2.9.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.03-b4.flag",
-          "expectation": "For 03 / B4, Flag is H.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.03-b4.image-ref",
-          "expectation": "For 03 / B4, Image ref is IMG-221.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.03-b4.reviewer-note",
-          "expectation": "For 03 / B4, Reviewer note is Matches C3 map.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "03 / B4"
+            ],
+            "column": [
+              "Delta nm"
+            ],
+            "value": [
+              "+2.9",
+              "+ 2.9"
+            ]
+          }
         },
         {
           "id": "p03.metrology.03-c4.cd-nm",
+          "canonicalClaimId": "p03.metrology.03-c4.cd-nm",
+          "claimType": "table_binding",
           "expectation": "For 03 / C4, CD nm is 27.4.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.03-c4.delta-nm",
-          "expectation": "For 03 / C4, Delta nm is +2.5.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.03-c4.flag",
-          "expectation": "For 03 / C4, Flag is H.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.03-c4.image-ref",
-          "expectation": "For 03 / C4, Image ref is IMG-222.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.03-c4.reviewer-note",
-          "expectation": "For 03 / C4, Reviewer note is Adjacent high.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.05-e2.cd-nm",
-          "expectation": "For 05 / E2, CD nm is 24.1.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.05-e2.delta-nm",
-          "expectation": "For 05 / E2, Delta nm is -0.8.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "03 / C4"
+            ],
+            "column": [
+              "CD nm"
+            ],
+            "value": [
+              "27.4"
+            ]
+          }
         },
         {
           "id": "p03.metrology.05-e2.flag",
+          "canonicalClaimId": "p03.metrology.05-e2.flag",
+          "claimType": "table_binding",
           "expectation": "For 05 / E2, Flag is L-map.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.05-e2.image-ref",
-          "expectation": "For 05 / E2, Image ref is IMG-223.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.05-e2.reviewer-note",
-          "expectation": "For 05 / E2, Reviewer note is Scratch path.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "05 / E2"
+            ],
+            "column": [
+              "Flag"
+            ],
+            "value": [
+              "L-map"
+            ]
+          }
         },
         {
           "id": "p03.metrology.07-d5.cd-nm",
+          "canonicalClaimId": "p03.metrology.07-d5.cd-nm",
+          "claimType": "table_binding",
           "expectation": "For 07 / D5, CD nm is 29.6.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "07 / D5"
+            ],
+            "column": [
+              "CD nm"
+            ],
+            "value": [
+              "29.6"
+            ]
+          }
         },
         {
           "id": "p03.metrology.07-d5.delta-nm",
+          "canonicalClaimId": "p03.metrology.07-d5.delta-nm",
+          "claimType": "table_binding",
           "expectation": "For 07 / D5, Delta nm is +4.7.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.07-d5.flag",
-          "expectation": "For 07 / D5, Flag is H.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.07-d5.image-ref",
-          "expectation": "For 07 / D5, Image ref is IMG-224.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.07-d5.reviewer-note",
-          "expectation": "For 07 / D5, Reviewer note is Flake shadow.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "07 / D5"
+            ],
+            "column": [
+              "Delta nm"
+            ],
+            "value": [
+              "+4.7",
+              "+ 4.7"
+            ]
+          }
         },
         {
           "id": "p03.metrology.07-d6.cd-nm",
+          "canonicalClaimId": "p03.metrology.07-d6.cd-nm",
+          "claimType": "table_binding",
           "expectation": "For 07 / D6, CD nm is 29.1.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.07-d6.delta-nm",
-          "expectation": "For 07 / D6, Delta nm is +4.2.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.07-d6.flag",
-          "expectation": "For 07 / D6, Flag is H.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.07-d6.image-ref",
-          "expectation": "For 07 / D6, Image ref is IMG-225.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.07-d6.reviewer-note",
-          "expectation": "For 07 / D6, Reviewer note is Adjacent flake.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.09-f3.cd-nm",
-          "expectation": "For 09 / F3, CD nm is 26.8.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "07 / D6"
+            ],
+            "column": [
+              "CD nm"
+            ],
+            "value": [
+              "29.1"
+            ]
+          }
         },
         {
           "id": "p03.metrology.09-f3.delta-nm",
+          "canonicalClaimId": "p03.metrology.09-f3.delta-nm",
+          "claimType": "table_binding",
           "expectation": "For 09 / F3, Delta nm is +1.9.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "09 / F3"
+            ],
+            "column": [
+              "Delta nm"
+            ],
+            "value": [
+              "+1.9",
+              "+ 1.9"
+            ]
+          }
         },
         {
           "id": "p03.metrology.09-f3.flag",
+          "canonicalClaimId": "p03.metrology.09-f3.flag",
+          "claimType": "table_binding",
           "expectation": "For 09 / F3, Flag is Watch.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.09-f3.image-ref",
-          "expectation": "For 09 / F3, Image ref is IMG-226.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.09-f3.reviewer-note",
-          "expectation": "For 09 / F3, Reviewer note is Parametric only.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "09 / F3"
+            ],
+            "column": [
+              "Flag"
+            ],
+            "value": [
+              "Watch"
+            ]
+          }
         },
         {
           "id": "p03.metrology.12-a6.cd-nm",
+          "canonicalClaimId": "p03.metrology.12-a6.cd-nm",
+          "claimType": "table_binding",
           "expectation": "For 12 / A6, CD nm is 22.9.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "12 / A6"
+            ],
+            "column": [
+              "CD nm"
+            ],
+            "value": [
+              "22.9"
+            ]
+          }
         },
         {
           "id": "p03.metrology.12-a6.delta-nm",
+          "canonicalClaimId": "p03.metrology.12-a6.delta-nm",
+          "claimType": "table_binding",
           "expectation": "For 12 / A6, Delta nm is -2.0.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "12 / A6"
+            ],
+            "column": [
+              "Delta nm"
+            ],
+            "value": [
+              "-2.0",
+              "-2",
+              "- 2.0",
+              "- 2"
+            ]
+          }
         },
         {
           "id": "p03.metrology.12-a6.flag",
+          "canonicalClaimId": "p03.metrology.12-a6.flag",
+          "claimType": "table_binding",
           "expectation": "For 12 / A6, Flag is L.",
           "harm": 2,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.12-a6.image-ref",
-          "expectation": "For 12 / A6, Image ref is IMG-227.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.metrology.12-a6.reviewer-note",
-          "expectation": "For 12 / A6, Reviewer note is Edge bead.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "12 / A6"
+            ],
+            "column": [
+              "Flag"
+            ],
+            "value": [
+              "L"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "03 / B4",
+          "03 / C4",
+          "05 / E2",
+          "07 / D5",
+          "07 / D6",
+          "09 / F3",
+          "12 / A6"
+        ]
+      }
     },
     {
       "id": "p03.rules",
-      "page": 3,
       "label": "Metrology disposition rules",
+      "sourceAnchors": [
+        {
+          "page": 3,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "CD-SEM metrology review"
+          ]
+        }
+      ],
+      "goldSection": "CD-SEM metrology review",
       "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
       "budget": 1,
-      "closedWorld": true,
       "leaves": [
         {
           "id": "p03.rules.schema",
+          "canonicalClaimId": "p03.rules.schema",
+          "claimType": "structure",
           "expectation": "The region preserves the source field schema in order: Rule, Condition, Required action.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Rule"
+              ],
+              [
+                "Condition"
+              ],
+              [
+                "Required action"
+              ]
+            ]
+          }
         },
         {
           "id": "p03.rules.row-order",
+          "canonicalClaimId": "p03.rules.row-order",
+          "claimType": "ordered_record",
           "expectation": "The source row order is recoverable as: CD-H -> CD-L -> Map correlation -> Yield exception.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "CD-H"
+              ],
+              [
+                "CD-L"
+              ],
+              [
+                "Map correlation"
+              ],
+              [
+                "Yield exception"
+              ]
+            ]
+          }
         },
         {
           "id": "p03.rules.cd-h.condition",
+          "canonicalClaimId": "p03.rules.cd-h.condition",
+          "claimType": "table_binding",
           "expectation": "For CD-H, Condition is Delta >= +2.5 nm.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CD-H"
+            ],
+            "column": [
+              "Condition"
+            ],
+            "value": [
+              "Delta >= +2.5 nm"
+            ]
+          }
         },
         {
           "id": "p03.rules.cd-h.required-action",
+          "canonicalClaimId": "p03.rules.cd-h.required-action",
+          "claimType": "table_binding",
           "expectation": "For CD-H, Required action is MRB disposition.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CD-H"
+            ],
+            "column": [
+              "Required action"
+            ],
+            "value": [
+              "MRB disposition"
+            ]
+          }
         },
         {
           "id": "p03.rules.cd-l.condition",
+          "canonicalClaimId": "p03.rules.cd-l.condition",
+          "claimType": "table_binding",
           "expectation": "For CD-L, Condition is Delta <= -2.0 nm.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CD-L"
+            ],
+            "column": [
+              "Condition"
+            ],
+            "value": [
+              "Delta <= -2.0 nm"
+            ]
+          }
         },
         {
           "id": "p03.rules.cd-l.required-action",
+          "canonicalClaimId": "p03.rules.cd-l.required-action",
+          "claimType": "table_binding",
           "expectation": "For CD-L, Required action is MRB disposition.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CD-L"
+            ],
+            "column": [
+              "Required action"
+            ],
+            "value": [
+              "MRB disposition"
+            ]
+          }
         },
         {
           "id": "p03.rules.map-correlation.condition",
+          "canonicalClaimId": "p03.rules.map-correlation.condition",
+          "claimType": "table_binding",
           "expectation": "For Map correlation, Condition is Defect code at measured site.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Map correlation"
+            ],
+            "column": [
+              "Condition"
+            ],
+            "value": [
+              "Defect code at measured site"
+            ]
+          }
         },
         {
           "id": "p03.rules.map-correlation.required-action",
+          "canonicalClaimId": "p03.rules.map-correlation.required-action",
+          "claimType": "table_binding",
           "expectation": "For Map correlation, Required action is Review image and map together.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Map correlation"
+            ],
+            "column": [
+              "Required action"
+            ],
+            "value": [
+              "Review image and map together"
+            ]
+          }
         },
         {
           "id": "p03.rules.yield-exception.condition",
+          "canonicalClaimId": "p03.rules.yield-exception.condition",
+          "claimType": "table_binding",
           "expectation": "For Yield exception, Condition is Wafer yield >93%.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Yield exception"
+            ],
+            "column": [
+              "Condition"
+            ],
+            "value": [
+              "Wafer yield >93%"
+            ]
+          }
         },
         {
           "id": "p03.rules.yield-exception.required-action",
+          "canonicalClaimId": "p03.rules.yield-exception.required-action",
+          "claimType": "table_binding",
           "expectation": "For Yield exception, Required action is Does not waive action-limit review.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Yield exception"
+            ],
+            "column": [
+              "Required action"
+            ],
+            "value": [
+              "Does not waive action-limit review"
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "CD-H",
+          "CD-L",
+          "Map correlation",
+          "Yield exception"
+        ]
+      }
+    },
+    {
+      "id": "p04.spc",
+      "label": "PVD thickness SPC chart points",
+      "sourceAnchors": [
+        {
+          "page": 4,
+          "layer": "raster",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "PVD thickness SPC and alarm interlocks"
+          ]
+        }
+      ],
+      "goldSection": "PVD thickness SPC and alarm interlocks",
+      "kind": "chart",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "p04.spc.r-2241",
+          "canonicalClaimId": "p04.spc.r-2241",
+          "claimType": "scalar",
+          "expectation": "R-2241 is 41.2 nm with state Inside.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2241"
+              ],
+              [
+                "41.2"
+              ],
+              [
+                "nm"
+              ],
+              [
+                "Inside"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.r-2242",
+          "canonicalClaimId": "p04.spc.r-2242",
+          "claimType": "scalar",
+          "expectation": "R-2242 is 42.0 nm with state Inside.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2242"
+              ],
+              [
+                "42.0"
+              ],
+              [
+                "nm"
+              ],
+              [
+                "Inside"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.r-2243",
+          "canonicalClaimId": "p04.spc.r-2243",
+          "claimType": "scalar",
+          "expectation": "R-2243 is 43.8 nm with state Inside.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2243"
+              ],
+              [
+                "43.8"
+              ],
+              [
+                "nm"
+              ],
+              [
+                "Inside"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.r-2244",
+          "canonicalClaimId": "p04.spc.r-2244",
+          "claimType": "scalar",
+          "expectation": "R-2244 is 45.6 nm with state Warning.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2244"
+              ],
+              [
+                "45.6"
+              ],
+              [
+                "nm"
+              ],
+              [
+                "Warning"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.r-2245",
+          "canonicalClaimId": "p04.spc.r-2245",
+          "claimType": "scalar",
+          "expectation": "R-2245 is 47.4 nm with state Above UCL.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2245"
+              ],
+              [
+                "47.4"
+              ],
+              [
+                "nm"
+              ],
+              [
+                "Above UCL"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.r-2246",
+          "canonicalClaimId": "p04.spc.r-2246",
+          "claimType": "scalar",
+          "expectation": "R-2246 is 46.2 nm with state Warning.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2246"
+              ],
+              [
+                "46.2"
+              ],
+              [
+                "nm"
+              ],
+              [
+                "Warning"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.r-2247",
+          "canonicalClaimId": "p04.spc.r-2247",
+          "claimType": "scalar",
+          "expectation": "R-2247 is 44.1 nm with state Recovered.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2247"
+              ],
+              [
+                "44.1"
+              ],
+              [
+                "nm"
+              ],
+              [
+                "Recovered"
+              ]
+            ]
+          }
         }
       ]
     },
     {
-      "id": "p04.spc",
-      "page": 4,
-      "label": "PVD thickness SPC chart",
+      "id": "p04.spc-contract",
+      "label": "SPC chart axes, legend, thresholds, and trend",
+      "sourceAnchors": [
+        {
+          "page": 4,
+          "layer": "raster",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "PVD thickness SPC and alarm interlocks"
+          ]
+        }
+      ],
+      "goldSection": "PVD thickness SPC and alarm interlocks",
       "kind": "chart",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
       "budget": 2,
-      "closedWorld": false,
       "leaves": [
         {
-          "id": "p04.spc.r-2241",
-          "expectation": "R-2241 is 41.2 nm with state Inside.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.spc.r-2242",
-          "expectation": "R-2242 is 42.0 nm with state Inside.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.spc.r-2243",
-          "expectation": "R-2243 is 43.8 nm with state Inside.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.spc.r-2244",
-          "expectation": "R-2244 is 45.6 nm with state Warning.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.spc.r-2245",
-          "expectation": "R-2245 is 47.4 nm with state Above UCL.",
+          "id": "p04.spc.axes",
+          "canonicalClaimId": "p04.spc.axes",
+          "claimType": "structure",
+          "expectation": "The chart uses run sequence on the horizontal x-axis and TiN thickness in nm on the vertical y-axis.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "horizontal x-axis",
+                "x-axis",
+                "horizontal axis"
+              ],
+              [
+                "run sequence"
+              ],
+              [
+                "vertical y-axis",
+                "y-axis",
+                "vertical axis"
+              ],
+              [
+                "TiN thickness"
+              ],
+              [
+                "nm"
+              ]
+            ]
+          }
         },
         {
-          "id": "p04.spc.r-2246",
-          "expectation": "R-2246 is 46.2 nm with state Warning.",
-          "harm": 1,
-          "allowPartial": false
+          "id": "p04.spc.series",
+          "canonicalClaimId": "p04.spc.series",
+          "claimType": "scalar",
+          "expectation": "The blue solid line is the PVD-03 measured TiN-thickness series.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "blue"
+              ],
+              [
+                "solid line"
+              ],
+              [
+                "PVD-03"
+              ],
+              [
+                "measured"
+              ],
+              [
+                "TiN thickness",
+                "TiN-thickness"
+              ]
+            ]
+          }
         },
         {
-          "id": "p04.spc.r-2247",
-          "expectation": "R-2247 is 44.1 nm with state Recovered.",
+          "id": "p04.spc.threshold.warning",
+          "canonicalClaimId": "p04.spc.threshold.warning",
+          "claimType": "scalar",
+          "expectation": "The amber dashed line is the 45.0 nm warning threshold.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "amber"
+              ],
+              [
+                "dashed line"
+              ],
+              [
+                "45.0 nm"
+              ],
+              [
+                "warning threshold"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.threshold.ucl",
+          "canonicalClaimId": "p04.spc.threshold.ucl",
+          "claimType": "scalar",
+          "expectation": "The red dashed line is the 47.0 nm UCL.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "red"
+              ],
+              [
+                "dashed line"
+              ],
+              [
+                "47.0 nm"
+              ],
+              [
+                "UCL"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.color.blue",
+          "canonicalClaimId": "p04.spc.color.blue",
+          "claimType": "scalar",
+          "expectation": "Blue points mean Inside or Recovered below the 45.0 nm warning threshold.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "blue points",
+                "blue"
+              ],
+              [
+                "Inside"
+              ],
+              [
+                "Recovered"
+              ],
+              [
+                "below"
+              ],
+              [
+                "45.0 nm"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.color.amber",
+          "canonicalClaimId": "p04.spc.color.amber",
+          "claimType": "scalar",
+          "expectation": "Amber points mean Warning at or above 45.0 nm but below 47.0 nm.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "amber points",
+                "amber"
+              ],
+              [
+                "Warning"
+              ],
+              [
+                "above"
+              ],
+              [
+                "45.0 nm"
+              ],
+              [
+                "below"
+              ],
+              [
+                "47.0 nm"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.color.red",
+          "canonicalClaimId": "p04.spc.color.red",
+          "claimType": "scalar",
+          "expectation": "A red point means Above UCL at more than 47.0 nm.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "red point",
+                "red"
+              ],
+              [
+                "Above UCL"
+              ],
+              [
+                "more than",
+                "above"
+              ],
+              [
+                "47.0 nm"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.trend",
+          "canonicalClaimId": "p04.spc.trend",
+          "claimType": "scalar",
+          "expectation": "The series rises from R-2241 through a 47.4 nm peak at R-2245, then falls through R-2246 to a recovered 44.1 nm at R-2247.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "rises"
+              ],
+              [
+                "R-2241"
+              ],
+              [
+                "47.4 nm"
+              ],
+              [
+                "peak"
+              ],
+              [
+                "R-2245"
+              ],
+              [
+                "falls"
+              ],
+              [
+                "R-2246"
+              ],
+              [
+                "44.1 nm"
+              ],
+              [
+                "R-2247"
+              ],
+              [
+                "recovered"
+              ]
+            ]
+          }
         }
       ]
     },
     {
       "id": "p04.interlocks",
-      "page": 4,
       "label": "PVD alarm interlocks",
+      "sourceAnchors": [
+        {
+          "page": 4,
+          "layer": "raster",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "PVD thickness SPC and alarm interlocks"
+          ]
+        }
+      ],
+      "goldSection": "PVD thickness SPC and alarm interlocks",
       "kind": "table",
-      "budget": 2,
-      "closedWorld": true,
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 1,
       "leaves": [
         {
           "id": "p04.interlocks.schema",
+          "canonicalClaimId": "p04.interlocks.schema",
+          "claimType": "structure",
           "expectation": "The region preserves the source field schema in order: Interlock, Observed, Threshold, State, Disposition.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Interlock"
+              ],
+              [
+                "Observed"
+              ],
+              [
+                "Threshold"
+              ],
+              [
+                "State"
+              ],
+              [
+                "Disposition"
+              ]
+            ]
+          }
         },
         {
           "id": "p04.interlocks.row-order",
+          "canonicalClaimId": "p04.interlocks.row-order",
+          "claimType": "ordered_record",
           "expectation": "The source row order is recoverable as: Chamber pressure -> Clamp purge -> Ti target age -> Monitor residual -> Alarm ack.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Chamber pressure"
+              ],
+              [
+                "Clamp purge"
+              ],
+              [
+                "Ti target age"
+              ],
+              [
+                "Monitor residual"
+              ],
+              [
+                "Alarm ack"
+              ]
+            ]
+          }
         },
         {
           "id": "p04.interlocks.chamber-pressure.observed",
+          "canonicalClaimId": "p04.interlocks.chamber-pressure.observed",
+          "claimType": "table_binding",
           "expectation": "For Chamber pressure, Observed is 4.8 mTorr.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.interlocks.chamber-pressure.threshold",
-          "expectation": "For Chamber pressure, Threshold is <=5.0.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Chamber pressure"
+            ],
+            "column": [
+              "Observed"
+            ],
+            "value": [
+              "4.8 mTorr"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.chamber-pressure.state",
+          "canonicalClaimId": "p04.interlocks.chamber-pressure.state",
+          "claimType": "table_binding",
           "expectation": "For Chamber pressure, State is Pass.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Chamber pressure"
+            ],
+            "column": [
+              "State"
+            ],
+            "value": [
+              "Pass"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.chamber-pressure.disposition",
+          "canonicalClaimId": "p04.interlocks.chamber-pressure.disposition",
+          "claimType": "table_binding",
           "expectation": "For Chamber pressure, Disposition is Not root cause.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Chamber pressure"
+            ],
+            "column": [
+              "Disposition"
+            ],
+            "value": [
+              "Not root cause"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.clamp-purge.observed",
+          "canonicalClaimId": "p04.interlocks.clamp-purge.observed",
+          "claimType": "table_binding",
           "expectation": "For Clamp purge, Observed is 18.1 slm.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.interlocks.clamp-purge.threshold",
-          "expectation": "For Clamp purge, Threshold is >=19.0.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Clamp purge"
+            ],
+            "column": [
+              "Observed"
+            ],
+            "value": [
+              "18.1 slm"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.clamp-purge.state",
+          "canonicalClaimId": "p04.interlocks.clamp-purge.state",
+          "claimType": "table_binding",
           "expectation": "For Clamp purge, State is Fail.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Clamp purge"
+            ],
+            "column": [
+              "State"
+            ],
+            "value": [
+              "Fail"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.clamp-purge.disposition",
+          "canonicalClaimId": "p04.interlocks.clamp-purge.disposition",
+          "claimType": "table_binding",
           "expectation": "For Clamp purge, Disposition is Future increase only.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Clamp purge"
+            ],
+            "column": [
+              "Disposition"
+            ],
+            "value": [
+              "Future increase only"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.ti-target-age.observed",
+          "canonicalClaimId": "p04.interlocks.ti-target-age.observed",
+          "claimType": "table_binding",
           "expectation": "For Ti target age, Observed is 81.4 kWh.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.interlocks.ti-target-age.threshold",
-          "expectation": "For Ti target age, Threshold is <=85.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Ti target age"
+            ],
+            "column": [
+              "Observed"
+            ],
+            "value": [
+              "81.4 kWh"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.ti-target-age.state",
+          "canonicalClaimId": "p04.interlocks.ti-target-age.state",
+          "claimType": "table_binding",
           "expectation": "For Ti target age, State is Watch.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Ti target age"
+            ],
+            "column": [
+              "State"
+            ],
+            "value": [
+              "Watch"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.ti-target-age.disposition",
+          "canonicalClaimId": "p04.interlocks.ti-target-age.disposition",
+          "claimType": "table_binding",
           "expectation": "For Ti target age, Disposition is Clean then continue.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Ti target age"
+            ],
+            "column": [
+              "Disposition"
+            ],
+            "value": [
+              "Clean then continue"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.monitor-residual.observed",
+          "canonicalClaimId": "p04.interlocks.monitor-residual.observed",
+          "claimType": "table_binding",
           "expectation": "For Monitor residual, Observed is +1.7 nm.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.interlocks.monitor-residual.threshold",
-          "expectation": "For Monitor residual, Threshold is +/-1.0.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Monitor residual"
+            ],
+            "column": [
+              "Observed"
+            ],
+            "value": [
+              "+1.7 nm"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.monitor-residual.state",
+          "canonicalClaimId": "p04.interlocks.monitor-residual.state",
+          "claimType": "table_binding",
           "expectation": "For Monitor residual, State is Fail.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Monitor residual"
+            ],
+            "column": [
+              "State"
+            ],
+            "value": [
+              "Fail"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.monitor-residual.disposition",
+          "canonicalClaimId": "p04.interlocks.monitor-residual.disposition",
+          "claimType": "table_binding",
           "expectation": "For Monitor residual, Disposition is R-2245 review.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Monitor residual"
+            ],
+            "column": [
+              "Disposition"
+            ],
+            "value": [
+              "R-2245 review"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.alarm-ack.observed",
+          "canonicalClaimId": "p04.interlocks.alarm-ack.observed",
+          "claimType": "table_binding",
           "expectation": "For Alarm ack, Observed is 09:18 / J. Kwon.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.interlocks.alarm-ack.threshold",
-          "expectation": "For Alarm ack, Threshold is Required.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Alarm ack"
+            ],
+            "column": [
+              "Observed"
+            ],
+            "value": [
+              "09:18 / J. Kwon"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.alarm-ack.state",
+          "canonicalClaimId": "p04.interlocks.alarm-ack.state",
+          "claimType": "table_binding",
           "expectation": "For Alarm ack, State is Complete.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Alarm ack"
+            ],
+            "column": [
+              "State"
+            ],
+            "value": [
+              "Complete"
+            ]
+          }
         },
         {
           "id": "p04.interlocks.alarm-ack.disposition",
+          "canonicalClaimId": "p04.interlocks.alarm-ack.disposition",
+          "claimType": "table_binding",
           "expectation": "For Alarm ack, Disposition is Containment starts.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Alarm ack"
+            ],
+            "column": [
+              "Disposition"
+            ],
+            "value": [
+              "Containment starts"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "Chamber pressure",
+          "Clamp purge",
+          "Ti target age",
+          "Monitor residual",
+          "Alarm ack"
+        ]
+      }
     },
     {
       "id": "p05.image.224",
-      "page": 5,
       "label": "IMG-224 metal-flake SEM",
+      "sourceAnchors": [
+        {
+          "page": 5,
+          "layer": "raster",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "SEM review contact sheet"
+          ]
+        }
+      ],
+      "goldSection": "SEM review contact sheet",
       "kind": "image",
-      "budget": 1,
-      "closedWorld": false,
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "image_description",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
       "leaves": [
         {
-          "id": "p05.img224.binding",
-          "expectation": "IMG-224 is bound to wafer 07 site D5.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
           "id": "p05.img224.finding",
+          "canonicalClaimId": "p05.img224.finding",
+          "claimType": "visual_description",
           "expectation": "IMG-224 visibly shows two bright irregular metal flakes, one smaller and adjacent.",
           "harm": 2,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "IMG-224"
+              ],
+              [
+                "two",
+                "2"
+              ],
+              [
+                "bright",
+                "high contrast"
+              ],
+              [
+                "irregular",
+                "flake"
+              ],
+              [
+                "adjacent",
+                "beside"
+              ]
+            ]
+          }
         }
       ]
     },
     {
       "id": "p05.image.223",
-      "page": 5,
       "label": "IMG-223 scratch SEM",
+      "sourceAnchors": [
+        {
+          "page": 5,
+          "layer": "raster",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "SEM review contact sheet"
+          ]
+        }
+      ],
+      "goldSection": "SEM review contact sheet",
       "kind": "image",
-      "budget": 1,
-      "closedWorld": false,
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "image_description",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
       "leaves": [
         {
-          "id": "p05.img223.binding",
-          "expectation": "IMG-223 is bound to wafer 05 site E2.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
           "id": "p05.img223.finding",
+          "canonicalClaimId": "p05.img223.finding",
+          "claimType": "visual_description",
           "expectation": "IMG-223 visibly shows a long diagonal scratch crossing the field.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "IMG-223"
+              ],
+              [
+                "long"
+              ],
+              [
+                "diagonal"
+              ],
+              [
+                "scratch"
+              ],
+              [
+                "crossing",
+                "across"
+              ]
+            ]
+          }
         }
       ]
     },
     {
       "id": "p05.image.227",
-      "page": 5,
       "label": "IMG-227 edge-bead SEM",
+      "sourceAnchors": [
+        {
+          "page": 5,
+          "layer": "raster",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "SEM review contact sheet"
+          ]
+        }
+      ],
+      "goldSection": "SEM review contact sheet",
       "kind": "image",
-      "budget": 1,
-      "closedWorld": false,
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "image_description",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
       "leaves": [
         {
-          "id": "p05.img227.binding",
-          "expectation": "IMG-227 is bound to wafer 12 site A6.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
           "id": "p05.img227.finding",
+          "canonicalClaimId": "p05.img227.finding",
+          "claimType": "visual_description",
           "expectation": "IMG-227 visibly shows a bright edge-residue band with bead deposits.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "IMG-227"
+              ],
+              [
+                "bright"
+              ],
+              [
+                "edge",
+                "boundary"
+              ],
+              [
+                "residue",
+                "band"
+              ],
+              [
+                "bead",
+                "deposits"
+              ]
+            ]
+          }
         }
       ]
     },
     {
       "id": "p05.image.226",
-      "page": 5,
       "label": "IMG-226 clean SEM",
+      "sourceAnchors": [
+        {
+          "page": 5,
+          "layer": "raster",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "SEM review contact sheet"
+          ]
+        }
+      ],
+      "goldSection": "SEM review contact sheet",
       "kind": "image",
-      "budget": 1,
-      "closedWorld": false,
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "image_description",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
       "leaves": [
         {
-          "id": "p05.img226.binding",
-          "expectation": "IMG-226 is bound to wafer 09 site F3.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
           "id": "p05.img226.finding",
+          "canonicalClaimId": "p05.img226.finding",
+          "claimType": "visual_description",
           "expectation": "IMG-226 is visually clean apart from low-level background specks.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.img226.parametric",
-          "expectation": "The P4 issue for IMG-226 is parametric rather than a visible particle.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "IMG-226"
+              ],
+              [
+                "clean"
+              ],
+              [
+                "background",
+                "field"
+              ],
+              [
+                "specks",
+                "noise"
+              ]
+            ]
+          }
         }
       ]
     },
     {
       "id": "p06.defects",
-      "page": 6,
       "label": "Defect classification",
+      "sourceAnchors": [
+        {
+          "page": 6,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Defect classification and MRB decisions"
+          ]
+        }
+      ],
+      "goldSection": "Defect classification and MRB decisions",
       "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
       "budget": 1,
-      "closedWorld": true,
       "leaves": [
         {
           "id": "p06.defects.schema",
+          "canonicalClaimId": "p06.defects.schema",
+          "claimType": "structure",
           "expectation": "The region preserves the source field schema in order: Code, Class, Count, Wafer, Gate.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Code"
+              ],
+              [
+                "Class"
+              ],
+              [
+                "Count"
+              ],
+              [
+                "Wafer"
+              ],
+              [
+                "Gate"
+              ]
+            ]
+          }
         },
         {
           "id": "p06.defects.row-order",
+          "canonicalClaimId": "p06.defects.row-order",
+          "claimType": "ordered_record",
           "expectation": "The source row order is recoverable as: M1 -> S2 -> E1 -> P4 -> C3.",
           "harm": 1,
-          "allowPartial": true
-        },
-        {
-          "id": "p06.defects.m1.class",
-          "expectation": "For M1, Class is Metal flake.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "M1"
+              ],
+              [
+                "S2"
+              ],
+              [
+                "E1"
+              ],
+              [
+                "P4"
+              ],
+              [
+                "C3"
+              ]
+            ]
+          }
         },
         {
           "id": "p06.defects.m1.count",
+          "canonicalClaimId": "p06.defects.m1.count",
+          "claimType": "table_binding",
           "expectation": "For M1, Count is 44.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "M1"
+            ],
+            "column": [
+              "Count"
+            ],
+            "value": [
+              "44"
+            ]
+          }
         },
         {
           "id": "p06.defects.m1.wafer",
+          "canonicalClaimId": "p06.defects.m1.wafer",
+          "claimType": "table_binding",
           "expectation": "For M1, Wafer is 07.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "M1"
+            ],
+            "column": [
+              "Wafer"
+            ],
+            "value": [
+              "07",
+              "7"
+            ]
+          }
         },
         {
           "id": "p06.defects.m1.gate",
+          "canonicalClaimId": "p06.defects.m1.gate",
+          "claimType": "table_binding",
           "expectation": "For M1, Gate is Scrap.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p06.defects.s2.class",
-          "expectation": "For S2, Class is Scratch.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "M1"
+            ],
+            "column": [
+              "Gate"
+            ],
+            "value": [
+              "Scrap"
+            ]
+          }
         },
         {
           "id": "p06.defects.s2.count",
+          "canonicalClaimId": "p06.defects.s2.count",
+          "claimType": "table_binding",
           "expectation": "For S2, Count is 31.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "S2"
+            ],
+            "column": [
+              "Count"
+            ],
+            "value": [
+              "31"
+            ]
+          }
         },
         {
           "id": "p06.defects.s2.wafer",
+          "canonicalClaimId": "p06.defects.s2.wafer",
+          "claimType": "table_binding",
           "expectation": "For S2, Wafer is 05.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "S2"
+            ],
+            "column": [
+              "Wafer"
+            ],
+            "value": [
+              "05",
+              "5"
+            ]
+          }
         },
         {
           "id": "p06.defects.s2.gate",
+          "canonicalClaimId": "p06.defects.s2.gate",
+          "claimType": "table_binding",
           "expectation": "For S2, Gate is Engineering hold.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p06.defects.e1.class",
-          "expectation": "For E1, Class is Edge bead.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "S2"
+            ],
+            "column": [
+              "Gate"
+            ],
+            "value": [
+              "Engineering hold"
+            ]
+          }
         },
         {
           "id": "p06.defects.e1.count",
+          "canonicalClaimId": "p06.defects.e1.count",
+          "claimType": "table_binding",
           "expectation": "For E1, Count is 27.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E1"
+            ],
+            "column": [
+              "Count"
+            ],
+            "value": [
+              "27"
+            ]
+          }
         },
         {
           "id": "p06.defects.e1.wafer",
+          "canonicalClaimId": "p06.defects.e1.wafer",
+          "claimType": "table_binding",
           "expectation": "For E1, Wafer is 12.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E1"
+            ],
+            "column": [
+              "Wafer"
+            ],
+            "value": [
+              "12"
+            ]
+          }
         },
         {
           "id": "p06.defects.e1.gate",
+          "canonicalClaimId": "p06.defects.e1.gate",
+          "claimType": "table_binding",
           "expectation": "For E1, Gate is Engineering hold.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p06.defects.p4.class",
-          "expectation": "For P4, Class is Parametric drift.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E1"
+            ],
+            "column": [
+              "Gate"
+            ],
+            "value": [
+              "Engineering hold"
+            ]
+          }
         },
         {
           "id": "p06.defects.p4.count",
+          "canonicalClaimId": "p06.defects.p4.count",
+          "claimType": "table_binding",
           "expectation": "For P4, Count is 19.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "P4"
+            ],
+            "column": [
+              "Count"
+            ],
+            "value": [
+              "19"
+            ]
+          }
         },
         {
           "id": "p06.defects.p4.wafer",
+          "canonicalClaimId": "p06.defects.p4.wafer",
+          "claimType": "table_binding",
           "expectation": "For P4, Wafer is 09.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "P4"
+            ],
+            "column": [
+              "Wafer"
+            ],
+            "value": [
+              "09",
+              "9"
+            ]
+          }
         },
         {
           "id": "p06.defects.p4.gate",
+          "canonicalClaimId": "p06.defects.p4.gate",
+          "claimType": "table_binding",
           "expectation": "For P4, Gate is Conditional.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p06.defects.c3.class",
-          "expectation": "For C3, Class is Center CD cluster.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "P4"
+            ],
+            "column": [
+              "Gate"
+            ],
+            "value": [
+              "Conditional"
+            ]
+          }
         },
         {
           "id": "p06.defects.c3.count",
+          "canonicalClaimId": "p06.defects.c3.count",
+          "claimType": "table_binding",
           "expectation": "For C3, Count is 16.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "C3"
+            ],
+            "column": [
+              "Count"
+            ],
+            "value": [
+              "16"
+            ]
+          }
         },
         {
           "id": "p06.defects.c3.wafer",
+          "canonicalClaimId": "p06.defects.c3.wafer",
+          "claimType": "table_binding",
           "expectation": "For C3, Wafer is 03.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "C3"
+            ],
+            "column": [
+              "Wafer"
+            ],
+            "value": [
+              "03",
+              "3"
+            ]
+          }
         },
         {
           "id": "p06.defects.c3.gate",
+          "canonicalClaimId": "p06.defects.c3.gate",
+          "claimType": "table_binding",
           "expectation": "For C3, Gate is Remeasure / hold.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "C3"
+            ],
+            "column": [
+              "Gate"
+            ],
+            "value": [
+              "Remeasure / hold"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "M1",
+          "S2",
+          "E1",
+          "P4",
+          "C3"
+        ]
+      }
     },
     {
       "id": "p06.mrb",
-      "page": 6,
       "label": "MRB decisions",
+      "sourceAnchors": [
+        {
+          "page": 6,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Defect classification and MRB decisions"
+          ]
+        }
+      ],
+      "goldSection": "Defect classification and MRB decisions",
       "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
       "budget": 2,
-      "closedWorld": true,
       "leaves": [
         {
           "id": "p06.mrb.schema",
+          "canonicalClaimId": "p06.mrb.schema",
+          "claimType": "structure",
           "expectation": "The region preserves the source field schema in order: Item, Decision, Reason, Owner.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Item"
+              ],
+              [
+                "Decision"
+              ],
+              [
+                "Reason"
+              ],
+              [
+                "Owner"
+              ]
+            ]
+          }
         },
         {
           "id": "p06.mrb.row-order",
+          "canonicalClaimId": "p06.mrb.row-order",
+          "claimType": "ordered_record",
           "expectation": "The source row order is recoverable as: Wafer 07 -> Wafer 05 -> Wafer 03 -> Wafer 12 -> Wafer 09 -> 01,02,04,06,08,10,11.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Wafer 07"
+              ],
+              [
+                "Wafer 05"
+              ],
+              [
+                "Wafer 03"
+              ],
+              [
+                "Wafer 12"
+              ],
+              [
+                "Wafer 09"
+              ],
+              [
+                "01,02,04,06,08,10,11"
+              ]
+            ]
+          }
         },
         {
           "id": "p06.mrb.wafer-07.decision",
+          "canonicalClaimId": "p06.mrb.wafer-07.decision",
+          "claimType": "table_binding",
           "expectation": "For Wafer 07, Decision is Scrap.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Wafer 07"
+            ],
+            "column": [
+              "Decision"
+            ],
+            "value": [
+              "Scrap"
+            ]
+          }
         },
         {
           "id": "p06.mrb.wafer-07.reason",
-          "expectation": "For Wafer 07, Reason is M1 at D5/D6/E5.",
+          "canonicalClaimId": "p06.mrb.wafer-07.reason",
+          "claimType": "table_binding",
+          "expectation": "For Wafer 07, Reason is Map W07-M1 plus IMG-224/225.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p06.mrb.wafer-07.owner",
-          "expectation": "For Wafer 07, Owner is Y. Nishida.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Wafer 07"
+            ],
+            "column": [
+              "Reason"
+            ],
+            "value": [
+              "Map W07-M1 plus IMG-224/225"
+            ]
+          }
         },
         {
           "id": "p06.mrb.wafer-05.decision",
+          "canonicalClaimId": "p06.mrb.wafer-05.decision",
+          "claimType": "table_binding",
           "expectation": "For Wafer 05, Decision is Hold.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Wafer 05"
+            ],
+            "column": [
+              "Decision"
+            ],
+            "value": [
+              "Hold"
+            ]
+          }
         },
         {
           "id": "p06.mrb.wafer-05.reason",
-          "expectation": "For Wafer 05, Reason is S2 crosses E2/F2/E3.",
+          "canonicalClaimId": "p06.mrb.wafer-05.reason",
+          "claimType": "table_binding",
+          "expectation": "For Wafer 05, Reason is Map W05-S2 plus IMG-223.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p06.mrb.wafer-05.owner",
-          "expectation": "For Wafer 05, Owner is A. Roy.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Wafer 05"
+            ],
+            "column": [
+              "Reason"
+            ],
+            "value": [
+              "Map W05-S2 plus IMG-223"
+            ]
+          }
         },
         {
           "id": "p06.mrb.wafer-03.decision",
+          "canonicalClaimId": "p06.mrb.wafer-03.decision",
+          "claimType": "table_binding",
           "expectation": "For Wafer 03, Decision is Hold.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Wafer 03"
+            ],
+            "column": [
+              "Decision"
+            ],
+            "value": [
+              "Hold"
+            ]
+          }
         },
         {
           "id": "p06.mrb.wafer-03.reason",
-          "expectation": "For Wafer 03, Reason is C3 high CD B4/C4/B5.",
+          "canonicalClaimId": "p06.mrb.wafer-03.reason",
+          "claimType": "table_binding",
+          "expectation": "For Wafer 03, Reason is Map W03-C3 plus metrology.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p06.mrb.wafer-03.owner",
-          "expectation": "For Wafer 03, Owner is M. Alvarez.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Wafer 03"
+            ],
+            "column": [
+              "Reason"
+            ],
+            "value": [
+              "Map W03-C3 plus metrology"
+            ]
+          }
         },
         {
           "id": "p06.mrb.wafer-12.decision",
+          "canonicalClaimId": "p06.mrb.wafer-12.decision",
+          "claimType": "table_binding",
           "expectation": "For Wafer 12, Decision is Hold.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Wafer 12"
+            ],
+            "column": [
+              "Decision"
+            ],
+            "value": [
+              "Hold"
+            ]
+          }
         },
         {
           "id": "p06.mrb.wafer-12.reason",
-          "expectation": "For Wafer 12, Reason is E1 at A6/B6.",
+          "canonicalClaimId": "p06.mrb.wafer-12.reason",
+          "claimType": "table_binding",
+          "expectation": "For Wafer 12, Reason is Map W12-E1 plus IMG-227.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p06.mrb.wafer-12.owner",
-          "expectation": "For Wafer 12, Owner is K. Stone.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Wafer 12"
+            ],
+            "column": [
+              "Reason"
+            ],
+            "value": [
+              "Map W12-E1 plus IMG-227"
+            ]
+          }
         },
         {
           "id": "p06.mrb.wafer-09.decision",
+          "canonicalClaimId": "p06.mrb.wafer-09.decision",
+          "claimType": "table_binding",
           "expectation": "For Wafer 09, Decision is Conditional.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Wafer 09"
+            ],
+            "column": [
+              "Decision"
+            ],
+            "value": [
+              "Conditional"
+            ]
+          }
         },
         {
           "id": "p06.mrb.wafer-09.reason",
-          "expectation": "For Wafer 09, Reason is P4; REL-22-A required.",
+          "canonicalClaimId": "p06.mrb.wafer-09.reason",
+          "claimType": "table_binding",
+          "expectation": "For Wafer 09, Reason is P4 parametric; REL-22-A required.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p06.mrb.wafer-09.owner",
-          "expectation": "For Wafer 09, Owner is S. Han.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Wafer 09"
+            ],
+            "column": [
+              "Reason"
+            ],
+            "value": [
+              "P4 parametric; REL-22-A required"
+            ]
+          }
         },
         {
           "id": "p06.mrb.01-02-04-06-08-10-11.decision",
+          "canonicalClaimId": "p06.mrb.01-02-04-06-08-10-11.decision",
+          "claimType": "table_binding",
           "expectation": "For 01,02,04,06,08,10,11, Decision is Release.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "01,02,04,06,08,10,11"
+            ],
+            "column": [
+              "Decision"
+            ],
+            "value": [
+              "Release"
+            ]
+          }
         },
         {
           "id": "p06.mrb.01-02-04-06-08-10-11.reason",
+          "canonicalClaimId": "p06.mrb.01-02-04-06-08-10-11.reason",
+          "claimType": "table_binding",
           "expectation": "For 01,02,04,06,08,10,11, Reason is Inside disposition limits.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p06.mrb.01-02-04-06-08-10-11.owner",
-          "expectation": "For 01,02,04,06,08,10,11, Owner is MRB.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "01,02,04,06,08,10,11"
+            ],
+            "column": [
+              "Reason"
+            ],
+            "value": [
+              "Inside disposition limits"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "Wafer 07",
+          "Wafer 05",
+          "Wafer 03",
+          "Wafer 12",
+          "Wafer 09",
+          "01,02,04,06,08,10,11"
+        ]
+      }
     },
     {
       "id": "p07.reliability",
-      "page": 7,
       "label": "Reliability sample plan",
+      "sourceAnchors": [
+        {
+          "page": 7,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Reliability conditions and shipping allocation"
+          ]
+        }
+      ],
+      "goldSection": "Reliability conditions and shipping allocation",
       "kind": "table",
-      "budget": 2,
-      "closedWorld": true,
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
+      "budget": 1,
       "leaves": [
         {
           "id": "p07.reliability.schema",
+          "canonicalClaimId": "p07.reliability.schema",
+          "claimType": "structure",
           "expectation": "The region preserves the source field schema in order: Sample, Wafer, Stress, Result, Disposition use.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Sample"
+              ],
+              [
+                "Wafer"
+              ],
+              [
+                "Stress"
+              ],
+              [
+                "Result"
+              ],
+              [
+                "Disposition use"
+              ]
+            ]
+          }
         },
         {
           "id": "p07.reliability.row-order",
+          "canonicalClaimId": "p07.reliability.row-order",
+          "claimType": "ordered_record",
           "expectation": "The source row order is recoverable as: REL-22-A -> REL-22-B -> REL-22-C -> REL-22-D.",
           "harm": 1,
-          "allowPartial": true
-        },
-        {
-          "id": "p07.reliability.rel-22-a.wafer",
-          "expectation": "For REL-22-A, Wafer is 09.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "REL-22-A"
+              ],
+              [
+                "REL-22-B"
+              ],
+              [
+                "REL-22-C"
+              ],
+              [
+                "REL-22-D"
+              ]
+            ]
+          }
         },
         {
           "id": "p07.reliability.rel-22-a.stress",
+          "canonicalClaimId": "p07.reliability.rel-22-a.stress",
+          "claimType": "table_binding",
           "expectation": "For REL-22-A, Stress is HTOL 168 h.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "REL-22-A"
+            ],
+            "column": [
+              "Stress"
+            ],
+            "value": [
+              "HTOL 168 h"
+            ]
+          }
         },
         {
           "id": "p07.reliability.rel-22-a.result",
+          "canonicalClaimId": "p07.reliability.rel-22-a.result",
+          "claimType": "table_binding",
           "expectation": "For REL-22-A, Result is Pending.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "REL-22-A"
+            ],
+            "column": [
+              "Result"
+            ],
+            "value": [
+              "Pending"
+            ]
+          }
         },
         {
           "id": "p07.reliability.rel-22-a.disposition-use",
+          "canonicalClaimId": "p07.reliability.rel-22-a.disposition-use",
+          "claimType": "table_binding",
           "expectation": "For REL-22-A, Disposition use is Condition for shipment.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p07.reliability.rel-22-b.wafer",
-          "expectation": "For REL-22-B, Wafer is 02.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "REL-22-A"
+            ],
+            "column": [
+              "Disposition use"
+            ],
+            "value": [
+              "Condition for shipment"
+            ]
+          }
         },
         {
           "id": "p07.reliability.rel-22-b.stress",
+          "canonicalClaimId": "p07.reliability.rel-22-b.stress",
+          "claimType": "table_binding",
           "expectation": "For REL-22-B, Stress is TC 100 cycles.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "REL-22-B"
+            ],
+            "column": [
+              "Stress"
+            ],
+            "value": [
+              "TC 100 cycles"
+            ]
+          }
         },
         {
           "id": "p07.reliability.rel-22-b.result",
+          "canonicalClaimId": "p07.reliability.rel-22-b.result",
+          "claimType": "table_binding",
           "expectation": "For REL-22-B, Result is Pass.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "REL-22-B"
+            ],
+            "column": [
+              "Result"
+            ],
+            "value": [
+              "Pass"
+            ]
+          }
         },
         {
           "id": "p07.reliability.rel-22-b.disposition-use",
+          "canonicalClaimId": "p07.reliability.rel-22-b.disposition-use",
+          "claimType": "table_binding",
           "expectation": "For REL-22-B, Disposition use is Reference.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p07.reliability.rel-22-c.wafer",
-          "expectation": "For REL-22-C, Wafer is 11.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "REL-22-B"
+            ],
+            "column": [
+              "Disposition use"
+            ],
+            "value": [
+              "Reference"
+            ]
+          }
         },
         {
           "id": "p07.reliability.rel-22-c.stress",
+          "canonicalClaimId": "p07.reliability.rel-22-c.stress",
+          "claimType": "table_binding",
           "expectation": "For REL-22-C, Stress is HAST 96 h.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "REL-22-C"
+            ],
+            "column": [
+              "Stress"
+            ],
+            "value": [
+              "HAST 96 h"
+            ]
+          }
         },
         {
           "id": "p07.reliability.rel-22-c.result",
+          "canonicalClaimId": "p07.reliability.rel-22-c.result",
+          "claimType": "table_binding",
           "expectation": "For REL-22-C, Result is Pass.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "REL-22-C"
+            ],
+            "column": [
+              "Result"
+            ],
+            "value": [
+              "Pass"
+            ]
+          }
         },
         {
           "id": "p07.reliability.rel-22-c.disposition-use",
+          "canonicalClaimId": "p07.reliability.rel-22-c.disposition-use",
+          "claimType": "table_binding",
           "expectation": "For REL-22-C, Disposition use is Reference.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p07.reliability.rel-22-d.wafer",
-          "expectation": "For REL-22-D, Wafer is 07.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "REL-22-C"
+            ],
+            "column": [
+              "Disposition use"
+            ],
+            "value": [
+              "Reference"
+            ]
+          }
         },
         {
           "id": "p07.reliability.rel-22-d.stress",
+          "canonicalClaimId": "p07.reliability.rel-22-d.stress",
+          "claimType": "table_binding",
           "expectation": "For REL-22-D, Stress is Not built.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "REL-22-D"
+            ],
+            "column": [
+              "Stress"
+            ],
+            "value": [
+              "Not built"
+            ]
+          }
         },
         {
           "id": "p07.reliability.rel-22-d.result",
+          "canonicalClaimId": "p07.reliability.rel-22-d.result",
+          "claimType": "table_binding",
           "expectation": "For REL-22-D, Result is Scrap.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "REL-22-D"
+            ],
+            "column": [
+              "Result"
+            ],
+            "value": [
+              "Scrap"
+            ]
+          }
         },
         {
           "id": "p07.reliability.rel-22-d.disposition-use",
+          "canonicalClaimId": "p07.reliability.rel-22-d.disposition-use",
+          "claimType": "table_binding",
           "expectation": "For REL-22-D, Disposition use is No reliability credit.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "REL-22-D"
+            ],
+            "column": [
+              "Disposition use"
+            ],
+            "value": [
+              "No reliability credit"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "REL-22-A",
+          "REL-22-B",
+          "REL-22-C",
+          "REL-22-D"
+        ]
+      }
     },
     {
       "id": "p07.shipping",
-      "page": 7,
       "label": "Shipping allocation",
+      "sourceAnchors": [
+        {
+          "page": 7,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Reliability conditions and shipping allocation"
+          ]
+        }
+      ],
+      "goldSection": "Reliability conditions and shipping allocation",
       "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
       "budget": 2,
-      "closedWorld": true,
       "leaves": [
         {
           "id": "p07.shipping.schema",
+          "canonicalClaimId": "p07.shipping.schema",
+          "claimType": "structure",
           "expectation": "The region preserves the source field schema in order: Bucket, Wafers, Good die, Shipment condition.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Bucket"
+              ],
+              [
+                "Wafers"
+              ],
+              [
+                "Good die"
+              ],
+              [
+                "Shipment condition"
+              ]
+            ]
+          }
         },
         {
           "id": "p07.shipping.row-order",
+          "canonicalClaimId": "p07.shipping.row-order",
+          "claimType": "ordered_record",
           "expectation": "The source row order is recoverable as: Release now -> Conditional -> Engineering hold -> Scrap.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Release now"
+              ],
+              [
+                "Conditional"
+              ],
+              [
+                "Engineering hold"
+              ],
+              [
+                "Scrap"
+              ]
+            ]
+          }
         },
         {
           "id": "p07.shipping.release-now.wafers",
+          "canonicalClaimId": "p07.shipping.release-now.wafers",
+          "claimType": "table_binding",
           "expectation": "For Release now, Wafers is 01,02,04,06,08,10,11.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Release now"
+            ],
+            "column": [
+              "Wafers"
+            ],
+            "value": [
+              "01,02,04,06,08,10,11"
+            ]
+          }
         },
         {
           "id": "p07.shipping.release-now.good-die",
+          "canonicalClaimId": "p07.shipping.release-now.good-die",
+          "claimType": "table_binding",
           "expectation": "For Release now, Good die is 127,759.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Release now"
+            ],
+            "column": [
+              "Good die"
+            ],
+            "value": [
+              "127,759",
+              "127759"
+            ]
+          }
         },
         {
           "id": "p07.shipping.release-now.shipment-condition",
+          "canonicalClaimId": "p07.shipping.release-now.shipment-condition",
+          "claimType": "table_binding",
           "expectation": "For Release now, Shipment condition is Standard COA.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Release now"
+            ],
+            "column": [
+              "Shipment condition"
+            ],
+            "value": [
+              "Standard COA"
+            ]
+          }
         },
         {
           "id": "p07.shipping.conditional.wafers",
+          "canonicalClaimId": "p07.shipping.conditional.wafers",
+          "claimType": "table_binding",
           "expectation": "For Conditional, Wafers is 09.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Conditional"
+            ],
+            "column": [
+              "Wafers"
+            ],
+            "value": [
+              "09",
+              "9"
+            ]
+          }
         },
         {
           "id": "p07.shipping.conditional.good-die",
+          "canonicalClaimId": "p07.shipping.conditional.good-die",
+          "claimType": "table_binding",
           "expectation": "For Conditional, Good die is 17,880.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Conditional"
+            ],
+            "column": [
+              "Good die"
+            ],
+            "value": [
+              "17,880",
+              "17880"
+            ]
+          }
         },
         {
           "id": "p07.shipping.conditional.shipment-condition",
+          "canonicalClaimId": "p07.shipping.conditional.shipment-condition",
+          "claimType": "table_binding",
           "expectation": "For Conditional, Shipment condition is Wait for REL-22-A pass.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Conditional"
+            ],
+            "column": [
+              "Shipment condition"
+            ],
+            "value": [
+              "Wait for REL-22-A pass"
+            ]
+          }
         },
         {
           "id": "p07.shipping.engineering-hold.wafers",
+          "canonicalClaimId": "p07.shipping.engineering-hold.wafers",
+          "claimType": "table_binding",
           "expectation": "For Engineering hold, Wafers is 03,05,12.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Engineering hold"
+            ],
+            "column": [
+              "Wafers"
+            ],
+            "value": [
+              "03,05,12"
+            ]
+          }
         },
         {
           "id": "p07.shipping.engineering-hold.good-die",
+          "canonicalClaimId": "p07.shipping.engineering-hold.good-die",
+          "claimType": "table_binding",
           "expectation": "For Engineering hold, Good die is 52,144.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Engineering hold"
+            ],
+            "column": [
+              "Good die"
+            ],
+            "value": [
+              "52,144",
+              "52144"
+            ]
+          }
         },
         {
           "id": "p07.shipping.engineering-hold.shipment-condition",
+          "canonicalClaimId": "p07.shipping.engineering-hold.shipment-condition",
+          "claimType": "table_binding",
           "expectation": "For Engineering hold, Shipment condition is Do not ship.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Engineering hold"
+            ],
+            "column": [
+              "Shipment condition"
+            ],
+            "value": [
+              "Do not ship"
+            ]
+          }
         },
         {
           "id": "p07.shipping.scrap.wafers",
+          "canonicalClaimId": "p07.shipping.scrap.wafers",
+          "claimType": "table_binding",
           "expectation": "For Scrap, Wafers is 07.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Scrap"
+            ],
+            "column": [
+              "Wafers"
+            ],
+            "value": [
+              "07",
+              "7"
+            ]
+          }
         },
         {
           "id": "p07.shipping.scrap.good-die",
+          "canonicalClaimId": "p07.shipping.scrap.good-die",
+          "claimType": "table_binding",
           "expectation": "For Scrap, Good die is 16,902.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Scrap"
+            ],
+            "column": [
+              "Good die"
+            ],
+            "value": [
+              "16,902",
+              "16902"
+            ]
+          }
         },
         {
           "id": "p07.shipping.scrap.shipment-condition",
+          "canonicalClaimId": "p07.shipping.scrap.shipment-condition",
+          "claimType": "table_binding",
           "expectation": "For Scrap, Shipment condition is Exclude from yield and COA.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Scrap"
+            ],
+            "column": [
+              "Shipment condition"
+            ],
+            "value": [
+              "Exclude from yield and COA"
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "Release now",
+          "Conditional",
+          "Engineering hold",
+          "Scrap"
+        ]
+      }
+    },
+    {
+      "id": "p07.htol-ticket",
+      "label": "Scanned REL-22-A HTOL load ticket",
+      "sourceAnchors": [
+        {
+          "page": 7,
+          "layer": "raster",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Reliability conditions and shipping allocation"
+          ]
+        }
+      ],
+      "goldSection": "Reliability conditions and shipping allocation",
+      "kind": "form",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "form_state",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "p07.htol.chamber",
+          "canonicalClaimId": "p07.htol.chamber",
+          "claimType": "scalar",
+          "expectation": "REL-22-A / wafer 09 is loaded in chamber H-17 at tray C4.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "REL-22-A",
+                "REL 22-A",
+                "REL-22 A",
+                "REL 22 A"
+              ],
+              [
+                "09",
+                "9"
+              ],
+              [
+                "17"
+              ],
+              [
+                "chamber"
+              ],
+              [
+                "loaded"
+              ],
+              [
+                "wafer"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p07.htol.loaded",
+          "canonicalClaimId": "p07.htol.loaded",
+          "claimType": "scalar",
+          "expectation": "The HTOL load time is 2026-06-11 at 14:22.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "2026-06-11",
+                "11 Jun 2026",
+                "11 June 2026",
+                "Jun 11 2026",
+                "June 11 2026"
+              ],
+              [
+                "14:22"
+              ],
+              [
+                "HTOL"
+              ],
+              [
+                "load"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p07.htol.seal",
+          "canonicalClaimId": "p07.htol.seal",
+          "claimType": "scalar",
+          "expectation": "KT witnessed the chamber door seal.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "KT"
+              ],
+              [
+                "witnessed"
+              ],
+              [
+                "chamber"
+              ],
+              [
+                "door"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p07.htol.logger",
+          "canonicalClaimId": "p07.htol.logger",
+          "claimType": "scalar",
+          "expectation": "Humidity logger HL-88 is attached.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "HL-88",
+                "HL 88"
+              ],
+              [
+                "humidity"
+              ],
+              [
+                "attached"
+              ],
+              [
+                "logger"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p07.htol.interim",
+          "canonicalClaimId": "p07.htol.interim",
+          "claimType": "scalar",
+          "expectation": "The 24 h observation reports no electrical reject.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "24"
+              ],
+              [
+                "no",
+                "not",
+                "none",
+                "without",
+                "absent"
+              ],
+              [
+                "observation"
+              ],
+              [
+                "electrical"
+              ],
+              [
+                "reports"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p07.htol.final",
+          "canonicalClaimId": "p07.htol.final",
+          "claimType": "scalar",
+          "expectation": "The final 168 h result is pending and wafer 09 remains segregated.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "168"
+              ],
+              [
+                "09",
+                "9"
+              ],
+              [
+                "final",
+                "finalized"
+              ],
+              [
+                "pending",
+                "awaiting",
+                "not final"
+              ],
+              [
+                "segregated"
+              ],
+              [
+                "result"
+              ],
+              [
+                "wafer"
+              ]
+            ]
+          }
         }
       ]
     },
     {
-      "id": "p08.coa",
-      "page": 8,
-      "label": "Signed COA holdback",
-      "kind": "table",
+      "id": "p08.worksheet",
+      "label": "Scanned defect-image verification worksheet",
+      "sourceAnchors": [
+        {
+          "page": 8,
+          "layer": "raster",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Defect-image verification worksheet"
+          ]
+        }
+      ],
+      "goldSection": "Defect-image verification worksheet",
+      "kind": "form",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "form_state",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
       "budget": 2,
-      "closedWorld": true,
       "leaves": [
         {
-          "id": "p08.coa.schema",
+          "id": "p08.check.map",
+          "canonicalClaimId": "p08.check.map",
+          "claimType": "form_state",
+          "expectation": "Wafer-map comparison is checked.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Wafer map compared with image archive",
+              "Wafer-map comparison"
+            ],
+            "state": "checked"
+          }
+        },
+        {
+          "id": "p08.check.neighbor",
+          "canonicalClaimId": "p08.check.neighbor",
+          "claimType": "form_state",
+          "expectation": "Neighboring-die review for the W07 cluster is checked.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Neighboring-die review",
+              "neighboring die review"
+            ],
+            "state": "checked"
+          }
+        },
+        {
+          "id": "p08.check.morphology",
+          "canonicalClaimId": "p08.check.morphology",
+          "claimType": "form_state",
+          "expectation": "Independent morphology confirmation is unchecked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Independent morphology confirmation",
+              "morphology confirmation"
+            ],
+            "state": "unchecked"
+          }
+        },
+        {
+          "id": "p08.check.coa",
+          "canonicalClaimId": "p08.check.coa",
+          "claimType": "form_state",
+          "expectation": "Preliminary all-wafer COA release is unchecked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Preliminary all-wafer COA released",
+              "all-wafer COA release"
+            ],
+            "state": "unchecked"
+          }
+        },
+        {
+          "id": "p08.check.reticle",
+          "canonicalClaimId": "p08.check.reticle",
+          "claimType": "form_state",
+          "expectation": "Reticle excursion review is disabled.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Reticle excursion review",
+              "reticle review"
+            ],
+            "state": "disabled"
+          }
+        },
+        {
+          "id": "p08.check.reticle.reason",
+          "canonicalClaimId": "p08.check.reticle.reason",
+          "claimType": "scalar",
+          "expectation": "Reticle excursion review is marked not applicable to the PVD-origin event.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Reticle excursion review"
+              ],
+              [
+                "not applicable",
+                "N/A"
+              ],
+              [
+                "PVD"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.correction.old",
+          "canonicalClaimId": "p08.correction.old",
+          "claimType": "scalar",
+          "expectation": "The initial IMG-224 count of one object is struck out.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "IMG-224",
+                "IMG 224"
+              ],
+              [
+                "initial"
+              ],
+              [
+                "object"
+              ],
+              [
+                "struck"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.correction.final",
+          "canonicalClaimId": "p08.correction.final",
+          "claimType": "scalar",
+          "expectation": "IMG-224 is corrected to two reportable objects and the worksheet defers morphology to the controlled image archive.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "IMG-224",
+                "IMG 224"
+              ],
+              [
+                "corrected"
+              ],
+              [
+                "reportable"
+              ],
+              [
+                "morphology"
+              ],
+              [
+                "controlled"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.signoff",
+          "canonicalClaimId": "p08.signoff",
+          "claimType": "scalar",
+          "expectation": "R. Kim signed at 2026-06-11 09:42 and A. Roy reviewed at 11:06.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "2026-06-11",
+                "11 Jun 2026",
+                "11 June 2026",
+                "Jun 11 2026",
+                "June 11 2026"
+              ],
+              [
+                "09:42",
+                "9:42"
+              ],
+              [
+                "11:06"
+              ],
+              [
+                "signed"
+              ],
+              [
+                "reviewed"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p08.routing",
+      "label": "Inspection archive routing",
+      "sourceAnchors": [
+        {
+          "page": 8,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Defect-image verification worksheet"
+          ]
+        }
+      ],
+      "goldSection": "Defect-image verification worksheet",
+      "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
+      "budget": 1,
+      "leaves": [
+        {
+          "id": "p08.routing.schema",
+          "canonicalClaimId": "p08.routing.schema",
+          "claimType": "structure",
+          "expectation": "The region preserves the source field schema in order: Archive object, Custodian, Checksum state, Packet role.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Archive object"
+              ],
+              [
+                "Custodian"
+              ],
+              [
+                "Checksum state"
+              ],
+              [
+                "Packet role"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.row-order",
+          "canonicalClaimId": "p08.routing.row-order",
+          "claimType": "ordered_record",
+          "expectation": "The source row order is recoverable as: IQC-071 -> IMG set 223/224/226/227 -> MAP-11JUN -> COA-DRAFT-02.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "IQC-071"
+              ],
+              [
+                "IMG set 223/224/226/227"
+              ],
+              [
+                "MAP-11JUN"
+              ],
+              [
+                "COA-DRAFT-02"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.iqc-071.checksum-state",
+          "canonicalClaimId": "p08.routing.iqc-071.checksum-state",
+          "claimType": "table_binding",
+          "expectation": "For IQC-071, Checksum state is Signed.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "IQC-071"
+            ],
+            "column": [
+              "Checksum state"
+            ],
+            "value": [
+              "Signed"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.iqc-071.packet-role",
+          "canonicalClaimId": "p08.routing.iqc-071.packet-role",
+          "claimType": "table_binding",
+          "expectation": "For IQC-071, Packet role is Inspection worksheet.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "IQC-071"
+            ],
+            "column": [
+              "Packet role"
+            ],
+            "value": [
+              "Inspection worksheet"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.img-set-223-224-226-227.checksum-state",
+          "canonicalClaimId": "p08.routing.img-set-223-224-226-227.checksum-state",
+          "claimType": "table_binding",
+          "expectation": "For IMG set 223/224/226/227, Checksum state is Matched.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "IMG set 223/224/226/227"
+            ],
+            "column": [
+              "Checksum state"
+            ],
+            "value": [
+              "Matched"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.img-set-223-224-226-227.packet-role",
+          "canonicalClaimId": "p08.routing.img-set-223-224-226-227.packet-role",
+          "claimType": "table_binding",
+          "expectation": "For IMG set 223/224/226/227, Packet role is Visual evidence.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "IMG set 223/224/226/227"
+            ],
+            "column": [
+              "Packet role"
+            ],
+            "value": [
+              "Visual evidence"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.map-11jun.checksum-state",
+          "canonicalClaimId": "p08.routing.map-11jun.checksum-state",
+          "claimType": "table_binding",
+          "expectation": "For MAP-11JUN, Checksum state is Matched.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "MAP-11JUN"
+            ],
+            "column": [
+              "Checksum state"
+            ],
+            "value": [
+              "Matched"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.map-11jun.packet-role",
+          "canonicalClaimId": "p08.routing.map-11jun.packet-role",
+          "claimType": "table_binding",
+          "expectation": "For MAP-11JUN, Packet role is Coordinate source.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "MAP-11JUN"
+            ],
+            "column": [
+              "Packet role"
+            ],
+            "value": [
+              "Coordinate source"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.coa-draft-02.checksum-state",
+          "canonicalClaimId": "p08.routing.coa-draft-02.checksum-state",
+          "claimType": "table_binding",
+          "expectation": "For COA-DRAFT-02, Checksum state is Void.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "COA-DRAFT-02"
+            ],
+            "column": [
+              "Checksum state"
+            ],
+            "value": [
+              "Void"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.coa-draft-02.packet-role",
+          "canonicalClaimId": "p08.routing.coa-draft-02.packet-role",
+          "claimType": "table_binding",
+          "expectation": "For COA-DRAFT-02, Packet role is Not shipment authority.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "COA-DRAFT-02"
+            ],
+            "column": [
+              "Packet role"
+            ],
+            "value": [
+              "Not shipment authority"
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "IQC-071",
+          "IMG set 223/224/226/227",
+          "MAP-11JUN",
+          "COA-DRAFT-02"
+        ]
+      }
+    },
+    {
+      "id": "p09.coa",
+      "label": "Signed COA holdback",
+      "sourceAnchors": [
+        {
+          "page": 9,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Certificate holdback and final audit trail"
+          ]
+        }
+      ],
+      "goldSection": "Certificate holdback and final audit trail",
+      "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "p09.coa.schema",
+          "canonicalClaimId": "p09.coa.schema",
+          "claimType": "structure",
           "expectation": "The region preserves the source field schema in order: COA field, Signed value, Application.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "COA field"
+              ],
+              [
+                "Signed value"
+              ],
+              [
+                "Application"
+              ]
+            ]
+          }
         },
         {
-          "id": "p08.coa.row-order",
+          "id": "p09.coa.row-order",
+          "canonicalClaimId": "p09.coa.row-order",
+          "claimType": "ordered_record",
           "expectation": "The source row order is recoverable as: Lot -> Released wafers -> Conditional wafer -> Engineering hold -> Scrap -> Executed recipe.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Lot"
+              ],
+              [
+                "Released wafers"
+              ],
+              [
+                "Conditional wafer"
+              ],
+              [
+                "Engineering hold"
+              ],
+              [
+                "Scrap"
+              ],
+              [
+                "Executed recipe"
+              ]
+            ]
+          }
         },
         {
-          "id": "p08.coa.lot.signed-value",
+          "id": "p09.coa.lot.signed-value",
+          "canonicalClaimId": "p09.coa.lot.signed-value",
+          "claimType": "table_binding",
           "expectation": "For Lot, Signed value is Q8R7-22.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Lot"
+            ],
+            "column": [
+              "Signed value"
+            ],
+            "value": [
+              "Q8R7-22"
+            ]
+          }
         },
         {
-          "id": "p08.coa.lot.application",
+          "id": "p09.coa.lot.application",
+          "canonicalClaimId": "p09.coa.lot.application",
+          "claimType": "table_binding",
           "expectation": "For Lot, Application is All wafers.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Lot"
+            ],
+            "column": [
+              "Application"
+            ],
+            "value": [
+              "All wafers"
+            ]
+          }
         },
         {
-          "id": "p08.coa.released-wafers.signed-value",
+          "id": "p09.coa.released-wafers.signed-value",
+          "canonicalClaimId": "p09.coa.released-wafers.signed-value",
+          "claimType": "table_binding",
           "expectation": "For Released wafers, Signed value is 01,02,04,06,08,10,11.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Released wafers"
+            ],
+            "column": [
+              "Signed value"
+            ],
+            "value": [
+              "01,02,04,06,08,10,11"
+            ]
+          }
         },
         {
-          "id": "p08.coa.released-wafers.application",
+          "id": "p09.coa.released-wafers.application",
+          "canonicalClaimId": "p09.coa.released-wafers.application",
+          "claimType": "table_binding",
           "expectation": "For Released wafers, Application is Ship now.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Released wafers"
+            ],
+            "column": [
+              "Application"
+            ],
+            "value": [
+              "Ship now"
+            ]
+          }
         },
         {
-          "id": "p08.coa.conditional-wafer.signed-value",
+          "id": "p09.coa.conditional-wafer.signed-value",
+          "canonicalClaimId": "p09.coa.conditional-wafer.signed-value",
+          "claimType": "table_binding",
           "expectation": "For Conditional wafer, Signed value is 09.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Conditional wafer"
+            ],
+            "column": [
+              "Signed value"
+            ],
+            "value": [
+              "09",
+              "9"
+            ]
+          }
         },
         {
-          "id": "p08.coa.conditional-wafer.application",
+          "id": "p09.coa.conditional-wafer.application",
+          "canonicalClaimId": "p09.coa.conditional-wafer.application",
+          "claimType": "table_binding",
           "expectation": "For Conditional wafer, Application is After REL-22-A pass.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Conditional wafer"
+            ],
+            "column": [
+              "Application"
+            ],
+            "value": [
+              "After REL-22-A pass"
+            ]
+          }
         },
         {
-          "id": "p08.coa.engineering-hold.signed-value",
+          "id": "p09.coa.engineering-hold.signed-value",
+          "canonicalClaimId": "p09.coa.engineering-hold.signed-value",
+          "claimType": "table_binding",
           "expectation": "For Engineering hold, Signed value is 03,05,12.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Engineering hold"
+            ],
+            "column": [
+              "Signed value"
+            ],
+            "value": [
+              "03,05,12"
+            ]
+          }
         },
         {
-          "id": "p08.coa.engineering-hold.application",
+          "id": "p09.coa.engineering-hold.application",
+          "canonicalClaimId": "p09.coa.engineering-hold.application",
+          "claimType": "table_binding",
           "expectation": "For Engineering hold, Application is Excluded.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Engineering hold"
+            ],
+            "column": [
+              "Application"
+            ],
+            "value": [
+              "Excluded"
+            ]
+          }
         },
         {
-          "id": "p08.coa.scrap.signed-value",
+          "id": "p09.coa.scrap.signed-value",
+          "canonicalClaimId": "p09.coa.scrap.signed-value",
+          "claimType": "table_binding",
           "expectation": "For Scrap, Signed value is 07.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Scrap"
+            ],
+            "column": [
+              "Signed value"
+            ],
+            "value": [
+              "07",
+              "7"
+            ]
+          }
         },
         {
-          "id": "p08.coa.scrap.application",
+          "id": "p09.coa.scrap.application",
+          "canonicalClaimId": "p09.coa.scrap.application",
+          "claimType": "table_binding",
           "expectation": "For Scrap, Application is Excluded from yield and COA.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Scrap"
+            ],
+            "column": [
+              "Application"
+            ],
+            "value": [
+              "Excluded from yield and COA"
+            ]
+          }
         },
         {
-          "id": "p08.coa.executed-recipe.signed-value",
+          "id": "p09.coa.executed-recipe.signed-value",
+          "canonicalClaimId": "p09.coa.executed-recipe.signed-value",
+          "claimType": "table_binding",
           "expectation": "For Executed recipe, Signed value is TIN_GATE_31.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Executed recipe"
+            ],
+            "column": [
+              "Signed value"
+            ],
+            "value": [
+              "TIN_GATE_31"
+            ]
+          }
         },
         {
-          "id": "p08.coa.executed-recipe.application",
+          "id": "p09.coa.executed-recipe.application",
+          "canonicalClaimId": "p09.coa.executed-recipe.application",
+          "claimType": "table_binding",
           "expectation": "For Executed recipe, Application is MES confirmed.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Executed recipe"
+            ],
+            "column": [
+              "Application"
+            ],
+            "value": [
+              "MES confirmed"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "Lot",
+          "Released wafers",
+          "Conditional wafer",
+          "Engineering hold",
+          "Scrap",
+          "Executed recipe"
+        ]
+      }
     },
     {
-      "id": "p08.audit",
-      "page": 8,
+      "id": "p09.audit",
       "label": "Lot-disposition audit trail",
+      "sourceAnchors": [
+        {
+          "page": 9,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Certificate holdback and final audit trail"
+          ]
+        }
+      ],
+      "goldSection": "Certificate holdback and final audit trail",
       "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
       "budget": 1,
-      "closedWorld": true,
       "leaves": [
         {
-          "id": "p08.audit.schema",
+          "id": "p09.audit.schema",
+          "canonicalClaimId": "p09.audit.schema",
+          "claimType": "structure",
           "expectation": "The region preserves the source field schema in order: Time, Actor, Entry, Effect.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Time"
+              ],
+              [
+                "Actor"
+              ],
+              [
+                "Entry"
+              ],
+              [
+                "Effect"
+              ]
+            ]
+          }
         },
         {
-          "id": "p08.audit.row-order",
+          "id": "p09.audit.row-order",
+          "canonicalClaimId": "p09.audit.row-order",
+          "claimType": "ordered_record",
           "expectation": "The source row order is recoverable as: 10 Jun 12:18 -> 10 Jun 14:40 -> 11 Jun 08:55 -> 11 Jun 10:20 -> 11 Jun 13:30.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "10 Jun 12:18"
+              ],
+              [
+                "10 Jun 14:40"
+              ],
+              [
+                "11 Jun 08:55"
+              ],
+              [
+                "11 Jun 10:20"
+              ],
+              [
+                "11 Jun 13:30"
+              ]
+            ]
+          }
         },
         {
-          "id": "p08.audit.10-jun-12-18.actor",
-          "expectation": "For 10 Jun 12:18, Actor is MES.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p08.audit.10-jun-12-18.entry",
+          "id": "p09.audit.10-jun-12-18.entry",
+          "canonicalClaimId": "p09.audit.10-jun-12-18.entry",
+          "claimType": "table_binding",
           "expectation": "For 10 Jun 12:18, Entry is PVD alarm attached.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "10 Jun 12:18"
+            ],
+            "column": [
+              "Entry"
+            ],
+            "value": [
+              "PVD alarm attached"
+            ]
+          }
         },
         {
-          "id": "p08.audit.10-jun-12-18.effect",
+          "id": "p09.audit.10-jun-12-18.effect",
+          "canonicalClaimId": "p09.audit.10-jun-12-18.effect",
+          "claimType": "table_binding",
           "expectation": "For 10 Jun 12:18, Effect is Containment starts.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "10 Jun 12:18"
+            ],
+            "column": [
+              "Effect"
+            ],
+            "value": [
+              "Containment starts"
+            ]
+          }
         },
         {
-          "id": "p08.audit.10-jun-14-40.actor",
-          "expectation": "For 10 Jun 14:40, Actor is Yield engineering.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p08.audit.10-jun-14-40.entry",
+          "id": "p09.audit.10-jun-14-40.entry",
+          "canonicalClaimId": "p09.audit.10-jun-14-40.entry",
+          "claimType": "table_binding",
           "expectation": "For 10 Jun 14:40, Entry is Map review complete.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "10 Jun 14:40"
+            ],
+            "column": [
+              "Entry"
+            ],
+            "value": [
+              "Map review complete"
+            ]
+          }
         },
         {
-          "id": "p08.audit.10-jun-14-40.effect",
+          "id": "p09.audit.10-jun-14-40.effect",
+          "canonicalClaimId": "p09.audit.10-jun-14-40.effect",
+          "claimType": "table_binding",
           "expectation": "For 10 Jun 14:40, Effect is 03/05/07/12 flagged.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "10 Jun 14:40"
+            ],
+            "column": [
+              "Effect"
+            ],
+            "value": [
+              "03/05/07/12 flagged"
+            ]
+          }
         },
         {
-          "id": "p08.audit.11-jun-08-55.actor",
-          "expectation": "For 11 Jun 08:55, Actor is MRB.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p08.audit.11-jun-08-55.entry",
+          "id": "p09.audit.11-jun-08-55.entry",
+          "canonicalClaimId": "p09.audit.11-jun-08-55.entry",
+          "claimType": "table_binding",
           "expectation": "For 11 Jun 08:55, Entry is 07 scrap; 09 conditional.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "11 Jun 08:55"
+            ],
+            "column": [
+              "Entry"
+            ],
+            "value": [
+              "07 scrap; 09 conditional"
+            ]
+          }
         },
         {
-          "id": "p08.audit.11-jun-08-55.effect",
+          "id": "p09.audit.11-jun-08-55.effect",
+          "canonicalClaimId": "p09.audit.11-jun-08-55.effect",
+          "claimType": "table_binding",
           "expectation": "For 11 Jun 08:55, Effect is Disposition controls.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "11 Jun 08:55"
+            ],
+            "column": [
+              "Effect"
+            ],
+            "value": [
+              "Disposition controls"
+            ]
+          }
         },
         {
-          "id": "p08.audit.11-jun-10-20.actor",
-          "expectation": "For 11 Jun 10:20, Actor is Quality.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p08.audit.11-jun-10-20.entry",
+          "id": "p09.audit.11-jun-10-20.entry",
+          "canonicalClaimId": "p09.audit.11-jun-10-20.entry",
+          "claimType": "table_binding",
           "expectation": "For 11 Jun 10:20, Entry is COA holdback signed.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "11 Jun 10:20"
+            ],
+            "column": [
+              "Entry"
+            ],
+            "value": [
+              "COA holdback signed"
+            ]
+          }
         },
         {
-          "id": "p08.audit.11-jun-10-20.effect",
+          "id": "p09.audit.11-jun-10-20.effect",
+          "canonicalClaimId": "p09.audit.11-jun-10-20.effect",
+          "claimType": "table_binding",
           "expectation": "For 11 Jun 10:20, Effect is Draft all-wafer COA void.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "11 Jun 10:20"
+            ],
+            "column": [
+              "Effect"
+            ],
+            "value": [
+              "Draft all-wafer COA void"
+            ]
+          }
         },
         {
-          "id": "p08.audit.11-jun-13-30.actor",
-          "expectation": "For 11 Jun 13:30, Actor is Planning.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p08.audit.11-jun-13-30.entry",
+          "id": "p09.audit.11-jun-13-30.entry",
+          "canonicalClaimId": "p09.audit.11-jun-13-30.entry",
+          "claimType": "table_binding",
           "expectation": "For 11 Jun 13:30, Entry is Ship buckets created.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "11 Jun 13:30"
+            ],
+            "column": [
+              "Entry"
+            ],
+            "value": [
+              "Ship buckets created"
+            ]
+          }
         },
         {
-          "id": "p08.audit.11-jun-13-30.effect",
+          "id": "p09.audit.11-jun-13-30.effect",
+          "canonicalClaimId": "p09.audit.11-jun-13-30.effect",
+          "claimType": "table_binding",
           "expectation": "For 11 Jun 13:30, Effect is 127,759 die release.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "11 Jun 13:30"
+            ],
+            "column": [
+              "Effect"
+            ],
+            "value": [
+              "127,759 die release",
+              "127759 die release"
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "10 Jun 12:18",
+          "10 Jun 14:40",
+          "11 Jun 08:55",
+          "11 Jun 10:20",
+          "11 Jun 13:30"
+        ]
+      }
+    },
+    {
+      "id": "p09.authority",
+      "label": "Shipment-authority statement",
+      "sourceAnchors": [
+        {
+          "page": 9,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Certificate holdback and final audit trail"
+          ]
+        }
+      ],
+      "goldSection": "Certificate holdback and final audit trail",
+      "kind": "text",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "source_precedence",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "p09.authority.control",
+          "canonicalClaimId": "p09.authority.control",
+          "claimType": "source_precedence",
+          "expectation": "The preliminary all-wafer COA is void; only the signed COA values authorize shipment.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "preliminary",
+                "draft"
+              ],
+              [
+                "void"
+              ],
+              [
+                "only"
+              ],
+              [
+                "signed COA"
+              ],
+              [
+                "authorize",
+                "authority"
+              ]
+            ]
+          }
         }
       ]
     },
     {
-      "id": "p08.authority",
-      "page": 8,
-      "label": "Shipment-authority statement",
-      "kind": "text",
-      "budget": 1,
-      "closedWorld": false,
-      "leaves": [
+      "id": "p09.cross-source",
+      "label": "Cross-source wafer disposition joins",
+      "sourceAnchors": [
         {
-          "id": "p08.authority.void",
-          "expectation": "The preliminary all-wafer COA is void.",
-          "harm": 1,
-          "allowPartial": false
+          "page": 2,
+          "layer": "raster",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Wafer-map review"
+          ]
         },
         {
-          "id": "p08.authority.signed",
-          "expectation": "Only the signed COA values on page 8 authorize shipment.",
+          "page": 5,
+          "layer": "raster",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "SEM review contact sheet"
+          ]
+        },
+        {
+          "page": 6,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Defect classification and MRB decisions"
+          ]
+        },
+        {
+          "page": 7,
+          "layer": "mixed",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Reliability conditions and shipping allocation"
+          ]
+        },
+        {
+          "page": 9,
+          "layer": "native_text",
+          "sectionPath": [
+            "Lot Q8R7-22 Material Review File",
+            "Certificate holdback and final audit trail"
+          ]
+        }
+      ],
+      "goldSection": "Certificate holdback and final audit trail",
+      "kind": "mixed",
+      "modality": "mixed",
+      "uniqueEvidence": true,
+      "primaryAxis": "mixed_modality_fusion",
+      "secondaryAxes": [
+        "cross_page_join",
+        "summarization_coverage"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 3,
+      "leaves": [
+        {
+          "id": "p09.join.w07",
+          "canonicalClaimId": "p09.join.w07",
+          "claimType": "cross_page_join",
+          "expectation": "Wafer 07's M1 map cluster and IMG-224 and IMG-225 evidence are explicitly linked to the scrap decision.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Wafer 07",
+                "W07"
+              ],
+              [
+                "M1"
+              ],
+              [
+                "IMG-224"
+              ],
+              [
+                "IMG-225"
+              ],
+              [
+                "scrap"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p09.join.w09",
+          "canonicalClaimId": "p09.join.w09",
+          "claimType": "cross_page_join",
+          "expectation": "Wafer 09's visually clean IMG-226 does not negate the P4 parametric condition or the REL-22-A shipment gate.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Wafer 09",
+                "W09"
+              ],
+              [
+                "IMG-226"
+              ],
+              [
+                "clean"
+              ],
+              [
+                "does not",
+                "not"
+              ],
+              [
+                "P4"
+              ],
+              [
+                "REL-22-A"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p09.join.w12",
+          "canonicalClaimId": "p09.join.w12",
+          "claimType": "cross_page_join",
+          "expectation": "The W12 E1 edge map and IMG-227 evidence are explicitly linked to engineering hold.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "W12"
+              ],
+              [
+                "E1"
+              ],
+              [
+                "IMG-227"
+              ],
+              [
+                "hold"
+              ]
+            ]
+          }
         }
       ]
     }

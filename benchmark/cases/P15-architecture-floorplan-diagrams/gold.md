@@ -1,84 +1,132 @@
 # Suite 214 Laboratory Coordination Set
 
-## Coordination transmittal
+## Coordination transmittal and sheet index
 
-Revision C controls and was issued 2026-06-12. Revision B used D-214A; Revision C uses D-214B, adds CR-6, and assigns L2-15.
+Package ARC-214-C is the RECORD ISSUE for the Orion Biologics Suite 214 laboratory renovation. The controlled index lists ten records from TX-01 through CL-214.
 
-| Sheet | Title | Revision | Issue date | Status |
+| Sheet | Record | Rev | Issued | Class |
 | --- | --- | --- | --- | --- |
-| A2.14 | Suite 214 floor plan | C | 12 Jun 2026 | Coordinated |
-| T4.08 | Rack R2 elevation and ports | C | 12 Jun 2026 | Coordinated |
-| N1.07 | Laboratory network topology | C | 12 Jun 2026 | Coordinated |
-| E6.02 | Panel LP-2 schedule | C | 12 Jun 2026 | Coordinated |
-| RFI-214B | Lab B corridor door | Answered | 12 Jun 2026 | Attached scan |
+| TX-01 | Transmittal / index | C | 16 Jun | Record |
+| A2.14-B | Archived floor plan | B | 07 Jun | Archive |
+| A2.14 | Controlled floor plan | C | 12 Jun | Construction |
+| A6.24 | RCP / MEP coordination | C | 12 Jun | Coordination |
+| T4.08 | Rack R2 / patching | C | 13 Jun | Coordination |
+| N1.07 | Network / access topology | C | 13 Jun | Coordination |
+| E6.02 | LP-2 / field check | C | 14 Jun | Field check |
+| RFI-214-17 | Door field response | A | 12 Jun | Response |
+| PH-214 | Field photo record | A | 15 Jun | Photo record |
+| CL-214 | Final issue release | C | 16 Jun | Release |
 
-| Revision | Date | Change | Issued by |
+| Event | Date | Authority | Record effect |
 | --- | --- | --- | --- |
-| A | 28 May | Existing-condition backgrounds | M. Song |
-| B | 07 Jun | Lab B door shown as D-214A | M. Song |
-| C | 12 Jun | Door D-214B; CR-6; circuit L2-15 | A. Verma |
+| Rev B issue | 07 Jun | MS | Archived background |
+| RFI response | 12 Jun | AV | Incorporated by Rev C |
+| Rev C issue | 12 Jun | AV | Controls coordination |
+| Record release | 16 Jun | LS | Closes package |
 
-## A2.14 - Suite 214 floor plan
+The authority order is final release, Revision C sheets, answered RFI, then archived Revision B record. Revision B is retained only as the archived background; Revision C controls coordination; RFI-214-17 is incorporated; the 16 June release closes the package.
 
-The suite is 45 ft 0 in wide and 22 ft 0 in deep. Rooms are 214 Clean Prep (18 ft 6 in x 12 ft 0 in), 215 Lab B (16 ft 0 in x 12 ft 0 in), 216 Freezer (10 ft 6 in x 12 ft 0 in), C2 Corridor, 217 Wash (12 ft 0 in x 10 ft 0 in), and 218 IT Closet (10 ft 6 in x 10 ft 0 in). The south wall of 215 Lab B directly adjoins C2 Corridor. D-214B is set in that shared wall, with reader CR-6 on the corridor side. The egress arrow runs from Clean Prep toward C2 Corridor. Callout 6 identifies CR-6 at D-214B; callout 9 is rack R2 in room 218; callout 11 is FZ-3 in room 216.
+## A2.14-B - Archived floor plan
 
-| Location | Field condition | Coordinated artifact |
-| --- | --- | --- |
-| 214 Clean Prep | D214-01 tablet dock | CS-2/01; VLAN 210 |
-| 215 Lab B | D-214B; CR-6 corridor side | CS-2/07; L2-15 |
-| 216 Freezer | FZ-3 at callout 11 | CS-2/12; VLAN 240; L2-17 |
-| 218 IT Closet | Rack R2 at callout 9 | CS-2/19; L2-19 |
+Revision B is visibly stamped superseded and dated 7 June 2026; the archived field-background record is 214-B-0707. The overall footprint is 45 ft by 22 ft. Clean Prep 214 is 18 ft 6 in by 12 ft and is west of Lab B 215, which is 16 ft by 12 ft. Freezer 216 is east of Lab B; Lab B is directly north of corridor C2; Wash 217 is immediately west of corridor C2; IT Closet 218 is south of Freezer 216 and east of C2. The old Lab B opening is near the middle of its south wall, has a north swing into Lab B, and is keyed by callout 6. Callout 9 points to rack R2 in IT Closet 218; callout 11 points to FZ-3 in Freezer 216. The first egress segment runs from Lab B through the old opening and the second turns west along C2. The base sheet carries no reader symbol at the opening.
 
-## T4.08 - Rack R2 elevation
+## A2.14 - Controlled floor plan and overlay
 
-Rack placements: CS-2 U42-U43; PP-7 U36-U37; FW-02 U30-U31; UPS A U24-U26; GW-3 U18; NVR bridge U12-U13.
+Revision C retains the 45 ft by 22 ft overall footprint but moves the Lab B opening 4 ft 6 in west of the dashed Revision B position. The dimension between the old and new opening hinge points is 4 ft 6 in. The current door is D-214B, is in the Lab B/C2 shared wall, and swings south into corridor C2. Reader CR-6 is on the corridor side at the east jamb. Callout 6 keys that reader and opening; callout 9 keys rack R2 in IT Closet 218; callout 11 keys FZ-3 in Freezer 216. Egress runs from Lab B through D-214B and then west along C2. The north arrow points toward the top of the sheet. The solid blue opening is Revision C's controlling current geometry; the dashed red opening is archived Revision B geometry.
 
-| Port | Drop | Room | Device | VLAN |
-| --- | --- | --- | --- | --- |
-| CS-2/01 | D214-01 | 214 | Tablet dock | 210 |
-| CS-2/07 | D215-03 | 215 | Card reader CR-6 | 230 |
-| CS-2/12 | D216-02 | 216 | Freezer monitor FZ-3 | 240 |
-| CS-2/19 | D218-01 | 218 | FW-02 management | 99 |
+Integrated reference conclusions:
 
-## N1.07 - Laboratory network topology
+- Clean Prep 214 remains immediately west of Lab B 215.
+- Freezer 216 remains immediately east of Lab B 215.
+- The south wall of Lab B 215 directly adjoins corridor C2.
+- D-214B is set in the wall shared by Lab B 215 and corridor C2.
 
-Directed links: FW-02 -> CS-2 trunk 99/210/230/240; CS-2 -> CR-6 VLAN 230; CS-2 -> FZ-3 VLAN 240; CS-2 -> QA subnet VLAN 210; CR-6 -> NVR badge event mirror; dashed optional FZ-3 -> NVR alert overlay.
+## A6.24 - Reflected ceiling and MEP coordination
 
-| Rule | Source | Destination | VLAN | State |
-| --- | --- | --- | --- | --- |
-| ACL-230-06 | CR-6 | NVR event mirror | 230 -> 240 | Permit one-way |
-| SVC-210-QA | CS-2 | QA subnet | 210 | Permit telemetry |
-| TRK-FW02-CS2 | FW-02 | CS-2 | 99/210/230/240 | Tagged trunk |
-| OPT-CAM | FZ-3 | NVR | 240 | Optional / dashed |
+The ceiling plan places SD-4 north-west of bench B-2 and west of sprinkler SP-7. SP-7 is north-east of ceiling panel CP-4. Occupancy sensor OS-2 is south-east of CP-4. Light L-5 is north of CP-4. Return grille RG-2 is east of CP-4. The solid green VAV-214 supply arrow runs to SD-4. A dashed amber control arrow runs from OS-2 to CP-4; a dashed blue BAS link runs from CP-4 to BAS-214. The dashed old diffuser location is near SP-7; the red relocation arrow moves it west to the solid current SD-4 position, producing an 8 ft separation. The solid SD-4 symbol is current and the dashed old symbol is superseded. Conflict bubble C1 keys that resolved move.
 
-## E6.02 - Panel LP-2 schedule
+## T4.08 - Rack R2 elevation and patching
 
-| Circuit | Load | Breaker | Emergency | Room | Note |
+Rack R2 placements are CS-2 at U42-U43, PP-7 at U36-U37, AC-6 at U31-U32, UPS-A at U26-U28, GW-3 at U19, NVR-B at U14-U15, and PDU-2 at U8. Callout B identifies the tray entry on the west/top side of the rack.
+
+| Port | Drop | Endpoint | Location | VLAN | Medium |
 | --- | --- | --- | --- | --- | --- |
-| L2-11 | Bench outlets B | 20A/1P | No | 215 | GFCI |
-| L2-13 | Autoclave AC-1 | 30A/2P | No | 217 | Dedicated |
-| L2-15 | Door controller DC-6 | 20A/1P | Yes | 215 | Feeds CR-6 |
-| L2-17 | Freezer FZ-3 | 20A/1P | Yes | 216 | Monitor required |
-| L2-19 | Rack R2 UPS | 20A/1P | Yes | 218 | UPS A |
-| L2-21 | Spare | 20A/1P | No | - | Hold for Rev D |
+| CS-2/01 | D214-01 | Tablet dock | 214-W | 210 | Cat6A |
+| CS-2/07 | D215-03 | CR-6 | 215-S | 230 | Cat6A |
+| CS-2/08 | D215-04 | DC-6 | R2/U31 | 230 | Cat6A |
+| CS-2/12 | D216-02 | FZ-3 | 216-E | 240 | Cat6A |
+| CS-2/13 | D216-03 | GW-3 | R2/U19 | 240 | Cat6A |
+| CS-2/19 | D218-01 | FW-02 mgmt | 218-R2 | 99 | Cat6A |
+| PP-7/21 | D214-11 | BAS-214 | 214-N | 120 | OM4 |
+| PP-7/22 | D215-12 | CP-4 | 215-CLG | 120 | OM4 |
 
-| Branch | Connected | Emergency | Coordination note |
+Internal patch paths are PP-7/07 -> CS-2/07 -> D215-03; PP-7/12 -> CS-2/12 -> D216-02; and PP-7/22 -> OM4-2 -> D215-12.
+
+## N1.07 - Network and access-control topology
+
+Directed edges are FW-02 to CS-2 (tagged trunk 99/210/230/240); CS-2 to CR-6 (VLAN 230 events); CR-6 to DC-6 (Wiegand); DC-6 to ACS-CORE (VLAN 230 authorization); CS-2 to FZ-3 (VLAN 240 telemetry); FZ-3 to QA-210 (one-way alarm); CR-6 to NVR-B (event mirror); and a dashed conditional FZ-3 to BAS-214 trend edge. The CR-6 event mirror branches to NVR-B before the DC-6 authorization target. No reverse authorization, mirror, or alarm edges are drawn.
+
+| Path key | Transport | Mode | Policy |
 | --- | --- | --- | --- |
-| Normal receptacles | 3.2 kVA | 0.0 kVA | Bench and autoclave |
-| Access control | 0.4 kVA | 0.4 kVA | DC-6 on L2-15 |
-| Cold storage | 0.7 kVA | 0.7 kVA | FZ-3 on L2-17 |
-| IT / UPS | 1.1 kVA | 1.1 kVA | R2 UPS on L2-19 |
-| Spare capacity | 2.6 kVA | - | L2-21 held for Rev D |
+| ACL-230-A | V230 | Auth | Permit one-way |
+| MIR-230-B | V230 | Event | Permit one-way |
+| TEL-240-Q | V240 | Alarm | Permit one-way |
+| OPT-240-B | V240 | Trend | Conditional |
 
-Issue checks: Emergency labels match floor-plan callouts is checked. L2-21 released for construction is unchecked. Freezer monitor moved to normal power is unchecked.
+Integrated reference conclusions:
 
-## RFI-214B - Lab B corridor door
+- A VLAN 230 event path runs from CS-2 to CR-6.
 
-The scanned response strikes the Revision B answer D-214A and corrects it to D-214B. Revision C uses D-214B, adds CR-6 on the corridor side, assigns LP-2 circuit L2-15, and updates the access-control schedule. A. Verma signed on 2026-06-12; security reviewer TN and the contractor acknowledged the response.
+## E6.02 - Panel LP-2 and field check
 
-| Field | Revision B | Revision C |
-| --- | --- | --- |
-| Door identifier | D-214A | D-214B |
-| Reader | None | CR-6 corridor side |
-| Circuit | Unassigned | L2-15 |
-| Schedule | Draft | Issued |
+| Circuit | Load | Breaker | Branch | Room | Record |
+| --- | --- | --- | --- | --- | --- |
+| L2-11 | Bench outlets B | 20A/1P | Normal | 215 | B-2 |
+| L2-13 | Autoclave AC-1 | 30A/2P | Normal | 217 | AC-1 |
+| L2-15 | Door controller | 20A/1P | Emergency | 215 | DC-6 |
+| L2-17 | Freezer | 20A/1P | Emergency | 216 | FZ-3 |
+| L2-19 | Rack UPS | 20A/1P | Emergency | 218 | UPS-A |
+| L2-21 | Spare | 20A/1P | Normal | - | Future |
+
+The embedded field-check record is EC-214-19, dated 14 June 2026. Its explicit states are:
+- Torque witness marks complete: checked.
+- L2-15 field tag installed: checked.
+- L2-17 field tag installed: checked.
+- L2-19 field tag installed: checked.
+- L2-21 released for use: unchecked.
+- Emergency transfer witnessed: checked.
+- Reader polarity exception open: crossed out.
+
+Technician JH and witness LS recorded that panel LP-2 was energized at 16:42 on 14 June 2026.
+
+## RFI-214-17 - Lab B corridor opening
+
+The field query was received on 2026-06-09. Maintain D-214A at Revision B position is unchecked, crossed by a red strike, and marked VOID. Issue architect response for construction is checked. The answered RFI voids D-214A and makes D-214B the controlling identifier. Architect AV directs a new opening 4 ft 6 in west of the old opening, a south swing into C2, CR-6 on the corridor-side east jamb, and DC-6 on LP-2 circuit L2-15. Revision C governs construction. The redline sketch places Lab B above corridor C2 with the door wall between them, shows the dashed old and solid new positions, dimensions the new opening 4 ft 6 in west of the old opening, and keys reader callout 6 on the east jamb. AV signed 2026-06-12; TN reviewed; contractor RK acknowledged 2026-06-13.
+
+## PH-214 - Field photo and punch evidence
+
+Photo 06 is a corridor-side view of D-214B. The reader is mounted on the image-right/east jamb, outside the Lab B opening; annotation A circles the reader rather than the door leaf. The leaf/opening remains clear. Photo 09 shows rack R2 in room 218. The overhead tray approaches from image-left/west and drops at the rack's west/top corner; annotation B circles that entry. The service side on the image-right/east side of rack R2 is unobstructed.
+
+| Image | Captured | View | Custodian | Checksum |
+| --- | --- | --- | --- | --- |
+| PHOTO 06 | 15 Jun 09:16 | C2 south | TN | 8F4C-06A2 |
+| PHOTO 09 | 15 Jun 09:42 | 218 west | TN | 1B77-09D5 |
+
+## CL-214 - Final issue and signoff record
+
+| Artifact | Revision | Digest | Recipient | Time |
+| --- | --- | --- | --- | --- |
+| A2.14 | C | 2E11-A214 | Field / RK | 17:22 |
+| A6.24 | C | 9A40-A624 | MEP / JH | 17:22 |
+| T4.08 | C | B817-T408 | Security / TN | 17:23 |
+| N1.07 | C | 0C31-N107 | IT / SM | 17:23 |
+| E6.02 | C | 7D14-E602 | Electrical / JH | 17:24 |
+| RFI-214-17 | A | 6F82-R214 | Record / LS | 17:24 |
+
+The release package is ARC-214-C. The embedded release form has IFC Revision C accepted checked, use archived Revision B background unchecked, RFI-214-17 incorporated checked, and open access-control punch items unchecked. Architect AV, Security TN, Electrical JH, and Owner LS sign the release. The release seal is 214-C-0616 and is dated 16 June 2026. Therefore Revision C controls, the archived plan cannot be used for set-out, the RFI directives are incorporated, and no access-control punch item remains open. The release power chain binds CR-6 through DC-6 to LP-2 circuit L2-15; the L2-15 field tag is installed and emergency transfer is witnessed. The release network chain binds CR-6 to CS-2/07 on VLAN 230, continues through DC-6 toward ACS-CORE, and separately mirrors events to NVR-B.
+
+Integrated reference conclusions:
+
+- Final release acceptance makes the solid Revision C door geometry control over the dashed archived Revision B opening.
+- The release chain binds CR-6 through DC-6 to LP-2 circuit L2-15.
+- Photo 06 visually confirms the reader on the image-right/east jamb, consistent with the plan and RFI.

@@ -10,6 +10,7 @@ import {
   atomicWriteText,
   calculateTokenCostUsd,
   parseRunCliArgs,
+  writeImmutableJson,
 } from "./runRuntime.js";
 
 test("cached-token pricing separates cached and uncached input", () => {
@@ -40,17 +41,27 @@ test("cached-token pricing clamps malformed token counts", () => {
 test("run CLI accepts one optional positional model and strict flags", () => {
   assert.deepEqual(parseRunCliArgs([]), {
     modelId: "vertex-gemini-3.1-flash-lite",
-    force: false,
     help: false,
   });
-  assert.deepEqual(parseRunCliArgs(["openai-gpt-5-nano", "--case", "P07", "--manifest", "suite.json", "--force"]), {
+  assert.deepEqual(parseRunCliArgs(["openai-gpt-5-nano", "--case", "P07", "--manifest", "suite.json"]), {
     modelId: "openai-gpt-5-nano",
     caseId: "P07",
     manifestPath: "suite.json",
-    force: true,
     help: false,
   });
-  assert.equal(parseRunCliArgs(["--model", "openai-gpt-5.4-nano"]).modelId, "openai-gpt-5.4-nano");
+  assert.deepEqual(
+    parseRunCliArgs([
+      "--model",
+      "openai-gpt-5.4-nano",
+      "--final-validation-authorization",
+      "final-validation:checkpoint-1",
+    ]),
+    {
+      modelId: "openai-gpt-5.4-nano",
+      finalValidationAuthorization: "final-validation:checkpoint-1",
+      help: false,
+    },
+  );
 });
 
 test("run CLI rejects unknown, duplicate, missing, conflicting, and extra arguments", () => {
@@ -59,7 +70,11 @@ test("run CLI rejects unknown, duplicate, missing, conflicting, and extra argume
   assert.throws(() => parseRunCliArgs(["--case", "a", "--case", "b"]), /Duplicate option --case/);
   assert.throws(() => parseRunCliArgs(["model-a", "model-b"]), /Unexpected positional argument model-b/);
   assert.throws(() => parseRunCliArgs(["model-a", "--model", "model-b"]), /both positionally and with --model/);
-  assert.throws(() => parseRunCliArgs(["--force", "false"]), /Unexpected positional argument false/);
+  assert.throws(() => parseRunCliArgs(["--force"]), /--force is disabled/);
+  assert.throws(
+    () => parseRunCliArgs(["--final-validation-authorization"]),
+    /--final-validation-authorization requires a value/,
+  );
 });
 
 test("atomic writers replace complete text and JSON without leaving temp files", async () => {
@@ -73,6 +88,20 @@ test("atomic writers replace complete text and JSON without leaving temp files",
     assert.equal(await readFile(textPath, "utf8"), "new prediction");
     assert.equal(await readFile(jsonPath, "utf8"), '{\n  "ok": true\n}\n');
     assert.deepEqual((await readdir(root)).sort(), ["prediction.md", "result.json"]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("immutable JSON markers are create-once and preserve their first value", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "doc2md-run-immutable-"));
+  try {
+    const markerPath = path.join(root, "attempts", "run-key.json");
+    await writeImmutableJson(markerPath, { attempt: 1 });
+    await assert.rejects(writeImmutableJson(markerPath, { attempt: 2 }), (error: unknown) => {
+      return (error as NodeJS.ErrnoException).code === "EEXIST";
+    });
+    assert.equal(await readFile(markerPath, "utf8"), '{\n  "attempt": 1\n}\n');
   } finally {
     await rm(root, { recursive: true, force: true });
   }

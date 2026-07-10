@@ -60,24 +60,47 @@ export async function atomicWriteJson(filePath: string, value: unknown): Promise
   await atomicWrite(filePath, JSON.stringify(value, null, 2) + "\n");
 }
 
+/**
+ * Persist a create-once audit artifact. Unlike the ordinary atomic writers this
+ * deliberately refuses to replace an existing path. A partial marker left by a
+ * process or disk failure is also fail-closed: callers must investigate it
+ * rather than silently authorizing another paid attempt.
+ */
+export async function writeImmutableJson(filePath: string, value: unknown): Promise<void> {
+  await mkdir(path.dirname(filePath), { recursive: true });
+  const handle = await open(filePath, "wx", 0o444);
+  try {
+    await handle.writeFile(JSON.stringify(value, null, 2) + "\n", "utf8");
+    await handle.sync();
+    await handle.close();
+  } catch (error) {
+    await handle.close().catch(() => undefined);
+    // Do not remove a partially written marker. Its existence conservatively
+    // records that attempt reservation began and prevents an automatic redraw.
+    throw error;
+  }
+}
+
 export const defaultRunModelId = "vertex-gemini-3.1-flash-lite";
 
 export type RunCliArgs = {
   modelId: string;
   caseId?: string;
   manifestPath?: string;
-  force: boolean;
+  finalValidationAuthorization?: string;
   help: boolean;
 };
 
-export const runUsage = `Usage: npm run run -- [model-id] [--case CASE_ID] [--manifest PATH] [--force]
+export const runUsage = `Usage: npm run run -- [model-id] [--case CASE_ID] [--manifest PATH] [--final-validation-authorization ID]
 
 The model id is optional and must be the first positional argument. --model MODEL_ID is also accepted as an alternative.
 Options:
   --model MODEL_ID  Select a model without using the positional form.
   --case CASE_ID     Run only one manifest case.
   --manifest PATH    Use a non-default benchmark manifest.
-  --force            Invalidate and rerun otherwise current samples.
+  --final-validation-authorization ID
+                     Required for a non-anchor final-validation model. ID must
+                     also match DOC2MD_FINAL_VALIDATION_AUTHORIZATION.
   --help              Show this message.`;
 
 export function parseRunCliArgs(argv: string[]): RunCliArgs {
@@ -97,13 +120,18 @@ export function parseRunCliArgs(argv: string[]): RunCliArgs {
 
     sawOption = true;
     const option = argument.slice(2);
-    if (!new Set(["model", "case", "manifest", "force", "help"]).has(option)) {
+    if (option === "force") {
+      throw new Error(
+        "--force is disabled: a current stochastic draw cannot be silently replaced. Change the hashed benchmark protocol or use a separately authorized final-validation workflow.",
+      );
+    }
+    if (!new Set(["model", "case", "manifest", "final-validation-authorization", "help"]).has(option)) {
       throw new Error(`Unknown option --${option}.\n${runUsage}`);
     }
     if (seen.has(option)) throw new Error(`Duplicate option --${option}.`);
     seen.add(option);
 
-    if (option === "force" || option === "help") {
+    if (option === "help") {
       switches.add(option);
       continue;
     }
@@ -122,7 +150,9 @@ export function parseRunCliArgs(argv: string[]): RunCliArgs {
     modelId: positionalModel ?? values.get("model") ?? defaultRunModelId,
     ...(values.has("case") ? { caseId: values.get("case")! } : {}),
     ...(values.has("manifest") ? { manifestPath: values.get("manifest")! } : {}),
-    force: switches.has("force"),
+    ...(values.has("final-validation-authorization")
+      ? { finalValidationAuthorization: values.get("final-validation-authorization")! }
+      : {}),
     help: switches.has("help"),
   };
 }

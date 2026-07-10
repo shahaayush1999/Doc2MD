@@ -1,69 +1,120 @@
-# West Region Logistics Exception Control Packet
+# Northstar Cold Chain Supplier Cutover Authorization
 
-## Operating exception memo
+## 1. Regional cold-storage cutover approval
 
-| Memo field | Memo value | Linked field | Linked value |
+| Field | Controlled value | Field | Controlled value |
 | --- | --- | --- | --- |
-| Prepared | 10 Jul 2026 | Coordinator | Lena Ortiz |
-| Review window | Through 12 Jul 16:00 PT | Region | West |
-| Scope | Cross-dock and linehaul exceptions | Record | OR-7712 |
+| File | SV-2048 | Revision | D |
+| Prepared | 08 Jul 2026 | Effective | 10 Jul 2026 09:30 MST |
+| Sites | Phoenix and Tucson | Coordinator | Avery Kim |
 
-Network planning opened OR-7712 after Reno dock staffing fell three crew positions below the consolidation plan. Boise overflow capacity and Tacoma weekend allocation are controlled separately; no blanket regional stop was issued.
+Northstar will transfer eligible Phoenix and Tucson inventory from Kestrel Logistics to Boreal Storage during the 14-15 July maintenance window. The change includes telemetry migration, physical custody transfer, invoice routing, and eventual closure of Kestrel credentials. Quarantined inventory remains under Northstar quality control.
 
-| ID | Scope | Disposition | Owner | Due |
-| --- | --- | --- | --- | --- |
-| D-17 | Reno consolidation | HOLD — dock crew exception | Ravi Mehta | 12 Jul 16:00 PT |
-| D-18 | Boise overflow | APPROVE — cross-dock slot B7 | Lena Ortiz | 09 Jul |
-| D-19 | Tacoma weekend linehaul | RETAIN — current carrier allocation | Mira Chen | 11 Jul |
-
-Distribute to network planning, Reno operations, transportation, and finance. D-17 is the only open blocking decision.
-
-## Lane risk register
-
-| Lane | Pallets | Constraint | State | Control / next gate |
-| --- | --- | --- | --- | --- |
-| Reno → SFO | 41 | Dock crew short by 3 | BLOCKED | Ravi closes D-17 |
-| Boise → SEA | 18 | Overflow slot B7 | RELEASED | Cutoff 09 Jul 18:00 |
-| Tacoma → PDX | 27 | Carrier capacity tight | WATCH | Confirm 11 Jul 10:00 |
-| Spokane → SEA | 12 | None | CLEAR | No action |
-
-| Location | Release authority | Evidence | Limit |
+| Priority | Record | Controls | Does not control |
 | --- | --- | --- | --- |
-| Reno | Ravi Mehta | Crew roster RC-118 | No outbound consolidation |
-| Boise | Lena Ortiz | Slot approval LO-551 | 18 pallets / B7 only |
-| Tacoma | Mira Chen | Carrier note TC-49 | Existing allocation |
-| Spokane | Dispatch desk | Daily plan SP-210 | Standard cutoff |
+| 1 | Page 5 final authorization | GO/HOLD state and release conditions | Individual rate details |
+| 2 | Page 4 exception register | Exception scope, owner, and closure evidence | Commercial ceiling |
+| 3 | Page 3 finance validation | Authorized cost ceiling and invoice route | Operational release |
+| 4 | Page 2 cutover workplan | Task sequence, windows, and task gates | Final authorization |
+| Reference | Email and meeting notes | Context only when cited by a controlled row | Any approval or closure |
 
-Boise may release independently. Tacoma remains on watch without reserve eligibility. Spokane remains clear. Reno may not consolidate until the D-17 exception owner records closure.
+A lower-priority record may supply detail but cannot reverse a higher-priority state. Closure applies only to the obligation named in the exception row. SV-2048 was prepared 08 Jul 2026 and became effective 10 Jul 2026 at 09:30 MST.
 
-## Cost reserve authorization
-
-| Reserve line | Amount | Eligibility | Control basis |
+| Step | Owner | Required review | Exit record |
 | --- | --- | --- | --- |
-| Temporary slot B7 | $2,400 | Eligible | Approval LO-551 |
-| Reno labor standby | $3,850 | Conditional | Only if D-17 extends past 12 Jul 16:00 PT |
-| Tacoma weekend premium | $1,175 | Not eligible | Existing carrier allocation retained |
+| 1 | Cutover lead | Sequence and operational gates | Page 2 workplan |
+| 2 | Finance | Ceiling, PO, and invoice routing | Page 3 validation |
+| 3 | Functional owners | Exception scope and evidence | Page 4 register |
+| 4 | Sponsor and quality | Selective GO/HOLD authorization | Page 5 final record |
 
-| Scenario | Eligible reserve | Included lines |
+## 2. Cutover workplan and handoff sequence
+
+| ID | Site / asset | Activity | Owner | Planned window | Gate / evidence | State |
+| --- | --- | --- | --- | --- | --- | --- |
+| T-01 | Phoenix / Dock 4 | Reserve the temperature-controlled bay; retain Kestrel access until EX-07 is signed. | Avery Kim | 14 Jul 22:00-23:00 MST | Facilities call FC-119 and access list AC-44 | READY |
+| T-02 | Phoenix / Sensor P-14 | Move telemetry from Kestrel gateway KG-2 to Boreal gateway BG-5; preserve 15-minute data. | Lin Chen | 14 Jul 23:00-23:40 MST | Parallel-read delta <=0.3 C for 30 minutes | CONDITIONAL |
+| T-03 | Tucson / Cage C | Seal returned Kestrel inventory and complete a dual count before carrier release. | Mateo Soto | 15 Jul 00:15-01:00 MST | Dual count sheet IC-882 | READY |
+| T-04 | Phoenix / Lot PX-771 | Transfer 48 pallets only after the T-02 telemetry gate passes. | Rina Singh | 15 Jul 00:30-02:10 MST | Scan batch SC-77; zero orphan pallets | BLOCKED BY T-02 |
+| T-05 | Tucson / Lot TZ-219 | Transfer 26 pallets and exclude six quarantined cases held under QA-61. | Jordan Cole | 15 Jul 01:20-02:20 MST | QA release QR-203 for eligible stock | READY |
+| T-06 | Both sites / credentials | Close Kestrel credentials after inventory reconciliation and legal waiver confirmation. | Avery Kim | 15 Jul 04:30 MST | REC-2048 has zero unresolved items and EX-07 is signed | PENDING |
+
+Approver sidebar, 08 Jul - Avery Kim: keep Kestrel Dock 4 access active until counsel signs EX-07. This margin note is advisory; page 5 controls release.
+
+T-02 gates the PX-771 transfer in T-04. EX-07 does not block physical transfer; it blocks T-06 credential closure. T-05 may move only eligible Tucson stock while the six QA-61 cases remain segregated.
+
+**Handoff matrix**
+
+| Trigger | Notify | Channel | Required content |
+| --- | --- | --- | --- |
+| T-02 passes | Phoenix floor lead | Bridge BR-2048 | P-14 delta and validation end time |
+| T-04 completes | Inventory control | Queue IC-WEST | PX-771 pallet count and orphan count |
+| Any temperature breach | Quality on-call | QA hotline | Sensor, duration, peak delta, and lot |
+| Rollback invoked | Both site leads | Bridge BR-2048 | Last completed task and custody location |
+
+Invoke RB-12 if a temperature deviation exceeds 1.0 C for 10 continuous minutes. Stop the active transfer, preserve custody at the last confirmed location, and report the last completed task on bridge BR-2048.
+
+## 3. Commercial validation and invoice routing
+
+| Line | Basis | Amount | Approval condition |
+| --- | --- | --- | --- |
+| Boreal implementation | Quote Q-884 revision C | $18,600 | Fixed fee |
+| Kestrel overlap | Two nights at $2,160 | $4,320 | Maximum two nights |
+| Sensor validation | Work order TV-19 | $2,150 | P-14 parallel read |
+| Contingency | Legal-delay allowance | $3,000 | Available only if EX-07 extends |
+
+| Control | Value | Interpretation |
 | --- | --- | --- |
-| D-17 closes by 12 Jul 16:00 PT | $2,400 | Temporary slot B7 |
-| D-17 remains open after 12 Jul 16:00 PT | $6,250 | Slot B7 + Reno labor standby |
+| Base committed cost | $25,070 | Implementation, overlap, and sensor validation |
+| Conditional contingency | $3,000 | Usable only while EX-07 extends the overlap |
+| Not-to-exceed ceiling | $28,070 | Requires finance reapproval if exceeded |
 
-Tacoma weekend premium is excluded because D-19 retains the existing carrier allocation. Labor standby becomes eligible only after the D-17 deadline passes while the hold remains open.
+| Vendor | PO | Cost center | Reviewer | Route |
+| --- | --- | --- | --- | --- |
+| Boreal Storage | 44018-3 | CC-7420 | Jonah Mercer | AP-West / transition |
+| Kestrel Logistics | 44007-9 | CC-7420 | Jonah Mercer | AP-West / overlap |
+| ThermoVision | 43991-2 | CC-7314 | Nadia Brooks | AP-Quality / validation |
 
-Finance concurrence stamp: M. Okafor; 10 Jul 2026 14:18 PT; reserve control LO-551.
+Finance validates the ceiling and invoice route. It does not declare an exception closed, satisfy a task gate, or authorize physical release. Unused contingency is not committed spend.
 
-## Controlling disposition and signoff
+Raster finance stamp: Jonah Mercer; 09 Jul 2026 16:42 MST; ceiling $28,070; control VC-2048; cost validation is not operational release.
 
-Reno outbound consolidation remains **ON HOLD** until Ravi Mehta closes the D-17 dock staffing exception.
+## 4. Exception and closure-evidence register
 
-| Role | Name | State | Timestamp |
+| Exception | Affected obligation | Current finding | Owner | Due | Accepted closure evidence | State |
+| --- | --- | --- | --- | --- | --- | --- |
+| E-05 | T-02 telemetry gate | Parallel baseline differs by 0.2 C after probe alignment. | Lin Chen | 09 Jul 15:00 MST | Signed TV-19 trace with 30-minute comparison | CLOSED |
+| EX-07 | T-06 credential closure | Kestrel access waiver is with counsel; physical cutover may proceed while access is retained. | Isha Patel | 14 Jul 18:00 MST | Countersigned waiver WA-771 | OPEN |
+| E-08 | T-05 Tucson inventory | Six QA-61 cases remain quarantined and are outside the eligible transfer quantity. | Dara Nwosu | 15 Jul 01:00 MST | QR-203 release or segregated custody receipt | OPEN - EXCLUDE |
+| E-09 | Boreal invoice route | Draft purchase order omitted the transition suffix. | Jonah Mercer | 09 Jul 12:00 MST | Issued PO 44018-3 | CLOSED |
+| E-11 | T-03 carrier release | Carrier arrival is forecast at 01:10, ten minutes after the planned count window. | Mateo Soto | 15 Jul 00:30 MST | Dispatch update in BR-2048 and revised custody time | WATCH |
+| E-12 | Tucson backup power | Backup power transfer test passed in 46 seconds against the 60 second limit. | Jordan Cole | 09 Jul 17:00 MST | Facilities test certificate FT-662 | CLOSED |
+
+| Marker | Meaning | Operational consequence |
+| --- | --- | --- |
+| CLOSED | Listed evidence was accepted for that row | No effect on unrelated exceptions |
+| OPEN - EXCLUDE | Affected inventory stays out of the authorized quantity | Eligible inventory may proceed |
+| WATCH | Monitor and update the stated evidence channel | Continue unless a final condition fails |
+
+Email acknowledgment is context only unless the relevant row cites it as accepted evidence. The signed page 5 authorization controls GO/HOLD state; the finance validation controls cost only.
+
+## 5. Final implementation authorization
+
+**PHYSICAL CUTOVER: GO.** Begin at 14 Jul 2026 22:00 MST for eligible inventory only. **KESTREL CREDENTIAL DECOMMISSION: HOLD** until C-3 is satisfied.
+
+| Condition | Required state before action | Action governed | Failure response |
 | --- | --- | --- | --- |
-| Operations | Lena Ortiz | Approved | 10 Jul 15:05 PT |
-| Finance | M. Okafor | Concurred | 10 Jul 14:18 PT |
-| Exception owner | Ravi Mehta | Open — not signed | Next review 12 Jul 16:00 PT |
-| Document control | S. Bell | Revision 3 effective | 10 Jul 15:10 PT |
+| C-1 | P-14 parallel-read delta <=0.3 C for 30 minutes | Start T-04 | Hold PX-771 at Phoenix |
+| C-2 | Six QA-61 cases remain segregated unless QR-203 releases them | Start T-05 | Move eligible stock only |
+| C-3 | EX-07 signed and REC-2048 has zero unresolved items | Close Kestrel credentials | Retain access and escalate |
+| C-4 | No temperature deviation >1.0 C for 10 continuous minutes | Continue physical transfer | Invoke rollback RB-12 |
 
-Finance concurrence authorizes the reserve; it does not release Reno. Operations approval establishes the packet. Ravi Mehta's row remains open and unsigned, so the controlling statement remains in force.
+The GO decision permits the physical cutover; it does not close EX-07, release the six QA-61 cases, or waive telemetry and rollback gates. Kestrel credential closure remains HOLD because T-06 and C-3 require both signed EX-07 and zero unresolved REC-2048 items. Finance validation and its stamp authorize cost only; they cannot close an exception, satisfy a task gate, or override the final release state. Page 4 remains the source for exception ownership and evidence.
 
-Revision 3 supersedes Revision 2 at 10 Jul 2026 15:10 PT. Next review: 12 Jul 2026 16:00 PT. Retention class: operations exception / seven years.
+| Role | Name | Decision | Recorded |
+| --- | --- | --- | --- |
+| Executive sponsor | Mara Velez | Approved | 10 Jul 2026 09:12 MST |
+| Cutover lead | Avery Kim | Accepted | 10 Jul 2026 09:18 MST |
+| Quality | Dara Nwosu | Approved with QA-61 exclusion | 10 Jul 2026 09:26 MST |
+| Legal exception owner | Isha Patel | EX-07 remains open; not a release signature | Review due 14 Jul 18:00 MST |
+
+Revision D supersedes Draft C. This authorization became effective at 10 Jul 2026 09:30 MST. The next control event is the first failed condition, completed rollback, or closure of C-3, whichever occurs first.

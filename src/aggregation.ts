@@ -20,8 +20,8 @@ function mean(values: number[]): number {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
-export function sampleStddev(values: number[]): number {
-  if (values.length <= 1) return 0;
+export function sampleStddev(values: number[]): number | null {
+  if (values.length <= 1) return null;
   const average = mean(values);
   return Math.sqrt(values.reduce((sum, value) => sum + (value - average) ** 2, 0) / (values.length - 1));
 }
@@ -70,13 +70,14 @@ export function aggregateSampleFirst(cases: AggregationCase[], expectedSampleIds
       invalidSamples.length === invalidCountBefore &&
       testCase.samples.length === expectedSampleIds.length &&
       validScores.length === expectedSampleIds.length;
+    const hasObservedVariability = complete && validScores.length > 1;
     return {
       caseId: testCase.caseId,
       complete,
       score: complete ? mean(validScores) : null,
-      scoreMin: complete ? Math.min(...validScores) : null,
-      scoreMax: complete ? Math.max(...validScores) : null,
-      scoreStddev: complete ? sampleStddev(validScores) : null,
+      scoreMin: hasObservedVariability ? Math.min(...validScores) : null,
+      scoreMax: hasObservedVariability ? Math.max(...validScores) : null,
+      scoreStddev: hasObservedVariability ? sampleStddev(validScores) : null,
     };
   });
 
@@ -89,19 +90,20 @@ export function aggregateSampleFirst(cases: AggregationCase[], expectedSampleIds
     : [];
   const suiteScores = suiteSampleScores.map((item) => item.score);
 
+  const hasObservedVariability = complete && suiteScores.length > 1;
   return {
     complete,
     invalidSamples,
     caseAggregates,
     suiteSampleScores,
     score: complete ? mean(suiteScores) : null,
-    scoreStddev: complete ? sampleStddev(suiteScores) : null,
-    scoreMin: complete ? Math.min(...suiteScores) : null,
-    scoreMax: complete ? Math.max(...suiteScores) : null,
+    scoreStddev: hasObservedVariability ? sampleStddev(suiteScores) : null,
+    scoreMin: hasObservedVariability ? Math.min(...suiteScores) : null,
+    scoreMax: hasObservedVariability ? Math.max(...suiteScores) : null,
   };
 }
 
-export const aggregationContractVersion = "equal-case-sample-first-v2";
+export const aggregationContractVersion = "equal-case-sample-first-v3-single-draw-null-variability";
 export const aggregationContractFingerprint = hashObject({
   version: aggregationContractVersion,
   aggregateSampleFirstHash: sha256(aggregateSampleFirst.toString()),

@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { renderReport, validSummary, validateSummaryArithmetic, type Manifest, type Summary } from "./report.js";
+import {
+  defaultReportModelIds,
+  renderReport,
+  validSummary,
+  validateSummaryArithmetic,
+  type Manifest,
+  type Summary,
+} from "./report.js";
 import { scoringContractFingerprint } from "./score.js";
 
 const manifest: Manifest = {
@@ -44,26 +51,59 @@ const summary: Summary = {
   inputProtocol: "native_pdf",
   caseCount: 1,
   expectedCaseCount: 1,
-  samplesPerModelCase: 3,
-  sampleCount: 3,
+  samplesPerModelCase: 1,
+  sampleCount: 1,
   score: 50,
-  suiteSampleScores: [
-    { sample: "001", score: 40 },
-    { sample: "002", score: 50 },
-    { sample: "003", score: 60 },
-  ],
-  scoreStddev: 10,
-  scoreMin: 40,
-  scoreMax: 60,
+  suiteSampleScores: [{ sample: "001", score: 50 }],
+  scoreStddev: null,
+  scoreMin: null,
+  scoreMax: null,
   scoreAggregation: "equal_case_sample_first",
   costUsd: 0.01,
   totalElapsedMs: 3000,
   totalInputTokens: 300,
   totalOutputTokens: 150,
+  modelCallCount: 1,
+  logicalGenerationCallCount: 1,
+  totalTransportRequestAttempts: 1,
+  transportRetryCount: 0,
+  transportRetriesAreCohortSamples: false,
   modelFailureCount: 0,
   complete: true,
   missingCaseIds: [],
   invalidSamples: [],
+  diagnostics: {
+    aggregation: "evidence_budget_sample_first",
+    complete: true,
+    byPrimaryAxis: [
+      {
+        key: "precise_recall",
+        caseCount: 1,
+        regionCount: 1,
+        totalBudget: 1,
+        score: 50,
+        rawScore: 50,
+        sampleScores: [{ sample: "001", score: 50, rawScore: 50 }],
+        scoreStddev: null,
+        scoreMin: null,
+        scoreMax: null,
+      },
+    ],
+    byModality: [
+      {
+        key: "native_text",
+        caseCount: 1,
+        regionCount: 1,
+        totalBudget: 1,
+        score: 50,
+        rawScore: 50,
+        sampleScores: [{ sample: "001", score: 50, rawScore: 50 }],
+        scoreStddev: null,
+        scoreMin: null,
+        scoreMax: null,
+      },
+    ],
+  },
   caseScores: [
     {
       caseId: "case-a",
@@ -71,23 +111,19 @@ const summary: Summary = {
       family: "fixture",
       tags: ["native-pdf"],
       pages: 1,
-      samples: 3,
-      expectedSamples: 3,
+      samples: 1,
+      expectedSamples: 1,
       complete: true,
       score: 50,
-      scoreMin: 40,
-      scoreMax: 60,
-      scoreStddev: 10,
-      sampleScores: [
-        { sample: "001", score: 40, valid: true, modelCallFailed: false },
-        { sample: "002", score: 50, valid: true, modelCallFailed: false },
-        { sample: "003", score: 60, valid: true, modelCallFailed: false },
-      ],
-      finishReasons: [
-        { sample: "001", finishReason: "stop" },
-        { sample: "002", finishReason: "stop" },
-        { sample: "003", finishReason: "stop" },
-      ],
+      scoreMin: null,
+      scoreMax: null,
+      scoreStddev: null,
+      sampleScores: [{ sample: "001", score: 50, valid: true, modelCallFailed: false }],
+      logicalGenerationCalls: 1,
+      transportRequestAttempts: 1,
+      transportRetryCount: 0,
+      transportRetriesAreCohortSamples: false,
+      finishReasons: [{ sample: "001", finishReason: "stop" }],
     },
   ],
 };
@@ -96,13 +132,84 @@ test("report arithmetic validation recomputes case and full-suite values", () =>
   assert.equal(validateSummaryArithmetic(summary, manifest), null);
   const tampered = {
     ...summary,
-    suiteSampleScores: summary.suiteSampleScores.map((sample) => (sample.sample === "002" ? { ...sample, score: 99 } : sample)),
+    suiteSampleScores: summary.suiteSampleScores.map((sample) => ({ ...sample, score: 99 })),
   };
   assert.match(validateSummaryArithmetic(tampered, manifest)!, /full-suite sample arithmetic/);
 });
 
 test("report rendering is byte-deterministic for identical inputs", () => {
   assert.equal(renderReport(manifest, [summary]), renderReport(manifest, [summary]));
+});
+
+test("standalone reports default to only the two development anchors", () => {
+  assert.deepEqual(defaultReportModelIds, ["openai-gpt-5-nano", "vertex-gemini-3.1-flash-lite"]);
+});
+
+test("report attributes observed separation by capability and modality without hiding signed utility", () => {
+  const stronger: Summary = {
+    ...summary,
+    modelId: "vertex-gemini-3.1-flash-lite",
+    provider: "google-vertex",
+    score: 80,
+    diagnostics: {
+      ...summary.diagnostics,
+      byPrimaryAxis: summary.diagnostics.byPrimaryAxis.map((row) => ({
+        ...row,
+        score: 80,
+        rawScore: 90,
+        sampleScores: [{ sample: "001", score: 80, rawScore: 90 }],
+      })),
+      byModality: summary.diagnostics.byModality.map((row) => ({
+        ...row,
+        score: 80,
+        rawScore: 90,
+        sampleScores: [{ sample: "001", score: 80, rawScore: 90 }],
+      })),
+    },
+  };
+  const html = renderReport(manifest, [summary, stronger]);
+  assert.match(html, /Capability and Modality Diagnostics/);
+  assert.match(html, /Precise Recall/);
+  assert.match(html, /Native Text/);
+  assert.match(html, /Observed spread/);
+  assert.match(html, /raw 90\.0/);
+  assert.match(html, /raw 40\.0/);
+  assert.match(html, /same single stochastic draw/);
+});
+
+test("one-sample reports explicitly withhold variability and reliability claims", () => {
+  const html = renderReport(manifest, [summary]);
+  assert.match(html, /1 sample per model\/case/);
+  assert.match(html, /SD and range are unavailable/);
+  assert.match(html, /no repeatability or reliability claim/);
+  assert.doesNotMatch(html, /\(50\.0–50\.0\)/);
+  assert.match(html, /Transport retries are attempts to complete the same reserved logical draw/);
+  assert.match(html, /<th class="num">Logical draws<\/th>/);
+});
+
+test("one-sample summary validation rejects manufactured zero variability", () => {
+  const current = { ...summary, scoringContractFingerprint };
+  assert.match(
+    validSummary({ ...current, scoreStddev: 0, scoreMin: 50, scoreMax: 50 }, manifest, "benchmark")!,
+    /variability fields do not match the sample protocol/,
+  );
+});
+
+test("one-sample diagnostic validation rejects manufactured variability", () => {
+  const current = { ...summary, scoringContractFingerprint };
+  const tampered: Summary = {
+    ...current,
+    diagnostics: {
+      ...current.diagnostics,
+      byPrimaryAxis: current.diagnostics.byPrimaryAxis.map((row) => ({
+        ...row,
+        scoreStddev: 0,
+        scoreMin: row.score,
+        scoreMax: row.score,
+      })),
+    },
+  };
+  assert.match(validateSummaryArithmetic(tampered, manifest)!, /primary-axis diagnostic aggregate arithmetic/);
 });
 
 test("report freshness rejects a summary after cohort artifacts change", () => {
@@ -137,16 +244,16 @@ test("report rejects coherent score and aggregate tampering that diverges from s
   const tampered: Summary = {
     ...current,
     score: 90,
-    scoreStddev: 0,
-    scoreMin: 90,
-    scoreMax: 90,
+    scoreStddev: null,
+    scoreMin: null,
+    scoreMax: null,
     suiteSampleScores: current.suiteSampleScores.map((sample) => ({ ...sample, score: 90 })),
     caseScores: current.caseScores.map((caseScore) => ({
       ...caseScore,
       score: 90,
-      scoreMin: 90,
-      scoreMax: 90,
-      scoreStddev: 0,
+      scoreMin: null,
+      scoreMax: null,
+      scoreStddev: null,
       sampleScores: caseScore.sampleScores.map((sample) => ({ ...sample, score: 90 })),
     })),
   };

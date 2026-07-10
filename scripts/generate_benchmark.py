@@ -13,11 +13,9 @@ import uuid
 from pathlib import Path
 
 from benchmark_cases import (
-    p07_launch,
     p12_pfas,
     p15_architecture,
     p17_clinical,
-    p20_utility,
     p21_semiconductor,
     p23_native_recovery,
 )
@@ -25,11 +23,9 @@ from benchmark_cases.common import REPO_ROOT
 
 
 BUILDERS = (
-    p07_launch.build,
     p12_pfas.build,
     p15_architecture.build,
     p17_clinical.build,
-    p20_utility.build,
     p21_semiconductor.build,
     p23_native_recovery.build,
 )
@@ -161,8 +157,8 @@ def _generate_in_place(output_root: Path) -> dict:
 
     cases = [builder(output_root) for builder in BUILDERS]
     page_count = sum(int(case["pages"]) for case in cases)
-    if len(cases) != 7 or page_count != 49:
-        raise ValueError(f"Expected seven cases and 49 pages; built {len(cases)} cases and {page_count} pages")
+    if len(cases) != 5 or page_count != 84:
+        raise ValueError(f"Expected five cases and 84 pages; built {len(cases)} cases and {page_count} pages")
 
     manifest = {
         "schemaVersion": 2,
@@ -171,8 +167,8 @@ def _generate_in_place(output_root: Path) -> dict:
         "scoreName": "Doc2MD Native PDF Score",
         "inputProtocol": "native_pdf",
         "providerFileModePolicy": "Send the native PDF file to the provider and record the provider's documented PDF ingestion mode separately. Do not convert official inputs to page images in the harness.",
-        "version": "0.2.0",
-        "description": "A compact mixed-modality benchmark for faithful reconstruction of realistic born-digital, scanned-region, technical-visual, stateful, and malformed-office PDFs into Markdown.",
+        "version": "1.0.0",
+        "description": "An unsaturated mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
         "caseCount": len(cases),
         "pageCount": page_count,
         "cases": cases,

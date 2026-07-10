@@ -1,10 +1,18 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { hashObject, sha256 } from "./cache.js";
-import { buildRunContext, models, readCurrentCachedRun, runCacheKey, vertexProviderRoute, type ManifestCase } from "./run.js";
+import {
+  buildRunContext,
+  inferenceAttemptMarkerPath,
+  models,
+  readCurrentCachedRun,
+  runCacheKey,
+  vertexProviderRoute,
+  type ManifestCase,
+} from "./run.js";
 
 test("explicit Vertex locations use a project-scoped endpoint with API-key authentication", () => {
   const globalModel = models["vertex-gemini-2.5-flash-lite"]!;
@@ -48,6 +56,7 @@ test("provider file mode is present in hashed execution protocol and cache prove
       path.join(root, "manifest.json"),
     );
     assert.equal(context.protocol.providerFileMode, context.providerFileMode);
+    assert.equal(context.protocol.samplesPerModelCase, 1);
     assert.ok(context.protocol.transportEpoch);
     assert.ok(context.protocol.sdkVersions.ai);
     assert.equal(context.protocol.sdkVersions.providerPackage, "@ai-sdk/openai");
@@ -65,6 +74,13 @@ test("provider file mode is present in hashed execution protocol and cache prove
     assert.notEqual(changed.runKey, cache.runKey);
     const changedSample = await runCacheKey(testCase, models["openai-gpt-5-nano"]!, context, "002");
     assert.notEqual(changedSample.runKey, cache.runKey);
+    const priorThreeSampleProtocol = { ...context.protocol, samplesPerModelCase: 3 };
+    const priorThreeSampleCache = await runCacheKey(testCase, models["openai-gpt-5-nano"]!, {
+      ...context,
+      protocol: priorThreeSampleProtocol,
+      protocolHash: hashObject(priorThreeSampleProtocol),
+    }, "001");
+    assert.notEqual(priorThreeSampleCache.runKey, cache.runKey);
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -82,6 +98,23 @@ test("cache reader accepts complete response artifacts and rejects legacy infras
     const modelConfigHash = "d".repeat(64);
     const protocolHash = "e".repeat(64);
     const inferenceBenchmarkFingerprint = "f".repeat(64);
+    const attemptMarkerPath = inferenceAttemptMarkerPath(root, runKey);
+    const attemptMarker = {
+      schemaVersion: 1,
+      kind: "paid_inference_attempt_reserved",
+      runKey,
+      caseId: "fixture",
+      modelId: "openai-gpt-5-nano",
+      sample: "001",
+      logicalSampleDraw: 1,
+      transportMaxRetries: 2,
+      runMode: "development_anchor",
+      authorizationHash: null,
+      createdAt: "2026-07-10T00:00:00.000Z",
+    };
+    const attemptMarkerText = JSON.stringify(attemptMarker, null, 2) + "\n";
+    await mkdir(path.dirname(attemptMarkerPath), { recursive: true });
+    await writeFile(attemptMarkerPath, attemptMarkerText, "utf8");
     const base = {
       artifactStatus: "scoreable_model_response",
       responseReceived: true,
@@ -96,16 +129,22 @@ test("cache reader accepts complete response artifacts and rejects legacy infras
       providerFileMode: "native file attachment",
       executionProvenance: {
         schemaVersion: 1,
-        protocolVersion: "native-pdf-v2",
+        protocolVersion: "native-pdf-v3-immutable-attempt-ledger",
         inputMode: "native_pdf",
         inputProtocol: "native_pdf",
         mediaType: "application/pdf",
         providerFileMode: "native file attachment",
-        maxOutputTokens: 24000,
+        maxOutputTokens: 60_000,
         maxRetries: 2,
-        transportEpoch: "fixture-transport",
+        transportEpoch: "fixture-transport-v3",
         providerPayloadMode: "messages.user.content.file.buffer",
         samplingMode: "provider-default-sampling",
+        logicalSampleDraw: 1,
+        logicalGenerationCalls: 1,
+        transportRequestAttempts: 1,
+        retriesAreCohortSamples: false,
+        runMode: "development_anchor",
+        authorizationHash: null,
         sdkVersions: { ai: "7.0.11", providerPackage: "@ai-sdk/openai", providerPackageVersion: "4.0.5" },
         promptHash,
         protocolHash,
@@ -145,6 +184,15 @@ test("cache reader accepts complete response artifacts and rejects legacy infras
         providerFileMode: "native file attachment",
         predictionHash: sha256(prediction),
       },
+      inferenceAttempt: {
+        markerPath: attemptMarkerPath,
+        markerHash: sha256(attemptMarkerText),
+        logicalSampleDraw: 1,
+        logicalGenerationCalls: 1,
+        transportMaxRetries: 2,
+        transportRequestAttempts: 1,
+        retriesAreCohortSamples: false,
+      },
       inputMode: "native_pdf",
     };
     const expected = {
@@ -157,15 +205,15 @@ test("cache reader accepts complete response artifacts and rejects legacy infras
       inputProtocol: "native_pdf",
       providerFileMode: "native file attachment",
       protocol: {
-        version: "native-pdf-v2",
+        version: "native-pdf-v3-immutable-attempt-ledger",
         inputMode: "native_pdf",
         inputProtocol: "native_pdf",
         mediaType: "application/pdf",
         providerFileMode: "native file attachment",
-        maxOutputTokens: 24000,
+        maxOutputTokens: 60_000,
         maxRetries: 2,
-        samplesPerModelCase: 3,
-        transportEpoch: "fixture-transport",
+        samplesPerModelCase: 1,
+        transportEpoch: "fixture-transport-v3",
         providerPayloadMode: "messages.user.content.file.buffer",
         samplingMode: "provider-default-sampling",
         sdkVersions: { ai: "7.0.11", providerPackage: "@ai-sdk/openai", providerPackageVersion: "4.0.5" },
@@ -178,6 +226,10 @@ test("cache reader accepts complete response artifacts and rejects legacy infras
     await writeFile(predictionPath, prediction, "utf8");
     await writeFile(resultPath, JSON.stringify(base), "utf8");
     assert.ok(await readCurrentCachedRun(resultPath, predictionPath, expected));
+
+    await writeFile(attemptMarkerPath, `${attemptMarkerText} `, "utf8");
+    assert.equal(await readCurrentCachedRun(resultPath, predictionPath, expected), null);
+    await writeFile(attemptMarkerPath, attemptMarkerText, "utf8");
 
     // The suite-level fingerprint is summary metadata, not part of this
     // case/sample run identity. Unchanged cases remain reusable when another

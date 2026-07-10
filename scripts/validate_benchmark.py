@@ -21,6 +21,11 @@ from typing import Any
 import pdfplumber
 from pypdf import PdfReader
 
+try:
+    from scripts.benchmark_cases.common import evidence_policy_violations
+except ModuleNotFoundError:  # Direct ``python scripts/validate_benchmark.py`` execution.
+    from benchmark_cases.common import evidence_policy_violations
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_BENCHMARK = ROOT / "benchmark"
@@ -175,8 +180,8 @@ def validate_facts(path: Path, case: dict[str, Any], validation: Validation) -> 
     facts = load_json(path, validation)
     if not isinstance(facts, dict):
         return 0, 0
-    if facts.get("schemaVersion") != 2:
-        validation.error(f"{case['id']}: facts schemaVersion must be 2")
+    if facts.get("schemaVersion") != 3:
+        validation.error(f"{case['id']}: facts schemaVersion must be 3")
     if facts.get("id") != case["id"]:
         validation.error(f"{case['id']}: facts id mismatch")
     for field in ("title", "family", "tags"):
@@ -189,8 +194,24 @@ def validate_facts(path: Path, case: dict[str, Any], validation: Validation) -> 
 
     region_ids: set[str] = set()
     leaf_ids: set[str] = set()
+    canonical_claim_ids: set[str] = set()
     anchored_pages: set[int] = set()
     leaf_count = 0
+    source_layers = {"native_text", "raster", "vector_geometry", "mixed", "native_layer_recovery"}
+    kinds = {"text", "table", "chart", "diagram", "form", "image", "structure", "mixed"}
+    axes = {
+        "precise_recall", "table_reconstruction", "long_context_coherence", "reading_order", "form_state",
+        "source_precedence", "chart_diagram_spatial", "image_description", "mixed_modality_fusion",
+        "native_layer_recovery", "cross_page_join", "structure_reconstruction", "low_quality_scan",
+        "summarization_coverage",
+    }
+    claim_types = {
+        "scalar", "table_binding", "ordered_record", "directed_edge", "form_state", "source_precedence",
+        "cross_page_join", "visual_description", "structure",
+    }
+    policy_types = {"lexical", "table_binding", "form_state", "directed_edge", "ordered_tokens", "qualitative"}
+    closed_scopes = {"region_claims", "table_rows", "form_options", "record_set", "edge_set", "structure_children"}
+    gold_text = path.with_name("gold.md").read_text(encoding="utf-8") if path.with_name("gold.md").is_file() else ""
     for region in regions:
         if not isinstance(region, dict):
             validation.error(f"{case['id']}: region is not an object")
@@ -202,25 +223,72 @@ def validate_facts(path: Path, case: dict[str, Any], validation: Validation) -> 
         if region_id in region_ids:
             validation.error(f"{case['id']}: duplicate region id {region_id}")
         region_ids.add(region_id)
-        page = region.get("page")
-        if not isinstance(page, int) or not 1 <= page <= int(case["pages"]):
-            validation.error(f"{case['id']}/{region_id}: page anchor {page!r} is out of range")
-        else:
-            anchored_pages.add(page)
-        if region.get("budget") not in (1, 2):
-            validation.error(f"{case['id']}/{region_id}: budget must be 1 or 2")
-        if not isinstance(region.get("closedWorld"), bool):
-            validation.error(f"{case['id']}/{region_id}: closedWorld must be boolean")
-        if region.get("kind") not in {
-            "text",
-            "table",
-            "chart",
-            "diagram",
-            "form",
-            "image",
-            "structure",
-        }:
+        if not isinstance(region.get("label"), str) or not region["label"].strip():
+            validation.error(f"{case['id']}/{region_id}: label must be non-empty")
+        anchors = region.get("sourceAnchors")
+        if not isinstance(anchors, list) or not anchors:
+            validation.error(f"{case['id']}/{region_id}: sourceAnchors must be non-empty")
+            anchors = []
+        for anchor_index, anchor in enumerate(anchors):
+            if not isinstance(anchor, dict):
+                validation.error(f"{case['id']}/{region_id}: source anchor {anchor_index} is not an object")
+                continue
+            page = anchor.get("page")
+            if not isinstance(page, int) or isinstance(page, bool) or not 1 <= page <= int(case["pages"]):
+                validation.error(f"{case['id']}/{region_id}: page anchor {page!r} is out of range")
+            else:
+                anchored_pages.add(page)
+            if anchor.get("layer") not in source_layers:
+                validation.error(f"{case['id']}/{region_id}: unsupported source layer {anchor.get('layer')!r}")
+            section_path = anchor.get("sectionPath")
+            if not isinstance(section_path, list) or not section_path or not all(isinstance(item, str) and item.strip() for item in section_path):
+                validation.error(f"{case['id']}/{region_id}: source anchor sectionPath must contain non-empty strings")
+            bbox = anchor.get("bbox")
+            if bbox is not None:
+                if (
+                    not isinstance(bbox, list)
+                    or len(bbox) != 4
+                    or not all(isinstance(value, (int, float)) and not isinstance(value, bool) and 0 <= value <= 1 for value in bbox)
+                    or not bbox[0] < bbox[2]
+                    or not bbox[1] < bbox[3]
+                ):
+                    validation.error(f"{case['id']}/{region_id}: bbox must be normalized [x0,y0,x1,y1]")
+        gold_section = region.get("goldSection")
+        if not isinstance(gold_section, str) or not gold_section.strip():
+            validation.error(f"{case['id']}/{region_id}: goldSection must be non-empty")
+        elif f"## {gold_section}\n" not in gold_text:
+            validation.error(f"{case['id']}/{region_id}: goldSection {gold_section!r} has no matching gold heading")
+        if region.get("budget") not in (1, 2, 3, 4):
+            validation.error(f"{case['id']}/{region_id}: budget must be 1 through 4")
+        if region.get("kind") not in kinds:
             validation.error(f"{case['id']}/{region_id}: unsupported kind {region.get('kind')!r}")
+        modality = region.get("modality")
+        if modality not in source_layers:
+            validation.error(f"{case['id']}/{region_id}: unsupported modality {modality!r}")
+        if not isinstance(region.get("uniqueEvidence"), bool):
+            validation.error(f"{case['id']}/{region_id}: uniqueEvidence must be boolean")
+        if region.get("primaryAxis") not in axes:
+            validation.error(f"{case['id']}/{region_id}: unsupported primaryAxis {region.get('primaryAxis')!r}")
+        secondary = region.get("secondaryAxes")
+        if not isinstance(secondary, list) or not all(axis in axes for axis in secondary):
+            validation.error(f"{case['id']}/{region_id}: secondaryAxes contains unsupported values")
+        elif len(set(secondary)) != len(secondary) or region.get("primaryAxis") in secondary:
+            validation.error(f"{case['id']}/{region_id}: capability axes must be unique")
+        text_only = region.get("textOnlyRecoverable")
+        if not isinstance(text_only, bool):
+            validation.error(f"{case['id']}/{region_id}: textOnlyRecoverable must be boolean")
+        elif text_only and modality in {"raster", "native_layer_recovery"}:
+            validation.error(f"{case['id']}/{region_id}: {modality} evidence cannot be text-only recoverable")
+        closed_world = region.get("closedWorld")
+        if closed_world is not None:
+            if not isinstance(closed_world, dict) or closed_world.get("scope") not in closed_scopes:
+                validation.error(f"{case['id']}/{region_id}: invalid closedWorld declaration")
+            else:
+                keys = closed_world.get("keys")
+                if not isinstance(keys, list) or not keys or not all(isinstance(key, str) and key.strip() for key in keys):
+                    validation.error(f"{case['id']}/{region_id}: closedWorld keys must be non-empty strings")
+                elif len({key.strip().casefold() for key in keys}) != len(keys):
+                    validation.error(f"{case['id']}/{region_id}: closedWorld keys must be unique")
         leaves = region.get("leaves")
         if not isinstance(leaves, list) or not leaves:
             validation.error(f"{case['id']}/{region_id}: region has no leaves")
@@ -236,14 +304,45 @@ def validate_facts(path: Path, case: dict[str, Any], validation: Validation) -> 
             if leaf_id in leaf_ids:
                 validation.error(f"{case['id']}: duplicate leaf id {leaf_id}")
             leaf_ids.add(leaf_id)
+            canonical_claim_id = leaf.get("canonicalClaimId")
+            if not isinstance(canonical_claim_id, str) or not canonical_claim_id:
+                validation.error(f"{case['id']}/{leaf_id}: canonicalClaimId is missing")
+            elif canonical_claim_id in canonical_claim_ids:
+                validation.error(f"{case['id']}: duplicate canonicalClaimId {canonical_claim_id}")
+            else:
+                canonical_claim_ids.add(canonical_claim_id)
             leaf_count += 1
             expectation = leaf.get("expectation")
             if not isinstance(expectation, str) or len(expectation.strip()) < 4:
                 validation.error(f"{case['id']}/{leaf_id}: expectation is empty")
             if leaf.get("harm") not in (1, 2):
                 validation.error(f"{case['id']}/{leaf_id}: harm must be 1 or 2")
-            if not isinstance(leaf.get("allowPartial"), bool):
-                validation.error(f"{case['id']}/{leaf_id}: allowPartial must be boolean")
+            claim_type = leaf.get("claimType")
+            if claim_type not in claim_types:
+                validation.error(f"{case['id']}/{leaf_id}: unsupported claimType {claim_type!r}")
+            policy = leaf.get("evidencePolicy")
+            if not isinstance(policy, dict) or policy.get("type") not in policy_types:
+                validation.error(f"{case['id']}/{leaf_id}: invalid evidencePolicy")
+            else:
+                policy_type = policy["type"]
+                if claim_type == "table_binding" and policy_type != "table_binding":
+                    validation.error(f"{case['id']}/{leaf_id}: table_binding requires table_binding evidence")
+                if claim_type == "ordered_record" and policy_type != "ordered_tokens":
+                    validation.error(f"{case['id']}/{leaf_id}: ordered_record requires ordered_tokens evidence")
+                if claim_type == "directed_edge" and policy_type != "directed_edge":
+                    validation.error(f"{case['id']}/{leaf_id}: directed_edge requires directed_edge evidence")
+                if claim_type == "form_state" and policy_type != "form_state":
+                    validation.error(f"{case['id']}/{leaf_id}: form_state requires form_state evidence")
+                if claim_type == "source_precedence" and policy_type != "ordered_tokens":
+                    validation.error(f"{case['id']}/{leaf_id}: source_precedence requires ordered_tokens evidence")
+                if claim_type == "visual_description" and policy_type != "qualitative":
+                    validation.error(f"{case['id']}/{leaf_id}: visual_description requires qualitative evidence")
+                if isinstance(expectation, str) and expectation.strip():
+                    for violation in evidence_policy_violations(expectation, policy):
+                        validation.error(
+                            f"{case['id']}/{leaf_id}: evidencePolicy does not guarantee "
+                            f"{violation.signal.kind} {violation.signal.value!r}: {violation.reason}"
+                        )
             if isinstance(expectation, str):
                 for pattern in UNEXPANDED_PATTERNS:
                     match = pattern.search(expectation)

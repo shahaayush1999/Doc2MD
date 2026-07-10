@@ -1,1218 +1,5585 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "id": "P15-architecture-floorplan-diagrams",
   "title": "Suite 214 Laboratory Coordination Set",
   "family": "architectural and building systems",
   "tags": [
-    "native-pdf",
-    "floorplan",
+    "mixed-pdf",
+    "floorplan-overlay",
+    "reflected-ceiling-plan",
     "rack-elevation",
     "directed-topology",
     "panel-schedule",
-    "scanned-rfi"
+    "scanned-rfi",
+    "field-photos",
+    "source-precedence"
   ],
   "regions": [
     {
-      "id": "p01.register",
-      "page": 1,
-      "label": "Document register",
+      "id": "p01.index",
+      "label": "Controlled sheet index",
+      "sourceAnchors": [
+        {
+          "page": 1,
+          "layer": "native_text",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "Coordination transmittal and sheet index"
+          ]
+        }
+      ],
+      "goldSection": "Coordination transmittal and sheet index",
       "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
       "budget": 1,
-      "closedWorld": true,
       "leaves": [
         {
-          "id": "p01.register.schema",
-          "expectation": "The region preserves the source field schema in order: Sheet, Title, Revision, Issue date, Status.",
+          "id": "p01.index.schema",
+          "canonicalClaimId": "p01.index.schema",
+          "claimType": "structure",
+          "expectation": "The region preserves the source field schema in order: Sheet, Record, Rev, Issued, Class.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Sheet"
+              ],
+              [
+                "Record"
+              ],
+              [
+                "Rev"
+              ],
+              [
+                "Issued"
+              ],
+              [
+                "Class"
+              ]
+            ]
+          }
         },
         {
-          "id": "p01.register.row-order",
-          "expectation": "The source row order is recoverable as: A2.14 -> T4.08 -> N1.07 -> E6.02 -> RFI-214B.",
+          "id": "p01.index.row-order",
+          "canonicalClaimId": "p01.index.row-order",
+          "claimType": "ordered_record",
+          "expectation": "The source row order is recoverable as: TX-01 -> A2.14-B -> A2.14 -> A6.24 -> T4.08 -> N1.07 -> E6.02 -> RFI-214-17 -> PH-214 -> CL-214.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "TX-01"
+              ],
+              [
+                "A2.14-B"
+              ],
+              [
+                "A2.14"
+              ],
+              [
+                "A6.24"
+              ],
+              [
+                "T4.08"
+              ],
+              [
+                "N1.07"
+              ],
+              [
+                "E6.02"
+              ],
+              [
+                "RFI-214-17"
+              ],
+              [
+                "PH-214"
+              ],
+              [
+                "CL-214"
+              ]
+            ]
+          }
         },
         {
-          "id": "p01.register.a2-14.title",
-          "expectation": "For A2.14, Title is Suite 214 floor plan.",
+          "id": "p01.index.a2-14-b.rev",
+          "canonicalClaimId": "p01.index.a2-14-b.rev",
+          "claimType": "table_binding",
+          "expectation": "For A2.14-B, Rev is B.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "A2.14-B"
+            ],
+            "column": [
+              "Rev"
+            ],
+            "value": [
+              "B"
+            ]
+          }
         },
         {
-          "id": "p01.register.a2-14.revision",
-          "expectation": "For A2.14, Revision is C.",
+          "id": "p01.index.a2-14-b.class",
+          "canonicalClaimId": "p01.index.a2-14-b.class",
+          "claimType": "table_binding",
+          "expectation": "For A2.14-B, Class is Archive.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "A2.14-B"
+            ],
+            "column": [
+              "Class"
+            ],
+            "value": [
+              "Archive"
+            ]
+          }
         },
         {
-          "id": "p01.register.a2-14.issue-date",
-          "expectation": "For A2.14, Issue date is 12 Jun 2026.",
+          "id": "p01.index.a2-14.rev",
+          "canonicalClaimId": "p01.index.a2-14.rev",
+          "claimType": "table_binding",
+          "expectation": "For A2.14, Rev is C.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "A2.14"
+            ],
+            "column": [
+              "Rev"
+            ],
+            "value": [
+              "C"
+            ]
+          }
         },
         {
-          "id": "p01.register.a2-14.status",
-          "expectation": "For A2.14, Status is Coordinated.",
+          "id": "p01.index.a2-14.issued",
+          "canonicalClaimId": "p01.index.a2-14.issued",
+          "claimType": "table_binding",
+          "expectation": "For A2.14, Issued is 12 Jun.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "A2.14"
+            ],
+            "column": [
+              "Issued"
+            ],
+            "value": [
+              "12 Jun"
+            ]
+          }
         },
         {
-          "id": "p01.register.t4-08.title",
-          "expectation": "For T4.08, Title is Rack R2 elevation and ports.",
+          "id": "p01.index.e6-02.class",
+          "canonicalClaimId": "p01.index.e6-02.class",
+          "claimType": "table_binding",
+          "expectation": "For E6.02, Class is Field check.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E6.02"
+            ],
+            "column": [
+              "Class"
+            ],
+            "value": [
+              "Field check"
+            ]
+          }
         },
         {
-          "id": "p01.register.t4-08.revision",
-          "expectation": "For T4.08, Revision is C.",
+          "id": "p01.index.rfi-214-17.issued",
+          "canonicalClaimId": "p01.index.rfi-214-17.issued",
+          "claimType": "table_binding",
+          "expectation": "For RFI-214-17, Issued is 12 Jun.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "RFI-214-17"
+            ],
+            "column": [
+              "Issued"
+            ],
+            "value": [
+              "12 Jun"
+            ]
+          }
         },
         {
-          "id": "p01.register.t4-08.issue-date",
-          "expectation": "For T4.08, Issue date is 12 Jun 2026.",
+          "id": "p01.index.cl-214.rev",
+          "canonicalClaimId": "p01.index.cl-214.rev",
+          "claimType": "table_binding",
+          "expectation": "For CL-214, Rev is C.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CL-214"
+            ],
+            "column": [
+              "Rev"
+            ],
+            "value": [
+              "C"
+            ]
+          }
         },
         {
-          "id": "p01.register.t4-08.status",
-          "expectation": "For T4.08, Status is Coordinated.",
+          "id": "p01.index.cl-214.class",
+          "canonicalClaimId": "p01.index.cl-214.class",
+          "claimType": "table_binding",
+          "expectation": "For CL-214, Class is Release.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.register.n1-07.title",
-          "expectation": "For N1.07, Title is Laboratory network topology.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.register.n1-07.revision",
-          "expectation": "For N1.07, Revision is C.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.register.n1-07.issue-date",
-          "expectation": "For N1.07, Issue date is 12 Jun 2026.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.register.n1-07.status",
-          "expectation": "For N1.07, Status is Coordinated.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.register.e6-02.title",
-          "expectation": "For E6.02, Title is Panel LP-2 schedule.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.register.e6-02.revision",
-          "expectation": "For E6.02, Revision is C.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.register.e6-02.issue-date",
-          "expectation": "For E6.02, Issue date is 12 Jun 2026.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.register.e6-02.status",
-          "expectation": "For E6.02, Status is Coordinated.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.register.rfi-214b.title",
-          "expectation": "For RFI-214B, Title is Lab B corridor door.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.register.rfi-214b.revision",
-          "expectation": "For RFI-214B, Revision is Answered.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.register.rfi-214b.issue-date",
-          "expectation": "For RFI-214B, Issue date is 12 Jun 2026.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.register.rfi-214b.status",
-          "expectation": "For RFI-214B, Status is Attached scan.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CL-214"
+            ],
+            "column": [
+              "Class"
+            ],
+            "value": [
+              "Release"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "TX-01",
+          "A2.14-B",
+          "A2.14",
+          "A6.24",
+          "T4.08",
+          "N1.07",
+          "E6.02",
+          "RFI-214-17",
+          "PH-214",
+          "CL-214"
+        ]
+      }
     },
     {
       "id": "p01.revisions",
-      "page": 1,
-      "label": "Revision history",
+      "label": "Revision and authority register",
+      "sourceAnchors": [
+        {
+          "page": 1,
+          "layer": "native_text",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "Coordination transmittal and sheet index"
+          ]
+        }
+      ],
+      "goldSection": "Coordination transmittal and sheet index",
       "kind": "table",
-      "budget": 2,
-      "closedWorld": true,
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "source_precedence",
+      "secondaryAxes": [
+        "table_reconstruction"
+      ],
+      "textOnlyRecoverable": true,
+      "budget": 1,
       "leaves": [
         {
           "id": "p01.revisions.schema",
-          "expectation": "The region preserves the source field schema in order: Revision, Date, Change, Issued by.",
+          "canonicalClaimId": "p01.revisions.schema",
+          "claimType": "structure",
+          "expectation": "The region preserves the source field schema in order: Event, Date, Authority, Record effect.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Event"
+              ],
+              [
+                "Date"
+              ],
+              [
+                "Authority"
+              ],
+              [
+                "Record effect"
+              ]
+            ]
+          }
         },
         {
           "id": "p01.revisions.row-order",
-          "expectation": "The source row order is recoverable as: A -> B -> C.",
+          "canonicalClaimId": "p01.revisions.row-order",
+          "claimType": "ordered_record",
+          "expectation": "The source row order is recoverable as: Rev B issue -> RFI response -> Rev C issue -> Record release.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Rev B issue"
+              ],
+              [
+                "RFI response"
+              ],
+              [
+                "Rev C issue"
+              ],
+              [
+                "Record release"
+              ]
+            ]
+          }
         },
         {
-          "id": "p01.revisions.a.date",
-          "expectation": "For A, Date is 28 May.",
+          "id": "p01.revisions.rev-b-issue.record-effect",
+          "canonicalClaimId": "p01.revisions.rev-b-issue.record-effect",
+          "claimType": "table_binding",
+          "expectation": "For Rev B issue, Record effect is Archived background.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Rev B issue"
+            ],
+            "column": [
+              "Record effect"
+            ],
+            "value": [
+              "Archived background"
+            ]
+          }
         },
         {
-          "id": "p01.revisions.a.change",
-          "expectation": "For A, Change is Existing-condition backgrounds.",
+          "id": "p01.revisions.rfi-response.authority",
+          "canonicalClaimId": "p01.revisions.rfi-response.authority",
+          "claimType": "table_binding",
+          "expectation": "For RFI response, Authority is AV.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "RFI response"
+            ],
+            "column": [
+              "Authority"
+            ],
+            "value": [
+              "AV"
+            ]
+          }
         },
         {
-          "id": "p01.revisions.a.issued-by",
-          "expectation": "For A, Issued by is M. Song.",
+          "id": "p01.revisions.rfi-response.record-effect",
+          "canonicalClaimId": "p01.revisions.rfi-response.record-effect",
+          "claimType": "table_binding",
+          "expectation": "For RFI response, Record effect is Incorporated by Rev C.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "RFI response"
+            ],
+            "column": [
+              "Record effect"
+            ],
+            "value": [
+              "Incorporated by Rev C"
+            ]
+          }
         },
         {
-          "id": "p01.revisions.b.date",
-          "expectation": "For B, Date is 07 Jun.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.revisions.b.change",
-          "expectation": "For B, Change is Lab B door shown as D-214A.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.revisions.b.issued-by",
-          "expectation": "For B, Issued by is M. Song.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.revisions.c.date",
-          "expectation": "For C, Date is 12 Jun.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p01.revisions.c.change",
-          "expectation": "For C, Change is Door D-214B; CR-6; circuit L2-15.",
+          "id": "p01.revisions.rev-c-issue.record-effect",
+          "canonicalClaimId": "p01.revisions.rev-c-issue.record-effect",
+          "claimType": "table_binding",
+          "expectation": "For Rev C issue, Record effect is Controls coordination.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Rev C issue"
+            ],
+            "column": [
+              "Record effect"
+            ],
+            "value": [
+              "Controls coordination"
+            ]
+          }
         },
         {
-          "id": "p01.revisions.c.issued-by",
-          "expectation": "For C, Issued by is A. Verma.",
+          "id": "p01.revisions.record-release.date",
+          "canonicalClaimId": "p01.revisions.record-release.date",
+          "claimType": "table_binding",
+          "expectation": "For Record release, Date is 16 Jun.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Record release"
+            ],
+            "column": [
+              "Date"
+            ],
+            "value": [
+              "16 Jun"
+            ]
+          }
+        },
+        {
+          "id": "p01.revisions.record-release.record-effect",
+          "canonicalClaimId": "p01.revisions.record-release.record-effect",
+          "claimType": "table_binding",
+          "expectation": "For Record release, Record effect is Closes package.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Record release"
+            ],
+            "column": [
+              "Record effect"
+            ],
+            "value": [
+              "Closes package"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "Rev B issue",
+          "RFI response",
+          "Rev C issue",
+          "Record release"
+        ]
+      }
     },
     {
       "id": "p01.control",
-      "page": 1,
-      "label": "Revision control statement",
+      "label": "Package authority order",
+      "sourceAnchors": [
+        {
+          "page": 1,
+          "layer": "native_text",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "Coordination transmittal and sheet index"
+          ]
+        }
+      ],
+      "goldSection": "Coordination transmittal and sheet index",
       "kind": "text",
-      "budget": 1,
-      "closedWorld": false,
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "source_precedence",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
+      "budget": 2,
       "leaves": [
+        {
+          "id": "p01.control.release",
+          "canonicalClaimId": "p01.control.release",
+          "claimType": "source_precedence",
+          "expectation": "The final release outranks all earlier package records.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "final release"
+              ],
+              [
+                "Revision C"
+              ]
+            ]
+          }
+        },
         {
           "id": "p01.control.rev-c",
-          "expectation": "Revision C dated 2026-06-12 controls over Revision B.",
+          "canonicalClaimId": "p01.control.rev-c",
+          "claimType": "source_precedence",
+          "expectation": "Revision C sheets control over the archived Revision B record.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Revision C",
+                "Rev C"
+              ],
+              [
+                "Revision B",
+                "Rev B"
+              ],
+              [
+                "archived"
+              ]
+            ]
+          }
         },
         {
-          "id": "p01.control.old-id",
-          "expectation": "D-214A remains only on the attached marked-up Revision B RFI sheet.",
-          "harm": 1,
-          "allowPartial": false
+          "id": "p01.control.rfi",
+          "canonicalClaimId": "p01.control.rfi",
+          "claimType": "source_precedence",
+          "expectation": "The answered RFI is incorporated by Revision C rather than acting as a later standalone override.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "RFI"
+              ],
+              [
+                "incorporated"
+              ],
+              [
+                "Revision C",
+                "Rev C"
+              ]
+            ]
+          }
         }
       ]
     },
     {
-      "id": "p02.plan",
-      "page": 2,
-      "label": "Floor plan rooms and dimensions",
+      "id": "p01.transmittal",
+      "label": "Transmittal identity",
+      "sourceAnchors": [
+        {
+          "page": 1,
+          "layer": "native_text",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "Coordination transmittal and sheet index"
+          ]
+        }
+      ],
+      "goldSection": "Coordination transmittal and sheet index",
+      "kind": "structure",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "structure_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
+      "budget": 1,
+      "leaves": [
+        {
+          "id": "p01.tx.package",
+          "canonicalClaimId": "p01.tx.package",
+          "claimType": "scalar",
+          "expectation": "The package identifier is ARC-214-C.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "ARC-214-C"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p01.tx.project",
+          "canonicalClaimId": "p01.tx.project",
+          "claimType": "scalar",
+          "expectation": "The project is the Orion Biologics Suite 214 laboratory renovation.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Orion Biologics"
+              ],
+              [
+                "Suite 214"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p01.tx.issue",
+          "canonicalClaimId": "p01.tx.issue",
+          "claimType": "scalar",
+          "expectation": "The transmittal is a record issue.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "record issue",
+                "record package"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p01.tx.sheet-count",
+          "canonicalClaimId": "p01.tx.sheet-count",
+          "claimType": "scalar",
+          "expectation": "The controlled index lists ten records from TX-01 through CL-214.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "TX-01"
+              ],
+              [
+                "CL-214"
+              ],
+              [
+                "ten"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p02.base-rooms",
+      "label": "Archived-plan room geometry",
+      "sourceAnchors": [
+        {
+          "page": 2,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "A2.14-B - Archived floor plan"
+          ]
+        }
+      ],
+      "goldSection": "A2.14-B - Archived floor plan",
       "kind": "diagram",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
       "budget": 2,
-      "closedWorld": false,
       "leaves": [
         {
-          "id": "p02.rooms.214",
-          "expectation": "Room 214 Clean Prep is 18 ft 6 in x 12 ft 0 in.",
+          "id": "p02.room.clean-lab",
+          "canonicalClaimId": "p02.room.clean-lab",
+          "claimType": "visual_description",
+          "expectation": "Clean Prep 214 is immediately west of Lab B 215.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Clean Prep 214"
+              ],
+              [
+                "Lab B 215"
+              ],
+              [
+                "west"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.rooms.215",
-          "expectation": "Room 215 Lab B is 16 ft 0 in x 12 ft 0 in.",
+          "id": "p02.room.lab-freezer",
+          "canonicalClaimId": "p02.room.lab-freezer",
+          "claimType": "visual_description",
+          "expectation": "Freezer 216 is immediately east of Lab B 215.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Freezer 216"
+              ],
+              [
+                "Lab B 215"
+              ],
+              [
+                "east"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.rooms.216",
-          "expectation": "Room 216 Freezer is 10 ft 6 in x 12 ft 0 in.",
-          "harm": 1,
-          "allowPartial": false
+          "id": "p02.room.lab-corridor",
+          "canonicalClaimId": "p02.room.lab-corridor",
+          "claimType": "visual_description",
+          "expectation": "Lab B 215 directly adjoins corridor C2 along its south wall.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Lab B 215"
+              ],
+              [
+                "C2"
+              ],
+              [
+                "corridor"
+              ],
+              [
+                "south"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.rooms.217",
-          "expectation": "Room 217 Wash is 12 ft 0 in x 10 ft 0 in.",
+          "id": "p02.room.freezer-it",
+          "canonicalClaimId": "p02.room.freezer-it",
+          "claimType": "visual_description",
+          "expectation": "IT Closet 218 is directly south of Freezer 216.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "IT Closet 218"
+              ],
+              [
+                "Freezer 216"
+              ],
+              [
+                "south"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.rooms.218",
-          "expectation": "Room 218 IT Closet is 10 ft 6 in x 10 ft 0 in.",
+          "id": "p02.room.wash-corridor",
+          "canonicalClaimId": "p02.room.wash-corridor",
+          "claimType": "visual_description",
+          "expectation": "Wash 217 is immediately west of corridor C2.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Wash 217"
+              ],
+              [
+                "C2"
+              ],
+              [
+                "corridor"
+              ],
+              [
+                "west"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.rooms.lab-b-corridor",
-          "expectation": "The south wall of 215 Lab B directly adjoins C2 Corridor.",
+          "id": "p02.room.overall",
+          "canonicalClaimId": "p02.room.overall",
+          "claimType": "visual_description",
+          "expectation": "The archived plan shows an overall footprint of 45 ft by 22 ft.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "45'-0\"",
+                "45 ft"
+              ],
+              [
+                "22'-0\"",
+                "22 ft"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.rooms.overall-width",
-          "expectation": "Overall suite width is 45 ft 0 in.",
+          "id": "p02.room.lab-size",
+          "canonicalClaimId": "p02.room.lab-size",
+          "claimType": "visual_description",
+          "expectation": "Lab B is dimensioned 16 ft by 12 ft.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Lab B",
+                "215"
+              ],
+              [
+                "16'-0\"",
+                "16 ft"
+              ],
+              [
+                "12'-0\"",
+                "12 ft"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.rooms.overall-depth",
-          "expectation": "Overall suite depth is 22 ft 0 in.",
+          "id": "p02.room.clean-size",
+          "canonicalClaimId": "p02.room.clean-size",
+          "claimType": "visual_description",
+          "expectation": "Clean Prep is dimensioned 18 ft 6 in by 12 ft.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Clean Prep",
+                "214"
+              ],
+              [
+                "18'-6\"",
+                "18 ft 6"
+              ],
+              [
+                "12'-0\"",
+                "12 ft"
+              ]
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "edge_set",
+        "keys": [
+          "p02.room.clean-lab",
+          "p02.room.lab-freezer",
+          "p02.room.lab-corridor",
+          "p02.room.freezer-it",
+          "p02.room.wash-corridor",
+          "p02.room.overall",
+          "p02.room.lab-size",
+          "p02.room.clean-size"
+        ]
+      }
     },
     {
-      "id": "p02.egress",
-      "page": 2,
-      "label": "Egress arrow",
+      "id": "p02.base-door",
+      "label": "Archived Lab B opening",
+      "sourceAnchors": [
+        {
+          "page": 2,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "A2.14-B - Archived floor plan"
+          ]
+        }
+      ],
+      "goldSection": "A2.14-B - Archived floor plan",
       "kind": "diagram",
-      "budget": 1,
-      "closedWorld": false,
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
       "leaves": [
         {
-          "id": "p02.egress.direction",
-          "expectation": "The egress arrow runs from 214 Clean Prep toward C2 Corridor.",
+          "id": "p02.door.wall",
+          "canonicalClaimId": "p02.door.wall",
+          "claimType": "visual_description",
+          "expectation": "The Revision B Lab B opening is in the wall shared with corridor C2.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Lab B"
+              ],
+              [
+                "C2"
+              ],
+              [
+                "corridor"
+              ],
+              [
+                "shared",
+                "south wall"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p02.door.position",
+          "canonicalClaimId": "p02.door.position",
+          "claimType": "visual_description",
+          "expectation": "The Revision B opening is near the middle of the Lab B south wall.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Lab B",
+                "215"
+              ],
+              [
+                "middle",
+                "center"
+              ],
+              [
+                "south wall"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p02.door.swing",
+          "canonicalClaimId": "p02.door.swing",
+          "claimType": "visual_description",
+          "expectation": "The Revision B door leaf swings north into Lab B.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Lab B",
+                "215"
+              ],
+              [
+                "north"
+              ],
+              [
+                "swing"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p02.door.reader",
+          "canonicalClaimId": "p02.door.reader",
+          "claimType": "visual_description",
+          "expectation": "No card-reader symbol appears beside the Revision B opening.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "no",
+                "absent"
+              ],
+              [
+                "card reader",
+                "reader"
+              ],
+              [
+                "Revision B",
+                "Rev B"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p02.door.callout",
+          "canonicalClaimId": "p02.door.callout",
+          "claimType": "visual_description",
+          "expectation": "Callout 6 keys the Revision B Lab B opening.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "callout 6",
+                "6"
+              ],
+              [
+                "Lab B",
+                "215"
+              ],
+              [
+                "opening",
+                "door"
+              ]
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "edge_set",
+        "keys": [
+          "p02.door.wall",
+          "p02.door.position",
+          "p02.door.swing",
+          "p02.door.reader",
+          "p02.door.callout"
+        ]
+      }
     },
     {
-      "id": "p02.callouts",
-      "page": 2,
-      "label": "Plan callouts",
+      "id": "p02.base-egress-callouts",
+      "label": "Archived egress and equipment callouts",
+      "sourceAnchors": [
+        {
+          "page": 2,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "A2.14-B - Archived floor plan"
+          ]
+        }
+      ],
+      "goldSection": "A2.14-B - Archived floor plan",
       "kind": "diagram",
-      "budget": 1,
-      "closedWorld": false,
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
       "leaves": [
         {
-          "id": "p02.callout.6",
-          "expectation": "Callout 6 identifies reader CR-6 on the corridor side of D-214B in the shared wall between 215 Lab B and C2 Corridor.",
-          "harm": 2,
-          "allowPartial": false
+          "id": "p02.egress.lab-door",
+          "canonicalClaimId": "p02.egress.lab-door",
+          "claimType": "directed_edge",
+          "expectation": "The first egress arrow runs from Lab B to the old corridor opening.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "Lab B",
+              "215"
+            ],
+            "destination": [
+              "old corridor opening",
+              "old opening",
+              "door"
+            ],
+            "relation": [
+              "egress"
+            ]
+          }
+        },
+        {
+          "id": "p02.egress.door-west",
+          "canonicalClaimId": "p02.egress.door-west",
+          "claimType": "directed_edge",
+          "expectation": "The second egress arrow runs from the opening west along corridor C2.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "opening",
+              "door"
+            ],
+            "destination": [
+              "west along corridor C2",
+              "west along C2",
+              "C2 west"
+            ],
+            "relation": [
+              "egress",
+              "west"
+            ]
+          }
         },
         {
           "id": "p02.callout.9",
-          "expectation": "Callout 9 is rack R2 in room 218 IT Closet.",
+          "canonicalClaimId": "p02.callout.9",
+          "claimType": "visual_description",
+          "expectation": "Callout 9 points to rack R2 in IT Closet 218.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "callout 9",
+                "9"
+              ],
+              [
+                "rack R2",
+                "R2"
+              ],
+              [
+                "IT Closet 218"
+              ]
+            ]
+          }
         },
         {
           "id": "p02.callout.11",
-          "expectation": "Callout 11 is freezer FZ-3 in room 216.",
+          "canonicalClaimId": "p02.callout.11",
+          "claimType": "visual_description",
+          "expectation": "Callout 11 points to freezer FZ-3 in room 216.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "callout 11",
+                "11"
+              ],
+              [
+                "FZ-3"
+              ],
+              [
+                "216"
+              ]
+            ]
+          }
         }
       ]
     },
     {
-      "id": "p02.coordination",
-      "page": 2,
-      "label": "Room coordination table",
-      "kind": "table",
-      "budget": 2,
-      "closedWorld": true,
+      "id": "p02.base-titleblock",
+      "label": "Archived-plan title-block state",
+      "sourceAnchors": [
+        {
+          "page": 2,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "A2.14-B - Archived floor plan"
+          ]
+        }
+      ],
+      "goldSection": "A2.14-B - Archived floor plan",
+      "kind": "form",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "form_state",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 1,
       "leaves": [
         {
-          "id": "p02.coordination.schema",
-          "expectation": "The region preserves the source field schema in order: Location, Field condition, Coordinated artifact.",
-          "harm": 1,
-          "allowPartial": true
+          "id": "p02.state.superseded",
+          "canonicalClaimId": "p02.state.superseded",
+          "claimType": "source_precedence",
+          "expectation": "The Revision B plan is visibly stamped superseded.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Revision B",
+                "Rev B"
+              ],
+              [
+                "SUPERSEDED",
+                "superseded"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.coordination.row-order",
-          "expectation": "The source row order is recoverable as: 214 Clean Prep -> 215 Lab B -> 216 Freezer -> 218 IT Closet.",
+          "id": "p02.state.date",
+          "canonicalClaimId": "p02.state.date",
+          "claimType": "scalar",
+          "expectation": "The archived plan issue date is 2026-06-07.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "07 JUN 2026",
+                "7 June 2026"
+              ]
+            ]
+          }
         },
         {
-          "id": "p02.coordination.214-clean-prep.field-condition",
-          "expectation": "For 214 Clean Prep, Field condition is D214-01 tablet dock.",
+          "id": "p02.state.record",
+          "canonicalClaimId": "p02.state.record",
+          "claimType": "scalar",
+          "expectation": "The archived field-background record is 214-B-0707.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.coordination.214-clean-prep.coordinated-artifact",
-          "expectation": "For 214 Clean Prep, Coordinated artifact is CS-2/01; VLAN 210.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.coordination.215-lab-b.field-condition",
-          "expectation": "For 215 Lab B, Field condition is D-214B; CR-6 corridor side.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.coordination.215-lab-b.coordinated-artifact",
-          "expectation": "For 215 Lab B, Coordinated artifact is CS-2/07; L2-15.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.coordination.216-freezer.field-condition",
-          "expectation": "For 216 Freezer, Field condition is FZ-3 at callout 11.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.coordination.216-freezer.coordinated-artifact",
-          "expectation": "For 216 Freezer, Coordinated artifact is CS-2/12; VLAN 240; L2-17.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.coordination.218-it-closet.field-condition",
-          "expectation": "For 218 IT Closet, Field condition is Rack R2 at callout 9.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p02.coordination.218-it-closet.coordinated-artifact",
-          "expectation": "For 218 IT Closet, Coordinated artifact is CS-2/19; L2-19.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "214-B-0707"
+              ]
+            ]
+          }
         }
       ]
     },
     {
-      "id": "p03.rack",
-      "page": 3,
-      "label": "Rack-unit elevation",
+      "id": "p03.current-rooms",
+      "label": "Controlled-plan room geometry",
+      "sourceAnchors": [
+        {
+          "page": 3,
+          "layer": "vector_geometry",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "A2.14 - Controlled floor plan and overlay"
+          ]
+        }
+      ],
+      "goldSection": "A2.14 - Controlled floor plan and overlay",
       "kind": "diagram",
+      "modality": "vector_geometry",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": false,
       "budget": 2,
-      "closedWorld": false,
       "leaves": [
         {
-          "id": "p03.rack.01",
+          "id": "p03.room.clean-lab",
+          "canonicalClaimId": "p03.room.clean-lab",
+          "claimType": "visual_description",
+          "expectation": "Clean Prep 214 remains immediately west of Lab B 215.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Clean Prep 214"
+              ],
+              [
+                "Lab B 215"
+              ],
+              [
+                "west"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.room.lab-freezer",
+          "canonicalClaimId": "p03.room.lab-freezer",
+          "claimType": "visual_description",
+          "expectation": "Freezer 216 remains immediately east of Lab B 215.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Freezer 216"
+              ],
+              [
+                "Lab B 215"
+              ],
+              [
+                "east"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.room.lab-corridor",
+          "canonicalClaimId": "p03.room.lab-corridor",
+          "claimType": "visual_description",
+          "expectation": "The south wall of Lab B 215 directly adjoins corridor C2.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Lab B 215"
+              ],
+              [
+                "C2"
+              ],
+              [
+                "corridor"
+              ],
+              [
+                "south"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.room.freezer-it",
+          "canonicalClaimId": "p03.room.freezer-it",
+          "claimType": "visual_description",
+          "expectation": "IT Closet 218 remains directly south of Freezer 216.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "IT Closet 218"
+              ],
+              [
+                "Freezer 216"
+              ],
+              [
+                "south"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.room.overall",
+          "canonicalClaimId": "p03.room.overall",
+          "claimType": "visual_description",
+          "expectation": "The controlled plan preserves the 45 ft by 22 ft overall footprint.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "45'-0\"",
+                "45 ft"
+              ],
+              [
+                "22'-0\"",
+                "22 ft"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.room.north",
+          "canonicalClaimId": "p03.room.north",
+          "claimType": "visual_description",
+          "expectation": "The north arrow points toward the top of the sheet.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "north",
+                "N"
+              ],
+              [
+                "top",
+                "up"
+              ]
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "edge_set",
+        "keys": [
+          "p03.room.clean-lab",
+          "p03.room.lab-freezer",
+          "p03.room.lab-corridor",
+          "p03.room.freezer-it",
+          "p03.room.overall",
+          "p03.room.north"
+        ]
+      }
+    },
+    {
+      "id": "p03.current-door",
+      "label": "Revision C door and reader geometry",
+      "sourceAnchors": [
+        {
+          "page": 3,
+          "layer": "vector_geometry",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "A2.14 - Controlled floor plan and overlay"
+          ]
+        }
+      ],
+      "goldSection": "A2.14 - Controlled floor plan and overlay",
+      "kind": "diagram",
+      "modality": "vector_geometry",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": false,
+      "budget": 3,
+      "leaves": [
+        {
+          "id": "p03.door.wall",
+          "canonicalClaimId": "p03.door.wall",
+          "claimType": "visual_description",
+          "expectation": "D-214B is set in the wall shared by Lab B 215 and corridor C2.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "D-214B"
+              ],
+              [
+                "Lab B 215"
+              ],
+              [
+                "C2"
+              ],
+              [
+                "corridor"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.door.shift",
+          "canonicalClaimId": "p03.door.shift",
+          "claimType": "visual_description",
+          "expectation": "The solid Revision C opening is 4 ft 6 in west of the dashed Revision B opening.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Revision C",
+                "Rev C"
+              ],
+              [
+                "Revision B",
+                "Rev B"
+              ],
+              [
+                "4'-6\"",
+                "4 ft 6"
+              ],
+              [
+                "west"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.door.swing",
+          "canonicalClaimId": "p03.door.swing",
+          "claimType": "visual_description",
+          "expectation": "D-214B swings south into corridor C2.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "D-214B"
+              ],
+              [
+                "south"
+              ],
+              [
+                "C2",
+                "corridor"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.door.reader-side",
+          "canonicalClaimId": "p03.door.reader-side",
+          "claimType": "visual_description",
+          "expectation": "Reader CR-6 is on the corridor side of D-214B.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "CR-6"
+              ],
+              [
+                "corridor side",
+                "C2"
+              ],
+              [
+                "D-214B"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.door.reader-jamb",
+          "canonicalClaimId": "p03.door.reader-jamb",
+          "claimType": "visual_description",
+          "expectation": "Reader CR-6 is at the east jamb of D-214B.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "CR-6"
+              ],
+              [
+                "east jamb",
+                "east"
+              ],
+              [
+                "D-214B"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.door.old-style",
+          "canonicalClaimId": "p03.door.old-style",
+          "claimType": "visual_description",
+          "expectation": "The archived door is dashed red while the current door is solid blue.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "archived"
+              ],
+              [
+                "dashed red"
+              ],
+              [
+                "current"
+              ],
+              [
+                "solid blue"
+              ],
+              [
+                "door",
+                "opening"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.door.callout",
+          "canonicalClaimId": "p03.door.callout",
+          "claimType": "visual_description",
+          "expectation": "Callout 6 keys the reader and door opening.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "callout 6",
+                "6"
+              ],
+              [
+                "reader",
+                "CR-6"
+              ],
+              [
+                "door",
+                "opening"
+              ]
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "edge_set",
+        "keys": [
+          "p03.door.wall",
+          "p03.door.shift",
+          "p03.door.swing",
+          "p03.door.reader-side",
+          "p03.door.reader-jamb",
+          "p03.door.old-style",
+          "p03.door.callout"
+        ]
+      }
+    },
+    {
+      "id": "p03.current-egress-callouts",
+      "label": "Controlled egress and equipment callouts",
+      "sourceAnchors": [
+        {
+          "page": 3,
+          "layer": "vector_geometry",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "A2.14 - Controlled floor plan and overlay"
+          ]
+        }
+      ],
+      "goldSection": "A2.14 - Controlled floor plan and overlay",
+      "kind": "diagram",
+      "modality": "vector_geometry",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "p03.egress.lab-door",
+          "canonicalClaimId": "p03.egress.lab-door",
+          "claimType": "directed_edge",
+          "expectation": "The first egress segment runs from Lab B through D-214B.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "Lab B",
+              "215"
+            ],
+            "destination": [
+              "D-214B"
+            ],
+            "relation": [
+              "egress"
+            ]
+          }
+        },
+        {
+          "id": "p03.egress.door-west",
+          "canonicalClaimId": "p03.egress.door-west",
+          "claimType": "directed_edge",
+          "expectation": "The second egress segment runs from D-214B west along corridor C2.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "D-214B"
+            ],
+            "destination": [
+              "west along corridor C2",
+              "west along C2",
+              "C2 west"
+            ],
+            "relation": [
+              "egress"
+            ]
+          }
+        },
+        {
+          "id": "p03.callout.9",
+          "canonicalClaimId": "p03.callout.9",
+          "claimType": "visual_description",
+          "expectation": "Callout 9 keys rack R2 inside IT Closet 218.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "callout 9",
+                "9"
+              ],
+              [
+                "R2"
+              ],
+              [
+                "IT Closet 218"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.callout.11",
+          "canonicalClaimId": "p03.callout.11",
+          "claimType": "visual_description",
+          "expectation": "Callout 11 keys FZ-3 inside Freezer 216.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "callout 11",
+                "11"
+              ],
+              [
+                "FZ-3"
+              ],
+              [
+                "Freezer 216"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p03.overlay",
+      "label": "Revision overlay interpretation",
+      "sourceAnchors": [
+        {
+          "page": 3,
+          "layer": "vector_geometry",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "A2.14 - Controlled floor plan and overlay"
+          ]
+        }
+      ],
+      "goldSection": "A2.14 - Controlled floor plan and overlay",
+      "kind": "diagram",
+      "modality": "vector_geometry",
+      "uniqueEvidence": true,
+      "primaryAxis": "source_precedence",
+      "secondaryAxes": [
+        "chart_diagram_spatial"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "p03.overlay.current",
+          "canonicalClaimId": "p03.overlay.current",
+          "claimType": "source_precedence",
+          "expectation": "The solid blue opening is the controlling Revision C geometry.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "solid blue",
+                "solid"
+              ],
+              [
+                "Revision C",
+                "Rev C"
+              ],
+              [
+                "controlling",
+                "current"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.overlay.old",
+          "canonicalClaimId": "p03.overlay.old",
+          "claimType": "source_precedence",
+          "expectation": "The dashed red opening is retained as archived Revision B geometry.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "dashed red",
+                "dashed"
+              ],
+              [
+                "Revision B",
+                "Rev B"
+              ],
+              [
+                "archived"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.overlay.same-wall",
+          "canonicalClaimId": "p03.overlay.same-wall",
+          "claimType": "visual_description",
+          "expectation": "Both old and new openings lie on the shared wall between Lab B and C2.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "old",
+                "Revision B"
+              ],
+              [
+                "new",
+                "Revision C"
+              ],
+              [
+                "Lab B"
+              ],
+              [
+                "C2"
+              ],
+              [
+                "shared wall"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.overlay.delta",
+          "canonicalClaimId": "p03.overlay.delta",
+          "claimType": "visual_description",
+          "expectation": "The overlay dimension between the opening hinge points is 4 ft 6 in.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "4'-6\"",
+                "4 ft 6"
+              ],
+              [
+                "hinge",
+                "opening"
+              ],
+              [
+                "dimension"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p04.ceiling-geometry",
+      "label": "Ceiling device geometry",
+      "sourceAnchors": [
+        {
+          "page": 4,
+          "layer": "vector_geometry",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "A6.24 - Reflected ceiling and MEP coordination"
+          ]
+        }
+      ],
+      "goldSection": "A6.24 - Reflected ceiling and MEP coordination",
+      "kind": "diagram",
+      "modality": "vector_geometry",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "p04.geo.sd-bench",
+          "canonicalClaimId": "p04.geo.sd-bench",
+          "claimType": "visual_description",
+          "expectation": "SD-4 is north-west of bench B-2.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "SD-4"
+              ],
+              [
+                "B-2"
+              ],
+              [
+                "north-west",
+                "northwest"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.geo.sd-sp",
+          "canonicalClaimId": "p04.geo.sd-sp",
+          "claimType": "visual_description",
+          "expectation": "SD-4 is west of sprinkler SP-7.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "SD-4"
+              ],
+              [
+                "SP-7"
+              ],
+              [
+                "west"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.geo.sp-cp",
+          "canonicalClaimId": "p04.geo.sp-cp",
+          "claimType": "visual_description",
+          "expectation": "SP-7 is north-east of ceiling panel CP-4.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "SP-7"
+              ],
+              [
+                "CP-4"
+              ],
+              [
+                "north-east",
+                "northeast"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.geo.os-cp",
+          "canonicalClaimId": "p04.geo.os-cp",
+          "claimType": "visual_description",
+          "expectation": "OS-2 is south-east of CP-4.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "OS-2"
+              ],
+              [
+                "CP-4"
+              ],
+              [
+                "south-east",
+                "southeast"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.geo.light-cp",
+          "canonicalClaimId": "p04.geo.light-cp",
+          "claimType": "visual_description",
+          "expectation": "Light L-5 is north of CP-4.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "L-5"
+              ],
+              [
+                "CP-4"
+              ],
+              [
+                "north"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.geo.rg-cp",
+          "canonicalClaimId": "p04.geo.rg-cp",
+          "claimType": "visual_description",
+          "expectation": "Return grille RG-2 is east of CP-4.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "RG-2"
+              ],
+              [
+                "CP-4"
+              ],
+              [
+                "east"
+              ]
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "edge_set",
+        "keys": [
+          "p04.geo.sd-bench",
+          "p04.geo.sd-sp",
+          "p04.geo.sp-cp",
+          "p04.geo.os-cp",
+          "p04.geo.light-cp",
+          "p04.geo.rg-cp"
+        ]
+      }
+    },
+    {
+      "id": "p04.mep-paths",
+      "label": "Directed MEP and controls paths",
+      "sourceAnchors": [
+        {
+          "page": 4,
+          "layer": "vector_geometry",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "A6.24 - Reflected ceiling and MEP coordination"
+          ]
+        }
+      ],
+      "goldSection": "A6.24 - Reflected ceiling and MEP coordination",
+      "kind": "diagram",
+      "modality": "vector_geometry",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "p04.edge.vav-sd",
+          "canonicalClaimId": "p04.edge.vav-sd",
+          "claimType": "directed_edge",
+          "expectation": "A solid supply path runs from VAV-214 to SD-4.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "VAV-214"
+            ],
+            "destination": [
+              "SD-4"
+            ],
+            "relation": [
+              "supply",
+              "solid"
+            ]
+          }
+        },
+        {
+          "id": "p04.edge.os-cp",
+          "canonicalClaimId": "p04.edge.os-cp",
+          "claimType": "directed_edge",
+          "expectation": "A dashed control path runs from OS-2 to CP-4.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "OS-2"
+            ],
+            "destination": [
+              "CP-4"
+            ],
+            "relation": [
+              "control",
+              "dashed"
+            ]
+          }
+        },
+        {
+          "id": "p04.edge.cp-bas",
+          "canonicalClaimId": "p04.edge.cp-bas",
+          "claimType": "directed_edge",
+          "expectation": "A dashed data path runs from CP-4 to BAS-214.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "CP-4"
+            ],
+            "destination": [
+              "BAS-214"
+            ],
+            "relation": [
+              "data",
+              "BAS",
+              "dashed"
+            ]
+          }
+        },
+        {
+          "id": "p04.edge.supply-style",
+          "canonicalClaimId": "p04.edge.supply-style",
+          "claimType": "visual_description",
+          "expectation": "The VAV supply route is solid green.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "VAV"
+              ],
+              [
+                "supply"
+              ],
+              [
+                "solid"
+              ],
+              [
+                "green"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.edge.control-style",
+          "canonicalClaimId": "p04.edge.control-style",
+          "claimType": "visual_description",
+          "expectation": "The sensor-control route is dashed amber and the BAS route is dashed blue.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "sensor",
+                "control"
+              ],
+              [
+                "dashed amber",
+                "amber"
+              ],
+              [
+                "BAS"
+              ],
+              [
+                "dashed blue",
+                "blue"
+              ]
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "edge_set",
+        "keys": [
+          "p04.edge.vav-sd",
+          "p04.edge.os-cp",
+          "p04.edge.cp-bas",
+          "p04.edge.supply-style",
+          "p04.edge.control-style"
+        ]
+      }
+    },
+    {
+      "id": "p04.conflict",
+      "label": "Resolved ceiling conflict",
+      "sourceAnchors": [
+        {
+          "page": 4,
+          "layer": "vector_geometry",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "A6.24 - Reflected ceiling and MEP coordination"
+          ]
+        }
+      ],
+      "goldSection": "A6.24 - Reflected ceiling and MEP coordination",
+      "kind": "diagram",
+      "modality": "vector_geometry",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [
+        "source_precedence"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 3,
+      "leaves": [
+        {
+          "id": "p04.conflict.old",
+          "canonicalClaimId": "p04.conflict.old",
+          "claimType": "visual_description",
+          "expectation": "The dashed old diffuser location is close to sprinkler SP-7.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "old diffuser",
+                "dashed"
+              ],
+              [
+                "SP-7"
+              ],
+              [
+                "close",
+                "near"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.conflict.move",
+          "canonicalClaimId": "p04.conflict.move",
+          "claimType": "directed_edge",
+          "expectation": "The red relocation arrow runs from the old diffuser position west to SD-4.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "old diffuser",
+              "old position"
+            ],
+            "destination": [
+              "SD-4"
+            ],
+            "relation": [
+              "relocation",
+              "west"
+            ]
+          }
+        },
+        {
+          "id": "p04.conflict.clearance",
+          "canonicalClaimId": "p04.conflict.clearance",
+          "claimType": "visual_description",
+          "expectation": "The revised SD-4 position is dimensioned 8 ft from SP-7.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "SD-4"
+              ],
+              [
+                "SP-7"
+              ],
+              [
+                "8'-0\"",
+                "8 ft"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.conflict.key",
+          "canonicalClaimId": "p04.conflict.key",
+          "claimType": "visual_description",
+          "expectation": "Conflict bubble C1 keys the diffuser relocation.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "C1"
+              ],
+              [
+                "diffuser",
+                "SD-4"
+              ],
+              [
+                "relocation",
+                "move"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.conflict.current",
+          "canonicalClaimId": "p04.conflict.current",
+          "claimType": "source_precedence",
+          "expectation": "The solid SD-4 symbol is current and the dashed old symbol is superseded.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "solid"
+              ],
+              [
+                "SD-4"
+              ],
+              [
+                "current"
+              ],
+              [
+                "dashed"
+              ],
+              [
+                "old"
+              ],
+              [
+                "superseded"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p05.rack",
+      "label": "Rack-unit elevation",
+      "sourceAnchors": [
+        {
+          "page": 5,
+          "layer": "vector_geometry",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "T4.08 - Rack R2 elevation and patching"
+          ]
+        }
+      ],
+      "goldSection": "T4.08 - Rack R2 elevation and patching",
+      "kind": "diagram",
+      "modality": "vector_geometry",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "p05.rack.cs2",
+          "canonicalClaimId": "p05.rack.cs2",
+          "claimType": "visual_description",
           "expectation": "Core switch CS-2 occupies U42-U43.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "CS-2"
+              ],
+              [
+                "U42-U43"
+              ]
+            ]
+          }
         },
         {
-          "id": "p03.rack.02",
+          "id": "p05.rack.pp7",
+          "canonicalClaimId": "p05.rack.pp7",
+          "claimType": "visual_description",
           "expectation": "Patch panel PP-7 occupies U36-U37.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "PP-7"
+              ],
+              [
+                "U36-U37"
+              ]
+            ]
+          }
         },
         {
-          "id": "p03.rack.03",
-          "expectation": "Firewall FW-02 occupies U30-U31.",
-          "harm": 1,
-          "allowPartial": false
+          "id": "p05.rack.ac6",
+          "canonicalClaimId": "p05.rack.ac6",
+          "claimType": "visual_description",
+          "expectation": "Door controller AC-6 occupies U31-U32.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "AC-6"
+              ],
+              [
+                "U31-U32"
+              ]
+            ]
+          }
         },
         {
-          "id": "p03.rack.04",
-          "expectation": "UPS A occupies U24-U26.",
+          "id": "p05.rack.ups",
+          "canonicalClaimId": "p05.rack.ups",
+          "claimType": "visual_description",
+          "expectation": "UPS-A occupies U26-U28.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "UPS-A",
+                "UPS A"
+              ],
+              [
+                "U26-U28"
+              ]
+            ]
+          }
         },
         {
-          "id": "p03.rack.05",
-          "expectation": "Gateway GW-3 occupies U18.",
+          "id": "p05.rack.gw3",
+          "canonicalClaimId": "p05.rack.gw3",
+          "claimType": "visual_description",
+          "expectation": "Freezer gateway GW-3 occupies U19.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "GW-3"
+              ],
+              [
+                "U19"
+              ]
+            ]
+          }
         },
         {
-          "id": "p03.rack.06",
-          "expectation": "NVR bridge occupies U12-U13.",
+          "id": "p05.rack.nvr",
+          "canonicalClaimId": "p05.rack.nvr",
+          "claimType": "visual_description",
+          "expectation": "NVR-B occupies U14-U15.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "NVR-B"
+              ],
+              [
+                "U14-U15"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p05.rack.entry",
+          "canonicalClaimId": "p05.rack.entry",
+          "claimType": "visual_description",
+          "expectation": "Callout B identifies a tray entry at the rack's west/top side.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "callout B",
+                "B"
+              ],
+              [
+                "tray entry"
+              ],
+              [
+                "west",
+                "top"
+              ]
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "edge_set",
+        "keys": [
+          "p05.rack.cs2",
+          "p05.rack.pp7",
+          "p05.rack.ac6",
+          "p05.rack.ups",
+          "p05.rack.gw3",
+          "p05.rack.nvr",
+          "p05.rack.entry"
+        ]
+      }
     },
     {
-      "id": "p03.patch",
-      "page": 3,
-      "label": "Patch schedule",
+      "id": "p05.patch",
+      "label": "Patch and endpoint schedule",
+      "sourceAnchors": [
+        {
+          "page": 5,
+          "layer": "native_text",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "T4.08 - Rack R2 elevation and patching"
+          ]
+        }
+      ],
+      "goldSection": "T4.08 - Rack R2 elevation and patching",
       "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
       "budget": 2,
-      "closedWorld": true,
       "leaves": [
         {
-          "id": "p03.patch.schema",
-          "expectation": "The region preserves the source field schema in order: Port, Drop, Room, Device, VLAN.",
+          "id": "p05.patch.schema",
+          "canonicalClaimId": "p05.patch.schema",
+          "claimType": "structure",
+          "expectation": "The region preserves the source field schema in order: Port, Drop, Endpoint, Location, VLAN, Medium.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Port"
+              ],
+              [
+                "Drop"
+              ],
+              [
+                "Endpoint"
+              ],
+              [
+                "Location"
+              ],
+              [
+                "VLAN"
+              ],
+              [
+                "Medium"
+              ]
+            ]
+          }
         },
         {
-          "id": "p03.patch.row-order",
-          "expectation": "The source row order is recoverable as: CS-2/01 -> CS-2/07 -> CS-2/12 -> CS-2/19.",
+          "id": "p05.patch.row-order",
+          "canonicalClaimId": "p05.patch.row-order",
+          "claimType": "ordered_record",
+          "expectation": "The source row order is recoverable as: CS-2/01 -> CS-2/07 -> CS-2/08 -> CS-2/12 -> CS-2/13 -> CS-2/19 -> PP-7/21 -> PP-7/22.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "CS-2/01"
+              ],
+              [
+                "CS-2/07"
+              ],
+              [
+                "CS-2/08"
+              ],
+              [
+                "CS-2/12"
+              ],
+              [
+                "CS-2/13"
+              ],
+              [
+                "CS-2/19"
+              ],
+              [
+                "PP-7/21"
+              ],
+              [
+                "PP-7/22"
+              ]
+            ]
+          }
         },
         {
-          "id": "p03.patch.cs-2-01.drop",
-          "expectation": "For CS-2/01, Drop is D214-01.",
+          "id": "p05.patch.cs-2-01.endpoint",
+          "canonicalClaimId": "p05.patch.cs-2-01.endpoint",
+          "claimType": "table_binding",
+          "expectation": "For CS-2/01, Endpoint is Tablet dock.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CS-2/01"
+            ],
+            "column": [
+              "Endpoint"
+            ],
+            "value": [
+              "Tablet dock"
+            ]
+          }
         },
         {
-          "id": "p03.patch.cs-2-01.room",
-          "expectation": "For CS-2/01, Room is 214.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.patch.cs-2-01.device",
-          "expectation": "For CS-2/01, Device is Tablet dock.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.patch.cs-2-01.vlan",
+          "id": "p05.patch.cs-2-01.vlan",
+          "canonicalClaimId": "p05.patch.cs-2-01.vlan",
+          "claimType": "table_binding",
           "expectation": "For CS-2/01, VLAN is 210.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CS-2/01"
+            ],
+            "column": [
+              "VLAN"
+            ],
+            "value": [
+              "210"
+            ]
+          }
         },
         {
-          "id": "p03.patch.cs-2-07.drop",
-          "expectation": "For CS-2/07, Drop is D215-03.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.patch.cs-2-07.room",
-          "expectation": "For CS-2/07, Room is 215.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p03.patch.cs-2-07.device",
-          "expectation": "For CS-2/07, Device is Card reader CR-6.",
+          "id": "p05.patch.cs-2-07.endpoint",
+          "canonicalClaimId": "p05.patch.cs-2-07.endpoint",
+          "claimType": "table_binding",
+          "expectation": "For CS-2/07, Endpoint is CR-6.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CS-2/07"
+            ],
+            "column": [
+              "Endpoint"
+            ],
+            "value": [
+              "CR-6"
+            ]
+          }
         },
         {
-          "id": "p03.patch.cs-2-07.vlan",
+          "id": "p05.patch.cs-2-07.location",
+          "canonicalClaimId": "p05.patch.cs-2-07.location",
+          "claimType": "table_binding",
+          "expectation": "For CS-2/07, Location is 215-S.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CS-2/07"
+            ],
+            "column": [
+              "Location"
+            ],
+            "value": [
+              "215-S"
+            ]
+          }
+        },
+        {
+          "id": "p05.patch.cs-2-07.vlan",
+          "canonicalClaimId": "p05.patch.cs-2-07.vlan",
+          "claimType": "table_binding",
           "expectation": "For CS-2/07, VLAN is 230.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CS-2/07"
+            ],
+            "column": [
+              "VLAN"
+            ],
+            "value": [
+              "230"
+            ]
+          }
         },
         {
-          "id": "p03.patch.cs-2-12.drop",
-          "expectation": "For CS-2/12, Drop is D216-02.",
+          "id": "p05.patch.cs-2-08.endpoint",
+          "canonicalClaimId": "p05.patch.cs-2-08.endpoint",
+          "claimType": "table_binding",
+          "expectation": "For CS-2/08, Endpoint is DC-6.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CS-2/08"
+            ],
+            "column": [
+              "Endpoint"
+            ],
+            "value": [
+              "DC-6"
+            ]
+          }
         },
         {
-          "id": "p03.patch.cs-2-12.room",
-          "expectation": "For CS-2/12, Room is 216.",
+          "id": "p05.patch.cs-2-08.location",
+          "canonicalClaimId": "p05.patch.cs-2-08.location",
+          "claimType": "table_binding",
+          "expectation": "For CS-2/08, Location is R2/U31.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CS-2/08"
+            ],
+            "column": [
+              "Location"
+            ],
+            "value": [
+              "R2/U31"
+            ]
+          }
         },
         {
-          "id": "p03.patch.cs-2-12.device",
-          "expectation": "For CS-2/12, Device is Freezer monitor FZ-3.",
+          "id": "p05.patch.cs-2-12.endpoint",
+          "canonicalClaimId": "p05.patch.cs-2-12.endpoint",
+          "claimType": "table_binding",
+          "expectation": "For CS-2/12, Endpoint is FZ-3.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CS-2/12"
+            ],
+            "column": [
+              "Endpoint"
+            ],
+            "value": [
+              "FZ-3"
+            ]
+          }
         },
         {
-          "id": "p03.patch.cs-2-12.vlan",
+          "id": "p05.patch.cs-2-12.location",
+          "canonicalClaimId": "p05.patch.cs-2-12.location",
+          "claimType": "table_binding",
+          "expectation": "For CS-2/12, Location is 216-E.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CS-2/12"
+            ],
+            "column": [
+              "Location"
+            ],
+            "value": [
+              "216-E"
+            ]
+          }
+        },
+        {
+          "id": "p05.patch.cs-2-12.vlan",
+          "canonicalClaimId": "p05.patch.cs-2-12.vlan",
+          "claimType": "table_binding",
           "expectation": "For CS-2/12, VLAN is 240.",
-          "harm": 1,
-          "allowPartial": false
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CS-2/12"
+            ],
+            "column": [
+              "VLAN"
+            ],
+            "value": [
+              "240"
+            ]
+          }
         },
         {
-          "id": "p03.patch.cs-2-19.drop",
-          "expectation": "For CS-2/19, Drop is D218-01.",
+          "id": "p05.patch.cs-2-13.endpoint",
+          "canonicalClaimId": "p05.patch.cs-2-13.endpoint",
+          "claimType": "table_binding",
+          "expectation": "For CS-2/13, Endpoint is GW-3.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CS-2/13"
+            ],
+            "column": [
+              "Endpoint"
+            ],
+            "value": [
+              "GW-3"
+            ]
+          }
         },
         {
-          "id": "p03.patch.cs-2-19.room",
-          "expectation": "For CS-2/19, Room is 218.",
+          "id": "p05.patch.cs-2-13.location",
+          "canonicalClaimId": "p05.patch.cs-2-13.location",
+          "claimType": "table_binding",
+          "expectation": "For CS-2/13, Location is R2/U19.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "CS-2/13"
+            ],
+            "column": [
+              "Location"
+            ],
+            "value": [
+              "R2/U19"
+            ]
+          }
         },
         {
-          "id": "p03.patch.cs-2-19.device",
-          "expectation": "For CS-2/19, Device is FW-02 management.",
+          "id": "p05.patch.pp-7-21.endpoint",
+          "canonicalClaimId": "p05.patch.pp-7-21.endpoint",
+          "claimType": "table_binding",
+          "expectation": "For PP-7/21, Endpoint is BAS-214.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "PP-7/21"
+            ],
+            "column": [
+              "Endpoint"
+            ],
+            "value": [
+              "BAS-214"
+            ]
+          }
         },
         {
-          "id": "p03.patch.cs-2-19.vlan",
-          "expectation": "For CS-2/19, VLAN is 99.",
+          "id": "p05.patch.pp-7-22.endpoint",
+          "canonicalClaimId": "p05.patch.pp-7-22.endpoint",
+          "claimType": "table_binding",
+          "expectation": "For PP-7/22, Endpoint is CP-4.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "PP-7/22"
+            ],
+            "column": [
+              "Endpoint"
+            ],
+            "value": [
+              "CP-4"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "CS-2/01",
+          "CS-2/07",
+          "CS-2/08",
+          "CS-2/12",
+          "CS-2/13",
+          "CS-2/19",
+          "PP-7/21",
+          "PP-7/22"
+        ]
+      }
     },
     {
-      "id": "p04.topology",
-      "page": 4,
-      "label": "Directed network topology",
+      "id": "p05.internal-paths",
+      "label": "Internal patch paths",
+      "sourceAnchors": [
+        {
+          "page": 5,
+          "layer": "vector_geometry",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "T4.08 - Rack R2 elevation and patching"
+          ]
+        }
+      ],
+      "goldSection": "T4.08 - Rack R2 elevation and patching",
       "kind": "diagram",
+      "modality": "vector_geometry",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": false,
       "budget": 2,
-      "closedWorld": false,
       "leaves": [
         {
-          "id": "p04.edge.01",
-          "expectation": "A solid directed link runs from FW-02 to CS-2 for trunk 99/210/230/240.",
-          "harm": 2,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.edge.02",
-          "expectation": "A solid directed link runs from CS-2 to CR-6 for VLAN 230.",
-          "harm": 2,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.edge.03",
-          "expectation": "A solid directed link runs from CS-2 to FZ-3 for VLAN 240.",
-          "harm": 2,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.edge.04",
-          "expectation": "A solid directed link runs from CS-2 to QA subnet for VLAN 210.",
-          "harm": 2,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.edge.05",
-          "expectation": "A solid directed link runs from CR-6 to NVR for badge event mirror.",
+          "id": "p05.path.07-a",
+          "canonicalClaimId": "p05.path.07-a",
+          "claimType": "directed_edge",
+          "expectation": "The first path runs from PP-7/07 to CS-2/07.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "PP-7/07"
+            ],
+            "destination": [
+              "CS-2/07"
+            ],
+            "relation": [
+              "patch"
+            ]
+          }
         },
         {
-          "id": "p04.edge.06",
-          "expectation": "A dashed optional directed link runs from FZ-3 to NVR for optional alert overlay.",
+          "id": "p05.path.07-b",
+          "canonicalClaimId": "p05.path.07-b",
+          "claimType": "directed_edge",
+          "expectation": "The first path continues from CS-2/07 to D215-03.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "CS-2/07"
+            ],
+            "destination": [
+              "D215-03"
+            ],
+            "relation": [
+              "patch"
+            ]
+          }
+        },
+        {
+          "id": "p05.path.12-a",
+          "canonicalClaimId": "p05.path.12-a",
+          "claimType": "directed_edge",
+          "expectation": "The second path runs from PP-7/12 to CS-2/12.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "PP-7/12"
+            ],
+            "destination": [
+              "CS-2/12"
+            ],
+            "relation": [
+              "patch"
+            ]
+          }
+        },
+        {
+          "id": "p05.path.12-b",
+          "canonicalClaimId": "p05.path.12-b",
+          "claimType": "directed_edge",
+          "expectation": "The second path continues from CS-2/12 to D216-02.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "CS-2/12"
+            ],
+            "destination": [
+              "D216-02"
+            ],
+            "relation": [
+              "patch"
+            ]
+          }
+        },
+        {
+          "id": "p05.path.22-a",
+          "canonicalClaimId": "p05.path.22-a",
+          "claimType": "directed_edge",
+          "expectation": "The third path runs from PP-7/22 to OM4-2.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "PP-7/22"
+            ],
+            "destination": [
+              "OM4-2"
+            ],
+            "relation": [
+              "patch"
+            ]
+          }
+        },
+        {
+          "id": "p05.path.22-b",
+          "canonicalClaimId": "p05.path.22-b",
+          "claimType": "directed_edge",
+          "expectation": "The third path continues from OM4-2 to D215-12.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "OM4-2"
+            ],
+            "destination": [
+              "D215-12"
+            ],
+            "relation": [
+              "patch"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "edge_set",
+        "keys": [
+          "p05.path.07-a",
+          "p05.path.07-b",
+          "p05.path.12-a",
+          "p05.path.12-b",
+          "p05.path.22-a",
+          "p05.path.22-b"
+        ]
+      }
     },
     {
-      "id": "p04.rules",
-      "page": 4,
-      "label": "Access-control rule table",
-      "kind": "table",
-      "budget": 2,
-      "closedWorld": true,
+      "id": "p06.network-edges",
+      "label": "Directed network service edges",
+      "sourceAnchors": [
+        {
+          "page": 6,
+          "layer": "vector_geometry",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "N1.07 - Network and access-control topology"
+          ]
+        }
+      ],
+      "goldSection": "N1.07 - Network and access-control topology",
+      "kind": "diagram",
+      "modality": "vector_geometry",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": false,
+      "budget": 3,
       "leaves": [
         {
-          "id": "p04.rules.schema",
-          "expectation": "The region preserves the source field schema in order: Rule, Source, Destination, VLAN, State.",
-          "harm": 1,
-          "allowPartial": true
-        },
-        {
-          "id": "p04.rules.row-order",
-          "expectation": "The source row order is recoverable as: ACL-230-06 -> SVC-210-QA -> TRK-FW02-CS2 -> OPT-CAM.",
-          "harm": 1,
-          "allowPartial": true
-        },
-        {
-          "id": "p04.rules.acl-230-06.source",
-          "expectation": "For ACL-230-06, Source is CR-6.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.rules.acl-230-06.destination",
-          "expectation": "For ACL-230-06, Destination is NVR event mirror.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.rules.acl-230-06.vlan",
-          "expectation": "For ACL-230-06, VLAN is 230 -> 240.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.rules.acl-230-06.state",
-          "expectation": "For ACL-230-06, State is Permit one-way.",
+          "id": "p06.edge.fw-cs",
+          "canonicalClaimId": "p06.edge.fw-cs",
+          "claimType": "directed_edge",
+          "expectation": "A tagged trunk runs from FW-02 to CS-2.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "FW-02"
+            ],
+            "destination": [
+              "CS-2"
+            ],
+            "relation": [
+              "tagged trunk",
+              "99/210/230/240"
+            ]
+          }
         },
         {
-          "id": "p04.rules.svc-210-qa.source",
-          "expectation": "For SVC-210-QA, Source is CS-2.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.rules.svc-210-qa.destination",
-          "expectation": "For SVC-210-QA, Destination is QA subnet.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.rules.svc-210-qa.vlan",
-          "expectation": "For SVC-210-QA, VLAN is 210.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.rules.svc-210-qa.state",
-          "expectation": "For SVC-210-QA, State is Permit telemetry.",
+          "id": "p06.edge.cs-cr",
+          "canonicalClaimId": "p06.edge.cs-cr",
+          "claimType": "directed_edge",
+          "expectation": "A VLAN 230 event path runs from CS-2 to CR-6.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "CS-2"
+            ],
+            "destination": [
+              "CR-6"
+            ],
+            "relation": [
+              "VLAN 230 event"
+            ]
+          }
         },
         {
-          "id": "p04.rules.trk-fw02-cs2.source",
-          "expectation": "For TRK-FW02-CS2, Source is FW-02.",
-          "harm": 1,
-          "allowPartial": false
+          "id": "p06.edge.cs-fz",
+          "canonicalClaimId": "p06.edge.cs-fz",
+          "claimType": "directed_edge",
+          "expectation": "A VLAN 240 telemetry path runs from CS-2 to FZ-3.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "CS-2"
+            ],
+            "destination": [
+              "FZ-3"
+            ],
+            "relation": [
+              "VLAN 240 telemetry"
+            ]
+          }
         },
         {
-          "id": "p04.rules.trk-fw02-cs2.destination",
-          "expectation": "For TRK-FW02-CS2, Destination is CS-2.",
+          "id": "p06.edge.fz-qa",
+          "canonicalClaimId": "p06.edge.fz-qa",
+          "claimType": "directed_edge",
+          "expectation": "A one-way alarm path runs from FZ-3 to QA-210.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "FZ-3"
+            ],
+            "destination": [
+              "QA-210"
+            ],
+            "relation": [
+              "one-way",
+              "alarm"
+            ]
+          }
         },
         {
-          "id": "p04.rules.trk-fw02-cs2.vlan",
-          "expectation": "For TRK-FW02-CS2, VLAN is 99/210/230/240.",
+          "id": "p06.edge.cr-nvr",
+          "canonicalClaimId": "p06.edge.cr-nvr",
+          "claimType": "directed_edge",
+          "expectation": "An event-mirror path runs from CR-6 to NVR-B.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "CR-6"
+            ],
+            "destination": [
+              "NVR-B"
+            ],
+            "relation": [
+              "event mirror",
+              "mirror"
+            ]
+          }
         },
         {
-          "id": "p04.rules.trk-fw02-cs2.state",
-          "expectation": "For TRK-FW02-CS2, State is Tagged trunk.",
+          "id": "p06.edge.fz-bas",
+          "canonicalClaimId": "p06.edge.fz-bas",
+          "claimType": "directed_edge",
+          "expectation": "A dashed conditional trend path runs from FZ-3 to BAS-214.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "FZ-3"
+            ],
+            "destination": [
+              "BAS-214"
+            ],
+            "relation": [
+              "dashed",
+              "conditional",
+              "trend"
+            ]
+          }
         },
         {
-          "id": "p04.rules.opt-cam.source",
-          "expectation": "For OPT-CAM, Source is FZ-3.",
+          "id": "p06.edge.conditional",
+          "canonicalClaimId": "p06.edge.conditional",
+          "claimType": "visual_description",
+          "expectation": "The FZ-3 to BAS-214 edge is dashed and conditional.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.rules.opt-cam.destination",
-          "expectation": "For OPT-CAM, Destination is NVR.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.rules.opt-cam.vlan",
-          "expectation": "For OPT-CAM, VLAN is 240.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p04.rules.opt-cam.state",
-          "expectation": "For OPT-CAM, State is Optional / dashed.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "FZ-3"
+              ],
+              [
+                "BAS-214"
+              ],
+              [
+                "dashed"
+              ],
+              [
+                "conditional"
+              ]
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "edge_set",
+        "keys": [
+          "p06.edge.fw-cs",
+          "p06.edge.cs-cr",
+          "p06.edge.cs-fz",
+          "p06.edge.fz-qa",
+          "p06.edge.cr-nvr",
+          "p06.edge.fz-bas",
+          "p06.edge.conditional"
+        ]
+      }
     },
     {
-      "id": "p05.panel",
-      "page": 5,
-      "label": "Panel LP-2 schedule",
-      "kind": "table",
-      "budget": 2,
-      "closedWorld": true,
+      "id": "p06.access-edges",
+      "label": "Directed access-control chain",
+      "sourceAnchors": [
+        {
+          "page": 6,
+          "layer": "vector_geometry",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "N1.07 - Network and access-control topology"
+          ]
+        }
+      ],
+      "goldSection": "N1.07 - Network and access-control topology",
+      "kind": "diagram",
+      "modality": "vector_geometry",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": false,
+      "budget": 3,
       "leaves": [
         {
-          "id": "p05.panel.schema",
-          "expectation": "The region preserves the source field schema in order: Circuit, Load, Breaker, Emergency, Room, Note.",
+          "id": "p06.access.cs-cr",
+          "canonicalClaimId": "p06.access.cs-cr",
+          "claimType": "directed_edge",
+          "expectation": "The access chain enters CR-6 from CS-2.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "CS-2"
+            ],
+            "destination": [
+              "CR-6"
+            ],
+            "relation": [
+              "access",
+              "VLAN 230"
+            ]
+          }
         },
         {
-          "id": "p05.panel.row-order",
+          "id": "p06.access.cr-dc",
+          "canonicalClaimId": "p06.access.cr-dc",
+          "claimType": "directed_edge",
+          "expectation": "Reader data runs from CR-6 to DC-6 by Wiegand.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "CR-6"
+            ],
+            "destination": [
+              "DC-6"
+            ],
+            "relation": [
+              "Wiegand"
+            ]
+          }
+        },
+        {
+          "id": "p06.access.dc-core",
+          "canonicalClaimId": "p06.access.dc-core",
+          "claimType": "directed_edge",
+          "expectation": "Authorization traffic runs from DC-6 to ACS-CORE.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "DC-6"
+            ],
+            "destination": [
+              "ACS-CORE"
+            ],
+            "relation": [
+              "authorization",
+              "auth"
+            ]
+          }
+        },
+        {
+          "id": "p06.access.no-reverse",
+          "canonicalClaimId": "p06.access.no-reverse",
+          "claimType": "visual_description",
+          "expectation": "No reverse ACS-CORE to DC-6 edge is drawn.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "no",
+                "absent"
+              ],
+              [
+                "ACS-CORE"
+              ],
+              [
+                "DC-6"
+              ],
+              [
+                "reverse"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p06.access.branch",
+          "canonicalClaimId": "p06.access.branch",
+          "claimType": "visual_description",
+          "expectation": "The CR-6 event mirror branches to NVR-B before the DC-6 authorization target.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "CR-6"
+              ],
+              [
+                "NVR-B"
+              ],
+              [
+                "DC-6"
+              ],
+              [
+                "branch",
+                "mirror"
+              ],
+              [
+                "before",
+                "prior to"
+              ]
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "edge_set",
+        "keys": [
+          "p06.access.cs-cr",
+          "p06.access.cr-dc",
+          "p06.access.dc-core",
+          "p06.access.no-reverse",
+          "p06.access.branch"
+        ]
+      }
+    },
+    {
+      "id": "p06.policy",
+      "label": "Directed path policy register",
+      "sourceAnchors": [
+        {
+          "page": 6,
+          "layer": "native_text",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "N1.07 - Network and access-control topology"
+          ]
+        }
+      ],
+      "goldSection": "N1.07 - Network and access-control topology",
+      "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "p06.policy.schema",
+          "canonicalClaimId": "p06.policy.schema",
+          "claimType": "structure",
+          "expectation": "The region preserves the source field schema in order: Path key, Transport, Mode, Policy.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Path key"
+              ],
+              [
+                "Transport"
+              ],
+              [
+                "Mode"
+              ],
+              [
+                "Policy"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p06.policy.row-order",
+          "canonicalClaimId": "p06.policy.row-order",
+          "claimType": "ordered_record",
+          "expectation": "The source row order is recoverable as: ACL-230-A -> MIR-230-B -> TEL-240-Q -> OPT-240-B.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "ACL-230-A"
+              ],
+              [
+                "MIR-230-B"
+              ],
+              [
+                "TEL-240-Q"
+              ],
+              [
+                "OPT-240-B"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p06.policy.acl-230-a.transport",
+          "canonicalClaimId": "p06.policy.acl-230-a.transport",
+          "claimType": "table_binding",
+          "expectation": "For ACL-230-A, Transport is V230.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "ACL-230-A"
+            ],
+            "column": [
+              "Transport"
+            ],
+            "value": [
+              "V230"
+            ]
+          }
+        },
+        {
+          "id": "p06.policy.acl-230-a.policy",
+          "canonicalClaimId": "p06.policy.acl-230-a.policy",
+          "claimType": "table_binding",
+          "expectation": "For ACL-230-A, Policy is Permit one-way.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "ACL-230-A"
+            ],
+            "column": [
+              "Policy"
+            ],
+            "value": [
+              "Permit one-way"
+            ]
+          }
+        },
+        {
+          "id": "p06.policy.mir-230-b.mode",
+          "canonicalClaimId": "p06.policy.mir-230-b.mode",
+          "claimType": "table_binding",
+          "expectation": "For MIR-230-B, Mode is Event.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "MIR-230-B"
+            ],
+            "column": [
+              "Mode"
+            ],
+            "value": [
+              "Event"
+            ]
+          }
+        },
+        {
+          "id": "p06.policy.mir-230-b.policy",
+          "canonicalClaimId": "p06.policy.mir-230-b.policy",
+          "claimType": "table_binding",
+          "expectation": "For MIR-230-B, Policy is Permit one-way.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "MIR-230-B"
+            ],
+            "column": [
+              "Policy"
+            ],
+            "value": [
+              "Permit one-way"
+            ]
+          }
+        },
+        {
+          "id": "p06.policy.tel-240-q.mode",
+          "canonicalClaimId": "p06.policy.tel-240-q.mode",
+          "claimType": "table_binding",
+          "expectation": "For TEL-240-Q, Mode is Alarm.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "TEL-240-Q"
+            ],
+            "column": [
+              "Mode"
+            ],
+            "value": [
+              "Alarm"
+            ]
+          }
+        },
+        {
+          "id": "p06.policy.tel-240-q.policy",
+          "canonicalClaimId": "p06.policy.tel-240-q.policy",
+          "claimType": "table_binding",
+          "expectation": "For TEL-240-Q, Policy is Permit one-way.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "TEL-240-Q"
+            ],
+            "column": [
+              "Policy"
+            ],
+            "value": [
+              "Permit one-way"
+            ]
+          }
+        },
+        {
+          "id": "p06.policy.opt-240-b.mode",
+          "canonicalClaimId": "p06.policy.opt-240-b.mode",
+          "claimType": "table_binding",
+          "expectation": "For OPT-240-B, Mode is Trend.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "OPT-240-B"
+            ],
+            "column": [
+              "Mode"
+            ],
+            "value": [
+              "Trend"
+            ]
+          }
+        },
+        {
+          "id": "p06.policy.opt-240-b.policy",
+          "canonicalClaimId": "p06.policy.opt-240-b.policy",
+          "claimType": "table_binding",
+          "expectation": "For OPT-240-B, Policy is Conditional.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "OPT-240-B"
+            ],
+            "column": [
+              "Policy"
+            ],
+            "value": [
+              "Conditional"
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "ACL-230-A",
+          "MIR-230-B",
+          "TEL-240-Q",
+          "OPT-240-B"
+        ]
+      }
+    },
+    {
+      "id": "p07.panel",
+      "label": "Panel LP-2 branch schedule",
+      "sourceAnchors": [
+        {
+          "page": 7,
+          "layer": "native_text",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "E6.02 - Panel LP-2 and field check"
+          ]
+        }
+      ],
+      "goldSection": "E6.02 - Panel LP-2 and field check",
+      "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "p07.panel.schema",
+          "canonicalClaimId": "p07.panel.schema",
+          "claimType": "structure",
+          "expectation": "The region preserves the source field schema in order: Circuit, Load, Breaker, Branch, Room, Record.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Circuit"
+              ],
+              [
+                "Load"
+              ],
+              [
+                "Breaker"
+              ],
+              [
+                "Branch"
+              ],
+              [
+                "Room"
+              ],
+              [
+                "Record"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p07.panel.row-order",
+          "canonicalClaimId": "p07.panel.row-order",
+          "claimType": "ordered_record",
           "expectation": "The source row order is recoverable as: L2-11 -> L2-13 -> L2-15 -> L2-17 -> L2-19 -> L2-21.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "L2-11"
+              ],
+              [
+                "L2-13"
+              ],
+              [
+                "L2-15"
+              ],
+              [
+                "L2-17"
+              ],
+              [
+                "L2-19"
+              ],
+              [
+                "L2-21"
+              ]
+            ]
+          }
         },
         {
-          "id": "p05.panel.l2-11.load",
-          "expectation": "For L2-11, Load is Bench outlets B.",
+          "id": "p07.panel.l2-15.load",
+          "canonicalClaimId": "p07.panel.l2-15.load",
+          "claimType": "table_binding",
+          "expectation": "For L2-15, Load is Door controller.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "L2-15"
+            ],
+            "column": [
+              "Load"
+            ],
+            "value": [
+              "Door controller"
+            ]
+          }
         },
         {
-          "id": "p05.panel.l2-11.breaker",
-          "expectation": "For L2-11, Breaker is 20A/1P.",
+          "id": "p07.panel.l2-15.branch",
+          "canonicalClaimId": "p07.panel.l2-15.branch",
+          "claimType": "table_binding",
+          "expectation": "For L2-15, Branch is Emergency.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "L2-15"
+            ],
+            "column": [
+              "Branch"
+            ],
+            "value": [
+              "Emergency"
+            ]
+          }
         },
         {
-          "id": "p05.panel.l2-11.emergency",
-          "expectation": "For L2-11, Emergency is No.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-11.room",
-          "expectation": "For L2-11, Room is 215.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-11.note",
-          "expectation": "For L2-11, Note is GFCI.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-13.load",
-          "expectation": "For L2-13, Load is Autoclave AC-1.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-13.breaker",
-          "expectation": "For L2-13, Breaker is 30A/2P.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-13.emergency",
-          "expectation": "For L2-13, Emergency is No.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-13.room",
-          "expectation": "For L2-13, Room is 217.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-13.note",
-          "expectation": "For L2-13, Note is Dedicated.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-15.load",
-          "expectation": "For L2-15, Load is Door controller DC-6.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-15.breaker",
-          "expectation": "For L2-15, Breaker is 20A/1P.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-15.emergency",
-          "expectation": "For L2-15, Emergency is Yes.",
+          "id": "p07.panel.l2-15.record",
+          "canonicalClaimId": "p07.panel.l2-15.record",
+          "claimType": "table_binding",
+          "expectation": "For L2-15, Record is DC-6.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "L2-15"
+            ],
+            "column": [
+              "Record"
+            ],
+            "value": [
+              "DC-6"
+            ]
+          }
         },
         {
-          "id": "p05.panel.l2-15.room",
-          "expectation": "For L2-15, Room is 215.",
+          "id": "p07.panel.l2-17.load",
+          "canonicalClaimId": "p07.panel.l2-17.load",
+          "claimType": "table_binding",
+          "expectation": "For L2-17, Load is Freezer.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "L2-17"
+            ],
+            "column": [
+              "Load"
+            ],
+            "value": [
+              "Freezer"
+            ]
+          }
         },
         {
-          "id": "p05.panel.l2-15.note",
-          "expectation": "For L2-15, Note is Feeds CR-6.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-17.load",
-          "expectation": "For L2-17, Load is Freezer FZ-3.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-17.breaker",
-          "expectation": "For L2-17, Breaker is 20A/1P.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-17.emergency",
-          "expectation": "For L2-17, Emergency is Yes.",
+          "id": "p07.panel.l2-17.branch",
+          "canonicalClaimId": "p07.panel.l2-17.branch",
+          "claimType": "table_binding",
+          "expectation": "For L2-17, Branch is Emergency.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "L2-17"
+            ],
+            "column": [
+              "Branch"
+            ],
+            "value": [
+              "Emergency"
+            ]
+          }
         },
         {
-          "id": "p05.panel.l2-17.room",
-          "expectation": "For L2-17, Room is 216.",
+          "id": "p07.panel.l2-17.record",
+          "canonicalClaimId": "p07.panel.l2-17.record",
+          "claimType": "table_binding",
+          "expectation": "For L2-17, Record is FZ-3.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "L2-17"
+            ],
+            "column": [
+              "Record"
+            ],
+            "value": [
+              "FZ-3"
+            ]
+          }
         },
         {
-          "id": "p05.panel.l2-17.note",
-          "expectation": "For L2-17, Note is Monitor required.",
+          "id": "p07.panel.l2-19.load",
+          "canonicalClaimId": "p07.panel.l2-19.load",
+          "claimType": "table_binding",
+          "expectation": "For L2-19, Load is Rack UPS.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "L2-19"
+            ],
+            "column": [
+              "Load"
+            ],
+            "value": [
+              "Rack UPS"
+            ]
+          }
         },
         {
-          "id": "p05.panel.l2-19.load",
-          "expectation": "For L2-19, Load is Rack R2 UPS.",
+          "id": "p07.panel.l2-19.branch",
+          "canonicalClaimId": "p07.panel.l2-19.branch",
+          "claimType": "table_binding",
+          "expectation": "For L2-19, Branch is Emergency.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "L2-19"
+            ],
+            "column": [
+              "Branch"
+            ],
+            "value": [
+              "Emergency"
+            ]
+          }
         },
         {
-          "id": "p05.panel.l2-19.breaker",
-          "expectation": "For L2-19, Breaker is 20A/1P.",
+          "id": "p07.panel.l2-19.record",
+          "canonicalClaimId": "p07.panel.l2-19.record",
+          "claimType": "table_binding",
+          "expectation": "For L2-19, Record is UPS-A.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "L2-19"
+            ],
+            "column": [
+              "Record"
+            ],
+            "value": [
+              "UPS-A"
+            ]
+          }
         },
         {
-          "id": "p05.panel.l2-19.emergency",
-          "expectation": "For L2-19, Emergency is Yes.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-19.room",
-          "expectation": "For L2-19, Room is 218.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-19.note",
-          "expectation": "For L2-19, Note is UPS A.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-21.load",
+          "id": "p07.panel.l2-21.load",
+          "canonicalClaimId": "p07.panel.l2-21.load",
+          "claimType": "table_binding",
           "expectation": "For L2-21, Load is Spare.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "L2-21"
+            ],
+            "column": [
+              "Load"
+            ],
+            "value": [
+              "Spare"
+            ]
+          }
         },
         {
-          "id": "p05.panel.l2-21.breaker",
-          "expectation": "For L2-21, Breaker is 20A/1P.",
+          "id": "p07.panel.l2-21.branch",
+          "canonicalClaimId": "p07.panel.l2-21.branch",
+          "claimType": "table_binding",
+          "expectation": "For L2-21, Branch is Normal.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "L2-21"
+            ],
+            "column": [
+              "Branch"
+            ],
+            "value": [
+              "Normal"
+            ]
+          }
         },
         {
-          "id": "p05.panel.l2-21.emergency",
-          "expectation": "For L2-21, Emergency is No.",
+          "id": "p07.panel.l2-21.record",
+          "canonicalClaimId": "p07.panel.l2-21.record",
+          "claimType": "table_binding",
+          "expectation": "For L2-21, Record is Future.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-21.room",
-          "expectation": "For L2-21, Room is -.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.panel.l2-21.note",
-          "expectation": "For L2-21, Note is Hold for Rev D.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "L2-21"
+            ],
+            "column": [
+              "Record"
+            ],
+            "value": [
+              "Future"
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "L2-11",
+          "L2-13",
+          "L2-15",
+          "L2-17",
+          "L2-19",
+          "L2-21"
+        ]
+      }
     },
     {
-      "id": "p05.loads",
-      "page": 5,
-      "label": "Panel load summary",
-      "kind": "table",
+      "id": "p07.walkdown",
+      "label": "Scanned electrical walkdown states",
+      "sourceAnchors": [
+        {
+          "page": 7,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "E6.02 - Panel LP-2 and field check"
+          ]
+        }
+      ],
+      "goldSection": "E6.02 - Panel LP-2 and field check",
+      "kind": "form",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "form_state",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 3,
+      "leaves": [
+        {
+          "id": "p07.check.torque",
+          "canonicalClaimId": "p07.check.torque",
+          "claimType": "form_state",
+          "expectation": "Torque witness marks complete is checked.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Torque witness marks complete"
+            ],
+            "state": "checked"
+          }
+        },
+        {
+          "id": "p07.check.l215",
+          "canonicalClaimId": "p07.check.l215",
+          "claimType": "form_state",
+          "expectation": "L2-15 field tag installed is checked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "L2-15 field tag installed"
+            ],
+            "state": "checked"
+          }
+        },
+        {
+          "id": "p07.check.l217",
+          "canonicalClaimId": "p07.check.l217",
+          "claimType": "form_state",
+          "expectation": "L2-17 field tag installed is checked.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "L2-17 field tag installed"
+            ],
+            "state": "checked"
+          }
+        },
+        {
+          "id": "p07.check.l219",
+          "canonicalClaimId": "p07.check.l219",
+          "claimType": "form_state",
+          "expectation": "L2-19 field tag installed is checked.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "L2-19 field tag installed"
+            ],
+            "state": "checked"
+          }
+        },
+        {
+          "id": "p07.check.l221",
+          "canonicalClaimId": "p07.check.l221",
+          "claimType": "form_state",
+          "expectation": "L2-21 released for use is unchecked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "L2-21 released for use"
+            ],
+            "state": "unchecked"
+          }
+        },
+        {
+          "id": "p07.check.transfer",
+          "canonicalClaimId": "p07.check.transfer",
+          "claimType": "form_state",
+          "expectation": "Emergency transfer witnessed is checked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Emergency transfer witnessed"
+            ],
+            "state": "checked"
+          }
+        },
+        {
+          "id": "p07.check.polarity",
+          "canonicalClaimId": "p07.check.polarity",
+          "claimType": "form_state",
+          "expectation": "Reader polarity exception open is crossed out.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Reader polarity exception open"
+            ],
+            "state": "crossed"
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "form_options",
+        "keys": [
+          "Torque witness marks complete",
+          "L2-15 field tag installed",
+          "L2-17 field tag installed",
+          "L2-19 field tag installed",
+          "L2-21 released for use",
+          "Emergency transfer witnessed",
+          "Reader polarity exception open"
+        ]
+      }
+    },
+    {
+      "id": "p07.walkdown-identity",
+      "label": "Scanned field-record identity",
+      "sourceAnchors": [
+        {
+          "page": 7,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "E6.02 - Panel LP-2 and field check"
+          ]
+        }
+      ],
+      "goldSection": "E6.02 - Panel LP-2 and field check",
+      "kind": "form",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "form_state",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
       "budget": 1,
-      "closedWorld": true,
       "leaves": [
         {
-          "id": "p05.loads.schema",
-          "expectation": "The region preserves the source field schema in order: Branch, Connected, Emergency, Coordination note.",
+          "id": "p07.identity.record",
+          "canonicalClaimId": "p07.identity.record",
+          "claimType": "scalar",
+          "expectation": "The field-check record is EC-214-19.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "EC-214-19"
+              ]
+            ]
+          }
         },
         {
-          "id": "p05.loads.row-order",
-          "expectation": "The source row order is recoverable as: Normal receptacles -> Access control -> Cold storage -> IT / UPS -> Spare capacity.",
+          "id": "p07.identity.date",
+          "canonicalClaimId": "p07.identity.date",
+          "claimType": "scalar",
+          "expectation": "The walkdown date is 2026-06-14.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "14 JUN 2026",
+                "14 June 2026"
+              ]
+            ]
+          }
         },
         {
-          "id": "p05.loads.normal-receptacles.connected",
-          "expectation": "For Normal receptacles, Connected is 3.2 kVA.",
+          "id": "p07.identity.tech",
+          "canonicalClaimId": "p07.identity.tech",
+          "claimType": "scalar",
+          "expectation": "The technician initials are JH.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "JH"
+              ],
+              [
+                "Technician"
+              ]
+            ]
+          }
         },
         {
-          "id": "p05.loads.normal-receptacles.emergency",
-          "expectation": "For Normal receptacles, Emergency is 0.0 kVA.",
+          "id": "p07.identity.witness",
+          "canonicalClaimId": "p07.identity.witness",
+          "claimType": "scalar",
+          "expectation": "The witness initials are LS.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "LS"
+              ],
+              [
+                "Witness"
+              ]
+            ]
+          }
         },
         {
-          "id": "p05.loads.normal-receptacles.coordination-note",
-          "expectation": "For Normal receptacles, Coordination note is Bench and autoclave.",
+          "id": "p07.identity.time",
+          "canonicalClaimId": "p07.identity.time",
+          "claimType": "scalar",
+          "expectation": "Panel energization was recorded at 16:42.",
           "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.loads.access-control.connected",
-          "expectation": "For Access control, Connected is 0.4 kVA.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.loads.access-control.emergency",
-          "expectation": "For Access control, Emergency is 0.4 kVA.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.loads.access-control.coordination-note",
-          "expectation": "For Access control, Coordination note is DC-6 on L2-15.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.loads.cold-storage.connected",
-          "expectation": "For Cold storage, Connected is 0.7 kVA.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.loads.cold-storage.emergency",
-          "expectation": "For Cold storage, Emergency is 0.7 kVA.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.loads.cold-storage.coordination-note",
-          "expectation": "For Cold storage, Coordination note is FZ-3 on L2-17.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.loads.it-ups.connected",
-          "expectation": "For IT / UPS, Connected is 1.1 kVA.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.loads.it-ups.emergency",
-          "expectation": "For IT / UPS, Emergency is 1.1 kVA.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.loads.it-ups.coordination-note",
-          "expectation": "For IT / UPS, Coordination note is R2 UPS on L2-19.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.loads.spare-capacity.connected",
-          "expectation": "For Spare capacity, Connected is 2.6 kVA.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.loads.spare-capacity.emergency",
-          "expectation": "For Spare capacity, Emergency is -.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p05.loads.spare-capacity.coordination-note",
-          "expectation": "For Spare capacity, Coordination note is L2-21 held for Rev D.",
-          "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "16:42"
+              ],
+              [
+                "energized"
+              ]
+            ]
+          }
         }
       ]
     },
     {
-      "id": "p05.checks",
-      "page": 5,
-      "label": "Electrical issue checkboxes",
+      "id": "p08.query-states",
+      "label": "Field-query option states",
+      "sourceAnchors": [
+        {
+          "page": 8,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "RFI-214-17 - Lab B corridor opening"
+          ]
+        }
+      ],
+      "goldSection": "RFI-214-17 - Lab B corridor opening",
       "kind": "form",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "form_state",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
       "budget": 2,
-      "closedWorld": false,
       "leaves": [
         {
-          "id": "p05.checks.labels",
-          "expectation": "Emergency labels match floor-plan callouts is checked.",
+          "id": "p08.query.maintain",
+          "canonicalClaimId": "p08.query.maintain",
+          "claimType": "form_state",
+          "expectation": "Maintain D-214A at Revision B position is unchecked.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Maintain D-214A at Revision B position"
+            ],
+            "state": "unchecked"
+          }
         },
         {
-          "id": "p05.checks.spare",
-          "expectation": "L2-21 released for construction is unchecked.",
-          "harm": 1,
-          "allowPartial": false
+          "id": "p08.query.response",
+          "canonicalClaimId": "p08.query.response",
+          "claimType": "form_state",
+          "expectation": "Issue architect response for construction is checked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Issue architect response for construction"
+            ],
+            "state": "checked"
+          }
         },
         {
-          "id": "p05.checks.freezer",
-          "expectation": "Freezer monitor moved to normal power is unchecked.",
+          "id": "p08.query.void",
+          "canonicalClaimId": "p08.query.void",
+          "claimType": "visual_description",
+          "expectation": "The maintain-D-214A option is crossed by a red strike and marked VOID.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "maintain D-214A"
+              ],
+              [
+                "strike",
+                "crossed"
+              ],
+              [
+                "VOID"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.query.received",
+          "canonicalClaimId": "p08.query.received",
+          "claimType": "scalar",
+          "expectation": "The field query was received on 2026-06-09.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "09 JUN 2026",
+                "9 June 2026",
+                "2026-06-09"
+              ]
+            ]
+          }
         }
-      ]
+      ],
+      "closedWorld": {
+        "scope": "form_options",
+        "keys": [
+          "Maintain D-214A at Revision B position",
+          "Issue architect response for construction"
+        ]
+      }
     },
     {
-      "id": "p06.rfi-scan",
-      "page": 6,
-      "label": "Scanned RFI response",
+      "id": "p08.redline",
+      "label": "Door redline geometry",
+      "sourceAnchors": [
+        {
+          "page": 8,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "RFI-214-17 - Lab B corridor opening"
+          ]
+        }
+      ],
+      "goldSection": "RFI-214-17 - Lab B corridor opening",
+      "kind": "diagram",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 3,
+      "leaves": [
+        {
+          "id": "p08.redline.old-new",
+          "canonicalClaimId": "p08.redline.old-new",
+          "claimType": "visual_description",
+          "expectation": "The redline shows a dashed old opening east of a solid new opening.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "dashed",
+                "old"
+              ],
+              [
+                "solid",
+                "new"
+              ],
+              [
+                "east",
+                "west"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.redline.shift",
+          "canonicalClaimId": "p08.redline.shift",
+          "claimType": "visual_description",
+          "expectation": "The new opening is dimensioned 4 ft 6 in west of the old opening.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "4'-6\"",
+                "4 ft 6"
+              ],
+              [
+                "new opening"
+              ],
+              [
+                "old opening"
+              ],
+              [
+                "west"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.redline.swing",
+          "canonicalClaimId": "p08.redline.swing",
+          "claimType": "visual_description",
+          "expectation": "The new door swings south into corridor C2.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "new door",
+                "D-214B"
+              ],
+              [
+                "south"
+              ],
+              [
+                "C2",
+                "corridor"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.redline.reader",
+          "canonicalClaimId": "p08.redline.reader",
+          "claimType": "visual_description",
+          "expectation": "Callout 6 marks the reader at the east jamb of the new opening.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "callout 6",
+                "6"
+              ],
+              [
+                "reader",
+                "CR-6"
+              ],
+              [
+                "east jamb"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.redline.wall",
+          "canonicalClaimId": "p08.redline.wall",
+          "claimType": "visual_description",
+          "expectation": "The redline sketch places Lab B above corridor C2, separated by the door wall.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Lab B"
+              ],
+              [
+                "C2"
+              ],
+              [
+                "corridor"
+              ],
+              [
+                "above"
+              ],
+              [
+                "door wall"
+              ]
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "edge_set",
+        "keys": [
+          "p08.redline.old-new",
+          "p08.redline.shift",
+          "p08.redline.swing",
+          "p08.redline.reader",
+          "p08.redline.wall"
+        ]
+      }
+    },
+    {
+      "id": "p08.response",
+      "label": "Answered RFI authority and directives",
+      "sourceAnchors": [
+        {
+          "page": 8,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "RFI-214-17 - Lab B corridor opening"
+          ]
+        }
+      ],
+      "goldSection": "RFI-214-17 - Lab B corridor opening",
       "kind": "form",
-      "budget": 2,
-      "closedWorld": false,
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "source_precedence",
+      "secondaryAxes": [
+        "form_state",
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 3,
       "leaves": [
         {
-          "id": "p06.rfi.old",
-          "expectation": "The scanned Revision B answer D-214A is struck out.",
-          "harm": 1,
-          "allowPartial": false
-        },
-        {
-          "id": "p06.rfi.door",
-          "expectation": "The corrected controlling door identifier is D-214B.",
+          "id": "p08.response.door",
+          "canonicalClaimId": "p08.response.door",
+          "claimType": "source_precedence",
+          "expectation": "The answered RFI voids D-214A and makes D-214B the controlling identifier.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "answered RFI"
+              ],
+              [
+                "void",
+                "voids"
+              ],
+              [
+                "D-214A"
+              ],
+              [
+                "D-214B"
+              ],
+              [
+                "controlling"
+              ]
+            ]
+          }
         },
         {
-          "id": "p06.rfi.reader",
-          "expectation": "CR-6 is added on the corridor side.",
+          "id": "p08.response.shift",
+          "canonicalClaimId": "p08.response.shift",
+          "claimType": "source_precedence",
+          "expectation": "The answered RFI controls a 4 ft 6 in westward shift.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "answered RFI"
+              ],
+              [
+                "4'-6\"",
+                "4 ft 6"
+              ],
+              [
+                "west"
+              ]
+            ]
+          }
         },
         {
-          "id": "p06.rfi.circuit",
-          "expectation": "Panel LP-2 circuit L2-15 is assigned to the reader.",
+          "id": "p08.response.reader",
+          "canonicalClaimId": "p08.response.reader",
+          "claimType": "source_precedence",
+          "expectation": "The answered RFI controls CR-6 on the corridor-side east jamb.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "answered RFI"
+              ],
+              [
+                "CR-6"
+              ],
+              [
+                "corridor-side",
+                "corridor side"
+              ],
+              [
+                "east jamb"
+              ]
+            ]
+          }
         },
         {
-          "id": "p06.rfi.revision",
-          "expectation": "Revision C dated 2026-06-12 governs.",
-          "harm": 1,
-          "allowPartial": false
+          "id": "p08.response.circuit",
+          "canonicalClaimId": "p08.response.circuit",
+          "claimType": "source_precedence",
+          "expectation": "The answered RFI binds DC-6 to LP-2 circuit L2-15.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "answered RFI"
+              ],
+              [
+                "DC-6"
+              ],
+              [
+                "LP-2"
+              ],
+              [
+                "L2-15"
+              ]
+            ]
+          }
         },
         {
-          "id": "p06.rfi.signoff.architect",
-          "expectation": "A. Verma signed the RFI on 2026-06-12.",
-          "harm": 1,
-          "allowPartial": false
+          "id": "p08.response.rev",
+          "canonicalClaimId": "p08.response.rev",
+          "claimType": "source_precedence",
+          "expectation": "The architect response states that Revision C governs construction.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Revision C",
+                "Rev C"
+              ],
+              [
+                "governs",
+                "governing"
+              ],
+              [
+                "construction"
+              ]
+            ]
+          }
         },
         {
-          "id": "p06.rfi.signoff.security",
-          "expectation": "Security reviewer initials are TN.",
+          "id": "p08.response.signoff",
+          "canonicalClaimId": "p08.response.signoff",
+          "claimType": "scalar",
+          "expectation": "AV signed 2026-06-12; TN reviewed; RK acknowledged 2026-06-13.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "AV"
+              ],
+              [
+                "signed"
+              ],
+              [
+                "12 JUN 2026",
+                "2026-06-12"
+              ],
+              [
+                "TN"
+              ],
+              [
+                "RK"
+              ],
+              [
+                "13 JUN 2026",
+                "2026-06-13"
+              ]
+            ]
+          }
         }
       ]
     },
     {
-      "id": "p06.fields",
-      "page": 6,
-      "label": "RFI revision field table",
+      "id": "p09.photo-door",
+      "label": "Door field-photo evidence",
+      "sourceAnchors": [
+        {
+          "page": 9,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "PH-214 - Field photo and punch evidence"
+          ]
+        }
+      ],
+      "goldSection": "PH-214 - Field photo and punch evidence",
+      "kind": "image",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "image_description",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 3,
+      "leaves": [
+        {
+          "id": "p09.door.reader",
+          "canonicalClaimId": "p09.door.reader",
+          "claimType": "visual_description",
+          "expectation": "Photo 06 shows the reader on the image-right jamb of the doorway.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Photo 06"
+              ],
+              [
+                "reader"
+              ],
+              [
+                "image-right",
+                "right jamb"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p09.door.corridor",
+          "canonicalClaimId": "p09.door.corridor",
+          "claimType": "visual_description",
+          "expectation": "Photo 06 is taken from the corridor side of the opening.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Photo 06"
+              ],
+              [
+                "corridor",
+                "C2"
+              ],
+              [
+                "side",
+                "view"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p09.door.annotation",
+          "canonicalClaimId": "p09.door.annotation",
+          "claimType": "visual_description",
+          "expectation": "Annotation A circles the reader rather than the door leaf.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "annotation A",
+                "A"
+              ],
+              [
+                "circles"
+              ],
+              [
+                "reader"
+              ],
+              [
+                "not",
+                "rather than"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p09.door.clear",
+          "canonicalClaimId": "p09.door.clear",
+          "claimType": "visual_description",
+          "expectation": "The photographed door leaf and opening are unobstructed.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "door",
+                "opening"
+              ],
+              [
+                "unobstructed",
+                "clear"
+              ]
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "region_claims",
+        "keys": [
+          "p09.door.reader",
+          "p09.door.corridor",
+          "p09.door.annotation",
+          "p09.door.clear"
+        ]
+      }
+    },
+    {
+      "id": "p09.photo-rack",
+      "label": "Rack field-photo evidence",
+      "sourceAnchors": [
+        {
+          "page": 9,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "PH-214 - Field photo and punch evidence"
+          ]
+        }
+      ],
+      "goldSection": "PH-214 - Field photo and punch evidence",
+      "kind": "image",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "image_description",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 3,
+      "leaves": [
+        {
+          "id": "p09.rack.tray",
+          "canonicalClaimId": "p09.rack.tray",
+          "claimType": "visual_description",
+          "expectation": "Photo 09 shows the overhead tray approaching rack R2 from image-left.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "Photo 09"
+              ],
+              [
+                "tray"
+              ],
+              [
+                "rack",
+                "R2"
+              ],
+              [
+                "image-left",
+                "left"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p09.rack.drop",
+          "canonicalClaimId": "p09.rack.drop",
+          "claimType": "visual_description",
+          "expectation": "The tray drops at the rack's west/top corner.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "tray"
+              ],
+              [
+                "drops",
+                "entry"
+              ],
+              [
+                "west",
+                "top corner"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p09.rack.annotation",
+          "canonicalClaimId": "p09.rack.annotation",
+          "claimType": "visual_description",
+          "expectation": "Annotation B circles the tray-to-rack entry.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "annotation B",
+                "B"
+              ],
+              [
+                "tray"
+              ],
+              [
+                "rack"
+              ],
+              [
+                "entry"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p09.rack.clear",
+          "canonicalClaimId": "p09.rack.clear",
+          "claimType": "visual_description",
+          "expectation": "The image-right service side of rack R2 is unobstructed.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "image-right",
+                "right"
+              ],
+              [
+                "service side"
+              ],
+              [
+                "rack R2",
+                "R2"
+              ],
+              [
+                "unobstructed",
+                "clear"
+              ]
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "region_claims",
+        "keys": [
+          "p09.rack.tray",
+          "p09.rack.drop",
+          "p09.rack.annotation",
+          "p09.rack.clear"
+        ]
+      }
+    },
+    {
+      "id": "p09.photo-index",
+      "label": "Field-photo chain of custody",
+      "sourceAnchors": [
+        {
+          "page": 9,
+          "layer": "native_text",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "PH-214 - Field photo and punch evidence"
+          ]
+        }
+      ],
+      "goldSection": "PH-214 - Field photo and punch evidence",
       "kind": "table",
-      "budget": 2,
-      "closedWorld": true,
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
+      "budget": 1,
       "leaves": [
         {
-          "id": "p06.fields.schema",
-          "expectation": "The region preserves the source field schema in order: Field, Revision B, Revision C.",
+          "id": "p09.photo-index.schema",
+          "canonicalClaimId": "p09.photo-index.schema",
+          "claimType": "structure",
+          "expectation": "The region preserves the source field schema in order: Image, Captured, View, Custodian, Checksum.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Image"
+              ],
+              [
+                "Captured"
+              ],
+              [
+                "View"
+              ],
+              [
+                "Custodian"
+              ],
+              [
+                "Checksum"
+              ]
+            ]
+          }
         },
         {
-          "id": "p06.fields.row-order",
-          "expectation": "The source row order is recoverable as: Door identifier -> Reader -> Circuit -> Schedule.",
+          "id": "p09.photo-index.row-order",
+          "canonicalClaimId": "p09.photo-index.row-order",
+          "claimType": "ordered_record",
+          "expectation": "The source row order is recoverable as: PHOTO 06 -> PHOTO 09.",
           "harm": 1,
-          "allowPartial": true
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "PHOTO 06"
+              ],
+              [
+                "PHOTO 09"
+              ]
+            ]
+          }
         },
         {
-          "id": "p06.fields.door-identifier.revision-b",
-          "expectation": "For Door identifier, Revision B is D-214A.",
+          "id": "p09.photo-index.photo-06.view",
+          "canonicalClaimId": "p09.photo-index.photo-06.view",
+          "claimType": "table_binding",
+          "expectation": "For PHOTO 06, View is C2 south.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "PHOTO 06"
+            ],
+            "column": [
+              "View"
+            ],
+            "value": [
+              "C2 south"
+            ]
+          }
         },
         {
-          "id": "p06.fields.door-identifier.revision-c",
-          "expectation": "For Door identifier, Revision C is D-214B.",
+          "id": "p09.photo-index.photo-06.checksum",
+          "canonicalClaimId": "p09.photo-index.photo-06.checksum",
+          "claimType": "table_binding",
+          "expectation": "For PHOTO 06, Checksum is 8F4C-06A2.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "PHOTO 06"
+            ],
+            "column": [
+              "Checksum"
+            ],
+            "value": [
+              "8F4C-06A2"
+            ]
+          }
         },
         {
-          "id": "p06.fields.reader.revision-b",
-          "expectation": "For Reader, Revision B is None.",
+          "id": "p09.photo-index.photo-09.view",
+          "canonicalClaimId": "p09.photo-index.photo-09.view",
+          "claimType": "table_binding",
+          "expectation": "For PHOTO 09, View is 218 west.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "PHOTO 09"
+            ],
+            "column": [
+              "View"
+            ],
+            "value": [
+              "218 west"
+            ]
+          }
         },
         {
-          "id": "p06.fields.reader.revision-c",
-          "expectation": "For Reader, Revision C is CR-6 corridor side.",
+          "id": "p09.photo-index.photo-09.checksum",
+          "canonicalClaimId": "p09.photo-index.photo-09.checksum",
+          "claimType": "table_binding",
+          "expectation": "For PHOTO 09, Checksum is 1B77-09D5.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "PHOTO 09"
+            ],
+            "column": [
+              "Checksum"
+            ],
+            "value": [
+              "1B77-09D5"
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "PHOTO 06",
+          "PHOTO 09"
+        ]
+      }
+    },
+    {
+      "id": "p10.issue",
+      "label": "Final distribution manifest",
+      "sourceAnchors": [
+        {
+          "page": 10,
+          "layer": "native_text",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "CL-214 - Final issue and signoff record"
+          ]
+        }
+      ],
+      "goldSection": "CL-214 - Final issue and signoff record",
+      "kind": "table",
+      "modality": "native_text",
+      "uniqueEvidence": true,
+      "primaryAxis": "table_reconstruction",
+      "secondaryAxes": [],
+      "textOnlyRecoverable": true,
+      "budget": 1,
+      "leaves": [
+        {
+          "id": "p10.issue.schema",
+          "canonicalClaimId": "p10.issue.schema",
+          "claimType": "structure",
+          "expectation": "The region preserves the source field schema in order: Artifact, Revision, Digest, Recipient, Time.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Artifact"
+              ],
+              [
+                "Revision"
+              ],
+              [
+                "Digest"
+              ],
+              [
+                "Recipient"
+              ],
+              [
+                "Time"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p10.issue.row-order",
+          "canonicalClaimId": "p10.issue.row-order",
+          "claimType": "ordered_record",
+          "expectation": "The source row order is recoverable as: A2.14 -> A6.24 -> T4.08 -> N1.07 -> E6.02 -> RFI-214-17.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "A2.14"
+              ],
+              [
+                "A6.24"
+              ],
+              [
+                "T4.08"
+              ],
+              [
+                "N1.07"
+              ],
+              [
+                "E6.02"
+              ],
+              [
+                "RFI-214-17"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p10.issue.a2-14.revision",
+          "canonicalClaimId": "p10.issue.a2-14.revision",
+          "claimType": "table_binding",
+          "expectation": "For A2.14, Revision is C.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "A2.14"
+            ],
+            "column": [
+              "Revision"
+            ],
+            "value": [
+              "C"
+            ]
+          }
+        },
+        {
+          "id": "p10.issue.a2-14.digest",
+          "canonicalClaimId": "p10.issue.a2-14.digest",
+          "claimType": "table_binding",
+          "expectation": "For A2.14, Digest is 2E11-A214.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "A2.14"
+            ],
+            "column": [
+              "Digest"
+            ],
+            "value": [
+              "2E11-A214"
+            ]
+          }
+        },
+        {
+          "id": "p10.issue.n1-07.revision",
+          "canonicalClaimId": "p10.issue.n1-07.revision",
+          "claimType": "table_binding",
+          "expectation": "For N1.07, Revision is C.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "N1.07"
+            ],
+            "column": [
+              "Revision"
+            ],
+            "value": [
+              "C"
+            ]
+          }
+        },
+        {
+          "id": "p10.issue.e6-02.digest",
+          "canonicalClaimId": "p10.issue.e6-02.digest",
+          "claimType": "table_binding",
+          "expectation": "For E6.02, Digest is 7D14-E602.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E6.02"
+            ],
+            "column": [
+              "Digest"
+            ],
+            "value": [
+              "7D14-E602"
+            ]
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "table_rows",
+        "keys": [
+          "A2.14",
+          "A6.24",
+          "T4.08",
+          "N1.07",
+          "E6.02",
+          "RFI-214-17"
+        ]
+      }
+    },
+    {
+      "id": "p10.release-states",
+      "label": "Embedded final-release states",
+      "sourceAnchors": [
+        {
+          "page": 10,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "CL-214 - Final issue and signoff record"
+          ]
+        }
+      ],
+      "goldSection": "CL-214 - Final issue and signoff record",
+      "kind": "form",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "form_state",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 3,
+      "leaves": [
+        {
+          "id": "p10.release.rev-c",
+          "canonicalClaimId": "p10.release.rev-c",
+          "claimType": "form_state",
+          "expectation": "IFC Revision C accepted is checked.",
           "harm": 2,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "IFC Revision C accepted"
+            ],
+            "state": "checked"
+          }
         },
         {
-          "id": "p06.fields.circuit.revision-b",
-          "expectation": "For Circuit, Revision B is Unassigned.",
-          "harm": 1,
-          "allowPartial": false
+          "id": "p10.release.rev-b",
+          "canonicalClaimId": "p10.release.rev-b",
+          "claimType": "form_state",
+          "expectation": "Use archived Revision B background is unchecked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Use archived Revision B background"
+            ],
+            "state": "unchecked"
+          }
         },
         {
-          "id": "p06.fields.circuit.revision-c",
-          "expectation": "For Circuit, Revision C is L2-15.",
-          "harm": 1,
-          "allowPartial": false
+          "id": "p10.release.rfi",
+          "canonicalClaimId": "p10.release.rfi",
+          "claimType": "form_state",
+          "expectation": "RFI-214-17 incorporated is checked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "RFI-214-17 incorporated"
+            ],
+            "state": "checked"
+          }
         },
         {
-          "id": "p06.fields.schedule.revision-b",
-          "expectation": "For Schedule, Revision B is Draft.",
+          "id": "p10.release.punch",
+          "canonicalClaimId": "p10.release.punch",
+          "claimType": "form_state",
+          "expectation": "Open access-control punch items is unchecked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Open access-control punch items"
+            ],
+            "state": "unchecked"
+          }
+        }
+      ],
+      "closedWorld": {
+        "scope": "form_options",
+        "keys": [
+          "IFC Revision C accepted",
+          "Use archived Revision B background",
+          "RFI-214-17 incorporated",
+          "Open access-control punch items"
+        ]
+      }
+    },
+    {
+      "id": "p10.release-identity",
+      "label": "Final-release identity and signatories",
+      "sourceAnchors": [
+        {
+          "page": 10,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "CL-214 - Final issue and signoff record"
+          ]
+        }
+      ],
+      "goldSection": "CL-214 - Final issue and signoff record",
+      "kind": "form",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "form_state",
+      "secondaryAxes": [
+        "low_quality_scan"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 1,
+      "leaves": [
+        {
+          "id": "p10.identity.package",
+          "canonicalClaimId": "p10.identity.package",
+          "claimType": "scalar",
+          "expectation": "The release package is ARC-214-C.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "ARC-214-C"
+              ]
+            ]
+          }
         },
         {
-          "id": "p06.fields.schedule.revision-c",
-          "expectation": "For Schedule, Revision C is Issued.",
+          "id": "p10.identity.date",
+          "canonicalClaimId": "p10.identity.date",
+          "claimType": "scalar",
+          "expectation": "The release date is 2026-06-16.",
           "harm": 1,
-          "allowPartial": false
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "16 JUN 2026",
+                "16 June 2026"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p10.identity.seal",
+          "canonicalClaimId": "p10.identity.seal",
+          "claimType": "scalar",
+          "expectation": "The release seal is 214-C-0616.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "214-C-0616"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p10.identity.signers",
+          "canonicalClaimId": "p10.identity.signers",
+          "claimType": "scalar",
+          "expectation": "The release names AV, TN, JH, and LS as signatories.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "AV"
+              ],
+              [
+                "TN"
+              ],
+              [
+                "JH"
+              ],
+              [
+                "LS"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p10.final-coordination",
+      "label": "Cross-sheet controlling coordination state",
+      "sourceAnchors": [
+        {
+          "page": 1,
+          "layer": "native_text",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "Coordination transmittal and sheet index"
+          ]
+        },
+        {
+          "page": 3,
+          "layer": "vector_geometry",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "A2.14 - Controlled floor plan and overlay"
+          ]
+        },
+        {
+          "page": 5,
+          "layer": "native_text",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "T4.08 - Rack R2 elevation and patching"
+          ]
+        },
+        {
+          "page": 6,
+          "layer": "vector_geometry",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "N1.07 - Network and access-control topology"
+          ]
+        },
+        {
+          "page": 7,
+          "layer": "mixed",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "E6.02 - Panel LP-2 and field check"
+          ]
+        },
+        {
+          "page": 8,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "RFI-214-17 - Lab B corridor opening"
+          ]
+        },
+        {
+          "page": 9,
+          "layer": "raster",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "PH-214 - Field photo and punch evidence"
+          ]
+        },
+        {
+          "page": 10,
+          "layer": "mixed",
+          "sectionPath": [
+            "Suite 214 Laboratory Coordination Set",
+            "CL-214 - Final issue and signoff record"
+          ]
+        }
+      ],
+      "goldSection": "CL-214 - Final issue and signoff record",
+      "kind": "mixed",
+      "modality": "mixed",
+      "uniqueEvidence": true,
+      "primaryAxis": "cross_page_join",
+      "secondaryAxes": [
+        "source_precedence",
+        "mixed_modality_fusion",
+        "long_context_coherence",
+        "summarization_coverage"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 4,
+      "leaves": [
+        {
+          "id": "p10.final.geometry",
+          "canonicalClaimId": "p10.final.geometry",
+          "claimType": "source_precedence",
+          "expectation": "Final release acceptance makes the solid Revision C door geometry control over the dashed archived Revision B opening.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "final release"
+              ],
+              [
+                "acceptance",
+                "accepted"
+              ],
+              [
+                "solid"
+              ],
+              [
+                "Revision C",
+                "Rev C"
+              ],
+              [
+                "dashed"
+              ],
+              [
+                "archived"
+              ],
+              [
+                "Revision B",
+                "Rev B"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p10.final.door-chain",
+          "canonicalClaimId": "p10.final.door-chain",
+          "claimType": "cross_page_join",
+          "expectation": "The Revision C plan and RFI-214-17 consistently bind D-214B to callout 6, CR-6 at the corridor-side east jamb, and a south swing into C2.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Revision C",
+                "Rev C"
+              ],
+              [
+                "RFI-214-17"
+              ],
+              [
+                "D-214B"
+              ],
+              [
+                "callout 6",
+                "6"
+              ],
+              [
+                "CR-6"
+              ],
+              [
+                "corridor-side",
+                "corridor side"
+              ],
+              [
+                "east jamb"
+              ],
+              [
+                "south swing",
+                "swings south"
+              ],
+              [
+                "C2"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p10.final.power-chain",
+          "canonicalClaimId": "p10.final.power-chain",
+          "claimType": "cross_page_join",
+          "expectation": "The release chain binds CR-6 through DC-6 to LP-2 circuit L2-15.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "release chain"
+              ],
+              [
+                "CR-6"
+              ],
+              [
+                "DC-6"
+              ],
+              [
+                "LP-2"
+              ],
+              [
+                "L2-15"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p10.final.power-field-state",
+          "canonicalClaimId": "p10.final.power-field-state",
+          "claimType": "cross_page_join",
+          "expectation": "LP-2 circuit L2-15 has its field tag installed and emergency transfer witnessed.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "LP-2"
+              ],
+              [
+                "L2-15"
+              ],
+              [
+                "field tag installed"
+              ],
+              [
+                "emergency transfer witnessed"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p10.final.network-chain",
+          "canonicalClaimId": "p10.final.network-chain",
+          "claimType": "cross_page_join",
+          "expectation": "The release network chain binds CR-6 to CS-2/07 on VLAN 230, then through DC-6 toward ACS-CORE while separately mirroring events to NVR-B.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "release"
+              ],
+              [
+                "network chain"
+              ],
+              [
+                "CR-6"
+              ],
+              [
+                "CS-2/07"
+              ],
+              [
+                "VLAN 230"
+              ],
+              [
+                "DC-6"
+              ],
+              [
+                "ACS-CORE"
+              ],
+              [
+                "mirror",
+                "mirroring"
+              ],
+              [
+                "NVR-B"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p10.final.photo-chain",
+          "canonicalClaimId": "p10.final.photo-chain",
+          "claimType": "cross_page_join",
+          "expectation": "Photo 06 visually confirms the reader on the image-right/east jamb, consistent with the plan and RFI.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Photo 06"
+              ],
+              [
+                "reader"
+              ],
+              [
+                "image-right",
+                "right",
+                "east jamb"
+              ],
+              [
+                "plan",
+                "A2.14"
+              ],
+              [
+                "RFI",
+                "RFI-214-17"
+              ]
+            ]
+          }
         }
       ]
     }
