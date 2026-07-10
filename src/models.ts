@@ -113,19 +113,3 @@ export function createModel(spec: ModelSpec) {
   }
   return createGoogleVertex({ location, baseURL })(spec.modelName);
 }
-
-export const conversionPrompt = `Convert the attached PDF into one faithful Markdown document for downstream machine use.
-
-Return only Markdown. Do not add commentary, citations, JSON, code fences, or an executive summary.
-
-Reconstruct the document exhaustively:
-- Process every page and every visible region in source order.
-- Preserve all readable text, headings, section hierarchy, lists, captions, footnotes, stamps, annotations, signatures, page-level notes, and document-state notes.
-- Preserve every table row, column, header, unit, label, value, subtotal, continuation, blank/NA state, and row/column relationship.
-- Preserve checkbox/radio states, strikeouts, insertions, corrections, voided values, and final/current values.
-- Describe charts, diagrams, maps, floorplans, screenshots, photos, timelines, heatmaps, chromatograms, and other visual content inline where it appears. Include labels, legends, axes, units, thresholds, colors, symbols, arrows, spatial relationships, and printed values.
-- Never invent precision for values that are only visually inferable.
-- Rendered visible current content wins over hidden, stale, covered, deleted, or superseded PDF text. Preserve visibly historical content only when it is part of the reading experience and label its state clearly.
-- If a broken export has legitimate selectable PDF text needed to recover the document, use it while preserving visible reading order.
-
-The goal is faithful reconstruction of the original document's information and reading experience, not summarization or interpretation.`;

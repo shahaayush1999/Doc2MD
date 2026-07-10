@@ -32,18 +32,19 @@ npm run bench -- --model openai-gpt-5.4-nano --model vertex-gemini-3.1-flash-lit
 
 Models run serially. Within each model, all five case pipelines run concurrently. Each pipeline sends the native PDF to the model and starts evaluation as soon as that case finishes.
 
-Every invocation creates a new timestamped directory:
+Results are cached per model and case:
 
 ```text
-runs/<timestamp>/
-  summary.json
-  report.html
-  <model>/<case>/prediction.md
-  <model>/<case>/inference.json
-  <model>/<case>/score.json
+runs/cache/<model>/<case>/prediction.md
+runs/cache/<model>/<case>/inference.json
+runs/cache/<model>/<case>/score.json
+reports/summary.json
+reports/index.html
 ```
 
-The suite score is the equal-weight mean of all five case scores. If any case fails, the model's suite score is reported as incomplete. The summary and report include inference spend, evaluator spend, and per-case scores.
+Inference is reused only when the PDF bytes, conversion prompt, model configuration, and output limit match. Evaluation is reused only when the prediction, facts, and evaluator implementation match. A scorer change therefore rescores cached predictions without rerunning the model. Adding a new case runs only that missing case for previously cached models. Explicit `--model` flags run/check only those models; without flags, the command checks the default anchors plus every model already present in the cache.
+
+After every invocation, the merged report is rebuilt from every model with a complete cache for the current manifest. The suite score is the equal-weight mean of all case scores. The report includes inference spend, evaluator spend, and per-case scores.
 
 ## Scoring
 

@@ -1,4 +1,5 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { fileURLToPath } from "node:url";
@@ -6,177 +7,291 @@ import { generateText } from "ai";
 import { evaluatePrediction, type ManifestCase } from "./evaluator.js";
 import { loadBenchmarkManifest } from "./manifest.js";
 import { calculateCost } from "./pricing.js";
-import { conversionPrompt, createModel, defaultModelIds, models } from "./models.js";
+import { createModel, defaultModelIds, models, type ModelSpec } from "./models.js";
 
+const cacheRoot = "runs/cache";
+const promptPath = "benchmark/prompt.md";
 const maxOutputTokens = 60_000;
 
-function parseModels(argv: string[]) {
-  const selected: string[] = [];
-  for (let index = 0; index < argv.length; index += 1) {
-    if (argv[index] !== "--model" || !argv[index + 1]) {
-      throw new Error(`Usage: npm run bench -- [--model MODEL_ID ...]\nModels: ${Object.keys(models).join(", ")}`);
-    }
-    const modelId = argv[++index]!;
-    if (!models[modelId]) throw new Error(`Unknown model ${modelId}. Models: ${Object.keys(models).join(", ")}`);
-    if (!selected.includes(modelId)) selected.push(modelId);
+function sha256(value: string | Uint8Array) {
+  return createHash("sha256").update(value).digest("hex");
+}
+
+async function readJson(filePath: string) {
+  return JSON.parse(await readFile(filePath, "utf8")) as any;
+}
+
+async function readJsonOrNull(filePath: string) {
+  try {
+    return await readJson(filePath);
+  } catch {
+    return null;
   }
-  return selected.length > 0 ? selected : defaultModelIds;
 }
 
 async function writeJson(filePath: string, value: unknown) {
+  await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, JSON.stringify(value, null, 2) + "\n", "utf8");
+}
+
+function cacheDirectory(modelId: string, caseId: string) {
+  return path.join(cacheRoot, modelId, caseId);
+}
+
+async function inferenceKey(spec: ModelSpec, testCase: ManifestCase, prompt: string) {
+  const pdf = await readFile(testCase.pdf);
+  return sha256(
+    JSON.stringify({
+      pdf: sha256(pdf),
+      prompt: sha256(prompt),
+      model: {
+        id: spec.id,
+        modelName: spec.modelName,
+        provider: spec.provider,
+        reasoning: spec.reasoning ?? null,
+        location: spec.location ?? null,
+      },
+      maxOutputTokens,
+    }),
+  );
+}
+
+async function scoreKey(testCase: ManifestCase, prediction: string, evaluatorSourceHash: string) {
+  if (!testCase.facts) throw new Error(`${testCase.id} has no facts file.`);
+  return sha256(
+    JSON.stringify({
+      prediction: sha256(prediction),
+      facts: sha256(await readFile(testCase.facts)),
+      evaluator: evaluatorSourceHash,
+    }),
+  );
+}
+
+async function loadCachedCase(modelId: string, testCase: ManifestCase, prompt: string, evaluatorSourceHash: string) {
+  const directory = cacheDirectory(modelId, testCase.id);
+  const [prediction, inference, evaluation] = await Promise.all([
+    readFile(path.join(directory, "prediction.md"), "utf8").catch(() => null),
+    readJsonOrNull(path.join(directory, "inference.json")),
+    readJsonOrNull(path.join(directory, "score.json")),
+  ]);
+  if (!prediction || !inference) return null;
+  const expectedInferenceKey = await inferenceKey(models[modelId]!, testCase, prompt);
+  if (inference.cacheKey !== expectedInferenceKey) return null;
+  const expectedScoreKey = await scoreKey(testCase, prediction, evaluatorSourceHash);
+  return {
+    directory,
+    prediction,
+    inference,
+    evaluation: evaluation?.cacheKey === expectedScoreKey ? evaluation : null,
+    inferenceKey: expectedInferenceKey,
+    scoreKey: expectedScoreKey,
+  };
+}
+
+async function importLegacyResults(manifest: { cases: ManifestCase[] }, prompt: string, evaluatorSourceHash: string) {
+  for (const modelId of Object.keys(models)) {
+    const spec = models[modelId]!;
+    for (const testCase of manifest.cases) {
+      const directory = cacheDirectory(modelId, testCase.id);
+      if (await readJsonOrNull(path.join(directory, "inference.json"))) continue;
+      const legacyDirectory = path.join("runs", modelId, testCase.id, "samples", "001");
+      const [prediction, result, score] = await Promise.all([
+        readFile(path.join(legacyDirectory, "prediction.md"), "utf8").catch(() => null),
+        readJsonOrNull(path.join(legacyDirectory, "result.json")),
+        readJsonOrNull(path.join(legacyDirectory, "score.json")),
+      ]);
+      if (!prediction || !result || !score || !Number.isFinite(score.score)) continue;
+      const pdfHash = sha256(await readFile(testCase.pdf));
+      if (
+        result.modelId !== modelId ||
+        result.modelName !== spec.modelName ||
+        result.cache?.pdfHash !== pdfHash ||
+        result.cache?.promptHash !== sha256(prompt)
+      ) {
+        continue;
+      }
+      const importedInference = {
+        modelId,
+        resolvedModel: result.providerMetadata?.resolved?.modelId ?? result.modelName,
+        elapsedMs: result.elapsedMs ?? 0,
+        finishReason: result.finishReason ?? "unknown",
+        usage: result.usage ?? null,
+        costUsd: result.estimatedCostUsd ?? 0,
+        cacheKey: await inferenceKey(spec, testCase, prompt),
+        importedFromLegacyRun: true,
+      };
+      const importedScore = {
+        valid: score.valid === true,
+        score: score.score,
+        evaluator: {
+          model: score.scorer?.evaluatorModelName ?? "gemini-3.1-flash-lite",
+          attempts: score.scorer?.attempts ?? 0,
+          errors: score.scorer?.errors ?? [],
+          elapsedMs: score.scorer?.elapsedMs ?? 0,
+          usage: score.scorer?.usage ?? null,
+          costUsd: score.scorer?.estimatedCostUsd ?? 0,
+        },
+        atomicScore: score.atomicScore,
+        judgeResult: score.judgeResult,
+        cacheKey: await scoreKey(testCase, prediction, evaluatorSourceHash),
+        importedFromLegacyRun: true,
+      };
+      await mkdir(directory, { recursive: true });
+      await Promise.all([
+        writeFile(path.join(directory, "prediction.md"), prediction, "utf8"),
+        writeJson(path.join(directory, "inference.json"), importedInference),
+        writeJson(path.join(directory, "score.json"), importedScore),
+      ]);
+    }
+  }
 }
 
 function errorMessage(error: unknown) {
   return error instanceof Error ? `${error.name}: ${error.message}` : String(error);
 }
 
-async function runCase(modelId: string, testCase: ManifestCase, modelDirectory: string) {
+async function runCase(modelId: string, testCase: ManifestCase, prompt: string, evaluatorSourceHash: string) {
   const spec = models[modelId]!;
-  const caseDirectory = path.join(modelDirectory, testCase.id);
-  await mkdir(caseDirectory, { recursive: true });
+  const directory = cacheDirectory(modelId, testCase.id);
+  await mkdir(directory, { recursive: true });
+  let cached = await loadCachedCase(modelId, testCase, prompt, evaluatorSourceHash);
+  let prediction = cached?.prediction ?? null;
+  let inference = cached?.inference ?? null;
+  let inferenceSpent = 0;
+  let evaluatorSpent = 0;
 
-  let prediction: string;
-  let inference: any;
-  try {
+  if (!prediction || !inference) {
     const pdf = await readFile(testCase.pdf);
     const started = performance.now();
     const response = await generateText({
       model: createModel(spec),
-      messages: [
-        {
-          role: "user",
-          content: [
-            { type: "text", text: conversionPrompt },
-            { type: "file", data: pdf, mediaType: "application/pdf", filename: `${testCase.id}.pdf` },
-          ],
-        },
-      ],
+      messages: [{ role: "user", content: [{ type: "text", text: prompt }, { type: "file", data: pdf, mediaType: "application/pdf", filename: `${testCase.id}.pdf` }] }],
       maxOutputTokens,
       maxRetries: 2,
       ...(spec.reasoning ? { reasoning: spec.reasoning } : {}),
     });
     prediction = response.text;
+    inferenceSpent = calculateCost(spec, response.usage);
     inference = {
       modelId,
       resolvedModel: response.response.modelId,
       elapsedMs: Math.round(performance.now() - started),
       finishReason: response.finishReason,
       usage: response.usage,
-      costUsd: calculateCost(spec, response.usage),
+      costUsd: inferenceSpent,
+      cacheKey: await inferenceKey(spec, testCase, prompt),
     };
     await Promise.all([
-      writeFile(path.join(caseDirectory, "prediction.md"), prediction, "utf8"),
-      writeJson(path.join(caseDirectory, "inference.json"), inference),
+      writeFile(path.join(directory, "prediction.md"), prediction, "utf8"),
+      writeJson(path.join(directory, "inference.json"), inference),
     ]);
-  } catch (error) {
-    const failure = { caseId: testCase.id, modelId, stage: "inference", error: errorMessage(error) };
-    await writeJson(path.join(caseDirectory, "error.json"), failure);
-    console.error(`${modelId} ${testCase.id}: inference failed`);
-    return { caseId: testCase.id, title: testCase.title, score: null, inferenceCostUsd: 0, evaluatorCostUsd: 0, error: failure.error };
+    cached = null;
   }
 
-  try {
-    const evaluation = await evaluatePrediction(testCase, prediction);
-    await writeJson(path.join(caseDirectory, "score.json"), evaluation);
-    console.log(
-      `${modelId} ${testCase.id}: ${evaluation.score === null ? "INVALID" : evaluation.score.toFixed(1)} ` +
-        `($${(inference.costUsd + evaluation.evaluator.costUsd).toFixed(6)})`,
-    );
-    return {
-      caseId: testCase.id,
-      title: testCase.title,
-      score: evaluation.score,
-      inferenceCostUsd: inference.costUsd,
-      evaluatorCostUsd: evaluation.evaluator.costUsd,
-      inferenceElapsedMs: inference.elapsedMs,
-      evaluatorElapsedMs: evaluation.evaluator.elapsedMs,
-      error: evaluation.valid ? null : evaluation.evaluator.errors.join("; "),
-    };
-  } catch (error) {
-    const failure = { caseId: testCase.id, modelId, stage: "evaluation", error: errorMessage(error) };
-    await writeJson(path.join(caseDirectory, "error.json"), failure);
-    console.error(`${modelId} ${testCase.id}: evaluation failed`);
-    return {
-      caseId: testCase.id,
-      title: testCase.title,
-      score: null,
-      inferenceCostUsd: inference.costUsd,
-      evaluatorCostUsd: 0,
-      error: failure.error,
-    };
+  let evaluation = cached?.evaluation ?? null;
+  if (!evaluation) {
+    evaluation = await evaluatePrediction(testCase, prediction);
+    evaluatorSpent = evaluation.evaluator.costUsd;
+    evaluation.cacheKey = await scoreKey(testCase, prediction, evaluatorSourceHash);
+    await writeJson(path.join(directory, "score.json"), evaluation);
   }
+
+  const cacheStatus = inferenceSpent === 0 && evaluatorSpent === 0 ? "cached" : inferenceSpent === 0 ? "rescored" : "run";
+  console.log(`${modelId} ${testCase.id}: ${evaluation.score === null ? "INVALID" : evaluation.score.toFixed(1)} (${cacheStatus})`);
+  return {
+    caseId: testCase.id,
+    title: testCase.title,
+    score: evaluation.score as number | null,
+    inferenceCostUsd: inference.costUsd ?? 0,
+    evaluatorCostUsd: evaluation.evaluator.costUsd ?? 0,
+    incrementalCostUsd: inferenceSpent + evaluatorSpent,
+    cacheStatus,
+  };
 }
 
 function mean(values: number[]) {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
+async function cachedModelIds() {
+  const entries = await readdir(cacheRoot, { withFileTypes: true }).catch(() => []);
+  return entries.filter((entry) => entry.isDirectory() && models[entry.name]).map((entry) => entry.name);
+}
+
+function parseRequestedModels(argv: string[]) {
+  const selected: string[] = [];
+  for (let index = 0; index < argv.length; index += 1) {
+    if (argv[index] !== "--model" || !argv[index + 1]) throw new Error("Usage: npm run bench -- [--model MODEL_ID ...]");
+    const modelId = argv[++index]!;
+    if (!models[modelId]) throw new Error(`Unknown model ${modelId}. Models: ${Object.keys(models).join(", ")}`);
+    if (!selected.includes(modelId)) selected.push(modelId);
+  }
+  return selected;
+}
+
 function escapeHtml(value: unknown) {
-  return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+  return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
 
 function renderReport(summary: any) {
-  const sections = summary.models
-    .map(
-      (model: any) => `<section><h2>${escapeHtml(model.modelId)} — ${model.score === null ? "Incomplete" : model.score.toFixed(1)}</h2>
-      <table><thead><tr><th>Case</th><th>Score</th><th>Inference</th><th>Evaluator</th></tr></thead><tbody>
-      ${model.cases
-        .map(
-          (testCase: any) => `<tr><td>${escapeHtml(testCase.caseId)}</td><td>${testCase.score === null ? "—" : testCase.score.toFixed(1)}</td><td>$${testCase.inferenceCostUsd.toFixed(6)}</td><td>$${testCase.evaluatorCostUsd.toFixed(6)}</td></tr>`,
-        )
-        .join("")}
-      </tbody></table></section>`,
-    )
-    .join("");
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Doc2MD benchmark</title><style>
-  body{max-width:1000px;margin:48px auto;padding:0 20px;font:15px/1.5 system-ui;color:#18201c;background:#f6f5f0}h1,h2{font-family:Georgia,serif}section{margin:36px 0;background:white;padding:20px;border:1px solid #ddd;border-radius:10px}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px;border-bottom:1px solid #ddd}th{color:#59625d}code{background:#ecebe5;padding:2px 5px}</style></head><body>
-  <h1>Doc2MD benchmark</h1><p>Run <code>${escapeHtml(summary.runId)}</code> · ${summary.caseCount} cases · Total spend $${summary.totalCostUsd.toFixed(6)}</p>${sections}</body></html>`;
+  const sections = summary.models.map((model: any) => `<section><h2>${escapeHtml(model.modelId)} — ${model.score === null ? "Incomplete" : model.score.toFixed(1)}</h2><table><thead><tr><th>Case</th><th>Score</th><th>Inference</th><th>Evaluator</th></tr></thead><tbody>${model.cases.map((testCase: any) => `<tr><td>${escapeHtml(testCase.caseId)}</td><td>${testCase.score === null ? "—" : testCase.score.toFixed(1)}</td><td>$${testCase.inferenceCostUsd.toFixed(6)}</td><td>$${testCase.evaluatorCostUsd.toFixed(6)}</td></tr>`).join("")}</tbody></table></section>`).join("");
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Doc2MD benchmark</title><style>body{max-width:1000px;margin:48px auto;padding:0 20px;font:15px/1.5 system-ui;color:#18201c;background:#f6f5f0}h1,h2{font-family:Georgia,serif}section{margin:36px 0;background:white;padding:20px;border:1px solid #ddd;border-radius:10px}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px;border-bottom:1px solid #ddd}th{color:#59625d}</style></head><body><h1>Doc2MD benchmark</h1><p>${summary.caseCount} current cases · ${summary.models.length} complete models · Cumulative measured spend $${summary.totalCostUsd.toFixed(6)}</p>${sections}</body></html>`;
 }
 
-export async function runBenchmark(modelIds: string[]) {
-  const startedAt = new Date();
-  const runId = startedAt.toISOString().replaceAll(":", "-").replaceAll(".", "-");
-  const runDirectory = path.join("runs", runId);
-  const { manifest } = await loadBenchmarkManifest();
-  await mkdir(runDirectory, { recursive: true });
-
-  const modelResults = [];
-  for (const modelId of modelIds) {
-    console.log(`\n${modelId}: starting ${manifest.cases.length} case pipelines in parallel`);
-    const cases = await Promise.all(
-      manifest.cases.map((testCase) => runCase(modelId, testCase as ManifestCase, path.join(runDirectory, modelId))),
-    );
-    const validScores = cases.flatMap((testCase) => (testCase.score === null ? [] : [testCase.score]));
+async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt: string, evaluatorSourceHash: string) {
+  const merged = [];
+  for (const modelId of await cachedModelIds()) {
+    const cases = [];
+    for (const testCase of manifest.cases) {
+      const cached = await loadCachedCase(modelId, testCase, prompt, evaluatorSourceHash);
+      if (!cached?.evaluation || !Number.isFinite(cached.evaluation.score)) break;
+      cases.push({
+        caseId: testCase.id,
+        title: testCase.title,
+        score: cached.evaluation.score,
+        inferenceCostUsd: cached.inference.costUsd ?? 0,
+        evaluatorCostUsd: cached.evaluation.evaluator.costUsd ?? 0,
+      });
+    }
+    if (cases.length !== manifest.cases.length) continue;
     const inferenceCostUsd = cases.reduce((sum, testCase) => sum + testCase.inferenceCostUsd, 0);
     const evaluatorCostUsd = cases.reduce((sum, testCase) => sum + testCase.evaluatorCostUsd, 0);
-    modelResults.push({
-      modelId,
-      score: validScores.length === cases.length ? mean(validScores) : null,
-      inferenceCostUsd,
-      evaluatorCostUsd,
-      totalCostUsd: inferenceCostUsd + evaluatorCostUsd,
-      cases,
-    });
+    merged.push({ modelId, score: mean(cases.map((testCase) => testCase.score)), inferenceCostUsd, evaluatorCostUsd, totalCostUsd: inferenceCostUsd + evaluatorCostUsd, cases });
+  }
+  return merged.sort((a, b) => b.score - a.score);
+}
+
+export async function runBenchmark(requestedModelIds: string[]) {
+  const { manifest } = await loadBenchmarkManifest();
+  const [promptFile, evaluatorSource] = await Promise.all([readFile(promptPath, "utf8"), readFile("src/evaluator.ts")]);
+  const prompt = promptFile.trimEnd();
+  const evaluatorSourceHash = sha256(evaluatorSource);
+  await importLegacyResults(manifest as { cases: ManifestCase[] }, prompt, evaluatorSourceHash);
+  const modelIds = requestedModelIds.length > 0 ? requestedModelIds : [...new Set([...defaultModelIds, ...(await cachedModelIds())])];
+  let incrementalSpendUsd = 0;
+
+  for (const modelId of modelIds) {
+    console.log(`\n${modelId}: checking ${manifest.cases.length} cases`);
+    const cases = await Promise.all(manifest.cases.map((testCase) => runCase(modelId, testCase as ManifestCase, prompt, evaluatorSourceHash)));
+    incrementalSpendUsd += cases.reduce((sum, testCase) => sum + testCase.incrementalCostUsd, 0);
   }
 
+  const mergedModels = await collectMergedResults(manifest as { cases: ManifestCase[] }, prompt, evaluatorSourceHash);
   const summary = {
-    runId,
-    startedAt: startedAt.toISOString(),
-    completedAt: new Date().toISOString(),
+    generatedAt: new Date().toISOString(),
     caseCount: manifest.cases.length,
-    models: modelResults,
-    totalCostUsd: modelResults.reduce((sum, model) => sum + model.totalCostUsd, 0),
+    incrementalSpendUsd,
+    totalCostUsd: mergedModels.reduce((sum, model) => sum + model.totalCostUsd, 0),
+    models: mergedModels,
   };
-  await Promise.all([
-    writeJson(path.join(runDirectory, "summary.json"), summary),
-    writeFile(path.join(runDirectory, "report.html"), renderReport(summary), "utf8"),
-  ]);
-  console.table(modelResults.map((model) => ({ model: model.modelId, score: model.score, spendUsd: model.totalCostUsd })));
-  console.log(`Report: ${path.join(runDirectory, "report.html")}`);
+  await mkdir("reports", { recursive: true });
+  await Promise.all([writeJson("reports/summary.json", summary), writeFile("reports/index.html", renderReport(summary), "utf8")]);
+  console.table(mergedModels.map((model) => ({ model: model.modelId, score: model.score, cumulativeSpendUsd: model.totalCostUsd })));
+  console.log(`Incremental spend: $${incrementalSpendUsd.toFixed(6)}`);
+  console.log("Report: reports/index.html");
   return summary;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  await runBenchmark(parseModels(process.argv.slice(2)));
+  await runBenchmark(parseRequestedModels(process.argv.slice(2)));
 }
