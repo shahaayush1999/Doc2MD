@@ -1,0 +1,2102 @@
+{
+  "schemaVersion": 1,
+  "kind": "doc2md_anchor_validation_draw_snapshot",
+  "capturedAt": "2026-07-10T12:52:35.939Z",
+  "sourceGitCommit": "86243c07d48122b2a53cdc6a87a021cea51ef5f5",
+  "sourceWorktreeWasClean": false,
+  "sourceWorktreeStatus": "?? docs/results/",
+  "benchmark": {
+    "name": "Doc2MD",
+    "suite": "official",
+    "manifestPath": "benchmark/manifest.json",
+    "caseCount": 5,
+    "sample": "001",
+    "modelIds": [
+      "openai-gpt-5-nano",
+      "vertex-gemini-3.1-flash-lite"
+    ]
+  },
+  "comparison": {
+    "exactScoreGap": 29.810604430458284,
+    "displayedScoreGap": 29.799999999999997,
+    "inferenceCostUsd": 0.08085625,
+    "evaluatorCostUsd": 0.30368175,
+    "totalMeasuredCostUsd": 0.38453799999999994
+  },
+  "models": [
+    {
+      "modelId": "openai-gpt-5-nano",
+      "sample": "001",
+      "exactSuiteScore": 26.072882594156134,
+      "displayedSuiteScore": 26.1,
+      "inferenceCostUsd": 0.010743,
+      "evaluatorCostUsd": 0.14668699999999998,
+      "totalMeasuredCostUsd": 0.15743,
+      "fingerprints": {
+        "benchmark": "10acfe9dbee49e2ebc5f9e2150d99c3a9759ecf733e20676027faaa40b03baf9",
+        "inferenceBenchmark": "406be46629745ebbb3ff9dfa38a24867adc47fb502f2d0bbdf837b69918ac24d",
+        "inferenceProtocol": "b36cbb675bc3ed6706279199f375dfc6bf5e352d769ae23c84279d3e3944f028",
+        "scoringContract": "60897c9bf8af201327a5bd928b81d841fcdb99ecd123b174787d481edb4c0342",
+        "modelConfig": "30672b8c68448c78cdd74f45cb5dc02cb37fc04412e481f09aca1dbcd8303b16",
+        "pricing": "c45ab4b00d6e3236479eaf64f9f1866919e8168f385da0741015bdadb81916d1",
+        "cohortArtifact": "190a355c2236342cf3fa64b5dd72df9bdb24124b4e9fb9c40e4be79a9e68aaf2"
+      },
+      "summaryArtifact": {
+        "path": "runs/openai-gpt-5-nano/summary.official.json",
+        "sha256": "a70a8c25c56ce3ad137877dd1c2b19517d6e0d69c39dacd5a801aa54bb2c760f",
+        "bytes": 17220
+      },
+      "summary": {
+        "modelId": "openai-gpt-5-nano",
+        "provider": "openai",
+        "suite": "official",
+        "manifestPath": "benchmark/manifest.json",
+        "benchmarkFingerprint": "10acfe9dbee49e2ebc5f9e2150d99c3a9759ecf733e20676027faaa40b03baf9",
+        "inferenceBenchmarkFingerprint": "406be46629745ebbb3ff9dfa38a24867adc47fb502f2d0bbdf837b69918ac24d",
+        "inferenceProtocolFingerprint": "b36cbb675bc3ed6706279199f375dfc6bf5e352d769ae23c84279d3e3944f028",
+        "modelConfigFingerprint": "30672b8c68448c78cdd74f45cb5dc02cb37fc04412e481f09aca1dbcd8303b16",
+        "resolvedInferenceModelId": "gpt-5-nano-2025-08-07",
+        "resolvedEvaluatorModelId": "gemini-3.1-flash-lite",
+        "pricingFingerprint": "c45ab4b00d6e3236479eaf64f9f1866919e8168f385da0741015bdadb81916d1",
+        "pricingVersion": "2026-07-10",
+        "scoringContractVersion": "atomic-region-candidate-grounded-v9",
+        "scoringContractFingerprint": "60897c9bf8af201327a5bd928b81d841fcdb99ecd123b174787d481edb4c0342",
+        "cohortArtifactFingerprint": "190a355c2236342cf3fa64b5dd72df9bdb24124b4e9fb9c40e4be79a9e68aaf2",
+        "benchmarkName": "Doc2MD",
+        "scoreName": "Doc2MD Native PDF Score",
+        "inputProtocol": "native_pdf",
+        "caseCount": 5,
+        "expectedCaseCount": 5,
+        "complete": true,
+        "missingCaseIds": [],
+        "invalidSamples": [],
+        "samplesPerModelCase": 1,
+        "expectedSampleCount": 5,
+        "sampleCount": 5,
+        "score": 26.1,
+        "suiteSampleScores": [
+          {
+            "sample": "001",
+            "score": 26.072883
+          }
+        ],
+        "scoreStddev": null,
+        "scoreMin": null,
+        "scoreMax": null,
+        "scoreAggregation": "equal_case_sample_first",
+        "costUsd": 0.010743,
+        "meanCostUsdPerSample": 0.002149,
+        "totalElapsedMs": 159055,
+        "meanElapsedMsPerSample": 31811,
+        "totalInputTokens": 75468,
+        "totalOutputTokens": 17424,
+        "meanOutputTokensPerSample": 3485,
+        "modelCallCount": 5,
+        "logicalGenerationCallCount": 5,
+        "totalTransportRequestAttempts": 5,
+        "transportRetryCount": 0,
+        "transportRetriesAreCohortSamples": false,
+        "modelFailureCount": 0,
+        "modelFailureRate": 0,
+        "evaluatorRequiredCount": 5,
+        "evaluatorValidCount": 5,
+        "evaluatorFailureCount": 0,
+        "evaluatorMissingInvalidCount": 0,
+        "evaluatorStatusCounts": {
+          "valid": 5,
+          "failed": 0,
+          "missingInvalid": 0
+        },
+        "evaluatorFailureRate": 0,
+        "evaluatorMissingInvalidRate": 0,
+        "evaluatorCostUsd": 0.146687,
+        "evaluatorElapsedMs": 319684,
+        "evaluatorInputTokens": 274106,
+        "evaluatorOutputTokens": 52107,
+        "diagnostics": {
+          "aggregation": "evidence_budget_sample_first",
+          "complete": true,
+          "byPrimaryAxis": [
+            {
+              "key": "chart_diagram_spatial",
+              "caseCount": 3,
+              "regionCount": 19,
+              "totalBudget": 43,
+              "score": 2.757475,
+              "rawScore": 2.757475,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 2.757475,
+                  "rawScore": 2.757475
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "cross_page_join",
+              "caseCount": 1,
+              "regionCount": 1,
+              "totalBudget": 4,
+              "score": 0,
+              "rawScore": 0,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 0,
+                  "rawScore": 0
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "form_state",
+              "caseCount": 4,
+              "regionCount": 26,
+              "totalBudget": 51,
+              "score": 0.490196,
+              "rawScore": 0.490196,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 0.490196,
+                  "rawScore": 0.490196
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "image_description",
+              "caseCount": 4,
+              "regionCount": 9,
+              "totalBudget": 20,
+              "score": 0,
+              "rawScore": 0,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 0,
+                  "rawScore": 0
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "long_context_coherence",
+              "caseCount": 3,
+              "regionCount": 23,
+              "totalBudget": 38,
+              "score": 3.508772,
+              "rawScore": 3.508772,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 3.508772,
+                  "rawScore": 3.508772
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "low_quality_scan",
+              "caseCount": 2,
+              "regionCount": 8,
+              "totalBudget": 16,
+              "score": 0,
+              "rawScore": 0,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 0,
+                  "rawScore": 0
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "mixed_modality_fusion",
+              "caseCount": 3,
+              "regionCount": 10,
+              "totalBudget": 21,
+              "score": 0,
+              "rawScore": 0,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 0,
+                  "rawScore": 0
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "native_layer_recovery",
+              "caseCount": 1,
+              "regionCount": 1,
+              "totalBudget": 4,
+              "score": 100,
+              "rawScore": 100,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 100,
+                  "rawScore": 100
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "precise_recall",
+              "caseCount": 3,
+              "regionCount": 10,
+              "totalBudget": 16,
+              "score": 67.604167,
+              "rawScore": 67.604167,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 67.604167,
+                  "rawScore": 67.604167
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "reading_order",
+              "caseCount": 2,
+              "regionCount": 3,
+              "totalBudget": 4,
+              "score": 0,
+              "rawScore": 0,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 0,
+                  "rawScore": 0
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "source_precedence",
+              "caseCount": 5,
+              "regionCount": 20,
+              "totalBudget": 41,
+              "score": 61.704501,
+              "rawScore": 61.704501,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 61.704501,
+                  "rawScore": 61.704501
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "structure_reconstruction",
+              "caseCount": 1,
+              "regionCount": 1,
+              "totalBudget": 1,
+              "score": 75,
+              "rawScore": 75,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 75,
+                  "rawScore": 75
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "table_reconstruction",
+              "caseCount": 5,
+              "regionCount": 69,
+              "totalBudget": 113,
+              "score": 28.311954,
+              "rawScore": 28.311954,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 28.311954,
+                  "rawScore": 28.311954
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            }
+          ],
+          "byModality": [
+            {
+              "key": "mixed",
+              "caseCount": 5,
+              "regionCount": 26,
+              "totalBudget": 57,
+              "score": 2.339181,
+              "rawScore": 2.339181,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 2.339181,
+                  "rawScore": 2.339181
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "native_layer_recovery",
+              "caseCount": 1,
+              "regionCount": 2,
+              "totalBudget": 6,
+              "score": 50,
+              "rawScore": 50,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 50,
+                  "rawScore": 50
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "native_text",
+              "caseCount": 5,
+              "regionCount": 107,
+              "totalBudget": 174,
+              "score": 39.521328,
+              "rawScore": 39.521328,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 39.521328,
+                  "rawScore": 39.521328
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "raster",
+              "caseCount": 5,
+              "regionCount": 53,
+              "totalBudget": 107,
+              "score": 1.253186,
+              "rawScore": 1.253186,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 1.253186,
+                  "rawScore": 1.253186
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "vector_geometry",
+              "caseCount": 2,
+              "regionCount": 12,
+              "totalBudget": 28,
+              "score": 4.234694,
+              "rawScore": 4.234694,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 4.234694,
+                  "rawScore": 4.234694
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            }
+          ]
+        },
+        "caseScores": [
+          {
+            "caseId": "P12-pfas-method-validation",
+            "title": "PFAS Method Validation and Batch Release Packet",
+            "family": "environmental analytical laboratory",
+            "tags": [
+              "mixed-modality",
+              "scientific",
+              "calibration",
+              "continued-table",
+              "full-page-scans",
+              "chromatograms",
+              "source-precedence"
+            ],
+            "pages": 12,
+            "samples": 1,
+            "expectedSamples": 1,
+            "complete": true,
+            "score": 31.446525,
+            "scoreMin": null,
+            "scoreMax": null,
+            "scoreStddev": null,
+            "sampleScores": [
+              {
+                "sample": "001",
+                "score": 31.4465249662618,
+                "valid": true,
+                "modelCallFailed": false,
+                "evaluatorFailure": false,
+                "evaluatorMissingInvalid": false,
+                "evaluatorStatus": "valid",
+                "scoreArtifactKind": "evaluator_valid"
+              }
+            ],
+            "modelFailureCount": 0,
+            "evaluatorValidCount": 1,
+            "evaluatorFailureCount": 0,
+            "evaluatorMissingInvalidCount": 0,
+            "elapsedMs": 27106,
+            "costUsd": 0.001919,
+            "inputTokens": 10882,
+            "outputTokens": 3436,
+            "logicalGenerationCalls": 1,
+            "transportRequestAttempts": 1,
+            "transportRetryCount": 0,
+            "transportRetriesAreCohortSamples": false,
+            "finishReasons": [
+              {
+                "sample": "001",
+                "finishReason": "stop"
+              }
+            ]
+          },
+          {
+            "caseId": "P15-architecture-floorplan-diagrams",
+            "title": "Suite 214 Laboratory Coordination Set",
+            "family": "architectural and building systems",
+            "tags": [
+              "mixed-pdf",
+              "floorplan-overlay",
+              "reflected-ceiling-plan",
+              "rack-elevation",
+              "directed-topology",
+              "panel-schedule",
+              "scanned-rfi",
+              "field-photos",
+              "source-precedence"
+            ],
+            "pages": 10,
+            "samples": 1,
+            "expectedSamples": 1,
+            "complete": true,
+            "score": 8.967753,
+            "scoreMin": null,
+            "scoreMax": null,
+            "scoreStddev": null,
+            "sampleScores": [
+              {
+                "sample": "001",
+                "score": 8.96775292608626,
+                "valid": true,
+                "modelCallFailed": false,
+                "evaluatorFailure": false,
+                "evaluatorMissingInvalid": false,
+                "evaluatorStatus": "valid",
+                "scoreArtifactKind": "evaluator_valid"
+              }
+            ],
+            "modelFailureCount": 0,
+            "evaluatorValidCount": 1,
+            "evaluatorFailureCount": 0,
+            "evaluatorMissingInvalidCount": 0,
+            "elapsedMs": 20426,
+            "costUsd": 0.001313,
+            "inputTokens": 10517,
+            "outputTokens": 1968,
+            "logicalGenerationCalls": 1,
+            "transportRequestAttempts": 1,
+            "transportRetryCount": 0,
+            "transportRetriesAreCohortSamples": false,
+            "finishReasons": [
+              {
+                "sample": "001",
+                "finishReason": "stop"
+              }
+            ]
+          },
+          {
+            "caseId": "P17-clinical-trial-site-monitoring",
+            "title": "HTX-204 Site 014 Monitoring Source Packet",
+            "family": "regulated clinical site monitoring",
+            "tags": [
+              "long-context",
+              "mixed-modality",
+              "full-page-scans",
+              "continued-tables",
+              "source-precedence",
+              "corrected-entries",
+              "checkbox-state",
+              "longitudinal-entities",
+              "tail-obligations"
+            ],
+            "pages": 48,
+            "samples": 1,
+            "expectedSamples": 1,
+            "complete": true,
+            "score": 6.498464,
+            "scoreMin": null,
+            "scoreMax": null,
+            "scoreStddev": null,
+            "sampleScores": [
+              {
+                "sample": "001",
+                "score": 6.498463901689708,
+                "valid": true,
+                "modelCallFailed": false,
+                "evaluatorFailure": false,
+                "evaluatorMissingInvalid": false,
+                "evaluatorStatus": "valid",
+                "scoreArtifactKind": "evaluator_valid"
+              }
+            ],
+            "modelFailureCount": 0,
+            "evaluatorValidCount": 1,
+            "evaluatorFailureCount": 0,
+            "evaluatorMissingInvalidCount": 0,
+            "elapsedMs": 66125,
+            "costUsd": 0.004951,
+            "inputTokens": 38789,
+            "outputTokens": 7529,
+            "logicalGenerationCalls": 1,
+            "transportRequestAttempts": 1,
+            "transportRetryCount": 0,
+            "transportRetriesAreCohortSamples": false,
+            "finishReasons": [
+              {
+                "sample": "001",
+                "finishReason": "stop"
+              }
+            ]
+          },
+          {
+            "caseId": "P21-semiconductor-lot-disposition",
+            "title": "Lot Q8R7-22 Material Review File",
+            "family": "semiconductor manufacturing quality",
+            "tags": [
+              "native-pdf",
+              "wafer-maps",
+              "metrology",
+              "spc",
+              "sem-images",
+              "mrb",
+              "source-precedence"
+            ],
+            "pages": 9,
+            "samples": 1,
+            "expectedSamples": 1,
+            "complete": true,
+            "score": 5.903594,
+            "scoreMin": null,
+            "scoreMax": null,
+            "scoreStddev": null,
+            "sampleScores": [
+              {
+                "sample": "001",
+                "score": 5.9035942536659896,
+                "valid": true,
+                "modelCallFailed": false,
+                "evaluatorFailure": false,
+                "evaluatorMissingInvalid": false,
+                "evaluatorStatus": "valid",
+                "scoreArtifactKind": "evaluator_valid"
+              }
+            ],
+            "modelFailureCount": 0,
+            "evaluatorValidCount": 1,
+            "evaluatorFailureCount": 0,
+            "evaluatorMissingInvalidCount": 0,
+            "elapsedMs": 22026,
+            "costUsd": 0.001206,
+            "inputTokens": 7926,
+            "outputTokens": 2023,
+            "logicalGenerationCalls": 1,
+            "transportRequestAttempts": 1,
+            "transportRetryCount": 0,
+            "transportRetriesAreCohortSamples": false,
+            "finishReasons": [
+              {
+                "sample": "001",
+                "finishReason": "stop"
+              }
+            ]
+          },
+          {
+            "caseId": "P23-native-text-layer-recovery",
+            "title": "Northstar Cold Chain Supplier Cutover Authorization",
+            "family": "office export recovery",
+            "tags": [
+              "native-pdf",
+              "libreoffice-export",
+              "malformed-layout",
+              "native-text-recovery",
+              "mixed-modality",
+              "tables",
+              "source-precedence",
+              "reading-order"
+            ],
+            "pages": 5,
+            "samples": 1,
+            "expectedSamples": 1,
+            "complete": true,
+            "score": 77.548077,
+            "scoreMin": null,
+            "scoreMax": null,
+            "scoreStddev": null,
+            "sampleScores": [
+              {
+                "sample": "001",
+                "score": 77.54807692307692,
+                "valid": true,
+                "modelCallFailed": false,
+                "evaluatorFailure": false,
+                "evaluatorMissingInvalid": false,
+                "evaluatorStatus": "valid",
+                "scoreArtifactKind": "evaluator_valid"
+              }
+            ],
+            "modelFailureCount": 0,
+            "evaluatorValidCount": 1,
+            "evaluatorFailureCount": 0,
+            "evaluatorMissingInvalidCount": 0,
+            "elapsedMs": 23372,
+            "costUsd": 0.001355,
+            "inputTokens": 7354,
+            "outputTokens": 2468,
+            "logicalGenerationCalls": 1,
+            "transportRequestAttempts": 1,
+            "transportRetryCount": 0,
+            "transportRetriesAreCohortSamples": false,
+            "finishReasons": [
+              {
+                "sample": "001",
+                "finishReason": "stop"
+              }
+            ]
+          }
+        ]
+      },
+      "cases": [
+        {
+          "caseId": "P12-pfas-method-validation",
+          "title": "PFAS Method Validation and Batch Release Packet",
+          "sample": "001",
+          "score": 31.4465249662618,
+          "inference": {
+            "estimatedCostUsd": 0.0019185,
+            "elapsedMs": 27106,
+            "finishReason": "stop",
+            "outputLength": 9607,
+            "usage": {
+              "inputTokens": 10882,
+              "outputTokens": 3436,
+              "totalTokens": 14318,
+              "inputTokenDetails": {
+                "noCacheTokens": 10882,
+                "cacheReadTokens": 0
+              },
+              "outputTokenDetails": {
+                "textTokens": 3436,
+                "reasoningTokens": 0
+              }
+            },
+            "transportRequestAttempts": 1,
+            "runKey": "c65ce6e691882769525f51ed65898ca8bb5329a66bf086efdeb07e59d1be2ffb",
+            "predictionHash": "60777c5fa2293cc659a434c595dca80fd0b9fb6350aa419faa08fc6491490b3f"
+          },
+          "evaluator": {
+            "status": "valid",
+            "estimatedCostUsd": 0.02152775,
+            "elapsedMs": 29339,
+            "attempts": 1,
+            "usage": {
+              "inputTokens": 44129,
+              "outputTokens": 6997,
+              "totalTokens": 51126,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0
+              }
+            },
+            "judgeReused": true,
+            "scoreKey": "eba9e2002230fd6170ca8a7963e4b4afc388a5f5117e355c7c09cd89dfea2a43",
+            "judgeKey": "7926f78fb8135bb095000d3f90a1a868bbfac0676e0dab3f0747a799e471f048"
+          },
+          "artifacts": {
+            "result": {
+              "path": "runs/openai-gpt-5-nano/P12-pfas-method-validation/samples/001/result.json",
+              "sha256": "585857081926a940040c19346d0813f799912254a275f4abf89f00c30912b369",
+              "bytes": 4631
+            },
+            "prediction": {
+              "path": "runs/openai-gpt-5-nano/P12-pfas-method-validation/samples/001/prediction.md",
+              "sha256": "60777c5fa2293cc659a434c595dca80fd0b9fb6350aa419faa08fc6491490b3f",
+              "bytes": 9609
+            },
+            "score": {
+              "path": "runs/openai-gpt-5-nano/P12-pfas-method-validation/samples/001/score.json",
+              "sha256": "ca23cd25c13032b4db921caa605e2f4b66a85f3cd647c7b764fc414ffce08d78",
+              "bytes": 225553
+            },
+            "attempts": [
+              {
+                "path": "runs/openai-gpt-5-nano/P12-pfas-method-validation/samples/001/attempts/c65ce6e691882769525f51ed65898ca8bb5329a66bf086efdeb07e59d1be2ffb.json",
+                "sha256": "ff29a14ec7269c2e90af0c1f3dd8d5d38450144adb4698605837bc913a099f38",
+                "bytes": 406
+              }
+            ]
+          }
+        },
+        {
+          "caseId": "P15-architecture-floorplan-diagrams",
+          "title": "Suite 214 Laboratory Coordination Set",
+          "sample": "001",
+          "score": 8.96775292608626,
+          "inference": {
+            "estimatedCostUsd": 0.00131305,
+            "elapsedMs": 20426,
+            "finishReason": "stop",
+            "outputLength": 5495,
+            "usage": {
+              "inputTokens": 10517,
+              "outputTokens": 1968,
+              "totalTokens": 12485,
+              "inputTokenDetails": {
+                "noCacheTokens": 10517,
+                "cacheReadTokens": 0
+              },
+              "outputTokenDetails": {
+                "textTokens": 1968,
+                "reasoningTokens": 0
+              }
+            },
+            "transportRequestAttempts": 1,
+            "runKey": "cac2eb3962dcf9bdff78feaa9840068122fee67ab2a76f9a6c6e62135ccb48af",
+            "predictionHash": "afa92fd19cb459eec1a095decfd85e546de477b1ac8e05ca145cc3b74b78ec23"
+          },
+          "evaluator": {
+            "status": "valid",
+            "estimatedCostUsd": 0.023552,
+            "elapsedMs": 40789,
+            "attempts": 1,
+            "usage": {
+              "inputTokens": 40646,
+              "outputTokens": 8927,
+              "totalTokens": 49573,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0
+              }
+            },
+            "judgeReused": true,
+            "scoreKey": "2e61f28ae0de5feca1b4dd4a937c7be72f7682c68476d32c37d80582d730ac9e",
+            "judgeKey": "04acec5d48ec9eaab228caa4670b3b68d94a927dd8b9654951d348680cef1f0f"
+          },
+          "artifacts": {
+            "result": {
+              "path": "runs/openai-gpt-5-nano/P15-architecture-floorplan-diagrams/samples/001/result.json",
+              "sha256": "04c3c6c5969098ac216f6753c5f1352f9caf368121471ed8172fa1b70eb5ce6c",
+              "bytes": 4641
+            },
+            "prediction": {
+              "path": "runs/openai-gpt-5-nano/P15-architecture-floorplan-diagrams/samples/001/prediction.md",
+              "sha256": "afa92fd19cb459eec1a095decfd85e546de477b1ac8e05ca145cc3b74b78ec23",
+              "bytes": 5495
+            },
+            "score": {
+              "path": "runs/openai-gpt-5-nano/P15-architecture-floorplan-diagrams/samples/001/score.json",
+              "sha256": "e64a046c7682e57ba170ddb37a77c3e0b459e468b74f43685f1c36b5344cd685",
+              "bytes": 239781
+            },
+            "attempts": [
+              {
+                "path": "runs/openai-gpt-5-nano/P15-architecture-floorplan-diagrams/samples/001/attempts/cac2eb3962dcf9bdff78feaa9840068122fee67ab2a76f9a6c6e62135ccb48af.json",
+                "sha256": "11bf4e8b63297fcdf2f47c76cf75fff865d85aea85a5c14d59bb2407c0c5df6c",
+                "bytes": 415
+              }
+            ]
+          }
+        },
+        {
+          "caseId": "P17-clinical-trial-site-monitoring",
+          "title": "HTX-204 Site 014 Monitoring Source Packet",
+          "sample": "001",
+          "score": 6.498463901689708,
+          "inference": {
+            "estimatedCostUsd": 0.00495105,
+            "elapsedMs": 66125,
+            "finishReason": "stop",
+            "outputLength": 26439,
+            "usage": {
+              "inputTokens": 38789,
+              "outputTokens": 7529,
+              "totalTokens": 46318,
+              "inputTokenDetails": {
+                "noCacheTokens": 38789,
+                "cacheReadTokens": 0
+              },
+              "outputTokenDetails": {
+                "textTokens": 7529,
+                "reasoningTokens": 0
+              }
+            },
+            "transportRequestAttempts": 1,
+            "runKey": "1fb552341b915e5087317ee241748f440fa270b44cf5d67b895a780e413cdab6",
+            "predictionHash": "75ca26da1579d2d70724bdc77434230d04c877c6c3adb021d11757718efb1721"
+          },
+          "evaluator": {
+            "status": "valid",
+            "estimatedCostUsd": 0.061821749999999995,
+            "elapsedMs": 106734,
+            "attempts": 1,
+            "usage": {
+              "inputTokens": 120879,
+              "outputTokens": 21068,
+              "totalTokens": 141947,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0
+              }
+            },
+            "judgeReused": true,
+            "scoreKey": "85ce0ff67c9ee6275a730bb2c5f1aa849b43fad5239057c0779b0b68dbef0dea",
+            "judgeKey": "8ab20cd692f56849c3f664ad75c1d0a9d91a71cd19aa1cede6577817131e08fe"
+          },
+          "artifacts": {
+            "result": {
+              "path": "runs/openai-gpt-5-nano/P17-clinical-trial-site-monitoring/samples/001/result.json",
+              "sha256": "bc935776b4b430f2d75fb15b721accc07c6f63c4268e4917a79208ec23ad8ab5",
+              "bytes": 4644
+            },
+            "prediction": {
+              "path": "runs/openai-gpt-5-nano/P17-clinical-trial-site-monitoring/samples/001/prediction.md",
+              "sha256": "75ca26da1579d2d70724bdc77434230d04c877c6c3adb021d11757718efb1721",
+              "bytes": 26443
+            },
+            "score": {
+              "path": "runs/openai-gpt-5-nano/P17-clinical-trial-site-monitoring/samples/001/score.json",
+              "sha256": "5b931c1a77d427943aac7438249442cd095cc71d103f13938db4e6e674c9bad2",
+              "bytes": 631609
+            },
+            "attempts": [
+              {
+                "path": "runs/openai-gpt-5-nano/P17-clinical-trial-site-monitoring/samples/001/attempts/1fb552341b915e5087317ee241748f440fa270b44cf5d67b895a780e413cdab6.json",
+                "sha256": "85ca03e85f19c8836782dd0fa2e32322bd229b364df3f62d4a9f6e6fd615dd5c",
+                "bytes": 414
+              }
+            ]
+          }
+        },
+        {
+          "caseId": "P21-semiconductor-lot-disposition",
+          "title": "Lot Q8R7-22 Material Review File",
+          "sample": "001",
+          "score": 5.9035942536659896,
+          "inference": {
+            "estimatedCostUsd": 0.0012055,
+            "elapsedMs": 22026,
+            "finishReason": "stop",
+            "outputLength": 6011,
+            "usage": {
+              "inputTokens": 7926,
+              "outputTokens": 2023,
+              "totalTokens": 9949,
+              "inputTokenDetails": {
+                "noCacheTokens": 7926,
+                "cacheReadTokens": 0
+              },
+              "outputTokenDetails": {
+                "textTokens": 2023,
+                "reasoningTokens": 0
+              }
+            },
+            "transportRequestAttempts": 1,
+            "runKey": "731b8cc1f839f44aae1568c3deb86b830d5871e573261c577c8b567dfbcebde4",
+            "predictionHash": "10e912fe4f0561741c5ddc09f89f610392a09f628b6292b6516d7a7b779f21a7"
+          },
+          "evaluator": {
+            "status": "valid",
+            "estimatedCostUsd": 0.02468475,
+            "elapsedMs": 27295,
+            "attempts": 1,
+            "usage": {
+              "inputTokens": 41103,
+              "outputTokens": 9606,
+              "totalTokens": 50709,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0
+              }
+            },
+            "judgeReused": true,
+            "scoreKey": "6020f5e255cb6697c54830d03d0963e5ae801517e03e5d973b7033a73825659e",
+            "judgeKey": "feab74b2d33bf44ccc1888033e3b865d0c3b876580378b3156b6b7619159defe"
+          },
+          "artifacts": {
+            "result": {
+              "path": "runs/openai-gpt-5-nano/P21-semiconductor-lot-disposition/samples/001/result.json",
+              "sha256": "b76fd72d63a90934951143e1d9b41f959b7cce6e63857f8a3da2fd2155990c7f",
+              "bytes": 4627
+            },
+            "prediction": {
+              "path": "runs/openai-gpt-5-nano/P21-semiconductor-lot-disposition/samples/001/prediction.md",
+              "sha256": "10e912fe4f0561741c5ddc09f89f610392a09f628b6292b6516d7a7b779f21a7",
+              "bytes": 6025
+            },
+            "score": {
+              "path": "runs/openai-gpt-5-nano/P21-semiconductor-lot-disposition/samples/001/score.json",
+              "sha256": "9d6472a356b239afc9ad3c52605877e3c27072eb5ed7fe854bf3b05ed8790881",
+              "bytes": 244226
+            },
+            "attempts": [
+              {
+                "path": "runs/openai-gpt-5-nano/P21-semiconductor-lot-disposition/samples/001/attempts/731b8cc1f839f44aae1568c3deb86b830d5871e573261c577c8b567dfbcebde4.json",
+                "sha256": "3e55a060e18a64b3cd19f0eb660fb9ee8479afe7ba160844073d77300d66b6d8",
+                "bytes": 413
+              }
+            ]
+          }
+        },
+        {
+          "caseId": "P23-native-text-layer-recovery",
+          "title": "Northstar Cold Chain Supplier Cutover Authorization",
+          "sample": "001",
+          "score": 77.54807692307692,
+          "inference": {
+            "estimatedCostUsd": 0.0013549000000000002,
+            "elapsedMs": 23372,
+            "finishReason": "stop",
+            "outputLength": 9652,
+            "usage": {
+              "inputTokens": 7354,
+              "outputTokens": 2468,
+              "totalTokens": 9822,
+              "inputTokenDetails": {
+                "noCacheTokens": 7354,
+                "cacheReadTokens": 0
+              },
+              "outputTokenDetails": {
+                "textTokens": 2468,
+                "reasoningTokens": 0
+              }
+            },
+            "transportRequestAttempts": 1,
+            "runKey": "dba44b198c0727536816c4e0cdb34fb5403bd19b11464b9f32130951b6fd5cf8",
+            "predictionHash": "bdaff1bd820d660de3d3770d1fdd0e7cb093dfa5d660cd784722491f90117ec4"
+          },
+          "evaluator": {
+            "status": "valid",
+            "estimatedCostUsd": 0.01510075,
+            "elapsedMs": 115527,
+            "attempts": 1,
+            "usage": {
+              "inputTokens": 27349,
+              "outputTokens": 5509,
+              "totalTokens": 32858,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0
+              }
+            },
+            "judgeReused": true,
+            "scoreKey": "8c8746aa13f5681512401ff1ab4844eae40bcf4a2c0f0d718e9912aa6e48bf32",
+            "judgeKey": "27e3a3de8e9b618bce63984fc896548b916df172c081da5a06da57fc2a3fa478"
+          },
+          "artifacts": {
+            "result": {
+              "path": "runs/openai-gpt-5-nano/P23-native-text-layer-recovery/samples/001/result.json",
+              "sha256": "71b8bf363df0149b54252e5b7567cb6dffe272e288e99918f14d1394bf1e1dae",
+              "bytes": 4664
+            },
+            "prediction": {
+              "path": "runs/openai-gpt-5-nano/P23-native-text-layer-recovery/samples/001/prediction.md",
+              "sha256": "bdaff1bd820d660de3d3770d1fdd0e7cb093dfa5d660cd784722491f90117ec4",
+              "bytes": 9652
+            },
+            "score": {
+              "path": "runs/openai-gpt-5-nano/P23-native-text-layer-recovery/samples/001/score.json",
+              "sha256": "3e188f510b61aaa676b6bade4bfcb103da4e5e92aee89d3f0e984da6bcf377e5",
+              "bytes": 154079
+            },
+            "attempts": [
+              {
+                "path": "runs/openai-gpt-5-nano/P23-native-text-layer-recovery/samples/001/attempts/dba44b198c0727536816c4e0cdb34fb5403bd19b11464b9f32130951b6fd5cf8.json",
+                "sha256": "b0dfb396766f55f2ed268b1438206fdec57c3c434e23ee208f31fb72a26671d2",
+                "bytes": 410
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "modelId": "vertex-gemini-3.1-flash-lite",
+      "sample": "001",
+      "exactSuiteScore": 55.88348702461442,
+      "displayedSuiteScore": 55.9,
+      "inferenceCostUsd": 0.07011325,
+      "evaluatorCostUsd": 0.15699475,
+      "totalMeasuredCostUsd": 0.22710799999999998,
+      "fingerprints": {
+        "benchmark": "10acfe9dbee49e2ebc5f9e2150d99c3a9759ecf733e20676027faaa40b03baf9",
+        "inferenceBenchmark": "26753722e3181059f9093999940e5181a990ea8247e9941843eea302c9ba2258",
+        "inferenceProtocol": "6f8f14fdf474068ae026c15f739b045b6512bbecd4a8c1530e2927e4dcac0098",
+        "scoringContract": "60897c9bf8af201327a5bd928b81d841fcdb99ecd123b174787d481edb4c0342",
+        "modelConfig": "1bc95f5d0cf1f5043ccdc4efbc764b4aff41dd514f4bb4097464f73a69d5c54a",
+        "pricing": "566b1303f37c3bdfa1bb2ae6f2a9289115868ba5af179a7a507e34dffb5a5996",
+        "cohortArtifact": "0e9ee67983fa6dee846ce527ed6b20f45c4b7990d56bde2c1a781715143f9a10"
+      },
+      "summaryArtifact": {
+        "path": "runs/vertex-gemini-3.1-flash-lite/summary.official.json",
+        "sha256": "162ab45af045e06c86b0ce328e3c34e114be993a6db3ae4ebb9edf2f95facea2",
+        "bytes": 17374
+      },
+      "summary": {
+        "modelId": "vertex-gemini-3.1-flash-lite",
+        "provider": "google-vertex",
+        "suite": "official",
+        "manifestPath": "benchmark/manifest.json",
+        "benchmarkFingerprint": "10acfe9dbee49e2ebc5f9e2150d99c3a9759ecf733e20676027faaa40b03baf9",
+        "inferenceBenchmarkFingerprint": "26753722e3181059f9093999940e5181a990ea8247e9941843eea302c9ba2258",
+        "inferenceProtocolFingerprint": "6f8f14fdf474068ae026c15f739b045b6512bbecd4a8c1530e2927e4dcac0098",
+        "modelConfigFingerprint": "1bc95f5d0cf1f5043ccdc4efbc764b4aff41dd514f4bb4097464f73a69d5c54a",
+        "resolvedInferenceModelId": "gemini-3.1-flash-lite",
+        "resolvedEvaluatorModelId": "gemini-3.1-flash-lite",
+        "pricingFingerprint": "566b1303f37c3bdfa1bb2ae6f2a9289115868ba5af179a7a507e34dffb5a5996",
+        "pricingVersion": "2026-07-10",
+        "scoringContractVersion": "atomic-region-candidate-grounded-v9",
+        "scoringContractFingerprint": "60897c9bf8af201327a5bd928b81d841fcdb99ecd123b174787d481edb4c0342",
+        "cohortArtifactFingerprint": "0e9ee67983fa6dee846ce527ed6b20f45c4b7990d56bde2c1a781715143f9a10",
+        "benchmarkName": "Doc2MD",
+        "scoreName": "Doc2MD Native PDF Score",
+        "inputProtocol": "native_pdf",
+        "caseCount": 5,
+        "expectedCaseCount": 5,
+        "complete": true,
+        "missingCaseIds": [],
+        "invalidSamples": [],
+        "samplesPerModelCase": 1,
+        "expectedSampleCount": 5,
+        "sampleCount": 5,
+        "score": 55.9,
+        "suiteSampleScores": [
+          {
+            "sample": "001",
+            "score": 55.883487
+          }
+        ],
+        "scoreStddev": null,
+        "scoreMin": null,
+        "scoreMax": null,
+        "scoreAggregation": "equal_case_sample_first",
+        "costUsd": 0.070113,
+        "meanCostUsdPerSample": 0.014023,
+        "totalElapsedMs": 125881,
+        "meanElapsedMsPerSample": 25176,
+        "totalInputTokens": 46165,
+        "totalOutputTokens": 39048,
+        "meanOutputTokensPerSample": 7810,
+        "modelCallCount": 5,
+        "logicalGenerationCallCount": 5,
+        "totalTransportRequestAttempts": 5,
+        "transportRetryCount": 0,
+        "transportRetriesAreCohortSamples": false,
+        "modelFailureCount": 0,
+        "modelFailureRate": 0,
+        "evaluatorRequiredCount": 5,
+        "evaluatorValidCount": 5,
+        "evaluatorFailureCount": 0,
+        "evaluatorMissingInvalidCount": 0,
+        "evaluatorStatusCounts": {
+          "valid": 5,
+          "failed": 0,
+          "missingInvalid": 0
+        },
+        "evaluatorFailureRate": 0,
+        "evaluatorMissingInvalidRate": 0,
+        "evaluatorCostUsd": 0.156995,
+        "evaluatorElapsedMs": 189453,
+        "evaluatorInputTokens": 298231,
+        "evaluatorOutputTokens": 54958,
+        "diagnostics": {
+          "aggregation": "evidence_budget_sample_first",
+          "complete": true,
+          "byPrimaryAxis": [
+            {
+              "key": "chart_diagram_spatial",
+              "caseCount": 3,
+              "regionCount": 19,
+              "totalBudget": 43,
+              "score": 10.526379,
+              "rawScore": 10.526379,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 10.526379,
+                  "rawScore": 10.526379
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "cross_page_join",
+              "caseCount": 1,
+              "regionCount": 1,
+              "totalBudget": 4,
+              "score": 8.333333,
+              "rawScore": 8.333333,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 8.333333,
+                  "rawScore": 8.333333
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "form_state",
+              "caseCount": 4,
+              "regionCount": 26,
+              "totalBudget": 51,
+              "score": 37.326628,
+              "rawScore": 37.326628,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 37.326628,
+                  "rawScore": 37.326628
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "image_description",
+              "caseCount": 4,
+              "regionCount": 9,
+              "totalBudget": 20,
+              "score": 15.151515,
+              "rawScore": 15.151515,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 15.151515,
+                  "rawScore": 15.151515
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "long_context_coherence",
+              "caseCount": 3,
+              "regionCount": 23,
+              "totalBudget": 38,
+              "score": 25.986842,
+              "rawScore": 25.986842,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 25.986842,
+                  "rawScore": 25.986842
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "low_quality_scan",
+              "caseCount": 2,
+              "regionCount": 8,
+              "totalBudget": 16,
+              "score": 10.714286,
+              "rawScore": 10.714286,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 10.714286,
+                  "rawScore": 10.714286
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "mixed_modality_fusion",
+              "caseCount": 3,
+              "regionCount": 10,
+              "totalBudget": 21,
+              "score": 2.857143,
+              "rawScore": 2.857143,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 2.857143,
+                  "rawScore": 2.857143
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "native_layer_recovery",
+              "caseCount": 1,
+              "regionCount": 1,
+              "totalBudget": 4,
+              "score": 100,
+              "rawScore": 100,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 100,
+                  "rawScore": 100
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "precise_recall",
+              "caseCount": 3,
+              "regionCount": 10,
+              "totalBudget": 16,
+              "score": 96.354167,
+              "rawScore": 96.354167,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 96.354167,
+                  "rawScore": 96.354167
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "reading_order",
+              "caseCount": 2,
+              "regionCount": 3,
+              "totalBudget": 4,
+              "score": 0,
+              "rawScore": 0,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 0,
+                  "rawScore": 0
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "source_precedence",
+              "caseCount": 5,
+              "regionCount": 20,
+              "totalBudget": 41,
+              "score": 83.913525,
+              "rawScore": 83.913525,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 83.913525,
+                  "rawScore": 83.913525
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "structure_reconstruction",
+              "caseCount": 1,
+              "regionCount": 1,
+              "totalBudget": 1,
+              "score": 75,
+              "rawScore": 75,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 75,
+                  "rawScore": 75
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "table_reconstruction",
+              "caseCount": 5,
+              "regionCount": 69,
+              "totalBudget": 113,
+              "score": 83.62112,
+              "rawScore": 83.62112,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 83.62112,
+                  "rawScore": 83.62112
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            }
+          ],
+          "byModality": [
+            {
+              "key": "mixed",
+              "caseCount": 5,
+              "regionCount": 26,
+              "totalBudget": 57,
+              "score": 10.292398,
+              "rawScore": 10.292398,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 10.292398,
+                  "rawScore": 10.292398
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "native_layer_recovery",
+              "caseCount": 1,
+              "regionCount": 2,
+              "totalBudget": 6,
+              "score": 50,
+              "rawScore": 50,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 50,
+                  "rawScore": 50
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "native_text",
+              "caseCount": 5,
+              "regionCount": 107,
+              "totalBudget": 174,
+              "score": 84.56908,
+              "rawScore": 84.56908,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 84.56908,
+                  "rawScore": 84.56908
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "raster",
+              "caseCount": 5,
+              "regionCount": 53,
+              "totalBudget": 107,
+              "score": 27.935167,
+              "rawScore": 27.935167,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 27.935167,
+                  "rawScore": 27.935167
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            },
+            {
+              "key": "vector_geometry",
+              "caseCount": 2,
+              "regionCount": 12,
+              "totalBudget": 28,
+              "score": 8.112245,
+              "rawScore": 8.112245,
+              "sampleScores": [
+                {
+                  "sample": "001",
+                  "score": 8.112245,
+                  "rawScore": 8.112245
+                }
+              ],
+              "scoreStddev": null,
+              "scoreMin": null,
+              "scoreMax": null
+            }
+          ]
+        },
+        "caseScores": [
+          {
+            "caseId": "P12-pfas-method-validation",
+            "title": "PFAS Method Validation and Batch Release Packet",
+            "family": "environmental analytical laboratory",
+            "tags": [
+              "mixed-modality",
+              "scientific",
+              "calibration",
+              "continued-table",
+              "full-page-scans",
+              "chromatograms",
+              "source-precedence"
+            ],
+            "pages": 12,
+            "samples": 1,
+            "expectedSamples": 1,
+            "complete": true,
+            "score": 58.579337,
+            "scoreMin": null,
+            "scoreMax": null,
+            "scoreStddev": null,
+            "sampleScores": [
+              {
+                "sample": "001",
+                "score": 58.579337329337335,
+                "valid": true,
+                "modelCallFailed": false,
+                "evaluatorFailure": false,
+                "evaluatorMissingInvalid": false,
+                "evaluatorStatus": "valid",
+                "scoreArtifactKind": "evaluator_valid"
+              }
+            ],
+            "modelFailureCount": 0,
+            "evaluatorValidCount": 1,
+            "evaluatorFailureCount": 0,
+            "evaluatorMissingInvalidCount": 0,
+            "elapsedMs": 24231,
+            "costUsd": 0.013134,
+            "inputTokens": 6737,
+            "outputTokens": 7633,
+            "logicalGenerationCalls": 1,
+            "transportRequestAttempts": 1,
+            "transportRetryCount": 0,
+            "transportRetriesAreCohortSamples": false,
+            "finishReasons": [
+              {
+                "sample": "001",
+                "finishReason": "stop"
+              }
+            ]
+          },
+          {
+            "caseId": "P15-architecture-floorplan-diagrams",
+            "title": "Suite 214 Laboratory Coordination Set",
+            "family": "architectural and building systems",
+            "tags": [
+              "mixed-pdf",
+              "floorplan-overlay",
+              "reflected-ceiling-plan",
+              "rack-elevation",
+              "directed-topology",
+              "panel-schedule",
+              "scanned-rfi",
+              "field-photos",
+              "source-precedence"
+            ],
+            "pages": 10,
+            "samples": 1,
+            "expectedSamples": 1,
+            "complete": true,
+            "score": 37.205212,
+            "scoreMin": null,
+            "scoreMax": null,
+            "scoreStddev": null,
+            "sampleScores": [
+              {
+                "sample": "001",
+                "score": 37.20521184062851,
+                "valid": true,
+                "modelCallFailed": false,
+                "evaluatorFailure": false,
+                "evaluatorMissingInvalid": false,
+                "evaluatorStatus": "valid",
+                "scoreArtifactKind": "evaluator_valid"
+              }
+            ],
+            "modelFailureCount": 0,
+            "evaluatorValidCount": 1,
+            "evaluatorFailureCount": 0,
+            "evaluatorMissingInvalidCount": 0,
+            "elapsedMs": 12194,
+            "costUsd": 0.00644,
+            "inputTokens": 5697,
+            "outputTokens": 3344,
+            "logicalGenerationCalls": 1,
+            "transportRequestAttempts": 1,
+            "transportRetryCount": 0,
+            "transportRetriesAreCohortSamples": false,
+            "finishReasons": [
+              {
+                "sample": "001",
+                "finishReason": "stop"
+              }
+            ]
+          },
+          {
+            "caseId": "P17-clinical-trial-site-monitoring",
+            "title": "HTX-204 Site 014 Monitoring Source Packet",
+            "family": "regulated clinical site monitoring",
+            "tags": [
+              "long-context",
+              "mixed-modality",
+              "full-page-scans",
+              "continued-tables",
+              "source-precedence",
+              "corrected-entries",
+              "checkbox-state",
+              "longitudinal-entities",
+              "tail-obligations"
+            ],
+            "pages": 48,
+            "samples": 1,
+            "expectedSamples": 1,
+            "complete": true,
+            "score": 40.271633,
+            "scoreMin": null,
+            "scoreMax": null,
+            "scoreStddev": null,
+            "sampleScores": [
+              {
+                "sample": "001",
+                "score": 40.271633384536614,
+                "valid": true,
+                "modelCallFailed": false,
+                "evaluatorFailure": false,
+                "evaluatorMissingInvalid": false,
+                "evaluatorStatus": "valid",
+                "scoreArtifactKind": "evaluator_valid"
+              }
+            ],
+            "modelFailureCount": 0,
+            "evaluatorValidCount": 1,
+            "evaluatorFailureCount": 0,
+            "evaluatorMissingInvalidCount": 0,
+            "elapsedMs": 63812,
+            "costUsd": 0.039244,
+            "inputTokens": 25457,
+            "outputTokens": 21920,
+            "logicalGenerationCalls": 1,
+            "transportRequestAttempts": 1,
+            "transportRetryCount": 0,
+            "transportRetriesAreCohortSamples": false,
+            "finishReasons": [
+              {
+                "sample": "001",
+                "finishReason": "stop"
+              }
+            ]
+          },
+          {
+            "caseId": "P21-semiconductor-lot-disposition",
+            "title": "Lot Q8R7-22 Material Review File",
+            "family": "semiconductor manufacturing quality",
+            "tags": [
+              "native-pdf",
+              "wafer-maps",
+              "metrology",
+              "spc",
+              "sem-images",
+              "mrb",
+              "source-precedence"
+            ],
+            "pages": 9,
+            "samples": 1,
+            "expectedSamples": 1,
+            "complete": true,
+            "score": 54.899714,
+            "scoreMin": null,
+            "scoreMax": null,
+            "scoreStddev": null,
+            "sampleScores": [
+              {
+                "sample": "001",
+                "score": 54.89971410703119,
+                "valid": true,
+                "modelCallFailed": false,
+                "evaluatorFailure": false,
+                "evaluatorMissingInvalid": false,
+                "evaluatorStatus": "valid",
+                "scoreArtifactKind": "evaluator_valid"
+              }
+            ],
+            "modelFailureCount": 0,
+            "evaluatorValidCount": 1,
+            "evaluatorFailureCount": 0,
+            "evaluatorMissingInvalidCount": 0,
+            "elapsedMs": 14549,
+            "costUsd": 0.006163,
+            "inputTokens": 5177,
+            "outputTokens": 3246,
+            "logicalGenerationCalls": 1,
+            "transportRequestAttempts": 1,
+            "transportRetryCount": 0,
+            "transportRetriesAreCohortSamples": false,
+            "finishReasons": [
+              {
+                "sample": "001",
+                "finishReason": "stop"
+              }
+            ]
+          },
+          {
+            "caseId": "P23-native-text-layer-recovery",
+            "title": "Northstar Cold Chain Supplier Cutover Authorization",
+            "family": "office export recovery",
+            "tags": [
+              "native-pdf",
+              "libreoffice-export",
+              "malformed-layout",
+              "native-text-recovery",
+              "mixed-modality",
+              "tables",
+              "source-precedence",
+              "reading-order"
+            ],
+            "pages": 5,
+            "samples": 1,
+            "expectedSamples": 1,
+            "complete": true,
+            "score": 88.461538,
+            "scoreMin": null,
+            "scoreMax": null,
+            "scoreStddev": null,
+            "sampleScores": [
+              {
+                "sample": "001",
+                "score": 88.46153846153845,
+                "valid": true,
+                "modelCallFailed": false,
+                "evaluatorFailure": false,
+                "evaluatorMissingInvalid": false,
+                "evaluatorStatus": "valid",
+                "scoreArtifactKind": "evaluator_valid"
+              }
+            ],
+            "modelFailureCount": 0,
+            "evaluatorValidCount": 1,
+            "evaluatorFailureCount": 0,
+            "evaluatorMissingInvalidCount": 0,
+            "elapsedMs": 11095,
+            "costUsd": 0.005132,
+            "inputTokens": 3097,
+            "outputTokens": 2905,
+            "logicalGenerationCalls": 1,
+            "transportRequestAttempts": 1,
+            "transportRetryCount": 0,
+            "transportRetriesAreCohortSamples": false,
+            "finishReasons": [
+              {
+                "sample": "001",
+                "finishReason": "stop"
+              }
+            ]
+          }
+        ]
+      },
+      "cases": [
+        {
+          "caseId": "P12-pfas-method-validation",
+          "title": "PFAS Method Validation and Batch Release Packet",
+          "sample": "001",
+          "score": 58.579337329337335,
+          "inference": {
+            "estimatedCostUsd": 0.01313375,
+            "elapsedMs": 24231,
+            "finishReason": "stop",
+            "outputLength": 17518,
+            "usage": {
+              "inputTokens": 6737,
+              "outputTokens": 7633,
+              "totalTokens": 14370,
+              "inputTokenDetails": {
+                "noCacheTokens": 6737,
+                "cacheReadTokens": 0
+              },
+              "outputTokenDetails": {
+                "textTokens": 7633,
+                "reasoningTokens": 0
+              }
+            },
+            "transportRequestAttempts": 1,
+            "runKey": "9101360c315fdaddcc7fee37a7d984fcda09f4769a18565ab12c161538b3a486",
+            "predictionHash": "5417895a23fd085395eda94a469d46444d3962ba2f0d3544c6a2f92b71e6c0aa"
+          },
+          "evaluator": {
+            "status": "valid",
+            "estimatedCostUsd": 0.023428249999999998,
+            "elapsedMs": 26709,
+            "attempts": 1,
+            "usage": {
+              "inputTokens": 49115,
+              "outputTokens": 7433,
+              "totalTokens": 56548,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0
+              }
+            },
+            "judgeReused": true,
+            "scoreKey": "b3ca4f2840a845953a81e9825174271e6a8f34cd6d3f33f0376ecf198fc3645f",
+            "judgeKey": "d57de3b15f1a1604fab34f3e17dea3309bea042322a41ede885e8fe01535cfc0"
+          },
+          "artifacts": {
+            "result": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P12-pfas-method-validation/samples/001/result.json",
+              "sha256": "17a6c8676d520352facf1e3dd92a638b2e9d55022863a33e0a31a35111717e90",
+              "bytes": 6287
+            },
+            "prediction": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P12-pfas-method-validation/samples/001/prediction.md",
+              "sha256": "5417895a23fd085395eda94a469d46444d3962ba2f0d3544c6a2f92b71e6c0aa",
+              "bytes": 17518
+            },
+            "score": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P12-pfas-method-validation/samples/001/score.json",
+              "sha256": "15413f4a6dc2f091f1164d6412ea8c5032e195b1d9b755e14157dc477bc31e89",
+              "bytes": 231809
+            },
+            "attempts": [
+              {
+                "path": "runs/vertex-gemini-3.1-flash-lite/P12-pfas-method-validation/samples/001/attempts/9101360c315fdaddcc7fee37a7d984fcda09f4769a18565ab12c161538b3a486.json",
+                "sha256": "a99404060a10db7e74277c9185c6f1845b902f2ca2c898f19edd90800398184a",
+                "bytes": 417
+              }
+            ]
+          }
+        },
+        {
+          "caseId": "P15-architecture-floorplan-diagrams",
+          "title": "Suite 214 Laboratory Coordination Set",
+          "sample": "001",
+          "score": 37.20521184062851,
+          "inference": {
+            "estimatedCostUsd": 0.006440250000000001,
+            "elapsedMs": 12194,
+            "finishReason": "stop",
+            "outputLength": 8711,
+            "usage": {
+              "inputTokens": 5697,
+              "outputTokens": 3344,
+              "totalTokens": 9041,
+              "inputTokenDetails": {
+                "noCacheTokens": 5697,
+                "cacheReadTokens": 0
+              },
+              "outputTokenDetails": {
+                "textTokens": 3344,
+                "reasoningTokens": 0
+              }
+            },
+            "transportRequestAttempts": 1,
+            "runKey": "a05a399a896289fac32dd4eb1d6274ea2ebfb9bf1d4ac767d34d32e581e86222",
+            "predictionHash": "5f4b9ef2f5fe0fcdaee48f9e5f30f5870c573db2372c8ba29eff2ae30e8a0d4b"
+          },
+          "evaluator": {
+            "status": "valid",
+            "estimatedCostUsd": 0.0238155,
+            "elapsedMs": 31400,
+            "attempts": 1,
+            "usage": {
+              "inputTokens": 41976,
+              "outputTokens": 8881,
+              "totalTokens": 50857,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0
+              }
+            },
+            "judgeReused": true,
+            "scoreKey": "1cc37805ec1075716edc4065eafe44d1e9f342e164251506b22e4474d0730aa5",
+            "judgeKey": "0bebe32e3fb12df0147ecd0d59c5da474b1a9d90ba352281136b2b76215e4b2d"
+          },
+          "artifacts": {
+            "result": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P15-architecture-floorplan-diagrams/samples/001/result.json",
+              "sha256": "6c3b9ce928c968a18297fb4a0c5491e7a5fbe6bfa3dba5df701e5aa46d8998b9",
+              "bytes": 6311
+            },
+            "prediction": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P15-architecture-floorplan-diagrams/samples/001/prediction.md",
+              "sha256": "5f4b9ef2f5fe0fcdaee48f9e5f30f5870c573db2372c8ba29eff2ae30e8a0d4b",
+              "bytes": 8711
+            },
+            "score": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P15-architecture-floorplan-diagrams/samples/001/score.json",
+              "sha256": "520ee9a1c10a9ec9c0d945b2b29fe96e06a2364de02bb6b05f8effe3eddefada",
+              "bytes": 225684
+            },
+            "attempts": [
+              {
+                "path": "runs/vertex-gemini-3.1-flash-lite/P15-architecture-floorplan-diagrams/samples/001/attempts/a05a399a896289fac32dd4eb1d6274ea2ebfb9bf1d4ac767d34d32e581e86222.json",
+                "sha256": "b8e5f96b913ef29d5361fb48f6734f5b14ff2f93506d51d76ff8b1dc016e6897",
+                "bytes": 426
+              }
+            ]
+          }
+        },
+        {
+          "caseId": "P17-clinical-trial-site-monitoring",
+          "title": "HTX-204 Site 014 Monitoring Source Packet",
+          "sample": "001",
+          "score": 40.271633384536614,
+          "inference": {
+            "estimatedCostUsd": 0.03924425,
+            "elapsedMs": 63812,
+            "finishReason": "stop",
+            "outputLength": 60025,
+            "usage": {
+              "inputTokens": 25457,
+              "outputTokens": 21920,
+              "totalTokens": 47377,
+              "inputTokenDetails": {
+                "noCacheTokens": 25457,
+                "cacheReadTokens": 0
+              },
+              "outputTokenDetails": {
+                "textTokens": 21920,
+                "reasoningTokens": 0
+              }
+            },
+            "transportRequestAttempts": 1,
+            "runKey": "b2bcad6c1e22c9b1be0b98c136776ad182517b84a53b5b22cabb0241924325bc",
+            "predictionHash": "d322ada0ca39bd4c3ed372226f7075051b1ced2b13bc016d1bc7d6aad7ab6b0d"
+          },
+          "evaluator": {
+            "status": "valid",
+            "estimatedCostUsd": 0.06908575,
+            "elapsedMs": 57889,
+            "attempts": 1,
+            "usage": {
+              "inputTokens": 137263,
+              "outputTokens": 23180,
+              "totalTokens": 160443,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0
+              }
+            },
+            "judgeReused": true,
+            "scoreKey": "9ef40d77b10f2cab35777dbf97c3d1a935afd2eded0da84b9c0fffb3328aa6e7",
+            "judgeKey": "7d0d770d1c08e3cdc63c0a1a91da09764d9d4f8d907301071e5f1221451eaa9d"
+          },
+          "artifacts": {
+            "result": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P17-clinical-trial-site-monitoring/samples/001/result.json",
+              "sha256": "c5235e01b59fee84e9dd319f3eb965b3c49eb783bc954d13badc8ce0dd533d8c",
+              "bytes": 6309
+            },
+            "prediction": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P17-clinical-trial-site-monitoring/samples/001/prediction.md",
+              "sha256": "d322ada0ca39bd4c3ed372226f7075051b1ced2b13bc016d1bc7d6aad7ab6b0d",
+              "bytes": 60025
+            },
+            "score": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P17-clinical-trial-site-monitoring/samples/001/score.json",
+              "sha256": "9d738787dcf402ac81b5a1b3edfe6d45fcebfbb78d4f2bc4df3a3beae58c6830",
+              "bytes": 646372
+            },
+            "attempts": [
+              {
+                "path": "runs/vertex-gemini-3.1-flash-lite/P17-clinical-trial-site-monitoring/samples/001/attempts/b2bcad6c1e22c9b1be0b98c136776ad182517b84a53b5b22cabb0241924325bc.json",
+                "sha256": "1596e994e735b8dc20ac7f76f2f5ee41758e98a4095005d28c5de1080b864f44",
+                "bytes": 425
+              }
+            ]
+          }
+        },
+        {
+          "caseId": "P21-semiconductor-lot-disposition",
+          "title": "Lot Q8R7-22 Material Review File",
+          "sample": "001",
+          "score": 54.89971410703119,
+          "inference": {
+            "estimatedCostUsd": 0.00616325,
+            "elapsedMs": 14549,
+            "finishReason": "stop",
+            "outputLength": 8644,
+            "usage": {
+              "inputTokens": 5177,
+              "outputTokens": 3246,
+              "totalTokens": 8423,
+              "inputTokenDetails": {
+                "noCacheTokens": 5177,
+                "cacheReadTokens": 0
+              },
+              "outputTokenDetails": {
+                "textTokens": 3246,
+                "reasoningTokens": 0
+              }
+            },
+            "transportRequestAttempts": 1,
+            "runKey": "fa5b48aa9d3c1a3e3310bd8bddeab08495aab32b72181e104c16ca69d72ea3d9",
+            "predictionHash": "db50b7e34d49cbca125512661fa3099e48c3c68b53525f9bedcbcec41dbabb3c"
+          },
+          "evaluator": {
+            "status": "valid",
+            "estimatedCostUsd": 0.02556075,
+            "elapsedMs": 24642,
+            "attempts": 1,
+            "usage": {
+              "inputTokens": 42435,
+              "outputTokens": 9968,
+              "totalTokens": 52403,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0
+              }
+            },
+            "judgeReused": true,
+            "scoreKey": "5fcda198c9df212d8c1c73d3fbbda9ec5eadcbfa2f2fdeec8808a455de674cbf",
+            "judgeKey": "9930a1df2b899b9fcbe70a5f83626d2c6ba301e6be2e8e839ddfac842369f7f7"
+          },
+          "artifacts": {
+            "result": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P21-semiconductor-lot-disposition/samples/001/result.json",
+              "sha256": "df618f44436e62bf6c846fb2de65b01c849d88002dbcad6015c273d1aa96e40b",
+              "bytes": 6282
+            },
+            "prediction": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P21-semiconductor-lot-disposition/samples/001/prediction.md",
+              "sha256": "db50b7e34d49cbca125512661fa3099e48c3c68b53525f9bedcbcec41dbabb3c",
+              "bytes": 8644
+            },
+            "score": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P21-semiconductor-lot-disposition/samples/001/score.json",
+              "sha256": "ba91bb72454af6f1b2a9fac4dd682f31a8fde6ab4b6f97d4242b73a0b1e10e16",
+              "bytes": 225132
+            },
+            "attempts": [
+              {
+                "path": "runs/vertex-gemini-3.1-flash-lite/P21-semiconductor-lot-disposition/samples/001/attempts/fa5b48aa9d3c1a3e3310bd8bddeab08495aab32b72181e104c16ca69d72ea3d9.json",
+                "sha256": "30407303c964db5f67e480ef21af19c892e9b9dd1457a8a7f1453cff86b566b7",
+                "bytes": 424
+              }
+            ]
+          }
+        },
+        {
+          "caseId": "P23-native-text-layer-recovery",
+          "title": "Northstar Cold Chain Supplier Cutover Authorization",
+          "sample": "001",
+          "score": 88.46153846153845,
+          "inference": {
+            "estimatedCostUsd": 0.00513175,
+            "elapsedMs": 11095,
+            "finishReason": "stop",
+            "outputLength": 10123,
+            "usage": {
+              "inputTokens": 3097,
+              "outputTokens": 2905,
+              "totalTokens": 6002,
+              "inputTokenDetails": {
+                "noCacheTokens": 3097,
+                "cacheReadTokens": 0
+              },
+              "outputTokenDetails": {
+                "textTokens": 2905,
+                "reasoningTokens": 0
+              }
+            },
+            "transportRequestAttempts": 1,
+            "runKey": "5308631ef664fc3f89a8b14b52507cdd8a5e328d277bb72821d4c5120ec7b78a",
+            "predictionHash": "5bf29b85222780839055f22dfd5681a812907b465bc1c558dc5065c9a0c671b0"
+          },
+          "evaluator": {
+            "status": "valid",
+            "estimatedCostUsd": 0.0151045,
+            "elapsedMs": 48813,
+            "attempts": 1,
+            "usage": {
+              "inputTokens": 27442,
+              "outputTokens": 5496,
+              "totalTokens": 32938,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0
+              }
+            },
+            "judgeReused": true,
+            "scoreKey": "3ee17fc9645dafcfaaa998f79f719086dbf0fba01ef57c83ea0caf31afe98bb5",
+            "judgeKey": "9bdd78b71f9eab3fd8abf9a307daaca82f52d144bb62be213c394166732661dc"
+          },
+          "artifacts": {
+            "result": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P23-native-text-layer-recovery/samples/001/result.json",
+              "sha256": "215e4a8b5bc0af2e4265e2590b6cc6a2e9a026c142cb7b1b9dc555434b7a29e7",
+              "bytes": 6296
+            },
+            "prediction": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P23-native-text-layer-recovery/samples/001/prediction.md",
+              "sha256": "5bf29b85222780839055f22dfd5681a812907b465bc1c558dc5065c9a0c671b0",
+              "bytes": 10123
+            },
+            "score": {
+              "path": "runs/vertex-gemini-3.1-flash-lite/P23-native-text-layer-recovery/samples/001/score.json",
+              "sha256": "492f28fc4b4b0b50754fae7cda0a13a532e0c9f4be4e7158cb46908d56d61004",
+              "bytes": 151779
+            },
+            "attempts": [
+              {
+                "path": "runs/vertex-gemini-3.1-flash-lite/P23-native-text-layer-recovery/samples/001/attempts/5308631ef664fc3f89a8b14b52507cdd8a5e328d277bb72821d4c5120ec7b78a.json",
+                "sha256": "c61aa3a1fab1c88445eccda348ea22281a2267753ecd680898d1a8c29c0f2191",
+                "bytes": 421
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
