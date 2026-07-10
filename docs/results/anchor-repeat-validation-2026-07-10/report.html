@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en" data-report-audience="technical">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doc2MD anchor repeat-validation audit</title>
+  <style>
+    :root { --ink:#17211c; --muted:#66706b; --paper:#f5f3ed; --panel:#fffdf8; --line:#d8d6ce; --green:#0f6b46; --green-soft:#e4f1e9; --amber:#946a17; --amber-soft:#f8efd8; --red:#a03e3e; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--paper); font:15px/1.55 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width:1180px; margin:0 auto; padding:64px 28px 96px; }
+    header { border-bottom:1px solid var(--line); padding-bottom:34px; margin-bottom:28px; }
+    .eyebrow { color:var(--green); font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+    h1 { margin:10px 0 12px; max-width:900px; font:700 clamp(36px,6vw,68px)/1.02 Georgia, serif; letter-spacing:-.035em; }
+    .lede { max-width:820px; color:var(--muted); font-size:18px; }
+    .status { display:inline-flex; align-items:center; gap:8px; margin-top:18px; padding:8px 12px; border:1px solid #b9d4c4; background:var(--green-soft); color:var(--green); border-radius:999px; font-weight:750; }
+    .status::before { content:""; width:8px; height:8px; background:var(--green); border-radius:50%; }
+    section { margin-top:44px; }
+    h2 { font:700 27px/1.2 Georgia, serif; margin:0 0 14px; }
+    h3 { font-size:15px; text-transform:uppercase; letter-spacing:.08em; margin:0 0 8px; }
+    p { max-width:900px; }
+    .cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:20px; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px; }
+    .card .label { color:var(--muted); font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .card .value { margin-top:8px; font:700 32px/1 Georgia,serif; }
+    .card .note { color:var(--muted); font-size:13px; margin-top:8px; }
+    .callout { border-left:4px solid var(--amber); background:var(--amber-soft); padding:16px 18px; margin:20px 0; max-width:940px; }
+    .table-wrap { overflow-x:auto; background:var(--panel); border:1px solid var(--line); border-radius:14px; }
+    table { width:100%; border-collapse:collapse; min-width:780px; }
+    th, td { padding:13px 14px; text-align:right; border-bottom:1px solid var(--line); vertical-align:top; }
+    thead th { color:var(--muted); background:#f0eee7; font-size:12px; letter-spacing:.04em; text-transform:uppercase; }
+    th:first-child, td:first-child, .case-table td:nth-child(2), .case-table th:nth-child(2) { text-align:left; }
+    tbody tr:last-child th, tbody tr:last-child td { border-bottom:0; }
+    .case-id { display:block; font-weight:750; }
+    .case-title { display:block; color:var(--muted); font-size:12px; max-width:360px; }
+    .positive { color:var(--green); font-weight:750; }
+    .negative { color:var(--red); font-weight:750; }
+    .sourced-number { position:relative; border-bottom:1px dotted currentColor; cursor:help; white-space:nowrap; }
+    .sourced-number:focus { outline:2px solid var(--green); outline-offset:3px; border-radius:2px; }
+    .sourced-number:hover::after, .sourced-number:focus::after { content:attr(data-source); position:absolute; z-index:10; left:50%; bottom:calc(100% + 9px); transform:translateX(-50%); width:max-content; max-width:340px; padding:8px 10px; color:white; background:#17211c; border-radius:7px; font:11px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace; box-shadow:0 8px 24px #0002; white-space:normal; }
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    ul { padding-left:20px; max-width:900px; }
+    li + li { margin-top:8px; }
+    code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.9em; }
+    footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; }
+    @media (max-width:800px) { main{padding:38px 18px 70px}.cards,.two-col{grid-template-columns:1fr}h1{font-size:42px}.card .value{font-size:28px} }
+    @media print { body{background:white}.sourced-number{border-bottom:0}.sourced-number::after{display:none!important}main{max-width:none;padding:24px}.card,.table-wrap{break-inside:avoid} }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">Doc2MD benchmark evidence</div>
+    <h1>Anchor repeat-validation audit</h1>
+    <p class="lede">A non-destructive, explicitly authorized second observation of the two cheapest anchor models across the same five-case native-PDF suite.</p>
+    <div class="status">Large anchor separation replicated</div>
+  </header>
+
+  <section id="technical-summary" data-report-section="technical-summary">
+    <h2>Technical summary</h2>
+    <p>The first-draw good-versus-bad anchor gap was <span class="sourced-number" tabindex="0" title="analysis.json → gap.first" data-source="analysis.json → gap.first">29.81</span> points; the repeat gap was <span class="sourced-number" tabindex="0" title="analysis.json → gap.repeat" data-source="analysis.json → gap.repeat">30.94</span>. The gap changed by only <span class="sourced-number" tabindex="0" title="analysis.json → gap.delta" data-source="analysis.json → gap.delta">+1.13</span> points and remained near thirty points in both observations. This is strong evidence that the redesigned suite is differentiating these two anchors, but it is not a reliability estimate.</p>
+    <div class="cards">
+      <article class="card"><div class="label">First anchor gap</div><div class="value"><span class="sourced-number" tabindex="0" title="analysis.json → gap.first" data-source="analysis.json → gap.first">29.81</span></div><div class="note">Gemini minus GPT‑5 Nano</div></article>
+      <article class="card"><div class="label">Repeat anchor gap</div><div class="value"><span class="sourced-number" tabindex="0" title="analysis.json → gap.repeat" data-source="analysis.json → gap.repeat">30.94</span></div><div class="note">Gemini minus GPT‑5 Nano</div></article>
+      <article class="card"><div class="label">Repeat-run spend</div><div class="value"><span class="sourced-number" tabindex="0" title="analysis.json → spend.repeat.totalMeasuredCostUsd" data-source="analysis.json → spend.repeat.totalMeasuredCostUsd">$0.403893</span></div><div class="note">Inference plus evaluator</div></article>
+    </div>
+  </section>
+
+  <section id="key-findings" data-report-section="key-findings">
+    <h2>Key findings</h2>
+    <ul>
+      <li>GPT‑5 Nano moved from <span class="sourced-number" tabindex="0" title="analysis.json → models[0].suite.firstScore" data-source="analysis.json → models[0].suite.firstScore">26.07</span> to <span class="sourced-number" tabindex="0" title="analysis.json → models[0].suite.repeatScore" data-source="analysis.json → models[0].suite.repeatScore">28.15</span>, a <span class="sourced-number" tabindex="0" title="analysis.json → models[0].suite.delta" data-source="analysis.json → models[0].suite.delta">+2.08</span>-point change.</li>
+      <li>Gemini 3.1 Flash‑Lite moved from <span class="sourced-number" tabindex="0" title="analysis.json → models[1].suite.firstScore" data-source="analysis.json → models[1].suite.firstScore">55.88</span> to <span class="sourced-number" tabindex="0" title="analysis.json → models[1].suite.repeatScore" data-source="analysis.json → models[1].suite.repeatScore">59.09</span>, a <span class="sourced-number" tabindex="0" title="analysis.json → models[1].suite.delta" data-source="analysis.json → models[1].suite.delta">+3.21</span>-point change.</li>
+      <li>The largest case movement was vertex-gemini-3.1-flash-lite on P17-clinical-trial-site-monitoring: <span class="sourced-number" tabindex="0" title="analysis.json → largest absolute case delta derived from models[].cases[]" data-source="analysis.json → largest absolute case delta derived from models[].cases[]">+15.98</span> points. That single case explains most of Gemini's suite movement.</li>
+      <li>The repeat used <span class="sourced-number" tabindex="0" title="analysis.json → integrity.repeatLogicalInferenceCalls" data-source="analysis.json → integrity.repeatLogicalInferenceCalls">10</span> logical model calls and <span class="sourced-number" tabindex="0" title="analysis.json → integrity.repeatTransportRequestAttempts" data-source="analysis.json → integrity.repeatTransportRequestAttempts">10</span> transport attempts, so there were <span class="sourced-number" tabindex="0" title="analysis.json → integrity.repeatTransportRetries" data-source="analysis.json → integrity.repeatTransportRetries">0</span> model transport retries.</li>
+    </ul>
+  </section>
+
+  <section id="score-comparison" data-report-section="results">
+    <h2>Suite score comparison</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">Model</th><th scope="col">First draw</th><th scope="col">Repeat draw</th><th scope="col">Change</th><th scope="col">Two-draw mean</th><th scope="col">Sample SD</th><th scope="col">Observed range</th></tr></thead>
+      <tbody><tr>
+        <th scope="row">openai-gpt-5-nano</th>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].suite.firstScore" data-source="analysis.json → models[0].suite.firstScore">26.07</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].suite.repeatScore" data-source="analysis.json → models[0].suite.repeatScore">28.15</span></td>
+        <td class="positive"><span class="sourced-number" tabindex="0" title="analysis.json → models[0].suite.delta" data-source="analysis.json → models[0].suite.delta">+2.08</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].suite.mean" data-source="analysis.json → models[0].suite.mean">27.11</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].suite.sampleStddev" data-source="analysis.json → models[0].suite.sampleStddev">1.47</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].suite.observedRange" data-source="analysis.json → models[0].suite.observedRange">2.08</span></td>
+      </tr><tr>
+        <th scope="row">vertex-gemini-3.1-flash-lite</th>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].suite.firstScore" data-source="analysis.json → models[1].suite.firstScore">55.88</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].suite.repeatScore" data-source="analysis.json → models[1].suite.repeatScore">59.09</span></td>
+        <td class="positive"><span class="sourced-number" tabindex="0" title="analysis.json → models[1].suite.delta" data-source="analysis.json → models[1].suite.delta">+3.21</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].suite.mean" data-source="analysis.json → models[1].suite.mean">57.49</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].suite.sampleStddev" data-source="analysis.json → models[1].suite.sampleStddev">2.27</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].suite.observedRange" data-source="analysis.json → models[1].suite.observedRange">3.21</span></td>
+      </tr></tbody>
+    </table></div>
+    <div class="callout"><strong>Do not over-read the SD.</strong> With only <span class="sourced-number" tabindex="0" title="analysis.json → scope.observationsPerModelCase" data-source="analysis.json → scope.observationsPerModelCase">2</span> observations per model/case, sample SD is mathematically defined but statistically unstable. It describes these two draws only.</div>
+  </section>
+
+  <section id="case-comparison" data-report-section="case-results">
+    <h2>Per-case movement</h2>
+    <div class="table-wrap"><table class="case-table">
+      <thead><tr><th scope="col">Model</th><th scope="col">Case</th><th scope="col">First</th><th scope="col">Repeat</th><th scope="col">Change</th></tr></thead>
+      <tbody><tr>
+          <th scope="row">openai-gpt-5-nano</th>
+          <td><span class="case-id">P12-pfas-method-validation</span><span class="case-title">PFAS Method Validation and Batch Release Packet</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[0].firstScore" data-source="analysis.json → models[0].cases[0].firstScore">31.45</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[0].repeatScore" data-source="analysis.json → models[0].cases[0].repeatScore">36.41</span></td>
+          <td class="positive"><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[0].delta" data-source="analysis.json → models[0].cases[0].delta">+4.97</span></td>
+        </tr><tr>
+          <th scope="row">openai-gpt-5-nano</th>
+          <td><span class="case-id">P15-architecture-floorplan-diagrams</span><span class="case-title">Suite 214 Laboratory Coordination Set</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[1].firstScore" data-source="analysis.json → models[0].cases[1].firstScore">8.97</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[1].repeatScore" data-source="analysis.json → models[0].cases[1].repeatScore">10.85</span></td>
+          <td class="positive"><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[1].delta" data-source="analysis.json → models[0].cases[1].delta">+1.88</span></td>
+        </tr><tr>
+          <th scope="row">openai-gpt-5-nano</th>
+          <td><span class="case-id">P17-clinical-trial-site-monitoring</span><span class="case-title">HTX-204 Site 014 Monitoring Source Packet</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[2].firstScore" data-source="analysis.json → models[0].cases[2].firstScore">6.50</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[2].repeatScore" data-source="analysis.json → models[0].cases[2].repeatScore">8.43</span></td>
+          <td class="positive"><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[2].delta" data-source="analysis.json → models[0].cases[2].delta">+1.93</span></td>
+        </tr><tr>
+          <th scope="row">openai-gpt-5-nano</th>
+          <td><span class="case-id">P21-semiconductor-lot-disposition</span><span class="case-title">Lot Q8R7-22 Material Review File</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[3].firstScore" data-source="analysis.json → models[0].cases[3].firstScore">5.90</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[3].repeatScore" data-source="analysis.json → models[0].cases[3].repeatScore">5.94</span></td>
+          <td class="positive"><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[3].delta" data-source="analysis.json → models[0].cases[3].delta">+0.04</span></td>
+        </tr><tr>
+          <th scope="row">openai-gpt-5-nano</th>
+          <td><span class="case-id">P23-native-text-layer-recovery</span><span class="case-title">Northstar Cold Chain Supplier Cutover Authorization</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[4].firstScore" data-source="analysis.json → models[0].cases[4].firstScore">77.55</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[4].repeatScore" data-source="analysis.json → models[0].cases[4].repeatScore">79.12</span></td>
+          <td class="positive"><span class="sourced-number" tabindex="0" title="analysis.json → models[0].cases[4].delta" data-source="analysis.json → models[0].cases[4].delta">+1.58</span></td>
+        </tr><tr>
+          <th scope="row">vertex-gemini-3.1-flash-lite</th>
+          <td><span class="case-id">P12-pfas-method-validation</span><span class="case-title">PFAS Method Validation and Batch Release Packet</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[0].firstScore" data-source="analysis.json → models[1].cases[0].firstScore">58.58</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[0].repeatScore" data-source="analysis.json → models[1].cases[0].repeatScore">60.46</span></td>
+          <td class="positive"><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[0].delta" data-source="analysis.json → models[1].cases[0].delta">+1.88</span></td>
+        </tr><tr>
+          <th scope="row">vertex-gemini-3.1-flash-lite</th>
+          <td><span class="case-id">P15-architecture-floorplan-diagrams</span><span class="case-title">Suite 214 Laboratory Coordination Set</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[1].firstScore" data-source="analysis.json → models[1].cases[1].firstScore">37.21</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[1].repeatScore" data-source="analysis.json → models[1].cases[1].repeatScore">38.90</span></td>
+          <td class="positive"><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[1].delta" data-source="analysis.json → models[1].cases[1].delta">+1.69</span></td>
+        </tr><tr>
+          <th scope="row">vertex-gemini-3.1-flash-lite</th>
+          <td><span class="case-id">P17-clinical-trial-site-monitoring</span><span class="case-title">HTX-204 Site 014 Monitoring Source Packet</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[2].firstScore" data-source="analysis.json → models[1].cases[2].firstScore">40.27</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[2].repeatScore" data-source="analysis.json → models[1].cases[2].repeatScore">56.25</span></td>
+          <td class="positive"><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[2].delta" data-source="analysis.json → models[1].cases[2].delta">+15.98</span></td>
+        </tr><tr>
+          <th scope="row">vertex-gemini-3.1-flash-lite</th>
+          <td><span class="case-id">P21-semiconductor-lot-disposition</span><span class="case-title">Lot Q8R7-22 Material Review File</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[3].firstScore" data-source="analysis.json → models[1].cases[3].firstScore">54.90</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[3].repeatScore" data-source="analysis.json → models[1].cases[3].repeatScore">51.41</span></td>
+          <td class="negative"><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[3].delta" data-source="analysis.json → models[1].cases[3].delta">-3.49</span></td>
+        </tr><tr>
+          <th scope="row">vertex-gemini-3.1-flash-lite</th>
+          <td><span class="case-id">P23-native-text-layer-recovery</span><span class="case-title">Northstar Cold Chain Supplier Cutover Authorization</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[4].firstScore" data-source="analysis.json → models[1].cases[4].firstScore">88.46</span></td>
+          <td><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[4].repeatScore" data-source="analysis.json → models[1].cases[4].repeatScore">88.46</span></td>
+          <td class="positive"><span class="sourced-number" tabindex="0" title="analysis.json → models[1].cases[4].delta" data-source="analysis.json → models[1].cases[4].delta">+0.00</span></td>
+        </tr></tbody>
+    </table></div>
+    <p><strong>Why there is no chart:</strong> an exact table is more honest for two observations. A distribution chart would visually imply more repeatability evidence than exists.</p>
+  </section>
+
+  <section id="spend" data-report-section="spend">
+    <h2>Measured spend</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">Evidence cohort</th><th scope="col">Model inference</th><th scope="col">Evaluator</th><th scope="col">Total</th></tr></thead>
+      <tbody><tr>
+        <th scope="row">First draw</th>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → spend.first.inferenceCostUsd" data-source="analysis.json → spend.first.inferenceCostUsd">$0.080856</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → spend.first.evaluatorCostUsd" data-source="analysis.json → spend.first.evaluatorCostUsd">$0.303682</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → spend.first.totalMeasuredCostUsd" data-source="analysis.json → spend.first.totalMeasuredCostUsd">$0.384538</span></td>
+      </tr><tr>
+        <th scope="row">Repeat draw</th>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → spend.repeat.inferenceCostUsd" data-source="analysis.json → spend.repeat.inferenceCostUsd">$0.094663</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → spend.repeat.evaluatorCostUsd" data-source="analysis.json → spend.repeat.evaluatorCostUsd">$0.309230</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → spend.repeat.totalMeasuredCostUsd" data-source="analysis.json → spend.repeat.totalMeasuredCostUsd">$0.403893</span></td>
+      </tr><tr>
+        <th scope="row">Cumulative evidence</th>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → spend.cumulative.inferenceCostUsd" data-source="analysis.json → spend.cumulative.inferenceCostUsd">$0.175520</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → spend.cumulative.evaluatorCostUsd" data-source="analysis.json → spend.cumulative.evaluatorCostUsd">$0.612912</span></td>
+        <td><span class="sourced-number" tabindex="0" title="analysis.json → spend.cumulative.totalMeasuredCostUsd" data-source="analysis.json → spend.cumulative.totalMeasuredCostUsd">$0.788431</span></td>
+      </tr></tbody>
+    </table></div>
+    <p>The evaluator accounted for <span class="sourced-number" tabindex="0" title="analysis.json → evaluatorShareOfRepeatSpend" data-source="analysis.json → evaluatorShareOfRepeatSpend">76.6%</span> of repeat-run spend. All values are usage-derived estimates recorded in provider result artifacts; they are not invoice reconciliation.</p>
+  </section>
+
+  <section id="data-contract-section" data-report-section="data-contract" data-report-audience="technical">
+    <h2>Scope, data, and metric definitions</h2>
+    <div class="two-col">
+      <article class="card"><h3>Unit of analysis</h3><p>One model-generated Markdown reconstruction for one case and one sample slot. Each suite score is the equal-weight mean across <span class="sourced-number" tabindex="0" title="analysis.json → scope.caseCount" data-source="analysis.json → scope.caseCount">5</span> cases.</p></article>
+      <article class="card"><h3>Comparison</h3><p>The anchor gap is Gemini 3.1 Flash‑Lite score minus GPT‑5 Nano score within the same draw slot. Positive values favor Gemini.</p></article>
+      <article class="card"><h3>Cost</h3><p>Inference cost and evaluator cost are reported separately, then summed. No human labor or infrastructure cost is included.</p></article>
+      <article class="card"><h3>Preservation</h3><p>Both snapshots contain exact scores, usage, costs, cache identities, and hashes of the underlying ignored run artifacts. Source snapshot hashes are recorded in <code>analysis.json</code>.</p></article>
+    </div>
+  </section>
+
+  <section id="methodology" data-report-section="methodology">
+    <h2>Methodology and integrity checks</h2>
+    <ol>
+      <li>Captured and pushed draw one before any repeat call.</li>
+      <li>Reserved immutable sample slot <code>002</code> under one authorization hash and forbade replacement of <code>001</code>.</li>
+      <li>Ran the same prompt, PDFs, model configurations, inference protocol, and scoring contract.</li>
+      <li>Used a fresh evaluator judgment for every repeat output: <span class="sourced-number" tabindex="0" title="analysis.json → integrity.repeatValidEvaluatorJudgments" data-source="analysis.json → integrity.repeatValidEvaluatorJudgments">10</span> valid judgments, <span class="sourced-number" tabindex="0" title="analysis.json → integrity.repeatEvaluatorAttempts" data-source="analysis.json → integrity.repeatEvaluatorAttempts">10</span> attempts, and <span class="sourced-number" tabindex="0" title="analysis.json → integrity.repeatJudgeReuses" data-source="analysis.json → integrity.repeatJudgeReuses">0</span> cached judgment reuses.</li>
+      <li>Computed each draw's suite score case-first with equal case weight, then compared the two complete draw slots.</li>
+    </ol>
+  </section>
+
+  <section id="limitations" data-report-section="limitations">
+    <h2>Limitations, uncertainty, and robustness</h2>
+    <ul>
+      <li>Two draws are a sensitivity check, not a stable variance estimate or confidence interval.</li>
+      <li>Fresh generation and fresh evaluator judgment were both stochastic, so observed deltas cannot be attributed to generation alone.</li>
+      <li>The two anchors establish local differentiation, not a calibrated ranking across the broader model market.</li>
+      <li>The official development summary intentionally remains one-draw; this report is a separate validation artifact.</li>
+      <li>The robust result is the replicated large gap. The less robust result is the exact score level, especially on the long clinical packet.</li>
+    </ul>
+  </section>
+
+  <section id="recommendations" data-report-section="recommendations">
+    <h2>Recommended next steps</h2>
+    <ul>
+      <li>Keep one draw as the normal iteration default and retain this repeat checkpoint as a variance warning, not as a new multi-run benchmark default.</li>
+      <li>When the suite is frozen, use a small predeclared repeat cohort only for release validation and report intervals without false precision.</li>
+      <li>Audit the long clinical case's evaluator stability before attributing its large Gemini movement entirely to model behavior.</li>
+      <li>Continue improving cases where both anchors are high or move together; preserve cases where the score gap reflects real document-processing utility.</li>
+    </ul>
+  </section>
+
+  <section id="further-questions" data-report-section="further-questions">
+    <h2>Further questions</h2>
+    <ul>
+      <li>How much of the clinical-case movement survives deterministic replay of each stored evaluator judgment?</li>
+      <li>Does the same large separation persist for a stronger, still-affordable good anchor without saturating the suite?</li>
+      <li>Which capability axes contribute most consistently to the anchor gap across future frozen checkpoints?</li>
+    </ul>
+  </section>
+
+  <footer>Generated from hash-bound local snapshots. Hover or focus any dotted numeric value to see its exact source field. Machine-readable analysis: <code>analysis.json</code>.</footer>
+</main>
+</body>
+</html>
