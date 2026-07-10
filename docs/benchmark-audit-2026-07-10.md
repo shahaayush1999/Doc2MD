@@ -18,11 +18,10 @@ It is not yet a decisive frontier leaderboard. Five of the six current models sc
 
 ### Reproducibility environment
 
-- Base revision: `b2a128bfc8431a6fb87d597dd75d6f62b1abeac1` on `main`, with the intentional uncommitted benchmark rebuild described by this record.
+- Rebuild commit: `8cde48f08c16540ba54fd787d8784a3bb42bc911` on `main`, based on `b2a128bfc8431a6fb87d597dd75d6f62b1abeac1`.
 - Node.js `v22.22.3`; npm `10.9.8`.
 - uv `0.11.18`; Python `3.11.15`.
 - LibreOffice `26.2.2.2`; qpdf `12.3.2`; pdftoppm `26.04.0`.
-- If this work is committed, replace the base/dirty-worktree description with the final commit identity.
 
 | Case | Pages | Regions | Leaves | Primary contribution |
 | --- | ---: | ---: | ---: | --- |
