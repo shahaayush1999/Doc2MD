@@ -57,7 +57,7 @@ function interactiveChart(models: any[]) {
     const metrics={
       cost:{title:"Reconstruction fidelity vs inference cost",axis:"Model inference cost · USD · log scale",value:p=>p.cost,format:v=>"$"+v.toFixed(v<.1?3:2),log:true},
       time:{title:"Reconstruction fidelity vs model-call time",axis:"Summed inference time · seconds",value:p=>p.time,format:v=>Math.round(v)+"s"},
-      tokens:{title:"Reconstruction fidelity vs output volume",axis:"Model output tokens",value:p=>Math.round(v/1000)+"k",format:v=>Math.round(v/1000)+"k"}
+      tokens:{title:"Reconstruction fidelity vs output volume",axis:"Model output tokens",value:p=>p.tokens,format:v=>Math.round(v/1000)+"k"}
     };
     const esc=s=>String(s).replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
     function render(key){
