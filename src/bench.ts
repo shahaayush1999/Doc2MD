@@ -206,6 +206,8 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
     inferenceCostUsd: inference.costUsd ?? 0,
     evaluatorCostUsd: evaluation.evaluator.costUsd ?? 0,
     incrementalCostUsd: inferenceSpent + evaluatorSpent,
+    incrementalInferenceCostUsd: inferenceSpent,
+    incrementalEvaluatorCostUsd: evaluatorSpent,
     cacheStatus,
   };
 }
@@ -262,26 +264,30 @@ export async function runBenchmark(requestedModelIds: string[]) {
   const evaluatorSourceHash = sha256(evaluatorSource);
   await importLegacyResults(manifest as { cases: ManifestCase[] }, prompt, evaluatorSourceHash);
   const modelIds = requestedModelIds.length > 0 ? requestedModelIds : [...new Set([...defaultModelIds, ...(await cachedModelIds())])];
-  let incrementalSpendUsd = 0;
+  let incrementalInferenceSpendUsd = 0;
+  let incrementalEvaluatorSpendUsd = 0;
 
   for (const modelId of modelIds) {
     console.log(`\n${modelId}: checking ${manifest.cases.length} cases`);
     const cases = await Promise.all(manifest.cases.map((testCase) => runCase(modelId, testCase as ManifestCase, prompt, evaluatorSourceHash)));
-    incrementalSpendUsd += cases.reduce((sum, testCase) => sum + testCase.incrementalCostUsd, 0);
+    incrementalInferenceSpendUsd += cases.reduce((sum, testCase) => sum + testCase.incrementalInferenceCostUsd, 0);
+    incrementalEvaluatorSpendUsd += cases.reduce((sum, testCase) => sum + testCase.incrementalEvaluatorCostUsd, 0);
   }
 
   const mergedModels = await collectMergedResults(manifest as { cases: ManifestCase[] }, prompt, evaluatorSourceHash);
   const summary = {
     generatedAt: new Date().toISOString(),
     caseCount: manifest.cases.length,
-    incrementalSpendUsd,
+    incrementalSpendUsd: incrementalInferenceSpendUsd + incrementalEvaluatorSpendUsd,
+    incrementalInferenceSpendUsd,
+    incrementalEvaluatorSpendUsd,
     totalCostUsd: mergedModels.reduce((sum, model) => sum + model.totalCostUsd, 0),
     models: mergedModels,
   };
   await mkdir("reports", { recursive: true });
   await Promise.all([writeJson("reports/summary.json", summary), writeFile("reports/index.html", renderReport(summary), "utf8")]);
-  console.table(mergedModels.map((model) => ({ model: model.modelId, score: model.score, cumulativeSpendUsd: model.totalCostUsd })));
-  console.log(`Incremental spend: $${incrementalSpendUsd.toFixed(6)}`);
+  console.table(mergedModels.map((model) => ({ model: model.modelId, score: model.score, inferenceSpendUsd: model.inferenceCostUsd })));
+  console.log(`Incremental model inference spend: $${incrementalInferenceSpendUsd.toFixed(6)}`);
   console.log("Report: reports/index.html");
   return summary;
 }
