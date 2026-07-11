@@ -56,6 +56,23 @@ function configuredModel(spec: ModelSpec) {
   };
 }
 
+function promptCacheKey(inferenceCacheKey: string) {
+  return `doc2md-${inferenceCacheKey.slice(0, 48)}`;
+}
+
+function usageWithCacheWrite(spec: ModelSpec, usage: any) {
+  if (!spec.cacheWritePerMillion) return usage;
+  const input = Math.max(0, usage?.inputTokens ?? 0);
+  const cached = Math.min(input, Math.max(0, usage?.inputTokenDetails?.cacheReadTokens ?? 0));
+  return {
+    ...usage,
+    inputTokenDetails: {
+      ...usage?.inputTokenDetails,
+      cacheWriteTokens: input - cached,
+    },
+  };
+}
+
 async function packageLockHash() {
   return sha256(await readFile("package-lock.json"));
 }
@@ -166,15 +183,26 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
     const outputLimit = spec.maxOutputTokens ?? maxOutputTokens;
     const startedAt = new Date();
     const started = performance.now();
+    const requestInferenceKey = await inferenceKey(spec, testCase, prompt);
+    const requestPromptCacheKey = promptCacheKey(requestInferenceKey);
     const response = await generateText({
       model: createModel(spec),
       messages: [{ role: "user", content: [{ type: "text", text: prompt }, { type: "file", data: pdf, mediaType: "application/pdf", filename: `${testCase.id}.pdf` }] }],
       maxOutputTokens: outputLimit,
       maxRetries: 2,
       ...(spec.reasoning ? { reasoning: spec.reasoning } : {}),
+      ...(spec.provider === "openai" ? {
+        providerOptions: {
+          openai: {
+            promptCacheKey: requestPromptCacheKey,
+            ...(spec.modelName.startsWith("gpt-5.6-") ? { promptCacheRetention: "24h" as const } : {}),
+          },
+        },
+      } : {}),
     });
+    const usage = usageWithCacheWrite(spec, response.usage);
     prediction = response.text;
-    inferenceSpent = calculateCost(spec, response.usage);
+    inferenceSpent = calculateCost(spec, usage);
     const finishedAt = new Date();
     inference = {
       modelId,
@@ -189,9 +217,17 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
       timestampSource: "provider-call-clock",
       elapsedMs: Math.round(performance.now() - started),
       finishReason: response.finishReason,
-      usage: response.usage,
+      usage,
+      providerCache: {
+        mode: spec.provider === "openai"
+          ? spec.modelName.startsWith("gpt-5.6-") ? "prompt-cache-key-24h" : "prompt-cache-key"
+          : "implicit",
+        key: spec.provider === "openai" ? requestPromptCacheKey : null,
+        cacheReadTokens: usage?.inputTokenDetails?.cacheReadTokens ?? 0,
+        cacheWriteTokens: usage?.inputTokenDetails?.cacheWriteTokens ?? 0,
+      },
       costUsd: inferenceSpent,
-      cacheKey: await inferenceKey(spec, testCase, prompt),
+      cacheKey: requestInferenceKey,
     };
     await Promise.all([
       writeFile(path.join(directory, "prediction.md"), prediction, "utf8"),
@@ -209,7 +245,10 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
   }
 
   const cacheStatus = inferenceSpent === 0 && evaluatorSpent === 0 ? "cached" : inferenceSpent === 0 ? "rescored" : "run";
-  console.log(`${modelId} draw ${draw} ${testCase.id}: ${evaluation.score === null ? "INVALID" : evaluation.score.toFixed(1)} (${cacheStatus})`);
+  const providerCache = inferenceSpent > 0
+    ? `; provider cache ${inference.usage?.inputTokenDetails?.cacheReadTokens ?? 0}/${inference.usage?.inputTokens ?? 0} input tokens`
+    : "";
+  console.log(`${modelId} draw ${draw} ${testCase.id}: ${evaluation.score === null ? "INVALID" : evaluation.score.toFixed(1)} (${cacheStatus}${providerCache})`);
   return {
     draw,
     caseId: testCase.id,
@@ -221,6 +260,9 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
     incrementalInferenceCostUsd: inferenceSpent,
     incrementalEvaluatorCostUsd: evaluatorSpent,
     cacheStatus,
+    inputTokens: inference.usage?.inputTokens ?? 0,
+    cacheReadTokens: inference.usage?.inputTokenDetails?.cacheReadTokens ?? 0,
+    cacheWriteTokens: inference.usage?.inputTokenDetails?.cacheWriteTokens ?? 0,
   };
 }
 
@@ -279,6 +321,11 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
           inferenceCostUsd: calculateCost(models[modelId]!, cached.inference.usage),
           evaluatorCostUsd: cached.evaluation.evaluator.costUsd ?? 0,
           outputTokens: cached.inference.usage?.outputTokens ?? 0,
+          inputTokens: cached.inference.usage?.inputTokens ?? 0,
+          cacheReadTokens: cached.inference.usage?.inputTokenDetails?.cacheReadTokens ?? 0,
+          cacheWriteTokens: cached.inference.usage?.inputTokenDetails?.cacheWriteTokens ?? 0,
+          evaluatorInputTokens: cached.evaluation.evaluator?.usage?.inputTokens ?? 0,
+          evaluatorCacheReadTokens: cached.evaluation.evaluator?.usage?.inputTokenDetails?.cacheReadTokens ?? 0,
           inferenceElapsedMs: cached.inference.elapsedMs ?? 0,
           resolvedModel: cached.inference.resolvedModel ?? null,
           evaluatorResolvedModel: cached.evaluation.evaluator?.resolved?.modelId ?? null,
@@ -293,6 +340,11 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
         inferenceCostUsd: cases.reduce((sum, testCase) => sum + testCase.inferenceCostUsd, 0),
         evaluatorCostUsd: cases.reduce((sum, testCase) => sum + testCase.evaluatorCostUsd, 0),
         totalOutputTokens: cases.reduce((sum, testCase) => sum + testCase.outputTokens, 0),
+        inputTokens: cases.reduce((sum, testCase) => sum + testCase.inputTokens, 0),
+        cacheReadTokens: cases.reduce((sum, testCase) => sum + testCase.cacheReadTokens, 0),
+        cacheWriteTokens: cases.reduce((sum, testCase) => sum + testCase.cacheWriteTokens, 0),
+        evaluatorInputTokens: cases.reduce((sum, testCase) => sum + testCase.evaluatorInputTokens, 0),
+        evaluatorCacheReadTokens: cases.reduce((sum, testCase) => sum + testCase.evaluatorCacheReadTokens, 0),
         inferenceSeconds: cases.reduce((sum, testCase) => sum + testCase.inferenceElapsedMs, 0) / 1_000,
         cases,
       });
@@ -339,6 +391,16 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
       totalCostUsd: inferenceCostUsd + evaluatorCostUsd,
       cumulativeInferenceCostUsd: draws.reduce((sum, draw) => sum + draw.inferenceCostUsd, 0),
       cumulativeEvaluatorCostUsd: draws.reduce((sum, draw) => sum + draw.evaluatorCostUsd, 0),
+      inputTokens: draws.reduce((sum, draw) => sum + draw.inputTokens, 0),
+      cacheReadTokens: draws.reduce((sum, draw) => sum + draw.cacheReadTokens, 0),
+      cacheWriteTokens: draws.reduce((sum, draw) => sum + draw.cacheWriteTokens, 0),
+      cacheHitRate: draws.reduce((sum, draw) => sum + draw.inputTokens, 0) === 0 ? 0 :
+        draws.reduce((sum, draw) => sum + draw.cacheReadTokens, 0) / draws.reduce((sum, draw) => sum + draw.inputTokens, 0),
+      evaluatorInputTokens: draws.reduce((sum, draw) => sum + draw.evaluatorInputTokens, 0),
+      evaluatorCacheReadTokens: draws.reduce((sum, draw) => sum + draw.evaluatorCacheReadTokens, 0),
+      evaluatorCacheHitRate: draws.reduce((sum, draw) => sum + draw.evaluatorInputTokens, 0) === 0 ? 0 :
+        draws.reduce((sum, draw) => sum + draw.evaluatorCacheReadTokens, 0) /
+          draws.reduce((sum, draw) => sum + draw.evaluatorInputTokens, 0),
       totalOutputTokens: mean(draws.map((draw) => draw.totalOutputTokens)),
       inferenceSeconds: mean(draws.map((draw) => draw.inferenceSeconds)),
       cases,
@@ -361,11 +423,25 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
 
   for (const modelId of modelIds) {
     console.log(`\n${modelId}: ensuring ${requestedRuns} draw slot${requestedRuns === 1 ? "" : "s"} × ${manifest.cases.length} cases`);
-    const cases = await Promise.all(
-      Array.from({ length: requestedRuns }, (_, drawIndex) =>
-        manifest.cases.map((testCase) => runCase(modelId, testCase as ManifestCase, prompt, evaluatorSourceHash, drawIndex + 1)),
-      ).flat(),
-    );
+    // Cases remain parallel. Within each case, advance only until one new
+    // provider call has warmed the prefix cache, then run every remaining draw
+    // in parallel. Cached local slots do not count as a provider warm-up.
+    const cases = (await Promise.all(manifest.cases.map(async (testCase) => {
+      const draws = [];
+      for (let draw = 1; draw <= requestedRuns; draw += 1) {
+        const result = await runCase(modelId, testCase as ManifestCase, prompt, evaluatorSourceHash, draw);
+        draws.push(result);
+        if (result.incrementalInferenceCostUsd > 0 && draw < requestedRuns) {
+          draws.push(...await Promise.all(
+            Array.from({ length: requestedRuns - draw }, (_, offset) =>
+              runCase(modelId, testCase as ManifestCase, prompt, evaluatorSourceHash, draw + offset + 1),
+            ),
+          ));
+          break;
+        }
+      }
+      return draws;
+    }))).flat();
     incrementalInferenceSpendUsd += cases.reduce((sum, testCase) => sum + testCase.incrementalInferenceCostUsd, 0);
     incrementalEvaluatorSpendUsd += cases.reduce((sum, testCase) => sum + testCase.incrementalEvaluatorCostUsd, 0);
   }

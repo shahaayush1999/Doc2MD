@@ -11,6 +11,7 @@ export type ModelSpec = {
   pricingVersion: string;
   inputPerMillion: number;
   cachedInputPerMillion: number;
+  cacheWritePerMillion?: number;
   outputPerMillion: number;
 };
 
@@ -41,9 +42,9 @@ export const models: Record<string, ModelSpec> = {
     provider: "google-vertex",
     reasoning: "minimal",
     pricingVersion: "2026-07-11",
-    inputPerMillion: 0.25,
-    cachedInputPerMillion: 0.025,
-    outputPerMillion: 1.5,
+    inputPerMillion: 0.45,
+    cachedInputPerMillion: 0.045,
+    outputPerMillion: 2.7,
   },
   "vertex-gemini-2.5-flash-lite": {
     id: "vertex-gemini-2.5-flash-lite",
@@ -83,9 +84,9 @@ export const models: Record<string, ModelSpec> = {
     reasoning: "minimal",
     location: "global",
     pricingVersion: "2026-07-11",
-    inputPerMillion: 0.5,
-    cachedInputPerMillion: 0.05,
-    outputPerMillion: 3,
+    inputPerMillion: 0.9,
+    cachedInputPerMillion: 0.09,
+    outputPerMillion: 5.4,
   },
   "vertex-gemini-3.1-pro": {
     id: "vertex-gemini-3.1-pro",
@@ -103,9 +104,42 @@ export const models: Record<string, ModelSpec> = {
     provider: "google-vertex",
     reasoning: "minimal",
     pricingVersion: "2026-07-11",
-    inputPerMillion: 1.5,
-    cachedInputPerMillion: 0.15,
-    outputPerMillion: 9,
+    inputPerMillion: 2.7,
+    cachedInputPerMillion: 0.27,
+    outputPerMillion: 16.2,
+  },
+  "openai-gpt-5.6-luna": {
+    id: "openai-gpt-5.6-luna",
+    modelName: "gpt-5.6-luna",
+    provider: "openai",
+    reasoning: "none",
+    pricingVersion: "2026-07-11",
+    inputPerMillion: 1,
+    cachedInputPerMillion: 0.1,
+    cacheWritePerMillion: 1.25,
+    outputPerMillion: 6,
+  },
+  "openai-gpt-5.6-terra": {
+    id: "openai-gpt-5.6-terra",
+    modelName: "gpt-5.6-terra",
+    provider: "openai",
+    reasoning: "none",
+    pricingVersion: "2026-07-11",
+    inputPerMillion: 2.5,
+    cachedInputPerMillion: 0.25,
+    cacheWritePerMillion: 3.125,
+    outputPerMillion: 15,
+  },
+  "openai-gpt-5.6-sol": {
+    id: "openai-gpt-5.6-sol",
+    modelName: "gpt-5.6-sol",
+    provider: "openai",
+    reasoning: "none",
+    pricingVersion: "2026-07-11",
+    inputPerMillion: 5,
+    cachedInputPerMillion: 0.5,
+    cacheWritePerMillion: 6.25,
+    outputPerMillion: 30,
   },
   "openai-gpt-5.5": {
     id: "openai-gpt-5.5",
