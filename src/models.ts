@@ -7,12 +7,22 @@ export type ModelSpec = {
   provider: "google-vertex" | "openai";
   reasoning?: "none" | "minimal";
   location?: string;
+  maxOutputTokens?: number;
   inputPerMillion: number;
   cachedInputPerMillion: number;
   outputPerMillion: number;
 };
 
 export const models: Record<string, ModelSpec> = {
+  "openai-gpt-4o-mini": {
+    id: "openai-gpt-4o-mini",
+    modelName: "gpt-4o-mini",
+    provider: "openai",
+    maxOutputTokens: 16_384,
+    inputPerMillion: 0.15,
+    cachedInputPerMillion: 0.075,
+    outputPerMillion: 0.6,
+  },
   "openai-gpt-5-nano": {
     id: "openai-gpt-5-nano",
     modelName: "gpt-5-nano",
