@@ -66,12 +66,15 @@ function interactiveChart(models: any[]) {
     const yMin=Math.max(0,Math.floor((scoreMin-scoreSpan*.1)/scoreStep)*scoreStep),yMax=Math.min(100,Math.ceil((scoreMax+scoreSpan*.1)/scoreStep)*scoreStep);
     const yTicks=Array.from({length:Math.round((yMax-yMin)/scoreStep)+1},(_,i)=>yMin+i*scoreStep);
     function render(key){
-      const m=metrics[key],W=1000,H=500,p={l:84,r:220,t:70,b:78},right=W-p.r,bottom=H-p.b,vals=points.map(m.value),min=m.log?Math.min(...vals):0,max=Math.max(...vals);
+      const m=metrics[key],W=1000,H=500,p={l:84,r:250,t:70,b:78},right=W-p.r,bottom=H-p.b,vals=points.map(m.value),min=m.log?Math.min(...vals):0,max=Math.max(...vals);
       const norm=v=>m.log?(Math.log10(v)-Math.log10(min))/(Math.log10(max)-Math.log10(min)||1):v/(max||1);
       const x=v=>p.l+norm(v)*(right-p.l),y=v=>p.t+(1-(v-yMin)/(yMax-yMin))*(bottom-p.t);
       const yt=yTicks.map(v=>'<line x1="'+p.l+'" y1="'+y(v)+'" x2="'+right+'" y2="'+y(v)+'" class="grid"/><text x="'+(p.l-14)+'" y="'+(y(v)+5)+'" text-anchor="end" class="tick">'+v+'</text>').join("");
       const xt=(m.log?[min,Math.sqrt(min*max),max]:[0,max/3,max*2/3,max]).map(v=>'<line x1="'+x(v||min)+'" y1="'+bottom+'" x2="'+x(v||min)+'" y2="'+(bottom+7)+'" class="axis"/><text x="'+x(v||min)+'" y="'+(bottom+27)+'" text-anchor="middle" class="tick">'+m.format(v)+'</text>').join("");
-      const marks=points.map((d,i)=>{const px=x(m.value(d)),py=y(d.score),ly=py+(i===1?25:-14),color=palette[i%palette.length];return '<line x1="'+px+'" y1="'+py+'" x2="'+(px+18)+'" y2="'+(ly-5)+'" stroke="'+color+'" opacity=".5"/><circle cx="'+px+'" cy="'+py+'" r="10" fill="'+color+'" stroke="#fffdf8" stroke-width="4"/><text x="'+(px+24)+'" y="'+ly+'" class="point-label">'+esc(d.name)+' · '+d.score.toFixed(1)+'</text>'}).join("");
+      const placed=points.map((d,i)=>({d,i,px:x(m.value(d)),py:y(d.score),ly:y(d.score)+5})).sort((a,b)=>a.py-b.py),labelGap=25,labelTop=p.t+5,labelBottom=bottom+5;
+      placed.forEach((item,i)=>item.ly=Math.max(item.ly,i?placed[i-1].ly+labelGap:labelTop));
+      for(let i=placed.length-1;i>=0;i--)placed[i].ly=Math.min(placed[i].ly,i===placed.length-1?labelBottom:placed[i+1].ly-labelGap);
+      const marks=placed.map(({d,i,px,py,ly})=>{const color=palette[i%palette.length],labelX=right+24;return '<line x1="'+px+'" y1="'+py+'" x2="'+(labelX-8)+'" y2="'+(ly-5)+'" stroke="'+color+'" opacity=".5"/><circle cx="'+px+'" cy="'+py+'" r="10" fill="'+color+'" stroke="#fffdf8" stroke-width="4"/><text x="'+labelX+'" y="'+ly+'" class="point-label">'+esc(d.name)+' · '+d.score.toFixed(1)+'</text>'}).join("");
       document.querySelector("#chart-stage").innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(m.title)+'"><text x="'+p.l+'" y="38" class="chart-title">'+esc(m.title)+'</text>'+yt+'<line x1="'+p.l+'" y1="'+bottom+'" x2="'+right+'" y2="'+bottom+'" class="axis"/>'+xt+marks+'<text x="24" y="'+((p.t+bottom)/2)+'" transform="rotate(-90 24 '+((p.t+bottom)/2)+')" text-anchor="middle" class="axis-label">Observed score · focused range</text><text x="'+((p.l+right)/2)+'" y="'+(H-18)+'" text-anchor="middle" class="axis-label">'+esc(m.axis)+'</text></svg>';
       document.querySelectorAll("[data-metric]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.metric===key)));
     }
