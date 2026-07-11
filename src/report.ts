@@ -32,8 +32,11 @@ function escapeHtml(value: unknown) {
   return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 }
 
-function label(modelId: string) {
-  return modelId.replace(/^vertex-/, "").replace(/^openai-/, "");
+function label(model: string | { modelId: string; configuredModel?: { modelName?: string; reasoning?: string | null } }): string {
+  if (typeof model === "string") return model.replace(/^vertex-/, "").replace(/^openai-/, "");
+  const name: string = model.configuredModel?.modelName ?? model.modelId.replace(/^vertex-/, "").replace(/^openai-/, "");
+  const reasoning = model.configuredModel?.reasoning;
+  return reasoning ? `${name} · ${reasoning[0]!.toUpperCase()}${reasoning.slice(1)} thinking` : name;
 }
 
 function money(value: number) {
@@ -42,7 +45,7 @@ function money(value: number) {
 
 function interactiveChart(models: any[]) {
   const data = JSON.stringify(models.map((model) => ({
-    name: label(model.modelId), score: model.score, cost: model.inferenceCostUsd,
+    name: label(model), score: model.score, cost: model.inferenceCostUsd,
     time: model.inferenceSeconds, tokens: model.totalOutputTokens,
   }))).replaceAll("<", "\\u003c");
   return `<div class="bench-chart">
@@ -110,7 +113,7 @@ function caseSections(models: any[]) {
       .map((model: any, modelIndex: number) => ({ model, modelIndex, score: model.cases[index].score }))
       .sort((a: any, b: any) => b.score - a.score || a.modelIndex - b.modelIndex)
       .map(({ model, modelIndex, score }: any) =>
-        `<div class="case-score"><span class="swatch" style="background:${palette[modelIndex % palette.length]}"></span><span>${escapeHtml(label(model.modelId))}</span><span class="track"><i style="width:${score}%;background:${palette[modelIndex % palette.length]}"></i></span><strong>${score.toFixed(1)}</strong></div>`,
+        `<div class="case-score"><span class="swatch" style="background:${palette[modelIndex % palette.length]}"></span><span>${escapeHtml(label(model))}</span><span class="track"><i style="width:${score}%;background:${palette[modelIndex % palette.length]}"></i></span><strong>${score.toFixed(1)}</strong></div>`,
       )
       .join("");
     return `<article class="case-study"><div class="case-copy"><div class="eyebrow">${escapeHtml(testCase.title)}</div><h3>${escapeHtml(context?.purpose ?? "Document reconstruction case")}</h3><p>${escapeHtml(context?.modality ?? "Mixed document evidence.")}</p><div class="coverage">${(context?.covers ?? []).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div></div><div class="case-results"><div class="mini-label">Observed score</div>${scores}</div></article>`;
@@ -119,7 +122,7 @@ function caseSections(models: any[]) {
 
 export function renderReport(summary: any) {
   const models = summary.models;
-  const modelRows = models.map((model: any) => `<tr><td><strong>${escapeHtml(label(model.modelId))}</strong><div class="range">resolved: ${escapeHtml(model.resolvedModel)}</div></td><td class="num">${model.drawCount}</td><td class="num strong">${model.score.toFixed(1)}${model.drawCount > 1 ? `<div class="range">${model.scoreMin.toFixed(1)}–${model.scoreMax.toFixed(1)} · SD ${model.scoreStddev.toFixed(1)}</div>` : ""}</td><td class="num">${money(model.inferenceCostUsd)}</td><td class="num">${model.inferenceSeconds.toFixed(1)}s</td><td class="num">${Math.round(model.totalOutputTokens).toLocaleString()}</td></tr>`).join("");
+  const modelRows = models.map((model: any) => `<tr><td><strong>${escapeHtml(label(model))}</strong><div class="range">resolved: ${escapeHtml(model.resolvedModel)}</div></td><td class="num">${model.drawCount}</td><td class="num strong">${model.score.toFixed(1)}${model.drawCount > 1 ? `<div class="range">${model.scoreMin.toFixed(1)}–${model.scoreMax.toFixed(1)} · SD ${model.scoreStddev.toFixed(1)}</div>` : ""}</td><td class="num">${money(model.inferenceCostUsd)}</td><td class="num">${model.inferenceSeconds.toFixed(1)}s</td><td class="num">${Math.round(model.totalOutputTokens).toLocaleString()}</td></tr>`).join("");
   const evaluatorSpend = models.reduce((sum: number, model: any) => sum + model.cumulativeEvaluatorCostUsd, 0);
   const drawCounts = models.map((model: any) => model.drawCount);
   const minimumDraws = Math.min(...drawCounts);
