@@ -108,7 +108,7 @@ Email acknowledgment is context only unless the relevant row cites it as accepte
 | C-3 | EX-07 signed and REC-2048 has zero unresolved items | Close Kestrel credentials | Retain access and escalate |
 | C-4 | No temperature deviation >1.0 C for 10 continuous minutes | Continue physical transfer | Invoke rollback RB-12 |
 
-The GO decision permits the physical cutover; it does not close EX-07, release the six QA-61 cases, or waive telemetry and rollback gates. Kestrel credential closure remains HOLD because T-06 and C-3 require both signed EX-07 and zero unresolved REC-2048 items. Finance validation and its stamp authorize cost only; they cannot close an exception, satisfy a task gate, or override the final release state. Page 4 remains the source for exception ownership and evidence.
+The GO decision permits the physical cutover; it does not close EX-07, release the six QA-61 cases, or waive telemetry and rollback gates. The finance stamp validates cost only. Page 4 remains the source for exception ownership and evidence.
 
 | Role | Name | Decision | Recorded |
 | --- | --- | --- | --- |

@@ -1268,7 +1268,7 @@ def build(output_root: Path):
     draw_table(c, 115, 170, [92, 110, 105, 86, 120], [photo_headers, *photo_rows], font_size=6.5, zebra=True)
     case.add_gold(
         "PH-214 - Field photo and punch evidence",
-        "Photo 06 is a corridor-side view of D-214B. The reader is mounted on the image-right/east jamb, outside the Lab B opening; annotation A circles the reader rather than the door leaf. The leaf/opening remains clear. Photo 09 shows rack R2 in room 218. The overhead tray approaches from image-left/west and drops at the rack's west/top corner; annotation B circles that entry. The service side on the image-right/east side of rack R2 is unobstructed.\n\n"
+        "Photo 06 is a corridor-side view of D-214B. The reader is mounted on the image-right/east jamb, outside the Lab B opening; annotation A circles the reader rather than the opening. The opening remains clear. Photo 09 shows rack R2 in room 218. The overhead tray approaches from image-left/west and drops at the rack's west/top corner; annotation B circles that entry. The service side on the image-right/east side of rack R2 is unobstructed.\n\n"
         + markdown_table(photo_headers, photo_rows),
     )
     case.add_region(
@@ -1278,8 +1278,8 @@ def build(output_root: Path):
         [
             visual_leaf("p09.door.reader", "Photo 06 shows the reader on the image-right jamb of the doorway.", [["Photo 06"], ["reader"], ["image-right", "right jamb"]], harm=2),
             visual_leaf("p09.door.corridor", "Photo 06 is taken from the corridor side of the opening.", [["Photo 06"], ["corridor", "C2"], ["side", "view"]]),
-            visual_leaf("p09.door.annotation", "Annotation A circles the reader rather than the door leaf.", [["annotation A", "A"], ["circles"], ["reader"], ["not", "rather than"]]),
-            visual_leaf("p09.door.clear", "The photographed door leaf and opening are unobstructed.", [["door", "opening"], ["unobstructed", "clear"]]),
+            visual_leaf("p09.door.annotation", "Annotation A circles the reader rather than the opening.", [["annotation A", "A"], ["circles"], ["reader"], ["not", "rather than"]]),
+            visual_leaf("p09.door.clear", "The photographed opening is unobstructed.", [["opening"], ["unobstructed", "clear"]]),
         ],
         budget=3,
         closed_world=True,
@@ -1338,7 +1338,7 @@ def build(output_root: Path):
     case.add_gold(
         "CL-214 - Final issue and signoff record",
         markdown_table(issue_headers, issue_rows)
-        + "\n\nThe release package is ARC-214-C. The embedded release form has IFC Revision C accepted checked, use archived Revision B background unchecked, RFI-214-17 incorporated checked, and open access-control punch items unchecked. Architect AV, Security TN, Electrical JH, and Owner LS sign the release. The release seal is 214-C-0616 and is dated 16 June 2026. Therefore Revision C controls, the archived plan cannot be used for set-out, the RFI directives are incorporated, and no access-control punch item remains open. The release power chain binds CR-6 through DC-6 to LP-2 circuit L2-15; the L2-15 field tag is installed and emergency transfer is witnessed. The release network chain binds CR-6 to CS-2/07 on VLAN 230, continues through DC-6 toward ACS-CORE, and separately mirrors events to NVR-B.",
+        + "\n\nThe release package is ARC-214-C. The embedded release form has IFC Revision C accepted checked, use archived Revision B background unchecked, RFI-214-17 incorporated checked, and open access-control punch items unchecked. Architect AV, Security TN, Electrical JH, and Owner LS sign the release. The release seal is 214-C-0616 and is dated 16 June 2026. Therefore Revision C controls, the archived plan cannot be used for set-out, the RFI directives are incorporated, and no access-control punch item remains open.",
     )
     issue_scored = {
         ("A2.14", "Revision"), ("A2.14", "Digest"),
@@ -1410,18 +1410,6 @@ def build(output_root: Path):
         ],
     )
 
-    case.add_gold_conclusions_for_leaves(
-        [
-            "p03.room.clean-lab",
-            "p03.room.lab-freezer",
-            "p03.room.lab-corridor",
-            "p03.door.wall",
-            "p06.edge.cs-cr",
-            "p10.final.geometry",
-            "p10.final.power-chain",
-            "p10.final.photo-chain",
-        ]
-    )
     record = case.finish()
     rasterize_pdf_pages(
         case.pdf_path,

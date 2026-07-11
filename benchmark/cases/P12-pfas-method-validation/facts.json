@@ -937,9 +937,6 @@
               ],
               [
                 "leading"
-              ],
-              [
-                "means"
               ]
             ]
           }
@@ -992,12 +989,6 @@
               ],
               [
                 "expanded"
-              ],
-              [
-                "invented"
-              ],
-              [
-                "means"
               ]
             ]
           }
@@ -1823,8 +1814,8 @@
               [
                 ">=0.995",
                 ">= 0.995",
-                "≥0.995",
-                "≥ 0.995"
+                "\u22650.995",
+                "\u2265 0.995"
               ],
               [
                 "-15",
@@ -1840,7 +1831,7 @@
               [
                 "within",
                 "+/-",
-                "±"
+                "\u00b1"
               ],
               [
                 "standards"
@@ -2101,8 +2092,8 @@
               [
                 "<=20",
                 "<= 20",
-                "≤20",
-                "≤ 20"
+                "\u226420",
+                "\u2264 20"
               ],
               [
                 "%"
@@ -2480,7 +2471,7 @@
               [
                 "within",
                 "+/-",
-                "±"
+                "\u00b1"
               ],
               [
                 "low-level"
@@ -2603,8 +2594,8 @@
               ],
               [
                 "uL",
-                "µL",
-                "μL"
+                "\u00b5L",
+                "\u03bcL"
               ],
               [
                 "ng/L"
@@ -2765,8 +2756,8 @@
               ],
               [
                 "uL",
-                "µL",
-                "μL"
+                "\u00b5L",
+                "\u03bcL"
               ],
               [
                 "surrogate"
@@ -2794,7 +2785,11 @@
                 "2024-09-30",
                 "30 September 2024",
                 "Sep 30 2024",
-                "September 30 2024"
+                "September 30 2024",
+                "30 Sep",
+                "30 September",
+                "Sep 30",
+                "September 30"
               ],
               [
                 "SPK-01",
@@ -2876,7 +2871,11 @@
                 "2024-04-10",
                 "10 April 2024",
                 "Apr 10 2024",
-                "April 10 2024"
+                "April 10 2024",
+                "10 Apr",
+                "10 April",
+                "Apr 10",
+                "April 10"
               ],
               [
                 "08:42",
@@ -3193,9 +3192,6 @@
               ],
               [
                 "recovery"
-              ],
-              [
-                "closing"
               ]
             ]
           }
@@ -3353,14 +3349,22 @@
                 "2024-04-19",
                 "19 April 2024",
                 "Apr 19 2024",
-                "April 19 2024"
+                "April 19 2024",
+                "19 Apr",
+                "19 April",
+                "Apr 19",
+                "April 19"
               ],
               [
                 "22 Apr 2024",
                 "2024-04-22",
                 "22 April 2024",
                 "Apr 22 2024",
-                "April 22 2024"
+                "April 22 2024",
+                "22 Apr",
+                "22 April",
+                "Apr 22",
+                "April 22"
               ],
               [
                 "14:05"
@@ -3742,9 +3746,6 @@
               ],
               [
                 "original"
-              ],
-              [
-                "treated"
               ]
             ]
           }
@@ -3956,15 +3957,6 @@
               ],
               [
                 "ng/L"
-              ],
-              [
-                "criteria"
-              ],
-              [
-                "blank"
-              ],
-              [
-                "both"
               ]
             ]
           }
@@ -3995,9 +3987,6 @@
               ],
               [
                 "ng/L"
-              ],
-              [
-                "concentrations"
               ],
               [
                 "measured"
@@ -4141,246 +4130,6 @@
               ],
               [
                 "%"
-              ],
-              [
-                "opening"
-              ],
-              [
-                "closing"
-              ],
-              [
-                "both"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "p09.calculations",
-      "label": "Cross-page QC calculations",
-      "sourceAnchors": [
-        {
-          "page": 6,
-          "layer": "raster",
-          "sectionPath": [
-            "PFAS Method Validation and Batch Release Packet",
-            "Extraction, fortification, and dilution bench record"
-          ]
-        },
-        {
-          "page": 9,
-          "layer": "native_text",
-          "sectionPath": [
-            "PFAS Method Validation and Batch Release Packet",
-            "Blank, recovery, and continuing-calibration review"
-          ]
-        }
-      ],
-      "goldSection": "Page 9 - Blank, recovery, and continuing-calibration review",
-      "kind": "table",
-      "modality": "mixed",
-      "uniqueEvidence": true,
-      "primaryAxis": "mixed_modality_fusion",
-      "secondaryAxes": [
-        "cross_page_join",
-        "precise_recall"
-      ],
-      "textOnlyRecoverable": false,
-      "budget": 2,
-      "leaves": [
-        {
-          "id": "p09.calc.lcs",
-          "canonicalClaimId": "p09.calc.lcs",
-          "claimType": "scalar",
-          "expectation": "Using the 10.00 ng/L SPK-01 target, LCS recoveries are 96.2% for PFOA and 91.4% for PFOS.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "SPK-01",
-                "SPK 01"
-              ],
-              [
-                "LCS"
-              ],
-              [
-                "PFOA"
-              ],
-              [
-                "PFOS"
-              ],
-              [
-                "10.00",
-                "10"
-              ],
-              [
-                "96.2"
-              ],
-              [
-                "91.4"
-              ],
-              [
-                "ng/L"
-              ],
-              [
-                "%"
-              ],
-              [
-                "recoveries"
-              ],
-              [
-                "target"
-              ],
-              [
-                "using"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p09.calc.ms",
-          "canonicalClaimId": "p09.calc.ms",
-          "claimType": "scalar",
-          "expectation": "Using the 10.00 ng/L SPK-02 target and the 3.42 ng/L PFOA native result, the PFOA MS and MSD recoveries are 96.0% and 98.0%.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "SPK-02",
-                "SPK 02"
-              ],
-              [
-                "PFOA"
-              ],
-              [
-                "MS"
-              ],
-              [
-                "MSD"
-              ],
-              [
-                "10.00",
-                "10"
-              ],
-              [
-                "3.42"
-              ],
-              [
-                "96.0",
-                "96"
-              ],
-              [
-                "98.0",
-                "98"
-              ],
-              [
-                "ng/L"
-              ],
-              [
-                "%"
-              ],
-              [
-                "native"
-              ],
-              [
-                "recoveries"
-              ],
-              [
-                "target"
-              ],
-              [
-                "result"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p09.calc.rpd",
-          "canonicalClaimId": "p09.calc.rpd",
-          "claimType": "scalar",
-          "expectation": "The PFOA MS/MSD recovery RPD is 2.1%.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PFOA"
-              ],
-              [
-                "MS/MSD",
-                "MS / MSD"
-              ],
-              [
-                "RPD"
-              ],
-              [
-                "2.1"
-              ],
-              [
-                "MS"
-              ],
-              [
-                "%"
-              ],
-              [
-                "recovery"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p09.calc.fts",
-          "canonicalClaimId": "p09.calc.fts",
-          "claimType": "scalar",
-          "expectation": "Using the 10.00 ng/L SPK-02 target and treating the 6:2 FTS native result marked U as zero, MSD recovery is 84.0%.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "SPK-02",
-                "SPK 02"
-              ],
-              [
-                "FTS"
-              ],
-              [
-                "MSD"
-              ],
-              [
-                "10.00",
-                "10"
-              ],
-              [
-                "6"
-              ],
-              [
-                "2"
-              ],
-              [
-                "84.0",
-                "84"
-              ],
-              [
-                "ng/L"
-              ],
-              [
-                "%"
-              ],
-              [
-                "native"
-              ],
-              [
-                "treating"
-              ],
-              [
-                "recovery"
-              ],
-              [
-                "target"
               ]
             ]
           }
@@ -4543,8 +4292,8 @@
               ],
               [
                 "uL",
-                "µL",
-                "μL"
+                "\u00b5L",
+                "\u03bcL"
               ],
               [
                 "flushed"
@@ -4585,9 +4334,6 @@
               ],
               [
                 "carryover"
-              ],
-              [
-                "recovered"
               ],
               [
                 "system"
@@ -4646,13 +4392,7 @@
                 "exclusively"
               ],
               [
-                "reinjected"
-              ],
-              [
                 "retained"
-              ],
-              [
-                "exactly"
               ]
             ]
           }
@@ -4774,7 +4514,11 @@
                 "2024-04-19",
                 "19 April 2024",
                 "Apr 19 2024",
-                "April 19 2024"
+                "April 19 2024",
+                "19 Apr",
+                "19 April",
+                "Apr 19",
+                "April 19"
               ],
               [
                 "12:22"
@@ -5270,7 +5014,11 @@
                 "2024-04-22",
                 "22 April 2024",
                 "Apr 22 2024",
-                "April 22 2024"
+                "April 22 2024",
+                "22 Apr",
+                "22 April",
+                "Apr 22",
+                "April 22"
               ],
               [
                 "09:40",
@@ -5916,7 +5664,11 @@
                 "2024-04-22",
                 "22 April 2024",
                 "Apr 22 2024",
-                "April 22 2024"
+                "April 22 2024",
+                "22 Apr",
+                "22 April",
+                "Apr 22",
+                "April 22"
               ],
               [
                 "09:40",
@@ -5936,131 +5688,6 @@
               ],
               [
                 "patel"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "x01.correction-lineage",
-      "label": "Cross-modal sequence-to-release lineage",
-      "sourceAnchors": [
-        {
-          "page": 7,
-          "layer": "raster",
-          "sectionPath": [
-            "PFAS Method Validation and Batch Release Packet",
-            "LC-MS/MS sequence and technical review"
-          ]
-        },
-        {
-          "page": 8,
-          "layer": "mixed",
-          "sectionPath": [
-            "PFAS Method Validation and Batch Release Packet",
-            "Raw integration and chromatogram review"
-          ]
-        },
-        {
-          "page": 10,
-          "layer": "raster",
-          "sectionPath": [
-            "PFAS Method Validation and Batch Release Packet",
-            "Instrument maintenance and reinjection authorization"
-          ]
-        },
-        {
-          "page": 11,
-          "layer": "mixed",
-          "sectionPath": [
-            "PFAS Method Validation and Batch Release Packet",
-            "LIMS export and signed QA correction"
-          ]
-        },
-        {
-          "page": 12,
-          "layer": "native_text",
-          "sectionPath": [
-            "PFAS Method Validation and Batch Release Packet",
-            "Final signed validation and batch determination"
-          ]
-        }
-      ],
-      "goldSection": "Page 12 - Final signed validation and batch determination",
-      "kind": "mixed",
-      "modality": "mixed",
-      "uniqueEvidence": true,
-      "primaryAxis": "long_context_coherence",
-      "secondaryAxes": [
-        "cross_page_join",
-        "source_precedence",
-        "mixed_modality_fusion"
-      ],
-      "textOnlyRecoverable": false,
-      "budget": 3,
-      "leaves": [
-        {
-          "id": "x01.lineage.control",
-          "canonicalClaimId": "x01.lineage.control",
-          "claimType": "cross_page_join",
-          "expectation": "The controlling lineage is the sequence 18 low-IS flag, signed maintenance and reinjection authorization, accepted sequence 19 with IR-19B, signed CR-24-044, and final release.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "ordered_tokens",
-            "tokens": [
-              [
-                "controlling lineage"
-              ],
-              [
-                "sequence 18 low-IS"
-              ],
-              [
-                "signed maintenance"
-              ],
-              [
-                "reinjection authorization"
-              ],
-              [
-                "accepted sequence 19"
-              ],
-              [
-                "IR-19B"
-              ],
-              [
-                "signed CR-24-044"
-              ],
-              [
-                "final release"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "x01.lineage.audit",
-          "canonicalClaimId": "x01.lineage.audit",
-          "claimType": "cross_page_join",
-          "expectation": "Final release does not erase the provisional export, rejected integration, or maintenance record.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "final release"
-              ],
-              [
-                "does not",
-                "must not",
-                "not"
-              ],
-              [
-                "provisional"
-              ],
-              [
-                "rejected"
-              ],
-              [
-                "maintenance"
               ]
             ]
           }

@@ -33,15 +33,6 @@ Wafer 03 C3 cells: B4, C4, B5. Wafer 05 S2 cells: E2, F2, E3. Wafer 07 M1 cells:
 | C3 | Center CD cluster | Violet | Remeasure / MRB |
 | E0 | Edge mark | Gray | Reference only |
 
-Integrated reference conclusions:
-
-- Wafer 03 marks a three-cell C3 cluster at B4, C4, and B5.
-- Wafer 05 marks an S2 path at E2, F2, and E3.
-- Wafer 07 marks an adjacent M1 cluster at D5, D6, and E5.
-- Wafer 09 marks only F3 as P4.
-- Wafer 12 marks the A6 and B6 edge cells as E1.
-- Wafer 02 marks only A1 as the gray E0 reference cell.
-
 ## CD-SEM metrology review
 
 | Wafer / site | CD nm | Delta nm | Flag | Image ref | Reviewer note |
@@ -146,8 +137,4 @@ The scanned IQC-071 worksheet covers lot Q8R7-22 and image set IMG-223/224/226/2
 | 11 Jun 10:20 | Quality | COA holdback signed | Draft all-wafer COA void |
 | 11 Jun 13:30 | Planning | Ship buckets created | 127,759 die release |
 
-The preliminary all-wafer COA is void; only the signed COA values authorize shipment. Cross-source joins remain explicit: wafer 07's M1 map cluster and IMG-224/225 evidence support scrap; wafer 09's visually clean IMG-226 does not negate its P4 parametric condition and REL-22-A shipment gate; the W12 E1 edge map and IMG-227 support engineering hold.
-
-Integrated reference conclusions:
-
-- Wafer 07's M1 map cluster and IMG-224 and IMG-225 evidence are explicitly linked to the scrap decision.
+The preliminary all-wafer COA is void; only the signed values above authorize shipment.

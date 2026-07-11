@@ -34,13 +34,6 @@ Revision B is visibly stamped superseded and dated 7 June 2026; the archived fie
 
 Revision C retains the 45 ft by 22 ft overall footprint but moves the Lab B opening 4 ft 6 in west of the dashed Revision B position. The dimension between the old and new opening hinge points is 4 ft 6 in. The current door is D-214B, is in the Lab B/C2 shared wall, and swings south into corridor C2. Reader CR-6 is on the corridor side at the east jamb. Callout 6 keys that reader and opening; callout 9 keys rack R2 in IT Closet 218; callout 11 keys FZ-3 in Freezer 216. Egress runs from Lab B through D-214B and then west along C2. The north arrow points toward the top of the sheet. The solid blue opening is Revision C's controlling current geometry; the dashed red opening is archived Revision B geometry.
 
-Integrated reference conclusions:
-
-- Clean Prep 214 remains immediately west of Lab B 215.
-- Freezer 216 remains immediately east of Lab B 215.
-- The south wall of Lab B 215 directly adjoins corridor C2.
-- D-214B is set in the wall shared by Lab B 215 and corridor C2.
-
 ## A6.24 - Reflected ceiling and MEP coordination
 
 The ceiling plan places SD-4 north-west of bench B-2 and west of sprinkler SP-7. SP-7 is north-east of ceiling panel CP-4. Occupancy sensor OS-2 is south-east of CP-4. Light L-5 is north of CP-4. Return grille RG-2 is east of CP-4. The solid green VAV-214 supply arrow runs to SD-4. A dashed amber control arrow runs from OS-2 to CP-4; a dashed blue BAS link runs from CP-4 to BAS-214. The dashed old diffuser location is near SP-7; the red relocation arrow moves it west to the solid current SD-4 position, producing an 8 ft separation. The solid SD-4 symbol is current and the dashed old symbol is superseded. Conflict bubble C1 keys that resolved move.
@@ -73,10 +66,6 @@ Directed edges are FW-02 to CS-2 (tagged trunk 99/210/230/240); CS-2 to CR-6 (VL
 | TEL-240-Q | V240 | Alarm | Permit one-way |
 | OPT-240-B | V240 | Trend | Conditional |
 
-Integrated reference conclusions:
-
-- A VLAN 230 event path runs from CS-2 to CR-6.
-
 ## E6.02 - Panel LP-2 and field check
 
 | Circuit | Load | Breaker | Branch | Room | Record |
@@ -105,7 +94,7 @@ The field query was received on 2026-06-09. Maintain D-214A at Revision B positi
 
 ## PH-214 - Field photo and punch evidence
 
-Photo 06 is a corridor-side view of D-214B. The reader is mounted on the image-right/east jamb, outside the Lab B opening; annotation A circles the reader rather than the door leaf. The leaf/opening remains clear. Photo 09 shows rack R2 in room 218. The overhead tray approaches from image-left/west and drops at the rack's west/top corner; annotation B circles that entry. The service side on the image-right/east side of rack R2 is unobstructed.
+Photo 06 is a corridor-side view of D-214B. The reader is mounted on the image-right/east jamb, outside the Lab B opening; annotation A circles the reader rather than the opening. The opening remains clear. Photo 09 shows rack R2 in room 218. The overhead tray approaches from image-left/west and drops at the rack's west/top corner; annotation B circles that entry. The service side on the image-right/east side of rack R2 is unobstructed.
 
 | Image | Captured | View | Custodian | Checksum |
 | --- | --- | --- | --- | --- |
@@ -123,10 +112,4 @@ Photo 06 is a corridor-side view of D-214B. The reader is mounted on the image-r
 | E6.02 | C | 7D14-E602 | Electrical / JH | 17:24 |
 | RFI-214-17 | A | 6F82-R214 | Record / LS | 17:24 |
 
-The release package is ARC-214-C. The embedded release form has IFC Revision C accepted checked, use archived Revision B background unchecked, RFI-214-17 incorporated checked, and open access-control punch items unchecked. Architect AV, Security TN, Electrical JH, and Owner LS sign the release. The release seal is 214-C-0616 and is dated 16 June 2026. Therefore Revision C controls, the archived plan cannot be used for set-out, the RFI directives are incorporated, and no access-control punch item remains open. The release power chain binds CR-6 through DC-6 to LP-2 circuit L2-15; the L2-15 field tag is installed and emergency transfer is witnessed. The release network chain binds CR-6 to CS-2/07 on VLAN 230, continues through DC-6 toward ACS-CORE, and separately mirrors events to NVR-B.
-
-Integrated reference conclusions:
-
-- Final release acceptance makes the solid Revision C door geometry control over the dashed archived Revision B opening.
-- The release chain binds CR-6 through DC-6 to LP-2 circuit L2-15.
-- Photo 06 visually confirms the reader on the image-right/east jamb, consistent with the plan and RFI.
+The release package is ARC-214-C. The embedded release form has IFC Revision C accepted checked, use archived Revision B background unchecked, RFI-214-17 incorporated checked, and open access-control punch items unchecked. Architect AV, Security TN, Electrical JH, and Owner LS sign the release. The release seal is 214-C-0616 and is dated 16 June 2026. Therefore Revision C controls, the archived plan cannot be used for set-out, the RFI directives are incorporated, and no access-control punch item remains open.

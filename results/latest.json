@@ -1,0 +1,781 @@
+{
+  "generatedAt": "2026-07-11T11:31:33.418Z",
+  "caseCount": 5,
+  "provenance": {
+    "inferenceProtocolVersion": 2,
+    "ingestionMode": "native PDF attached directly to the provider model API",
+    "promptHash": "a59e08b0d026f54ba1ade9e3ff9035ffcbb969c207d5bf74ea5f15d687951531",
+    "manifestHash": "693eacba6093f8074aebff04106a738384fac255fe0ac9870f9775a0a2714a61",
+    "evaluatorSourceHash": "f01619ee39aca42ebe2d221df824f5ea6c04345f5e99339fc939e1405b628e0a",
+    "packageLockHash": "7e378a2f46e1f7e3e7ca7bd469db2a25fd1b61bdc37834d9f56771dcc031eabd",
+    "measurementStartedAt": "2026-07-10T14:18:16.590Z",
+    "measurementFinishedAt": "2026-07-11T07:17:32.608Z"
+  },
+  "exclusions": [],
+  "incrementalSpendUsd": 0,
+  "incrementalInferenceSpendUsd": 0,
+  "incrementalEvaluatorSpendUsd": 0,
+  "totalCostUsd": 1.6118781549999999,
+  "models": [
+    {
+      "modelId": "vertex-gemini-3.5-flash",
+      "configuredModel": {
+        "id": "vertex-gemini-3.5-flash",
+        "modelName": "gemini-3.5-flash",
+        "provider": "google-vertex",
+        "reasoning": "minimal",
+        "location": null,
+        "maxOutputTokens": 60000
+      },
+      "resolvedModel": "gemini-3.5-flash",
+      "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+      "pricingVersion": "2026-07-11",
+      "drawCount": 1,
+      "score": 74.9842816642811,
+      "scoreMin": 74.9842816642811,
+      "scoreMax": 74.9842816642811,
+      "scoreStddev": null,
+      "inferenceCostUsd": 0.5593874999999999,
+      "evaluatorCostUsd": 0.16368375,
+      "totalCostUsd": 0.7230712499999999,
+      "cumulativeInferenceCostUsd": 0.5593874999999999,
+      "cumulativeEvaluatorCostUsd": 0.16368375,
+      "totalOutputTokens": 54460,
+      "inferenceSeconds": 222.523,
+      "cases": [
+        {
+          "caseId": "P12-pfas-method-validation",
+          "title": "PFAS Method Validation and Batch Release Packet",
+          "score": 72.25799023671365,
+          "scoreMin": 72.25799023671365,
+          "scoreMax": 72.25799023671365,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0823395
+        },
+        {
+          "caseId": "P15-architecture-floorplan-diagrams",
+          "title": "Suite 214 Laboratory Coordination Set",
+          "score": 46.18909685086155,
+          "scoreMin": 46.18909685086155,
+          "scoreMax": 46.18909685086155,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0553815
+        },
+        {
+          "caseId": "P17-clinical-trial-site-monitoring",
+          "title": "HTX-204 Site 014 Monitoring Source Packet",
+          "score": 87.76717913272535,
+          "scoreMin": 87.76717913272535,
+          "scoreMax": 87.76717913272535,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.3381465
+        },
+        {
+          "caseId": "P21-semiconductor-lot-disposition",
+          "title": "Lot Q8R7-22 Material Review File",
+          "score": 70.13688066319645,
+          "scoreMin": 70.13688066319645,
+          "scoreMax": 70.13688066319645,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0517485
+        },
+        {
+          "caseId": "P23-native-text-layer-recovery",
+          "title": "Northstar Cold Chain Supplier Cutover Authorization",
+          "score": 98.57026143790848,
+          "scoreMin": 98.57026143790848,
+          "scoreMax": 98.57026143790848,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0317715
+        }
+      ],
+      "draws": [
+        {
+          "draw": 1,
+          "score": 74.9842816642811,
+          "inferenceCostUsd": 0.5593874999999999,
+          "evaluatorCostUsd": 0.16368375,
+          "totalOutputTokens": 54460,
+          "inferenceSeconds": 222.523,
+          "cases": [
+            {
+              "caseId": "P12-pfas-method-validation",
+              "title": "PFAS Method Validation and Batch Release Packet",
+              "score": 72.25799023671365,
+              "inferenceCostUsd": 0.0823395,
+              "evaluatorCostUsd": 0.02336875,
+              "outputTokens": 8026,
+              "inferenceElapsedMs": 35226,
+              "resolvedModel": "gemini-3.5-flash",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:20:03.160Z",
+              "finishedAt": "2026-07-10T14:20:38.386Z"
+            },
+            {
+              "caseId": "P15-architecture-floorplan-diagrams",
+              "title": "Suite 214 Laboratory Coordination Set",
+              "score": 46.18909685086155,
+              "inferenceCostUsd": 0.0553815,
+              "evaluatorCostUsd": 0.025223,
+              "outputTokens": 5204,
+              "inferenceElapsedMs": 28274,
+              "resolvedModel": "gemini-3.5-flash",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:20:03.133Z",
+              "finishedAt": "2026-07-10T14:20:31.407Z"
+            },
+            {
+              "caseId": "P17-clinical-trial-site-monitoring",
+              "title": "HTX-204 Site 014 Monitoring Source Packet",
+              "score": 87.76717913272535,
+              "inferenceCostUsd": 0.3381465,
+              "evaluatorCostUsd": 0.073329,
+              "outputTokens": 33329,
+              "inferenceElapsedMs": 117971,
+              "resolvedModel": "gemini-3.5-flash",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:20:03.331Z",
+              "finishedAt": "2026-07-10T14:22:01.302Z"
+            },
+            {
+              "caseId": "P21-semiconductor-lot-disposition",
+              "title": "Lot Q8R7-22 Material Review File",
+              "score": 70.13688066319645,
+              "inferenceCostUsd": 0.0517485,
+              "evaluatorCostUsd": 0.02647425,
+              "outputTokens": 4887,
+              "inferenceElapsedMs": 24518,
+              "resolvedModel": "gemini-3.5-flash",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:20:03.219Z",
+              "finishedAt": "2026-07-10T14:20:27.737Z"
+            },
+            {
+              "caseId": "P23-native-text-layer-recovery",
+              "title": "Northstar Cold Chain Supplier Cutover Authorization",
+              "score": 98.57026143790848,
+              "inferenceCostUsd": 0.0317715,
+              "evaluatorCostUsd": 0.01528875,
+              "outputTokens": 3014,
+              "inferenceElapsedMs": 16534,
+              "resolvedModel": "gemini-3.5-flash",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:20:03.113Z",
+              "finishedAt": "2026-07-10T14:20:19.647Z"
+            }
+          ]
+        }
+      ],
+      "measurementStartedAt": "2026-07-10T14:20:03.113Z",
+      "measurementFinishedAt": "2026-07-10T14:22:01.302Z"
+    },
+    {
+      "modelId": "vertex-gemini-3.1-flash-lite",
+      "configuredModel": {
+        "id": "vertex-gemini-3.1-flash-lite",
+        "modelName": "gemini-3.1-flash-lite",
+        "provider": "google-vertex",
+        "reasoning": "minimal",
+        "location": null,
+        "maxOutputTokens": 60000
+      },
+      "resolvedModel": "gemini-3.1-flash-lite",
+      "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+      "pricingVersion": "2026-07-11",
+      "drawCount": 1,
+      "score": 66.80158406142485,
+      "scoreMin": 66.80158406142485,
+      "scoreMax": 66.80158406142485,
+      "scoreStddev": null,
+      "inferenceCostUsd": 0.07011325,
+      "evaluatorCostUsd": 0.130946375,
+      "totalCostUsd": 0.20105962500000002,
+      "cumulativeInferenceCostUsd": 0.07011325,
+      "cumulativeEvaluatorCostUsd": 0.130946375,
+      "totalOutputTokens": 39048,
+      "inferenceSeconds": 125.881,
+      "cases": [
+        {
+          "caseId": "P12-pfas-method-validation",
+          "title": "PFAS Method Validation and Batch Release Packet",
+          "score": 67.46753246753248,
+          "scoreMin": 67.46753246753248,
+          "scoreMax": 67.46753246753248,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.01313375
+        },
+        {
+          "caseId": "P15-architecture-floorplan-diagrams",
+          "title": "Suite 214 Laboratory Coordination Set",
+          "score": 45.96150581444699,
+          "scoreMin": 45.96150581444699,
+          "scoreMax": 45.96150581444699,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.00644025
+        },
+        {
+          "caseId": "P17-clinical-trial-site-monitoring",
+          "title": "HTX-204 Site 014 Monitoring Source Packet",
+          "score": 60.04935307456316,
+          "scoreMin": 60.04935307456316,
+          "scoreMax": 60.04935307456316,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.03924425
+        },
+        {
+          "caseId": "P21-semiconductor-lot-disposition",
+          "title": "Lot Q8R7-22 Material Review File",
+          "score": 65.39064006169268,
+          "scoreMin": 65.39064006169268,
+          "scoreMax": 65.39064006169268,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.00616325
+        },
+        {
+          "caseId": "P23-native-text-layer-recovery",
+          "title": "Northstar Cold Chain Supplier Cutover Authorization",
+          "score": 95.13888888888889,
+          "scoreMin": 95.13888888888889,
+          "scoreMax": 95.13888888888889,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.00513175
+        }
+      ],
+      "draws": [
+        {
+          "draw": 1,
+          "score": 66.80158406142485,
+          "inferenceCostUsd": 0.07011325,
+          "evaluatorCostUsd": 0.130946375,
+          "totalOutputTokens": 39048,
+          "inferenceSeconds": 125.881,
+          "cases": [
+            {
+              "caseId": "P12-pfas-method-validation",
+              "title": "PFAS Method Validation and Batch Release Packet",
+              "score": 67.46753246753248,
+              "inferenceCostUsd": 0.01313375,
+              "evaluatorCostUsd": 0.0229955,
+              "outputTokens": 7633,
+              "inferenceElapsedMs": 24231,
+              "resolvedModel": "gemini-3.1-flash-lite",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:18:58.495Z",
+              "finishedAt": "2026-07-10T14:19:22.726Z"
+            },
+            {
+              "caseId": "P15-architecture-floorplan-diagrams",
+              "title": "Suite 214 Laboratory Coordination Set",
+              "score": 45.96150581444699,
+              "inferenceCostUsd": 0.00644025,
+              "evaluatorCostUsd": 0.023755,
+              "outputTokens": 3344,
+              "inferenceElapsedMs": 12194,
+              "resolvedModel": "gemini-3.1-flash-lite",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:19:10.535Z",
+              "finishedAt": "2026-07-10T14:19:22.729Z"
+            },
+            {
+              "caseId": "P17-clinical-trial-site-monitoring",
+              "title": "HTX-204 Site 014 Monitoring Source Packet",
+              "score": 60.04935307456316,
+              "inferenceCostUsd": 0.03924425,
+              "evaluatorCostUsd": 0.043387375,
+              "outputTokens": 21920,
+              "inferenceElapsedMs": 63812,
+              "resolvedModel": "gemini-3.1-flash-lite",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:18:18.929Z",
+              "finishedAt": "2026-07-10T14:19:22.741Z"
+            },
+            {
+              "caseId": "P21-semiconductor-lot-disposition",
+              "title": "Lot Q8R7-22 Material Review File",
+              "score": 65.39064006169268,
+              "inferenceCostUsd": 0.00616325,
+              "evaluatorCostUsd": 0.0256455,
+              "outputTokens": 3246,
+              "inferenceElapsedMs": 14549,
+              "resolvedModel": "gemini-3.1-flash-lite",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:19:08.196Z",
+              "finishedAt": "2026-07-10T14:19:22.745Z"
+            },
+            {
+              "caseId": "P23-native-text-layer-recovery",
+              "title": "Northstar Cold Chain Supplier Cutover Authorization",
+              "score": 95.13888888888889,
+              "inferenceCostUsd": 0.00513175,
+              "evaluatorCostUsd": 0.015163,
+              "outputTokens": 2905,
+              "inferenceElapsedMs": 11095,
+              "resolvedModel": "gemini-3.1-flash-lite",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:19:11.652Z",
+              "finishedAt": "2026-07-10T14:19:22.747Z"
+            }
+          ]
+        }
+      ],
+      "measurementStartedAt": "2026-07-10T14:18:18.929Z",
+      "measurementFinishedAt": "2026-07-10T14:19:22.747Z"
+    },
+    {
+      "modelId": "openai-gpt-5.4-nano",
+      "configuredModel": {
+        "id": "openai-gpt-5.4-nano",
+        "modelName": "gpt-5.4-nano",
+        "provider": "openai",
+        "reasoning": "none",
+        "location": null,
+        "maxOutputTokens": 60000
+      },
+      "resolvedModel": "gpt-5.4-nano-2026-03-17",
+      "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+      "pricingVersion": "2026-07-11",
+      "drawCount": 1,
+      "score": 62.71976672259426,
+      "scoreMin": 62.71976672259426,
+      "scoreMax": 62.71976672259426,
+      "scoreStddev": null,
+      "inferenceCostUsd": 0.06354578000000001,
+      "evaluatorCostUsd": 0.13717745,
+      "totalCostUsd": 0.20072323000000003,
+      "cumulativeInferenceCostUsd": 0.06354578000000001,
+      "cumulativeEvaluatorCostUsd": 0.13717745,
+      "totalOutputTokens": 44694,
+      "inferenceSeconds": 670.215,
+      "cases": [
+        {
+          "caseId": "P12-pfas-method-validation",
+          "title": "PFAS Method Validation and Batch Release Packet",
+          "score": 63.59988462452068,
+          "scoreMin": 63.59988462452068,
+          "scoreMax": 63.59988462452068,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0094404
+        },
+        {
+          "caseId": "P15-architecture-floorplan-diagrams",
+          "title": "Suite 214 Laboratory Coordination Set",
+          "score": 45.32499363381716,
+          "scoreMin": 45.32499363381716,
+          "scoreMax": 45.32499363381716,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0068651499999999996
+        },
+        {
+          "caseId": "P17-clinical-trial-site-monitoring",
+          "title": "HTX-204 Site 014 Monitoring Source Packet",
+          "score": 68.09441608811359,
+          "scoreMin": 68.09441608811359,
+          "scoreMax": 68.09441608811359,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.03772678
+        },
+        {
+          "caseId": "P21-semiconductor-lot-disposition",
+          "title": "Lot Q8R7-22 Material Review File",
+          "score": 47.34342815540876,
+          "scoreMin": 47.34342815540876,
+          "scoreMax": 47.34342815540876,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.00492895
+        },
+        {
+          "caseId": "P23-native-text-layer-recovery",
+          "title": "Northstar Cold Chain Supplier Cutover Authorization",
+          "score": 89.2361111111111,
+          "scoreMin": 89.2361111111111,
+          "scoreMax": 89.2361111111111,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0045845
+        }
+      ],
+      "draws": [
+        {
+          "draw": 1,
+          "score": 62.71976672259426,
+          "inferenceCostUsd": 0.06354578000000001,
+          "evaluatorCostUsd": 0.13717745,
+          "totalOutputTokens": 44694,
+          "inferenceSeconds": 670.215,
+          "cases": [
+            {
+              "caseId": "P12-pfas-method-validation",
+              "title": "PFAS Method Validation and Batch Release Packet",
+              "score": 63.59988462452068,
+              "inferenceCostUsd": 0.0094404,
+              "evaluatorCostUsd": 0.022878,
+              "outputTokens": 6032,
+              "inferenceElapsedMs": 46420,
+              "resolvedModel": "gpt-5.4-nano-2026-03-17",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T21:43:17.509Z",
+              "finishedAt": "2026-07-10T21:44:03.929Z"
+            },
+            {
+              "caseId": "P15-architecture-floorplan-diagrams",
+              "title": "Suite 214 Laboratory Coordination Set",
+              "score": 45.32499363381716,
+              "inferenceCostUsd": 0.0068651499999999996,
+              "evaluatorCostUsd": 0.0246425,
+              "outputTokens": 4067,
+              "inferenceElapsedMs": 38662,
+              "resolvedModel": "gpt-5.4-nano-2026-03-17",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T21:43:17.479Z",
+              "finishedAt": "2026-07-10T21:43:56.141Z"
+            },
+            {
+              "caseId": "P17-clinical-trial-site-monitoring",
+              "title": "HTX-204 Site 014 Monitoring Source Packet",
+              "score": 68.09441608811359,
+              "inferenceCostUsd": 0.03772678,
+              "evaluatorCostUsd": 0.049016699999999996,
+              "outputTokens": 29098,
+              "inferenceElapsedMs": 532464,
+              "resolvedModel": "gpt-5.4-nano-2026-03-17",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T21:43:17.735Z",
+              "finishedAt": "2026-07-10T21:52:10.199Z"
+            },
+            {
+              "caseId": "P21-semiconductor-lot-disposition",
+              "title": "Lot Q8R7-22 Material Review File",
+              "score": 47.34342815540876,
+              "inferenceCostUsd": 0.00492895,
+              "evaluatorCostUsd": 0.02532175,
+              "outputTokens": 2859,
+              "inferenceElapsedMs": 28247,
+              "resolvedModel": "gpt-5.4-nano-2026-03-17",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T21:43:17.568Z",
+              "finishedAt": "2026-07-10T21:43:45.815Z"
+            },
+            {
+              "caseId": "P23-native-text-layer-recovery",
+              "title": "Northstar Cold Chain Supplier Cutover Authorization",
+              "score": 89.2361111111111,
+              "inferenceCostUsd": 0.0045845,
+              "evaluatorCostUsd": 0.0153185,
+              "outputTokens": 2638,
+              "inferenceElapsedMs": 24422,
+              "resolvedModel": "gpt-5.4-nano-2026-03-17",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T21:43:17.457Z",
+              "finishedAt": "2026-07-10T21:43:41.879Z"
+            }
+          ]
+        }
+      ],
+      "measurementStartedAt": "2026-07-10T21:43:17.457Z",
+      "measurementFinishedAt": "2026-07-10T21:52:10.199Z"
+    },
+    {
+      "modelId": "openai-gpt-4o-mini",
+      "configuredModel": {
+        "id": "openai-gpt-4o-mini",
+        "modelName": "gpt-4o-mini",
+        "provider": "openai",
+        "reasoning": null,
+        "location": null,
+        "maxOutputTokens": 16384
+      },
+      "resolvedModel": "gpt-4o-mini-2024-07-18",
+      "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+      "pricingVersion": "2026-07-11",
+      "drawCount": 1,
+      "score": 48.664226745731355,
+      "scoreMin": 48.664226745731355,
+      "scoreMax": 48.664226745731355,
+      "scoreStddev": null,
+      "inferenceCostUsd": 0.18030929999999998,
+      "evaluatorCostUsd": 0.15100800000000003,
+      "totalCostUsd": 0.33131730000000004,
+      "cumulativeInferenceCostUsd": 0.18030929999999998,
+      "cumulativeEvaluatorCostUsd": 0.15100800000000003,
+      "totalOutputTokens": 28108,
+      "inferenceSeconds": 382.272,
+      "cases": [
+        {
+          "caseId": "P12-pfas-method-validation",
+          "title": "PFAS Method Validation and Batch Release Packet",
+          "score": 42.1444568868981,
+          "scoreMin": 42.1444568868981,
+          "scoreMax": 42.1444568868981,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.026179349999999997
+        },
+        {
+          "caseId": "P15-architecture-floorplan-diagrams",
+          "title": "Suite 214 Laboratory Coordination Set",
+          "score": 19.709702062643238,
+          "scoreMin": 19.709702062643238,
+          "scoreMax": 19.709702062643238,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.028527149999999998
+        },
+        {
+          "caseId": "P17-clinical-trial-site-monitoring",
+          "title": "HTX-204 Site 014 Monitoring Source Packet",
+          "score": 46.749699879951976,
+          "scoreMin": 46.749699879951976,
+          "scoreMax": 46.749699879951976,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0886959
+        },
+        {
+          "caseId": "P21-semiconductor-lot-disposition",
+          "title": "Lot Q8R7-22 Material Review File",
+          "score": 44.225821907710454,
+          "scoreMin": 44.225821907710454,
+          "scoreMax": 44.225821907710454,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0208146
+        },
+        {
+          "caseId": "P23-native-text-layer-recovery",
+          "title": "Northstar Cold Chain Supplier Cutover Authorization",
+          "score": 90.49145299145299,
+          "scoreMin": 90.49145299145299,
+          "scoreMax": 90.49145299145299,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0160923
+        }
+      ],
+      "draws": [
+        {
+          "draw": 1,
+          "score": 48.664226745731355,
+          "inferenceCostUsd": 0.18030929999999998,
+          "evaluatorCostUsd": 0.15100800000000003,
+          "totalOutputTokens": 28108,
+          "inferenceSeconds": 382.272,
+          "cases": [
+            {
+              "caseId": "P12-pfas-method-validation",
+              "title": "PFAS Method Validation and Batch Release Packet",
+              "score": 42.1444568868981,
+              "inferenceCostUsd": 0.026179349999999997,
+              "evaluatorCostUsd": 0.02157825,
+              "outputTokens": 4388,
+              "inferenceElapsedMs": 63824,
+              "resolvedModel": "gpt-4o-mini-2024-07-18",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-11T07:14:12.696Z",
+              "finishedAt": "2026-07-11T07:15:16.520Z"
+            },
+            {
+              "caseId": "P15-architecture-floorplan-diagrams",
+              "title": "Suite 214 Laboratory Coordination Set",
+              "score": 19.709702062643238,
+              "inferenceCostUsd": 0.028527149999999998,
+              "evaluatorCostUsd": 0.02320675,
+              "outputTokens": 2305,
+              "inferenceElapsedMs": 32740,
+              "resolvedModel": "gpt-4o-mini-2024-07-18",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-11T07:14:12.663Z",
+              "finishedAt": "2026-07-11T07:14:45.403Z"
+            },
+            {
+              "caseId": "P17-clinical-trial-site-monitoring",
+              "title": "HTX-204 Site 014 Monitoring Source Packet",
+              "score": 46.749699879951976,
+              "inferenceCostUsd": 0.0886959,
+              "evaluatorCostUsd": 0.06625475,
+              "outputTokens": 16384,
+              "inferenceElapsedMs": 199726,
+              "resolvedModel": "gpt-4o-mini-2024-07-18",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-11T07:14:12.882Z",
+              "finishedAt": "2026-07-11T07:17:32.608Z"
+            },
+            {
+              "caseId": "P21-semiconductor-lot-disposition",
+              "title": "Lot Q8R7-22 Material Review File",
+              "score": 44.225821907710454,
+              "inferenceCostUsd": 0.0208146,
+              "evaluatorCostUsd": 0.02480125,
+              "outputTokens": 2273,
+              "inferenceElapsedMs": 40890,
+              "resolvedModel": "gpt-4o-mini-2024-07-18",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-11T07:14:12.753Z",
+              "finishedAt": "2026-07-11T07:14:53.643Z"
+            },
+            {
+              "caseId": "P23-native-text-layer-recovery",
+              "title": "Northstar Cold Chain Supplier Cutover Authorization",
+              "score": 90.49145299145299,
+              "inferenceCostUsd": 0.0160923,
+              "evaluatorCostUsd": 0.015167,
+              "outputTokens": 2758,
+              "inferenceElapsedMs": 45092,
+              "resolvedModel": "gpt-4o-mini-2024-07-18",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-11T07:14:12.644Z",
+              "finishedAt": "2026-07-11T07:14:57.736Z"
+            }
+          ]
+        }
+      ],
+      "measurementStartedAt": "2026-07-11T07:14:12.644Z",
+      "measurementFinishedAt": "2026-07-11T07:17:32.608Z"
+    },
+    {
+      "modelId": "openai-gpt-5-nano",
+      "configuredModel": {
+        "id": "openai-gpt-5-nano",
+        "modelName": "gpt-5-nano",
+        "provider": "openai",
+        "reasoning": "minimal",
+        "location": null,
+        "maxOutputTokens": 60000
+      },
+      "resolvedModel": "gpt-5-nano-2025-08-07",
+      "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+      "pricingVersion": "2026-07-11",
+      "drawCount": 1,
+      "score": 36.83782550016511,
+      "scoreMin": 36.83782550016511,
+      "scoreMax": 36.83782550016511,
+      "scoreStddev": null,
+      "inferenceCostUsd": 0.010743000000000003,
+      "evaluatorCostUsd": 0.14496375,
+      "totalCostUsd": 0.15570675,
+      "cumulativeInferenceCostUsd": 0.010743000000000003,
+      "cumulativeEvaluatorCostUsd": 0.14496375,
+      "totalOutputTokens": 17424,
+      "inferenceSeconds": 159.055,
+      "cases": [
+        {
+          "caseId": "P12-pfas-method-validation",
+          "title": "PFAS Method Validation and Batch Release Packet",
+          "score": 37.98338932437476,
+          "scoreMin": 37.98338932437476,
+          "scoreMax": 37.98338932437476,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0019185
+        },
+        {
+          "caseId": "P15-architecture-floorplan-diagrams",
+          "title": "Suite 214 Laboratory Coordination Set",
+          "score": 11.673138952550715,
+          "scoreMin": 11.673138952550715,
+          "scoreMax": 11.673138952550715,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0013130500000000003
+        },
+        {
+          "caseId": "P17-clinical-trial-site-monitoring",
+          "title": "HTX-204 Site 014 Monitoring Source Packet",
+          "score": 14.275376817393623,
+          "scoreMin": 14.275376817393623,
+          "scoreMax": 14.275376817393623,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.00495105
+        },
+        {
+          "caseId": "P21-semiconductor-lot-disposition",
+          "title": "Lot Q8R7-22 Material Review File",
+          "score": 36.941250184284236,
+          "scoreMin": 36.941250184284236,
+          "scoreMax": 36.941250184284236,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0012055
+        },
+        {
+          "caseId": "P23-native-text-layer-recovery",
+          "title": "Northstar Cold Chain Supplier Cutover Authorization",
+          "score": 83.31597222222221,
+          "scoreMin": 83.31597222222221,
+          "scoreMax": 83.31597222222221,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0013549
+        }
+      ],
+      "draws": [
+        {
+          "draw": 1,
+          "score": 36.83782550016511,
+          "inferenceCostUsd": 0.010743000000000003,
+          "evaluatorCostUsd": 0.14496375,
+          "totalOutputTokens": 17424,
+          "inferenceSeconds": 159.055,
+          "cases": [
+            {
+              "caseId": "P12-pfas-method-validation",
+              "title": "PFAS Method Validation and Batch Release Packet",
+              "score": 37.98338932437476,
+              "inferenceCostUsd": 0.0019185,
+              "evaluatorCostUsd": 0.0211715,
+              "outputTokens": 3436,
+              "inferenceElapsedMs": 27106,
+              "resolvedModel": "gpt-5-nano-2025-08-07",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:18:55.594Z",
+              "finishedAt": "2026-07-10T14:19:22.700Z"
+            },
+            {
+              "caseId": "P15-architecture-floorplan-diagrams",
+              "title": "Suite 214 Laboratory Coordination Set",
+              "score": 11.673138952550715,
+              "inferenceCostUsd": 0.0013130500000000003,
+              "evaluatorCostUsd": 0.023283,
+              "outputTokens": 1968,
+              "inferenceElapsedMs": 20426,
+              "resolvedModel": "gpt-5-nano-2025-08-07",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:19:02.277Z",
+              "finishedAt": "2026-07-10T14:19:22.703Z"
+            },
+            {
+              "caseId": "P17-clinical-trial-site-monitoring",
+              "title": "HTX-204 Site 014 Monitoring Source Packet",
+              "score": 14.275376817393623,
+              "inferenceCostUsd": 0.00495105,
+              "evaluatorCostUsd": 0.060384,
+              "outputTokens": 7529,
+              "inferenceElapsedMs": 66125,
+              "resolvedModel": "gpt-5-nano-2025-08-07",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:18:16.590Z",
+              "finishedAt": "2026-07-10T14:19:22.715Z"
+            },
+            {
+              "caseId": "P21-semiconductor-lot-disposition",
+              "title": "Lot Q8R7-22 Material Review File",
+              "score": 36.941250184284236,
+              "inferenceCostUsd": 0.0012055,
+              "evaluatorCostUsd": 0.02496,
+              "outputTokens": 2023,
+              "inferenceElapsedMs": 22026,
+              "resolvedModel": "gpt-5-nano-2025-08-07",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:19:00.694Z",
+              "finishedAt": "2026-07-10T14:19:22.720Z"
+            },
+            {
+              "caseId": "P23-native-text-layer-recovery",
+              "title": "Northstar Cold Chain Supplier Cutover Authorization",
+              "score": 83.31597222222221,
+              "inferenceCostUsd": 0.0013549,
+              "evaluatorCostUsd": 0.01516525,
+              "outputTokens": 2468,
+              "inferenceElapsedMs": 23372,
+              "resolvedModel": "gpt-5-nano-2025-08-07",
+              "evaluatorResolvedModel": "gemini-3.1-flash-lite",
+              "startedAt": "2026-07-10T14:18:59.349Z",
+              "finishedAt": "2026-07-10T14:19:22.721Z"
+            }
+          ]
+        }
+      ],
+      "measurementStartedAt": "2026-07-10T14:18:16.590Z",
+      "measurementFinishedAt": "2026-07-10T14:19:22.721Z"
+    }
+  ]
+}

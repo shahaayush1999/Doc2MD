@@ -7,6 +7,7 @@
   "scripts": {
     "generate": "uv run python scripts/generate_benchmark.py",
     "validate": "uv run python scripts/validate_benchmark.py --benchmark benchmark --json",
+    "audit": "npm run validate && node --import tsx src/audit.ts",
     "render": "uv run python scripts/validate_benchmark.py --benchmark benchmark --render tmp/pdfs/benchmark --json",
     "bench": "node --env-file=.env.local --import tsx src/bench.ts",
     "typecheck": "tsc --noEmit"

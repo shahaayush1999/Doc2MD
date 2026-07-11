@@ -171,6 +171,15 @@ export type UnsupportedClaim = z.infer<typeof unsupportedClaimSchema>;
 export type ScoredUnsupportedClaim = UnsupportedClaim & { harm: 1 | 2 };
 export type JudgeResult = z.infer<typeof judgeSchema>;
 
+export type JudgeAdjustment = {
+  id: string;
+  rawStatus: LeafStatus;
+  finalStatus: LeafStatus;
+  rawCandidateLineRefs: number[];
+  finalCandidateLineRefs: number[];
+  reason: string | null;
+};
+
 export class BenchmarkContractError extends Error {
   constructor(message: string) {
     super(message);
@@ -200,6 +209,19 @@ const judgeMaxOutputTokens = 32_000;
 const judgeMaxAttempts = 2;
 const judgeTransportMaxRetries = 2;
 const judgeSampling = { temperature: 0, seed: 731_2026 } as const;
+
+export function evaluatorConfiguration() {
+  return {
+    id: evaluator.id,
+    modelName: evaluator.modelName,
+    provider: evaluator.provider,
+    reasoning: evaluator.reasoning,
+    sampling: judgeSampling,
+    maxOutputTokens: judgeMaxOutputTokens,
+    maxAttempts: judgeMaxAttempts,
+    pricingVersion: evaluator.pricingVersion,
+  };
+}
 
 export const leafStatusCredit = {
   correct: 1,
@@ -349,6 +371,8 @@ function normalizeEvidenceText(value: string): string {
   return value
     .normalize("NFKC")
     .toLowerCase()
+    .replace(/\\(?:longrightarrow|rightarrow|to)\b/g, "->")
+    .replace(/\\(?:longleftarrow|leftarrow)\b/g, "<-")
     .replace(/[‐‑‒–—−]/g, "-")
     .replace(/→/g, "->")
     .replace(/←/g, "<-")
@@ -494,20 +518,12 @@ function lexicalTextGate(text: string, groups: string[][], expectation?: string)
     semanticNegative[index] ? state.any : state.positive,
   );
   if (satisfiedGroups.every(Boolean)) return { satisfied: true, contradiction: false };
-  if (
-    allPresent &&
-    satisfiedGroups.some((satisfied, index) => !satisfied && !semanticNegative[index])
-  ) {
-    return {
-      satisfied: false,
-      contradiction: true,
-      reason: "One or more required lexical terms have the opposite polarity from the expected claim.",
-    };
-  }
   return {
     satisfied: false,
     contradiction: false,
-    reason: "The citations omit one or more required lexical term groups.",
+    reason: allPresent
+      ? "The citations contain the required terms but do not establish the expected lexical polarity."
+      : "The citations omit one or more required lexical term groups.",
   };
 }
 
@@ -544,7 +560,7 @@ function equalAlternative(value: string, alternatives: string[]): boolean {
 
 function splitPipeCells(line: string): string[] | null {
   if (!line.includes("|")) return null;
-  const raw = line.trim().replace(/^\|/, "").replace(/\|$/, "");
+  const raw = line.trim().replace(/^[-+*]\s+/, "").replace(/^\|/, "").replace(/\|$/, "");
   const cells = raw.split(/(?<!\\)\|/).map((cell) => cell.replace(/\\\|/g, "|").trim());
   return cells.length >= 2 ? cells : null;
 }
@@ -726,6 +742,23 @@ function tableBindingGate(
         }
       }
     }
+  }
+
+  // A prompt-permitted key-value list may carry the row key before a colon and
+  // the named columns in a nearby heading, for example:
+  // "Control | Value | Interpretation" followed by
+  // "- Base committed cost: $25,070 (Implementation, overlap, and sensor validation)".
+  // Treat that as structured evidence when the row, column heading, and exact
+  // value are all locally recoverable. Do not infer a contradiction from a
+  // non-matching free-form value because one line can encode several columns.
+  for (const { ref, raw } of citedLines) {
+    const match = raw.match(/^\s*(?:[-+*]\s+)?([^:|]{1,160})\s*:\s*(.+)$/);
+    if (!match || !equalAlternative(match[1]!, policy.row)) continue;
+    const headingStart = Math.max(0, ref - 7);
+    const headingContext = normalizeEvidenceText(lines.slice(headingStart, ref - 1).join("\n"));
+    if (!matchingAlternative(headingContext, policy.column)) continue;
+    const valueText = normalizeEvidenceText(match[2]!);
+    if (matchingAlternative(valueText, policy.value)) positiveMatches.push([ref]);
   }
 
   // Plain-text tables must cite both their header and the exact target row.
@@ -954,6 +987,7 @@ function directedEdgeGate(
   for (const ref of [...citedRefs].sort((left, right) => left - right)) {
     const line = normalizeEvidenceText(lines[ref - 1] ?? "");
     const relationTerms = policy.relation ? normalizedAlternatives(policy.relation) : [];
+    const nearbyHeading = normalizeEvidenceText(lines.slice(Math.max(0, ref - 7), ref - 1).join("\n"));
     const sentences = line.split(/(?<=[.!?])\s+/).filter(Boolean);
     for (const sentence of sentences) {
       const clauses = sentence.split(/\s*;\s*/).filter(Boolean);
@@ -966,7 +1000,12 @@ function directedEdgeGate(
       for (const context of contexts) {
         const relationPresent =
           relationTerms.length === 0 ||
-          relationTerms.some((relation) => phraseIndex(context, relation) >= 0 || phraseIndex(sentence, relation) >= 0);
+          relationTerms.some(
+            (relation) =>
+              phraseIndex(context, relation) >= 0 ||
+              phraseIndex(sentence, relation) >= 0 ||
+              phraseIndex(nearbyHeading, relation) >= 0,
+          );
         if (!relationPresent) continue;
         const sources = allAlternativeMatches(context, policy.source);
         const destinations = allAlternativeMatches(context, policy.destination);
@@ -1351,9 +1390,11 @@ function orderedTokensGate(lines: string[], refs: Iterable<number>, groups: stri
       const rawRefs = refsCoveringLexicalGroups(lines, refs, groups, false);
       return {
         satisfied: false,
-        contradiction: rawRefs !== null,
+        contradiction: false,
         candidateLineRefs: rawRefs ?? undefined,
-        reason: rawRefs ? "The required tokens appear in the wrong order." : "The citations omit one or more required ordered tokens.",
+        reason: rawRefs
+          ? "The required tokens are present but the expected order is not established."
+          : "The citations omit one or more required ordered tokens.",
       };
     }
     matchedRefs.push(document.refAt(match.index));
@@ -1554,6 +1595,31 @@ export function validateJudgeResult(facts: FactFile, value: unknown, prediction?
   const result = parsed.data;
   const leaves = expectedLeaves(facts);
   const leafById = new Map(leaves.map((leaf) => [leaf.id, leaf]));
+  const candidate = prediction === undefined ? null : candidateLines(prediction);
+
+  // The semantic judge can make clerical output mistakes even when its leaf
+  // decisions are usable. Keep the benchmark available by normalizing those
+  // mistakes conservatively: unknown/duplicate rows are discarded, absent
+  // rows become missing, and unusable citations cannot retain positive credit.
+  const firstKnownResult = new Map<string, JudgeResult["leafResults"][number]>();
+  for (const item of result.leafResults) {
+    if (leafById.has(item.id) && !firstKnownResult.has(item.id)) firstKnownResult.set(item.id, item);
+  }
+  result.leafResults = leaves.map((leaf) => {
+    const item = firstKnownResult.get(leaf.id);
+    if (!item) return { id: leaf.id, status: "missing" as const, candidateLineRefs: [], note: "Evaluator omitted this leaf." };
+    if (candidate !== null) {
+      item.candidateLineRefs = [...new Set(item.candidateLineRefs)].filter(
+        (ref) => ref <= candidate.length && candidate[ref - 1]?.trim(),
+      );
+    }
+    if (item.status !== "missing" && item.candidateLineRefs.length === 0) {
+      item.status = "missing";
+      item.note = "Evaluator supplied no usable candidate citation.";
+    }
+    if (item.status === "missing") item.candidateLineRefs = [];
+    return item;
+  });
   const returnedIds = result.leafResults.map((item) => item.id);
   const duplicates = duplicateValues(returnedIds);
   const unknown = [...new Set(returnedIds.filter((id) => !leafById.has(id)))].sort();
@@ -1643,6 +1709,17 @@ export function validateJudgeResult(facts: FactFile, value: unknown, prediction?
           originalStatus === "correct"
             ? evaluateEvidencePolicy(lines, item.candidateLineRefs, leaf.evidencePolicy, leaf.expectation)
             : null;
+
+        // A judge-confirmed citation that satisfies its typed policy is scoped
+        // evidence. Accept it before attempting a much more expensive scan of
+        // the entire candidate, which is unnecessary and can introduce false
+        // conflicts from repeated longitudinal records.
+        if (originalStatus === "correct" && citedGate?.satisfied) {
+          item.candidateLineRefs = citedGate.candidateLineRefs ?? sortedUniqueRefs(item.candidateLineRefs);
+          delete item.note;
+          continue;
+        }
+
         const resolved = resolveEvidencePolicy(lines, leaf.evidencePolicy, leaf.expectation);
         const lexicalResolutionAllowed =
           leaf.evidencePolicy.type !== "lexical" || originalStatus === "correct" || legacyGateDemotion;
@@ -1660,20 +1737,6 @@ export function validateJudgeResult(facts: FactFile, value: unknown, prediction?
               )
             : null;
 
-        // A judge-confirmed exact citation to a table row, form option,
-        // directed relation, or ordered record is scoped evidence. Reusing the
-        // same row key or option label in another document section must not
-        // turn that local binding into a contradiction. Lexical policies keep
-        // the stricter document-wide locality/polarity recovery below.
-        if (
-          originalStatus === "correct" &&
-          leaf.evidencePolicy.type !== "lexical" &&
-          citedGate?.satisfied
-        ) {
-          item.candidateLineRefs = citedGate.candidateLineRefs ?? sortedUniqueRefs(item.candidateLineRefs);
-          delete item.note;
-          continue;
-        }
         const authoritativeResolution =
           resolved?.satisfied || resolved?.contradiction ? resolved : citationRecovery ?? resolved;
 
@@ -1715,6 +1778,26 @@ export function validateJudgeResult(facts: FactFile, value: unknown, prediction?
     ...result,
     leafResults: leaves.map((leaf) => byId.get(leaf.id)!),
   };
+}
+
+export function judgeAdjustments(raw: JudgeResult, final: JudgeResult): JudgeAdjustment[] {
+  const rawById = new Map(raw.leafResults.map((item) => [item.id, item]));
+  return final.leafResults.flatMap((item) => {
+    const before = rawById.get(item.id);
+    if (!before) return [];
+    const refsChanged = before.candidateLineRefs.join(",") !== item.candidateLineRefs.join(",");
+    if (before.status === item.status && !refsChanged && before.note === item.note) return [];
+    return [
+      {
+        id: item.id,
+        rawStatus: before.status,
+        finalStatus: item.status,
+        rawCandidateLineRefs: before.candidateLineRefs,
+        finalCandidateLineRefs: item.candidateLineRefs,
+        reason: item.note ?? null,
+      },
+    ];
+  });
 }
 
 function clamp01(value: number): number {
@@ -1863,6 +1946,7 @@ export function judgeRegionsForPrompt(facts: FactFile) {
     goldSection: region.goldSection,
     kind: region.kind,
     modality: region.modality,
+    sourceAnchors: region.sourceAnchors,
     closedWorld: region.closedWorld ?? null,
     leaves: region.leaves.map(({ id, canonicalClaimId, claimType, expectation, evidencePolicy }) => ({
       id,
@@ -1963,10 +2047,12 @@ export async function judgeWithGemini(testCase: ManifestCase, facts: FactFile, p
         maxRetries: judgeTransportMaxRetries,
       });
       usages.push(response.usage);
+      const rawResult = structuredClone(response.object) as JudgeResult;
       const result = validateJudgeResult(facts, response.object, prediction);
       const usage = combineUsage(usages);
       return {
         ok: true as const,
+        rawResult,
         result,
         resolved: {
           provider: evaluator.provider,
@@ -1994,6 +2080,7 @@ export async function judgeWithGemini(testCase: ManifestCase, facts: FactFile, p
       return {
         ok: false as const,
         result: null,
+        rawResult: null,
         resolved: null,
         attempts: attempt,
         errors,
@@ -2029,11 +2116,14 @@ export async function evaluatePrediction(testCase: ManifestCase, prediction: str
     };
   }
   const atomicScore = scoreAtomicRegions(facts, judged.result, prediction);
+  const adjustments = judgeAdjustments(judged.rawResult, judged.result);
   return {
     valid: true,
     score: atomicScore.score,
     evaluator: {
       model: evaluator.modelName,
+      configuration: evaluatorConfiguration(),
+      resolved: judged.resolved,
       attempts: judged.attempts,
       errors: judged.errors,
       elapsedMs: judged.elapsedMs,
@@ -2041,6 +2131,8 @@ export async function evaluatePrediction(testCase: ManifestCase, prediction: str
       costUsd: judged.estimatedCostUsd,
     },
     atomicScore,
+    rawJudgeResult: judged.rawResult,
     judgeResult: judged.result,
+    judgeAdjustments: adjustments,
   };
 }

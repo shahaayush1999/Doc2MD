@@ -89,6 +89,7 @@ def _generate_in_place(output_root: Path) -> dict:
     output_root.mkdir(parents=True, exist_ok=True)
 
     cases = [builder(output_root) for builder in BUILDERS]
+    shutil.copyfile(REPO_ROOT / "scripts" / "benchmark_prompt.md", output_root / "prompt.md")
     page_count = sum(int(case["pages"]) for case in cases)
     if len(cases) != 5 or page_count != 84:
         raise ValueError(f"Expected five cases and 84 pages; built {len(cases)} cases and {page_count} pages")

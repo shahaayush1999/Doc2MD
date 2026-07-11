@@ -453,6 +453,11 @@ def _date_alternatives(value: str) -> tuple[str, ...]:
                 f"{day} {long} {year}",
                 f"{short} {day} {year}",
                 f"{long} {day} {year}",
+                f"{day} {short}",
+                f"{day:02d} {short}",
+                f"{day} {long}",
+                f"{short} {day}",
+                f"{long} {day}",
             )
         )
     )
@@ -1237,54 +1242,6 @@ class CaseBuilder:
         self.gold_parts.append(f"## {heading}\n\n{body.strip()}\n")
         self.gold_headings[self.page_number] = heading
 
-    def add_gold_conclusions_for_leaves(self, leaf_ids: Sequence[str]) -> None:
-        """Add explicit integrated conclusions for claims not local to one table row.
-
-        The canonical answer usually supports a fact directly through a table, form,
-        or paragraph. Some scored claims intentionally combine several nearby rows,
-        visual marks, or source-precedence decisions. Those conclusions need an
-        explicit sentence in the relevant gold section so the reference answer is
-        itself unambiguous without weakening the scorer's locality and polarity
-        checks.
-        """
-        requested = list(dict.fromkeys(leaf_ids))
-        leaves_by_id: dict[str, tuple[str, str]] = {}
-        for region in self.regions:
-            section = str(region["goldSection"])
-            for leaf_item in region["leaves"]:
-                leaf_id = str(leaf_item["id"])
-                if leaf_id in leaves_by_id:
-                    raise ValueError(f"{self.case_id}: duplicate leaf id {leaf_id}")
-                leaves_by_id[leaf_id] = (section, str(leaf_item["expectation"]))
-
-        missing = [leaf_id for leaf_id in requested if leaf_id not in leaves_by_id]
-        if missing:
-            raise ValueError(f"{self.case_id}: unknown gold conclusion leaf id(s): {missing}")
-
-        conclusions_by_section: dict[str, list[str]] = {}
-        for leaf_id in requested:
-            section, expectation = leaves_by_id[leaf_id]
-            conclusions_by_section.setdefault(section, []).append(expectation)
-
-        part_by_heading: dict[str, int] = {}
-        for index, part in enumerate(self.gold_parts):
-            heading = part.split("\n", 1)[0].removeprefix("## ")
-            if heading in part_by_heading:
-                raise ValueError(f"{self.case_id}: duplicate gold heading {heading!r}")
-            part_by_heading[heading] = index
-
-        for section, conclusions in conclusions_by_section.items():
-            if section not in part_by_heading:
-                raise ValueError(f"{self.case_id}: gold section {section!r} does not exist")
-            index = part_by_heading[section]
-            bullets = "\n".join(f"- {conclusion}" for conclusion in conclusions)
-            self.gold_parts[index] = (
-                self.gold_parts[index].rstrip()
-                + "\n\nIntegrated reference conclusions:\n\n"
-                + bullets
-                + "\n"
-            )
-
     def set_page_modalities(
         self,
         *,
@@ -1453,6 +1410,22 @@ class CaseBuilder:
         if self.page_number != self.page_count:
             raise ValueError(f"{self.case_id}: expected {self.page_count} pages, generated {self.page_number}")
         self.canvas.save()
+        # Doc2MD is a reconstruction benchmark. Regions that require a newly
+        # authored cross-record conclusion are diagnostic design notes, not
+        # scored source evidence. Long-context capability is measured through
+        # exhaustive recovery of the actual distributed records instead.
+        self.regions = [
+            region
+            for region in self.regions
+            if not str(region["id"]).startswith("x")
+            and region["primaryAxis"] != "cross_page_join"
+            and all(leaf["claimType"] != "cross_page_join" for leaf in region["leaves"])
+        ]
+        self.gold_parts = [
+            part.split("\n\nIntegrated reference conclusions:", 1)[0].rstrip() + "\n"
+            for part in self.gold_parts
+            if not part.startswith("## Cross-page entity lineage synthesis")
+        ]
         for region in self.regions:
             primary_page = int(region["sourceAnchors"][0]["page"])
             if not region.pop("_goldSectionExplicit", False) and primary_page in self.gold_headings:

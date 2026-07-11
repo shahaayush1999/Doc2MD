@@ -387,9 +387,9 @@ def build(output_root):
             ),
             leaf(
                 "p04.spc.threshold.warning",
-                "The amber dashed line is the 45.0 nm warning threshold.",
+                "The amber/orange dashed line is the 45.0 nm warning threshold.",
                 harm=2,
-                evidence_policy={"type": "lexical", "allOf": [["amber"], ["dashed line"], ["45.0 nm"], ["warning threshold"]]},
+                evidence_policy={"type": "lexical", "allOf": [["amber", "orange"], ["dashed line"], ["45.0 nm"], ["warning threshold"]]},
             ),
             leaf(
                 "p04.spc.threshold.ucl",
@@ -404,8 +404,8 @@ def build(output_root):
             ),
             leaf(
                 "p04.spc.color.amber",
-                "Amber points mean Warning at or above 45.0 nm but below 47.0 nm.",
-                evidence_policy={"type": "lexical", "allOf": [["amber points", "amber"], ["Warning"], ["above"], ["45.0 nm"], ["below"], ["47.0 nm"]]},
+                "Amber/orange points mean Warning at or above 45.0 nm but below 47.0 nm.",
+                evidence_policy={"type": "lexical", "allOf": [["amber points", "amber", "orange points", "orange"], ["Warning"], ["above"], ["45.0 nm"], ["below"], ["47.0 nm"]]},
             ),
             leaf(
                 "p04.spc.color.red",
@@ -681,7 +681,7 @@ def build(output_root):
         markdown_table(coa_headers, coa_rows)
         + "\n\n"
         + markdown_table(audit_headers, audit_rows)
-        + "\n\nThe preliminary all-wafer COA is void; only the signed COA values authorize shipment. Cross-source joins remain explicit: wafer 07's M1 map cluster and IMG-224/225 evidence support scrap; wafer 09's visually clean IMG-226 does not negate its P4 parametric condition and REL-22-A shipment gate; the W12 E1 edge map and IMG-227 support engineering hold.",
+        + "\n\nThe preliminary all-wafer COA is void; only the signed values above authorize shipment.",
     )
     coa_bindings = {(row[0], field) for row in coa_rows for field in {"Signed value", "Application"}}
     audit_bindings = {(row[0], field) for row in audit_rows for field in {"Entry", "Effect"}}
@@ -694,8 +694,8 @@ def build(output_root):
         [
             source_precedence_leaf(
                 "p09.authority.control",
-                "The preliminary all-wafer COA is void; only the signed COA values authorize shipment.",
-                [["preliminary", "draft"], ["void"], ["only"], ["signed COA"], ["authorize", "authority"]],
+                "The preliminary all-wafer COA is void; only the signed values above authorize shipment.",
+                [["preliminary", "draft"], ["COA"], ["void"], ["only"], ["signed values"], ["above"], ["authorize", "authority"]],
             )
         ],
         budget=2,
@@ -742,17 +742,6 @@ def build(output_root):
         ],
     )
 
-    case.add_gold_conclusions_for_leaves(
-        [
-            "p02.map.w03.pattern",
-            "p02.map.w05.pattern",
-            "p02.map.w07.pattern",
-            "p02.map.w09.pattern",
-            "p02.map.w12.pattern",
-            "p02.map.w02.reference",
-            "p09.join.w07",
-        ]
-    )
     record = case.finish()
     rasterize_pdf_pages(
         case.pdf_path,

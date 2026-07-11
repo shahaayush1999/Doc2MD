@@ -1867,13 +1867,14 @@
           "id": "p04.spc.threshold.warning",
           "canonicalClaimId": "p04.spc.threshold.warning",
           "claimType": "scalar",
-          "expectation": "The amber dashed line is the 45.0 nm warning threshold.",
+          "expectation": "The amber/orange dashed line is the 45.0 nm warning threshold.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "amber"
+                "amber",
+                "orange"
               ],
               [
                 "dashed line"
@@ -1943,14 +1944,16 @@
           "id": "p04.spc.color.amber",
           "canonicalClaimId": "p04.spc.color.amber",
           "claimType": "scalar",
-          "expectation": "Amber points mean Warning at or above 45.0 nm but below 47.0 nm.",
+          "expectation": "Amber/orange points mean Warning at or above 45.0 nm but below 47.0 nm.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
                 "amber points",
-                "amber"
+                "amber",
+                "orange points",
+                "orange"
               ],
               [
                 "Warning"
@@ -4023,7 +4026,11 @@
                 "11 Jun 2026",
                 "11 June 2026",
                 "Jun 11 2026",
-                "June 11 2026"
+                "June 11 2026",
+                "11 Jun",
+                "11 June",
+                "Jun 11",
+                "June 11"
               ],
               [
                 "14:22"
@@ -4344,7 +4351,11 @@
                 "11 Jun 2026",
                 "11 June 2026",
                 "Jun 11 2026",
-                "June 11 2026"
+                "June 11 2026",
+                "11 Jun",
+                "11 June",
+                "Jun 11",
+                "June 11"
               ],
               [
                 "09:42",
@@ -5215,7 +5226,7 @@
           "id": "p09.authority.control",
           "canonicalClaimId": "p09.authority.control",
           "claimType": "source_precedence",
-          "expectation": "The preliminary all-wafer COA is void; only the signed COA values authorize shipment.",
+          "expectation": "The preliminary all-wafer COA is void; only the signed values above authorize shipment.",
           "harm": 2,
           "evidencePolicy": {
             "type": "ordered_tokens",
@@ -5225,160 +5236,23 @@
                 "draft"
               ],
               [
+                "COA"
+              ],
+              [
                 "void"
               ],
               [
                 "only"
               ],
               [
-                "signed COA"
+                "signed values"
+              ],
+              [
+                "above"
               ],
               [
                 "authorize",
                 "authority"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "p09.cross-source",
-      "label": "Cross-source wafer disposition joins",
-      "sourceAnchors": [
-        {
-          "page": 2,
-          "layer": "raster",
-          "sectionPath": [
-            "Lot Q8R7-22 Material Review File",
-            "Wafer-map review"
-          ]
-        },
-        {
-          "page": 5,
-          "layer": "raster",
-          "sectionPath": [
-            "Lot Q8R7-22 Material Review File",
-            "SEM review contact sheet"
-          ]
-        },
-        {
-          "page": 6,
-          "layer": "native_text",
-          "sectionPath": [
-            "Lot Q8R7-22 Material Review File",
-            "Defect classification and MRB decisions"
-          ]
-        },
-        {
-          "page": 7,
-          "layer": "mixed",
-          "sectionPath": [
-            "Lot Q8R7-22 Material Review File",
-            "Reliability conditions and shipping allocation"
-          ]
-        },
-        {
-          "page": 9,
-          "layer": "native_text",
-          "sectionPath": [
-            "Lot Q8R7-22 Material Review File",
-            "Certificate holdback and final audit trail"
-          ]
-        }
-      ],
-      "goldSection": "Certificate holdback and final audit trail",
-      "kind": "mixed",
-      "modality": "mixed",
-      "uniqueEvidence": true,
-      "primaryAxis": "mixed_modality_fusion",
-      "secondaryAxes": [
-        "cross_page_join",
-        "summarization_coverage"
-      ],
-      "textOnlyRecoverable": false,
-      "budget": 3,
-      "leaves": [
-        {
-          "id": "p09.join.w07",
-          "canonicalClaimId": "p09.join.w07",
-          "claimType": "cross_page_join",
-          "expectation": "Wafer 07's M1 map cluster and IMG-224 and IMG-225 evidence are explicitly linked to the scrap decision.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "Wafer 07",
-                "W07"
-              ],
-              [
-                "M1"
-              ],
-              [
-                "IMG-224"
-              ],
-              [
-                "IMG-225"
-              ],
-              [
-                "scrap"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p09.join.w09",
-          "canonicalClaimId": "p09.join.w09",
-          "claimType": "cross_page_join",
-          "expectation": "Wafer 09's visually clean IMG-226 does not negate the P4 parametric condition or the REL-22-A shipment gate.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "Wafer 09",
-                "W09"
-              ],
-              [
-                "IMG-226"
-              ],
-              [
-                "clean"
-              ],
-              [
-                "does not",
-                "not"
-              ],
-              [
-                "P4"
-              ],
-              [
-                "REL-22-A"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p09.join.w12",
-          "canonicalClaimId": "p09.join.w12",
-          "claimType": "cross_page_join",
-          "expectation": "The W12 E1 edge map and IMG-227 evidence are explicitly linked to engineering hold.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "W12"
-              ],
-              [
-                "E1"
-              ],
-              [
-                "IMG-227"
-              ],
-              [
-                "hold"
               ]
             ]
           }

@@ -1,10 +1,13 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { fileURLToPath } from "node:url";
 import { generateText } from "ai";
-import { evaluatePrediction, type ManifestCase } from "./evaluator.js";
+import {
+  evaluatePrediction,
+  type ManifestCase,
+} from "./evaluator.js";
 import { loadBenchmarkManifest } from "./manifest.js";
 import { calculateCost } from "./pricing.js";
 import { createModel, defaultModelIds, models, type ModelSpec } from "./models.js";
@@ -13,6 +16,8 @@ import { renderReport } from "./report.js";
 const cacheRoot = "runs/cache";
 const promptPath = "benchmark/prompt.md";
 const maxOutputTokens = 60_000;
+const inferenceProtocolVersion = 2;
+const ingestionMode = "native PDF attached directly to the provider model API";
 
 function sha256(value: string | Uint8Array) {
   return createHash("sha256").update(value).digest("hex");
@@ -40,7 +45,22 @@ function cacheDirectory(modelId: string, caseId: string, draw = 1) {
   return draw === 1 ? firstDraw : path.join(firstDraw, "draws", String(draw).padStart(3, "0"));
 }
 
-async function inferenceKey(spec: ModelSpec, testCase: ManifestCase, prompt: string) {
+function configuredModel(spec: ModelSpec) {
+  return {
+    id: spec.id,
+    modelName: spec.modelName,
+    provider: spec.provider,
+    reasoning: spec.reasoning ?? null,
+    location: spec.location ?? null,
+    maxOutputTokens: spec.maxOutputTokens ?? maxOutputTokens,
+  };
+}
+
+async function packageLockHash() {
+  return sha256(await readFile("package-lock.json"));
+}
+
+async function legacyInferenceKey(spec: ModelSpec, testCase: ManifestCase, prompt: string) {
   const pdf = await readFile(testCase.pdf);
   const outputLimit = spec.maxOutputTokens ?? maxOutputTokens;
   return sha256(
@@ -57,6 +77,18 @@ async function inferenceKey(spec: ModelSpec, testCase: ManifestCase, prompt: str
       maxOutputTokens: outputLimit,
     }),
   );
+}
+
+async function inferenceKey(spec: ModelSpec, testCase: ManifestCase, prompt: string) {
+  const pdf = await readFile(testCase.pdf);
+  return sha256(JSON.stringify({
+    protocolVersion: inferenceProtocolVersion,
+    ingestionMode,
+    packageLock: await packageLockHash(),
+    pdf: sha256(pdf),
+    prompt: sha256(prompt),
+    model: configuredModel(spec),
+  }));
 }
 
 async function scoreKey(testCase: ManifestCase, prediction: string, evaluatorSourceHash: string) {
@@ -79,7 +111,9 @@ async function loadCachedCase(modelId: string, testCase: ManifestCase, prompt: s
   ]);
   if (!prediction || !inference) return null;
   const expectedInferenceKey = await inferenceKey(models[modelId]!, testCase, prompt);
-  if (inference.cacheKey !== expectedInferenceKey) return null;
+  const isLegacyKey = inference.cacheKey === await legacyInferenceKey(models[modelId]!, testCase, prompt);
+  if (inference.cacheKey !== expectedInferenceKey && !isLegacyKey) return null;
+  const inferenceStat = await stat(path.join(directory, "inference.json"));
   const expectedScoreKey = await scoreKey(testCase, prediction, evaluatorSourceHash);
   return {
     directory,
@@ -87,66 +121,10 @@ async function loadCachedCase(modelId: string, testCase: ManifestCase, prompt: s
     inference,
     evaluation: evaluation?.cacheKey === expectedScoreKey ? evaluation : null,
     inferenceKey: expectedInferenceKey,
+    inferenceNeedsUpgrade: isLegacyKey,
+    inferenceFileMtime: inferenceStat.mtime,
     scoreKey: expectedScoreKey,
   };
-}
-
-async function importLegacyResults(manifest: { cases: ManifestCase[] }, prompt: string, evaluatorSourceHash: string) {
-  for (const modelId of Object.keys(models)) {
-    const spec = models[modelId]!;
-    for (const testCase of manifest.cases) {
-      const directory = cacheDirectory(modelId, testCase.id);
-      if (await readJsonOrNull(path.join(directory, "inference.json"))) continue;
-      const legacyDirectory = path.join("runs", modelId, testCase.id, "samples", "001");
-      const [prediction, result, score] = await Promise.all([
-        readFile(path.join(legacyDirectory, "prediction.md"), "utf8").catch(() => null),
-        readJsonOrNull(path.join(legacyDirectory, "result.json")),
-        readJsonOrNull(path.join(legacyDirectory, "score.json")),
-      ]);
-      if (!prediction || !result || !score || !Number.isFinite(score.score)) continue;
-      const pdfHash = sha256(await readFile(testCase.pdf));
-      if (
-        result.modelId !== modelId ||
-        result.modelName !== spec.modelName ||
-        result.cache?.pdfHash !== pdfHash ||
-        result.cache?.promptHash !== sha256(prompt)
-      ) {
-        continue;
-      }
-      const importedInference = {
-        modelId,
-        resolvedModel: result.providerMetadata?.resolved?.modelId ?? result.modelName,
-        elapsedMs: result.elapsedMs ?? 0,
-        finishReason: result.finishReason ?? "unknown",
-        usage: result.usage ?? null,
-        costUsd: result.estimatedCostUsd ?? 0,
-        cacheKey: await inferenceKey(spec, testCase, prompt),
-        importedFromLegacyRun: true,
-      };
-      const importedScore = {
-        valid: score.valid === true,
-        score: score.score,
-        evaluator: {
-          model: score.scorer?.evaluatorModelName ?? "gemini-3.1-flash-lite",
-          attempts: score.scorer?.attempts ?? 0,
-          errors: score.scorer?.errors ?? [],
-          elapsedMs: score.scorer?.elapsedMs ?? 0,
-          usage: score.scorer?.usage ?? null,
-          costUsd: score.scorer?.estimatedCostUsd ?? 0,
-        },
-        atomicScore: score.atomicScore,
-        judgeResult: score.judgeResult,
-        cacheKey: await scoreKey(testCase, prediction, evaluatorSourceHash),
-        importedFromLegacyRun: true,
-      };
-      await mkdir(directory, { recursive: true });
-      await Promise.all([
-        writeFile(path.join(directory, "prediction.md"), prediction, "utf8"),
-        writeJson(path.join(directory, "inference.json"), importedInference),
-        writeJson(path.join(directory, "score.json"), importedScore),
-      ]);
-    }
-  }
 }
 
 function errorMessage(error: unknown) {
@@ -163,9 +141,30 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
   let inferenceSpent = 0;
   let evaluatorSpent = 0;
 
+  if (prediction && inference && cached?.inferenceNeedsUpgrade) {
+    const finishedAt = cached.inferenceFileMtime.toISOString();
+    const startedAt = new Date(cached.inferenceFileMtime.getTime() - Math.max(0, inference.elapsedMs ?? 0)).toISOString();
+    inference = {
+      ...inference,
+      configuredModel: configuredModel(spec),
+      ingestionMode,
+      protocolVersion: inferenceProtocolVersion,
+      packageLockHash: await packageLockHash(),
+      pricingVersion: spec.pricingVersion,
+      recordedCostUsd: inference.costUsd ?? null,
+      costUsd: calculateCost(spec, inference.usage),
+      startedAt,
+      finishedAt,
+      timestampSource: "cache-file-mtime",
+      cacheKey: cached.inferenceKey,
+    };
+    await writeJson(path.join(directory, "inference.json"), inference);
+  }
+
   if (!prediction || !inference) {
     const pdf = await readFile(testCase.pdf);
     const outputLimit = spec.maxOutputTokens ?? maxOutputTokens;
+    const startedAt = new Date();
     const started = performance.now();
     const response = await generateText({
       model: createModel(spec),
@@ -176,9 +175,18 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
     });
     prediction = response.text;
     inferenceSpent = calculateCost(spec, response.usage);
+    const finishedAt = new Date();
     inference = {
       modelId,
+      configuredModel: configuredModel(spec),
       resolvedModel: response.response.modelId,
+      ingestionMode,
+      protocolVersion: inferenceProtocolVersion,
+      packageLockHash: await packageLockHash(),
+      pricingVersion: spec.pricingVersion,
+      startedAt: startedAt.toISOString(),
+      finishedAt: finishedAt.toISOString(),
+      timestampSource: "provider-call-clock",
       elapsedMs: Math.round(performance.now() - started),
       finishReason: response.finishReason,
       usage: response.usage,
@@ -207,7 +215,7 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
     caseId: testCase.id,
     title: testCase.title,
     score: evaluation.score as number | null,
-    inferenceCostUsd: inference.costUsd ?? 0,
+    inferenceCostUsd: calculateCost(spec, inference.usage),
     evaluatorCostUsd: evaluation.evaluator.costUsd ?? 0,
     incrementalCostUsd: inferenceSpent + evaluatorSpent,
     incrementalInferenceCostUsd: inferenceSpent,
@@ -256,6 +264,7 @@ function parseOptions(argv: string[]) {
 
 async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt: string, evaluatorSourceHash: string) {
   const merged = [];
+  const exclusions: Array<{ modelId: string; reason: string }> = [];
   for (const modelId of await cachedModelIds()) {
     const draws: any[] = [];
     for (let draw = 1; draw <= 20; draw += 1) {
@@ -267,10 +276,14 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
           caseId: testCase.id,
           title: testCase.title,
           score: cached.evaluation.score,
-          inferenceCostUsd: cached.inference.costUsd ?? 0,
+          inferenceCostUsd: calculateCost(models[modelId]!, cached.inference.usage),
           evaluatorCostUsd: cached.evaluation.evaluator.costUsd ?? 0,
           outputTokens: cached.inference.usage?.outputTokens ?? 0,
           inferenceElapsedMs: cached.inference.elapsedMs ?? 0,
+          resolvedModel: cached.inference.resolvedModel ?? null,
+          evaluatorResolvedModel: cached.evaluation.evaluator?.resolved?.modelId ?? null,
+          startedAt: cached.inference.startedAt ?? null,
+          finishedAt: cached.inference.finishedAt ?? null,
         });
       }
       if (cases.length !== manifest.cases.length) break;
@@ -285,6 +298,15 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
       });
     }
     if (draws.length === 0) continue;
+    const resolvedModels = [...new Set(draws.flatMap((draw) => draw.cases.map((item: any) => item.resolvedModel)).filter(Boolean))];
+    const resolvedEvaluators = [...new Set(draws.flatMap((draw) => draw.cases.map((item: any) => item.evaluatorResolvedModel)).filter(Boolean))];
+    if (resolvedModels.length !== 1 || resolvedEvaluators.length !== 1) {
+      exclusions.push({
+        modelId,
+        reason: `Resolved identity drift: model=${resolvedModels.join(", ") || "missing"}; evaluator=${resolvedEvaluators.join(", ") || "missing"}`,
+      });
+      continue;
+    }
     const drawScores = draws.map((draw) => draw.score);
     const cases = manifest.cases.map((testCase, caseIndex) => {
       const observations = draws.map((draw) => draw.cases[caseIndex]!);
@@ -303,6 +325,10 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
     const evaluatorCostUsd = mean(draws.map((draw) => draw.evaluatorCostUsd));
     merged.push({
       modelId,
+      configuredModel: configuredModel(models[modelId]!),
+      resolvedModel: resolvedModels[0],
+      evaluatorResolvedModel: resolvedEvaluators[0],
+      pricingVersion: models[modelId]!.pricingVersion,
       drawCount: draws.length,
       score: mean(drawScores),
       scoreMin: Math.min(...drawScores),
@@ -317,9 +343,11 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
       inferenceSeconds: mean(draws.map((draw) => draw.inferenceSeconds)),
       cases,
       draws,
+      measurementStartedAt: draws.flatMap((draw) => draw.cases.map((item: any) => item.startedAt)).filter(Boolean).sort()[0] ?? null,
+      measurementFinishedAt: draws.flatMap((draw) => draw.cases.map((item: any) => item.finishedAt)).filter(Boolean).sort().at(-1) ?? null,
     });
   }
-  return merged.sort((a, b) => b.score - a.score);
+  return { models: merged.sort((a, b) => b.score - a.score), exclusions };
 }
 
 export async function runBenchmark(requestedModelIds: string[], requestedRuns = 1) {
@@ -327,7 +355,6 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
   const [promptFile, evaluatorSource] = await Promise.all([readFile(promptPath, "utf8"), readFile("src/evaluator.ts")]);
   const prompt = promptFile.trimEnd();
   const evaluatorSourceHash = sha256(evaluatorSource);
-  await importLegacyResults(manifest as { cases: ManifestCase[] }, prompt, evaluatorSourceHash);
   const modelIds = requestedModelIds.length > 0 ? requestedModelIds : [...new Set([...defaultModelIds, ...(await cachedModelIds())])];
   let incrementalInferenceSpendUsd = 0;
   let incrementalEvaluatorSpendUsd = 0;
@@ -343,10 +370,24 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
     incrementalEvaluatorSpendUsd += cases.reduce((sum, testCase) => sum + testCase.incrementalEvaluatorCostUsd, 0);
   }
 
-  const mergedModels = await collectMergedResults(manifest as { cases: ManifestCase[] }, prompt, evaluatorSourceHash);
+  const collected = await collectMergedResults(manifest as { cases: ManifestCase[] }, prompt, evaluatorSourceHash);
+  const mergedModels = collected.models;
+  const manifestHash = sha256(await readFile("benchmark/manifest.json"));
+  const promptHash = sha256(prompt);
   const summary = {
     generatedAt: new Date().toISOString(),
     caseCount: manifest.cases.length,
+    provenance: {
+      inferenceProtocolVersion,
+      ingestionMode,
+      promptHash,
+      manifestHash,
+      evaluatorSourceHash,
+      packageLockHash: await packageLockHash(),
+      measurementStartedAt: mergedModels.map((model) => model.measurementStartedAt).filter(Boolean).sort()[0] ?? null,
+      measurementFinishedAt: mergedModels.map((model) => model.measurementFinishedAt).filter(Boolean).sort().at(-1) ?? null,
+    },
+    exclusions: collected.exclusions,
     incrementalSpendUsd: incrementalInferenceSpendUsd + incrementalEvaluatorSpendUsd,
     incrementalInferenceSpendUsd,
     incrementalEvaluatorSpendUsd,
@@ -357,7 +398,11 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
     models: mergedModels,
   };
   await mkdir("reports", { recursive: true });
-  await Promise.all([writeJson("reports/summary.json", summary), writeFile("reports/index.html", renderReport(summary), "utf8")]);
+  await Promise.all([
+    writeJson("reports/summary.json", summary),
+    writeJson("results/latest.json", summary),
+    writeFile("reports/index.html", renderReport(summary), "utf8"),
+  ]);
   console.table(mergedModels.map((model) => ({ model: model.modelId, draws: model.drawCount, score: model.score, meanInferenceSpendUsd: model.inferenceCostUsd })));
   console.log(`Incremental model inference spend: $${incrementalInferenceSpendUsd.toFixed(6)}`);
   console.log("Report: reports/index.html");

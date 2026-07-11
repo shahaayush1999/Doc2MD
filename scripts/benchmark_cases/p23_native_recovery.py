@@ -1202,49 +1202,6 @@ def _regions() -> list[dict]:
             primary_axis="precise_recall",
             secondary_axes=("long_context_coherence",),
         ),
-        _region(
-            "x01.selective-release",
-            "Cross-page selective-release synthesis",
-            "mixed",
-            [
-                leaf(
-                    "x01.selective-release.physical",
-                    "Physical cutover is GO only for eligible inventory and still requires the T-02 and T-04 telemetry gate and the T-05 QA-61 exclusion.",
-                    harm=2,
-                    claim_type="cross_page_join",
-                    evidence=["Physical cutover", "GO", ["only", "solely"], "eligible inventory", "T-02", "T-04", "T-05", "QA-61"],
-                ),
-                leaf(
-                    "x01.selective-release.credentials",
-                    "Kestrel credential closure remains HOLD because T-06 and C-3 require both signed EX-07 and zero unresolved REC-2048 items.",
-                    harm=2,
-                    claim_type="cross_page_join",
-                    evidence=["Kestrel", "HOLD", "T-06", "C-3", "signed EX-07", "REC-2048", "zero unresolved"],
-                ),
-                leaf(
-                    "x01.selective-release.finance",
-                    "Finance validation and its stamp authorize cost only; they cannot close an exception, satisfy a task gate, or override the final release state.",
-                    harm=2,
-                    claim_type="cross_page_join",
-                    evidence=["finance validation", "stamp", "cost", ["only", "solely"], "cannot", "exception", "task gate", "final release"],
-                ),
-            ],
-            primary_axis="long_context_coherence",
-            secondary_axes=("cross_page_join", "source_precedence", "mixed_modality_fusion"),
-            modality="mixed",
-            text_only_recoverable=False,
-            budget=4,
-            unique_evidence=False,
-            source_anchors=[
-                _source_anchor(1, "Record authority and precedence", "native_text"),
-                _source_anchor(2, "Clipped native-layer workplan", "native_layer_recovery"),
-                _source_anchor(3, "Finance scope", "native_text"),
-                _source_anchor(3, "Raster finance validation stamp", "raster"),
-                _source_anchor(4, "Landscape exception register", "native_text"),
-                _source_anchor(5, "Final selective authorization", "native_text"),
-            ],
-            gold_section=GOLD_SECTIONS[5],
-        ),
     ]
 
 
@@ -1299,7 +1256,7 @@ def _gold() -> str:
         "## 5. Final implementation authorization\n\n"
         "**PHYSICAL CUTOVER: GO.** Begin at 14 Jul 2026 22:00 MST for eligible inventory only. **KESTREL CREDENTIAL DECOMMISSION: HOLD** until C-3 is satisfied.\n\n"
         + markdown_table(CONDITION_HEADERS, CONDITION_ROWS)
-        + "\n\nThe GO decision permits the physical cutover; it does not close EX-07, release the six QA-61 cases, or waive telemetry and rollback gates. Kestrel credential closure remains HOLD because T-06 and C-3 require both signed EX-07 and zero unresolved REC-2048 items. Finance validation and its stamp authorize cost only; they cannot close an exception, satisfy a task gate, or override the final release state. Page 4 remains the source for exception ownership and evidence.\n\n"
+        + "\n\nThe GO decision permits the physical cutover; it does not close EX-07, release the six QA-61 cases, or waive telemetry and rollback gates. The finance stamp validates cost only. Page 4 remains the source for exception ownership and evidence.\n\n"
         + markdown_table(SIGNOFF_HEADERS, SIGNOFF_ROWS)
         + "\n\nRevision D supersedes Draft C. This authorization became effective at 10 Jul 2026 09:30 MST. The next control event is the first failed condition, completed rollback, or closure of C-3, whichever occurs first.\n"
     )

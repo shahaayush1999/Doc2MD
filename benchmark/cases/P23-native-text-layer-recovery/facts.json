@@ -2635,7 +2635,11 @@
                 "2026-07-14",
                 "14 July 2026",
                 "Jul 14 2026",
-                "July 14 2026"
+                "July 14 2026",
+                "14 Jul",
+                "14 July",
+                "Jul 14",
+                "July 14"
               ],
               [
                 "22:00 MST"
@@ -3414,7 +3418,11 @@
                 "2026-07-10",
                 "10 July 2026",
                 "Jul 10 2026",
-                "July 10 2026"
+                "July 10 2026",
+                "10 Jul",
+                "10 July",
+                "Jul 10",
+                "July 10"
               ],
               [
                 "09:30 MST",
@@ -3455,187 +3463,6 @@
               ],
               [
                 "rollback"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "x01.selective-release",
-      "label": "Cross-page selective-release synthesis",
-      "sourceAnchors": [
-        {
-          "page": 1,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "1. Regional cold-storage cutover approval",
-            "Record authority and precedence"
-          ]
-        },
-        {
-          "page": 2,
-          "layer": "native_layer_recovery",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "2. Cutover workplan and handoff sequence",
-            "Clipped native-layer workplan"
-          ]
-        },
-        {
-          "page": 3,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "3. Commercial validation and invoice routing",
-            "Finance scope"
-          ]
-        },
-        {
-          "page": 3,
-          "layer": "raster",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "3. Commercial validation and invoice routing",
-            "Raster finance validation stamp"
-          ]
-        },
-        {
-          "page": 4,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "4. Exception and closure-evidence register",
-            "Landscape exception register"
-          ]
-        },
-        {
-          "page": 5,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "5. Final implementation authorization",
-            "Final selective authorization"
-          ]
-        }
-      ],
-      "goldSection": "5. Final implementation authorization",
-      "kind": "mixed",
-      "modality": "mixed",
-      "uniqueEvidence": false,
-      "primaryAxis": "long_context_coherence",
-      "secondaryAxes": [
-        "cross_page_join",
-        "source_precedence",
-        "mixed_modality_fusion"
-      ],
-      "textOnlyRecoverable": false,
-      "budget": 4,
-      "leaves": [
-        {
-          "id": "x01.selective-release.physical",
-          "canonicalClaimId": "x01.selective-release.physical",
-          "claimType": "cross_page_join",
-          "expectation": "Physical cutover is GO only for eligible inventory and still requires the T-02 and T-04 telemetry gate and the T-05 QA-61 exclusion.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "Physical cutover"
-              ],
-              [
-                "GO"
-              ],
-              [
-                "only",
-                "solely"
-              ],
-              [
-                "eligible inventory"
-              ],
-              [
-                "T-02"
-              ],
-              [
-                "T-04"
-              ],
-              [
-                "T-05"
-              ],
-              [
-                "QA-61"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "x01.selective-release.credentials",
-          "canonicalClaimId": "x01.selective-release.credentials",
-          "claimType": "cross_page_join",
-          "expectation": "Kestrel credential closure remains HOLD because T-06 and C-3 require both signed EX-07 and zero unresolved REC-2048 items.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "Kestrel"
-              ],
-              [
-                "HOLD"
-              ],
-              [
-                "T-06"
-              ],
-              [
-                "C-3"
-              ],
-              [
-                "signed EX-07"
-              ],
-              [
-                "REC-2048"
-              ],
-              [
-                "zero unresolved"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "x01.selective-release.finance",
-          "canonicalClaimId": "x01.selective-release.finance",
-          "claimType": "cross_page_join",
-          "expectation": "Finance validation and its stamp authorize cost only; they cannot close an exception, satisfy a task gate, or override the final release state.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "finance validation"
-              ],
-              [
-                "stamp"
-              ],
-              [
-                "cost"
-              ],
-              [
-                "only",
-                "solely"
-              ],
-              [
-                "cannot"
-              ],
-              [
-                "exception"
-              ],
-              [
-                "task gate"
-              ],
-              [
-                "final release"
               ]
             ]
           }

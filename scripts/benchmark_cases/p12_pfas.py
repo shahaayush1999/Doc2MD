@@ -1030,25 +1030,6 @@ def build(output_root):
         ],
         budget=2,
     )
-    case.add_region(
-        "p09.calculations",
-        "Cross-page QC calculations",
-        "table",
-        [
-            leaf("p09.calc.lcs", "Using the 10.00 ng/L SPK-01 target, LCS recoveries are 96.2% for PFOA and 91.4% for PFOS.", harm=2),
-            leaf("p09.calc.ms", "Using the 10.00 ng/L SPK-02 target and the 3.42 ng/L PFOA native result, the PFOA MS and MSD recoveries are 96.0% and 98.0%.", harm=2),
-            leaf("p09.calc.rpd", "The PFOA MS/MSD recovery RPD is 2.1%."),
-            leaf("p09.calc.fts", "Using the 10.00 ng/L SPK-02 target and treating the 6:2 FTS native result marked U as zero, MSD recovery is 84.0%.", harm=2),
-        ],
-        pages=[6, 9],
-        budget=2,
-        modality="mixed",
-        primary_axis="mixed_modality_fusion",
-        secondary_axes=["cross_page_join", "precise_recall"],
-        text_only_recoverable=False,
-        gold_section="Page 9 - Blank, recovery, and continuing-calibration review",
-    )
-
     # Page 10 - full-page maintenance/authorization scan.
     c = case.new_page(
         "Instrument maintenance and reinjection authorization",
@@ -1241,7 +1222,7 @@ def build(output_root):
         _table_gold(result_headers, result_rows)
         + "\n\n"
         + _table_gold(determination_headers, determination_rows)
-        + "\n\nThe batch is released with J and U qualifiers preserved. DW-240409-04 is accepted as corrected from sequence 19/IR-19B under CR-24-044. The controlling lineage is the sequence 18 low-IS flag, the signed maintenance and reinjection authorization, accepted sequence 19/IR-19B, signed CR-24-044, and final release. The final determination does not erase provisional exports, rejected integrations, or maintenance records. L. Chen signed 22 Apr 2024 09:40 and R. Patel released 22 Apr 2024 16:10.",
+        + "\n\nThe batch is released with J and U qualifiers preserved. DW-240409-04 is accepted as corrected from sequence 19/IR-19B under CR-24-044. The final determination does not erase provisional exports, rejected integrations, or maintenance records. L. Chen signed 22 Apr 2024 09:40 and R. Patel released 22 Apr 2024 16:10.",
     )
     case.add_region(
         "p12.results",
@@ -1324,67 +1305,6 @@ def build(output_root):
         budget=2,
         primary_axis="source_precedence",
         secondary_axes=["summarization_coverage"],
-    )
-    case.add_region(
-        "x01.correction-lineage",
-        "Cross-modal sequence-to-release lineage",
-        "mixed",
-        [
-            leaf(
-                "x01.lineage.control",
-                "The controlling lineage is the sequence 18 low-IS flag, signed maintenance and reinjection authorization, accepted sequence 19 with IR-19B, signed CR-24-044, and final release.",
-                harm=2,
-                claim_type="cross_page_join",
-                evidence_policy={
-                    "type": "ordered_tokens",
-                    "tokens": [
-                        ["controlling lineage"],
-                        ["sequence 18 low-IS"],
-                        ["signed maintenance"],
-                        ["reinjection authorization"],
-                        ["accepted sequence 19"],
-                        ["IR-19B"],
-                        ["signed CR-24-044"],
-                        ["final release"],
-                    ],
-                },
-            ),
-            leaf(
-                "x01.lineage.audit",
-                "Final release does not erase the provisional export, rejected integration, or maintenance record.",
-                harm=2,
-                claim_type="cross_page_join",
-                evidence=["final release", ["does not", "must not", "not"], "provisional", "rejected", "maintenance"],
-            ),
-        ],
-        pages=[7, 8, 10, 11, 12],
-        budget=3,
-        modality="mixed",
-        primary_axis="long_context_coherence",
-        secondary_axes=["cross_page_join", "source_precedence", "mixed_modality_fusion"],
-        text_only_recoverable=False,
-        gold_section="Page 12 - Final signed validation and batch determination",
-    )
-
-    case.add_gold_conclusions_for_leaves(
-        [
-            "p02.qual.none",
-            "p04.precision.pfhxa",
-            "p07.sequence.17",
-            "p07.sequence.18",
-            "p07.sequence.19",
-            "p07.sequence.21",
-            "p08.routing.c",
-            "p08.routing.d",
-            "p09.qc.blanks",
-            "p09.qc.lcs",
-            "p09.qc.msd",
-            "p09.qc.ccv",
-            "p09.calc.fts",
-            "p10.maintenance.check",
-            "p10.auth.scope",
-            "p11.correction.pfoa",
-        ]
     )
     record = case.finish()
     rasterize_pdf_pages(

@@ -264,21 +264,13 @@ def _facts(
 
 
 def _expand_protocol_dates(value: object) -> str:
-    """Expand packet-local day/month shorthand into the explicit 2026 date."""
-    month = r"Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec"
-    return re.sub(
-        rf"(?<![\d-])(\d{{1,2}})\s+({month})(?!\s+\d{{4}})",
-        r"\1 \2 2026",
-        str(value),
-    )
+    """Preserve the source's packet-local date representation verbatim."""
+    return str(value)
 
 
 def _gold_table(case: CaseBuilder, heading: str, headers: Sequence[str], rows: Sequence[Sequence[str]], intro: str = "") -> None:
-    # Source tables often use protocol-year shorthand (for example ``08 May``)
-    # while atomic facts use ISO dates.  The canonical reconstruction makes the
-    # document-level 2026 context explicit so exact date gates cannot silently
-    # discard the year.
-
+    # Faithful reconstruction preserves visible packet-local shorthand such as
+    # ``08 May`` instead of inserting a year that is not printed in the row.
     gold_rows = [[_expand_protocol_dates(value) for value in row] for row in rows]
     expanded_intro = _expand_protocol_dates(intro.strip())
     body = (expanded_intro + "\n\n" if expanded_intro else "") + markdown_table(headers, gold_rows)
@@ -3228,49 +3220,6 @@ def build(output_root):
 
     if set(INTENDED_PAGE_MODALITY) != set(range(1, 49)):
         raise ValueError("Intended page modality map must cover pages 1 through 48 exactly")
-    case.add_gold_conclusions_for_leaves(
-        [
-            "p01.control.window",
-            "p06.ae.ae08",
-            "p07.queries.q77",
-            "p07.queries.provisional",
-            "p11.ecg.final-value",
-            "p15.custody.collection",
-            "p15.custody.versions",
-            "p15.custody.ack",
-            "p17.notes.lab",
-            "p18.epro-events.replacement",
-            "p18.epro-events.sync",
-            "p19.capa-draft.status",
-            "p21.observations.rescue",
-            "p21.observations.recovery",
-            "p26.aging.capa",
-            "p27.window-audit.upload",
-            "p30.masking-access.custody",
-            "p30.masking-access.break",
-            "p30.masking-access.display",
-            "p31.method-rule.poc",
-            "p32.cal-form.passed",
-            "p32.cal-form.reset",
-            "p32.cal-form.sensor",
-            "p32.cal-form.provisional",
-            "x32.calibration-fusion.binding",
-            "p36.exception-form.backfill",
-            "p36.diary.row-order",
-            "x36.epro-continuity-fusion.binding",
-            "p37.transaction-rule.balance",
-            "p38.staff-training.jd-code",
-            "p41.evidence-rule.history",
-            "p43.waiver-log-rule.subject",
-            "p44.capa-evidence-rule.revision",
-            "p48.archive-rule.scope",
-            "p48.archive-rule.coexist",
-            "x15.lab-fusion.binding",
-            "x18.epro-fusion.binding",
-            "x21.dose-fusion.binding",
-            "x23.med-fusion.binding",
-        ]
-    )
     record = case.finish()
     rasterize_pdf_pages(
         case.pdf_path,

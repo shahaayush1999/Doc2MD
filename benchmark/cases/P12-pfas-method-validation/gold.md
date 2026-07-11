@@ -52,10 +52,6 @@ The calibration table uses grouped headers for identity, transitions, retention,
 | J | Estimated concentration | Preserve the numeric value and J |
 | - | No qualifier | Do not invent a textual qualifier |
 
-Integrated reference conclusions:
-
-- A dash means no qualifier and must not be expanded into an invented qualifier.
-
 ## Page 3 - Calibration curves and residual disposition
 
 Figure 03 labels each standard as concentration in ng/L | response ratio.
@@ -92,10 +88,6 @@ Acceptance: weighted R2 >= 0.995; standards +/-15%, with +/-20% permitted at the
 | High | 80 ng/L | 7 on 7 days | 70-130% | <=20% |
 
 Table V4 continues on page 5 with PFDA through HFPO-DA and repeated headers.
-
-Integrated reference conclusions:
-
-- PFHxA low recovery/RSD is 91.0/10.3%, with n=7 and state Pass.
 
 ## Page 5 - Table V4 accuracy and precision, part 2
 
@@ -168,13 +160,6 @@ Analyst M. Iyer signed 10 Apr 2024 08:42; witness L. Chen signed 10 Apr 2024 08:
 
 Sequence 18 is held under MX-24-041 at 38% IS recovery. Sequence 19 is the accepted reinjection at 91% IS recovery. Analyst M. Iyer signed 19 Apr 2024 14:05 and technical reviewer L. Chen signed 22 Apr 2024 09:40.
 
-Integrated reference conclusions:
-
-- Sequence 17 is CCV-10 at 11:38 with 95% IS recovery and Accepted state.
-- Sequence 18 is DW-240409-04 at 11:51 with 38% IS recovery and state HOLD MX-24-041.
-- Sequence 19 is DW-240409-04-RI at 12:18 with 91% IS recovery and Accepted state.
-- Sequence 21 is closing CCV-10-CLOSE at 12:44 with 93% IS recovery and Accepted state.
-
 ## Page 8 - Raw integration and chromatogram review
 
 Instrument panel evidence:
@@ -191,11 +176,6 @@ Instrument panel evidence:
 | D | Reinjection internal standard | IR-19B | correction scope |
 
 Exact RT, area, ratio, and internal-standard recovery values come from the instrument annotations; the routing register supplies panel identity only.
-
-Integrated reference conclusions:
-
-- Panel C routes to original integration IR-18A and must not be treated as an accepted result.
-- Panel D routes to reinjection integration IR-19B and does not by itself define correction scope.
 
 ## Page 9 - Blank, recovery, and continuing-calibration review
 
@@ -222,14 +202,6 @@ Integrated reference conclusions:
 
 The 10.00 ng/L SPK-01/SPK-02 targets come from page 6. The LCS recoveries are 96.2% PFOA and 91.4% PFOS; MS/MSD PFOA recoveries are 96.0% and 98.0% with 2.1% RPD; 6:2 FTS MSD recovery is 84.0%.
 
-Integrated reference conclusions:
-
-- LRB PFOA is <0.25 ng/L U and PFOS is <0.50 ng/L U; both meet their blank criteria.
-- LCS measured concentrations are 9.62 ng/L PFOA and 9.14 ng/L PFOS.
-- DW-240408-03-MSD PFOA is 13.22 ng/L and 6:2 FTS is 8.40 ng/L with native <1.00 U.
-- Opening CCV-10 PFOA is 9.48 ng/L and closing CCV-10-CLOSE PFOA is 10.31 ng/L; both meet 85-115% of 10.00.
-- Using the 10.00 ng/L SPK-02 target and treating the 6:2 FTS native result marked U as zero, MSD recovery is 84.0%.
-
 ## Page 10 - Scanned maintenance and reinjection authorization
 
 | Time | Observation / action | Measured check | Initials |
@@ -252,11 +224,6 @@ Integrated reference conclusions:
 
 Salt residue was confined to the needle seat. No source cleaning, recalibration, or re-extraction was authorized. M. Iyer signed 19 Apr 2024 12:22 and L. Chen authorized at 12:24.
 
-Integrated reference conclusions:
-
-- The system blank had PFOS carryover <0.08 ng/L and the IS check recovered 96%.
-- Only DW-240409-04 may be reinjected, exactly once, using retained vial DIL-05.
-
 ## Page 11 - LIMS export and signed QA correction
 
 The page first contains provisional export PRELIM-LIMS-0419:
@@ -268,10 +235,6 @@ The page first contains provisional export PRELIM-LIMS-0419:
 | E-106 | DW-240409-05 | PFOA | 4.87 ng/L | - | Seq 20 / IR-20A | Ready |
 
 Signed correction CR-24-044 applies only to DW-240409-04. It supersedes PRELIM-LIMS-0419 fields derived from sequence 18/IR-18A and makes accepted sequence 19/IR-19B controlling. PFOA changes from 1.84 ng/L J to 1.06 ng/L J. PFOS remains <0.50 ng/L U with no qualifier change. Other batch results are unchanged. The reason is sequence 18 IS recovery below the 50-150% criterion. L. Chen signed 22 Apr 2024 09:40 and R. Patel signed 22 Apr 2024 16:10. The audit trail must not be overwritten. Controlled record order is provisional PRELIM-LIMS-0419 first, followed by signed CR-24-044.
-
-Integrated reference conclusions:
-
-- DW-240409-04 PFOA changes from 1.84 ng/L J to 1.06 ng/L J.
 
 ## Page 12 - Final signed validation and batch determination
 
@@ -294,4 +257,4 @@ Integrated reference conclusions:
 | DW-240409-04 | Accepted as corrected | Sequence 19 / IR-19B / CR-24-044 |
 | Batch release | RELEASED | J and U qualifiers retained exactly |
 
-The batch is released with J and U qualifiers preserved. DW-240409-04 is accepted as corrected from sequence 19/IR-19B under CR-24-044. The controlling lineage is the sequence 18 low-IS flag, the signed maintenance and reinjection authorization, accepted sequence 19/IR-19B, signed CR-24-044, and final release. The final determination does not erase provisional exports, rejected integrations, or maintenance records. L. Chen signed 22 Apr 2024 09:40 and R. Patel released 22 Apr 2024 16:10.
+The batch is released with J and U qualifiers preserved. DW-240409-04 is accepted as corrected from sequence 19/IR-19B under CR-24-044. The final determination does not erase provisional exports, rejected integrations, or maintenance records. L. Chen signed 22 Apr 2024 09:40 and R. Patel released 22 Apr 2024 16:10.
