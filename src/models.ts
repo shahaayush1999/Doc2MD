@@ -5,7 +5,7 @@ export type ModelSpec = {
   id: string;
   modelName: string;
   provider: "google-vertex" | "openai";
-  reasoning?: "none" | "minimal";
+  reasoning?: "none" | "minimal" | "low";
   location?: string;
   maxOutputTokens?: number;
   pricingVersion: string;
@@ -46,6 +46,16 @@ export const models: Record<string, ModelSpec> = {
     cachedInputPerMillion: 0.045,
     outputPerMillion: 2.7,
   },
+  "vertex-gemini-3.1-flash-lite-low": {
+    id: "vertex-gemini-3.1-flash-lite-low",
+    modelName: "gemini-3.1-flash-lite",
+    provider: "google-vertex",
+    reasoning: "low",
+    pricingVersion: "2026-07-12",
+    inputPerMillion: 0.45,
+    cachedInputPerMillion: 0.045,
+    outputPerMillion: 2.7,
+  },
   "vertex-gemini-2.5-flash-lite": {
     id: "vertex-gemini-2.5-flash-lite",
     modelName: "gemini-2.5-flash-lite",
@@ -63,6 +73,16 @@ export const models: Record<string, ModelSpec> = {
     provider: "openai",
     reasoning: "none",
     pricingVersion: "2026-07-11",
+    inputPerMillion: 0.2,
+    cachedInputPerMillion: 0.02,
+    outputPerMillion: 1.25,
+  },
+  "openai-gpt-5.4-nano-low": {
+    id: "openai-gpt-5.4-nano-low",
+    modelName: "gpt-5.4-nano",
+    provider: "openai",
+    reasoning: "low",
+    pricingVersion: "2026-07-12",
     inputPerMillion: 0.2,
     cachedInputPerMillion: 0.02,
     outputPerMillion: 1.25,
@@ -114,6 +134,17 @@ export const models: Record<string, ModelSpec> = {
     provider: "openai",
     reasoning: "none",
     pricingVersion: "2026-07-11",
+    inputPerMillion: 1,
+    cachedInputPerMillion: 0.1,
+    cacheWritePerMillion: 1.25,
+    outputPerMillion: 6,
+  },
+  "openai-gpt-5.6-luna-low": {
+    id: "openai-gpt-5.6-luna-low",
+    modelName: "gpt-5.6-luna",
+    provider: "openai",
+    reasoning: "low",
+    pricingVersion: "2026-07-12",
     inputPerMillion: 1,
     cachedInputPerMillion: 0.1,
     cacheWritePerMillion: 1.25,
