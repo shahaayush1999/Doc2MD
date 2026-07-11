@@ -56,8 +56,8 @@ function interactiveChart(models: any[]) {
     const points=${data},palette=${JSON.stringify(palette)};
     const metrics={
       cost:{title:"Reconstruction fidelity vs uncached inference cost",axis:"Uncached model inference cost · USD · log scale",value:p=>p.cost,format:v=>"$"+v.toFixed(v<.1?3:2),log:true},
-      time:{title:"Reconstruction fidelity vs model-call time",axis:"Summed inference time · seconds",value:p=>p.time,format:v=>Math.round(v)+"s"},
-      tokens:{title:"Reconstruction fidelity vs output volume",axis:"Model output tokens",value:p=>p.tokens,format:v=>Math.round(v/1000)+"k"}
+      time:{title:"Reconstruction fidelity vs model-call time",axis:"Summed inference time · seconds · log scale",value:p=>p.time,format:v=>Math.round(v)+"s",log:true},
+      tokens:{title:"Reconstruction fidelity vs output volume",axis:"Model output tokens · log scale",value:p=>p.tokens,format:v=>Math.round(v/1000)+"k",log:true}
     };
     const esc=s=>String(s).replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
     const scoreValues=points.map(p=>p.score),scoreMin=Math.min(...scoreValues),scoreMax=Math.max(...scoreValues);

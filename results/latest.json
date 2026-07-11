@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T20:09:54.346Z",
+  "generatedAt": "2026-07-11T20:21:55.505Z",
   "caseCount": 5,
   "provenance": {
     "inferenceProtocolVersion": 2,
@@ -18,9 +18,9 @@
     "actualSpendField": "models[].actualInferenceCostUsd"
   },
   "exclusions": [],
-  "incrementalSpendUsd": 2.1924275,
-  "incrementalInferenceSpendUsd": 1.88434425,
-  "incrementalEvaluatorSpendUsd": 0.30808325000000003,
+  "incrementalSpendUsd": 0,
+  "incrementalInferenceSpendUsd": 0,
+  "incrementalEvaluatorSpendUsd": 0,
   "totalCostUsd": 19.483513304999995,
   "models": [
     {
