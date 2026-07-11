@@ -9,7 +9,7 @@ import {
   type ManifestCase,
 } from "./evaluator.js";
 import { loadBenchmarkManifest } from "./manifest.js";
-import { calculateCost } from "./pricing.js";
+import { calculateCost, calculateUncachedCost } from "./pricing.js";
 import { createModel, defaultModelIds, models, type ModelSpec } from "./models.js";
 import { renderReport } from "./report.js";
 
@@ -170,6 +170,7 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
       pricingVersion: spec.pricingVersion,
       recordedCostUsd: inference.costUsd ?? null,
       costUsd: calculateCost(spec, inference.usage),
+      uncachedCostUsd: calculateUncachedCost(spec, inference.usage),
       startedAt,
       finishedAt,
       timestampSource: "cache-file-mtime",
@@ -227,6 +228,7 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
         cacheWriteTokens: usage?.inputTokenDetails?.cacheWriteTokens ?? 0,
       },
       costUsd: inferenceSpent,
+      uncachedCostUsd: calculateUncachedCost(spec, usage),
       cacheKey: requestInferenceKey,
     };
     await Promise.all([
@@ -254,7 +256,8 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
     caseId: testCase.id,
     title: testCase.title,
     score: evaluation.score as number | null,
-    inferenceCostUsd: calculateCost(spec, inference.usage),
+    inferenceCostUsd: calculateUncachedCost(spec, inference.usage),
+    actualInferenceCostUsd: calculateCost(spec, inference.usage),
     evaluatorCostUsd: evaluation.evaluator.costUsd ?? 0,
     incrementalCostUsd: inferenceSpent + evaluatorSpent,
     incrementalInferenceCostUsd: inferenceSpent,
@@ -318,7 +321,8 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
           caseId: testCase.id,
           title: testCase.title,
           score: cached.evaluation.score,
-          inferenceCostUsd: calculateCost(models[modelId]!, cached.inference.usage),
+          inferenceCostUsd: calculateUncachedCost(models[modelId]!, cached.inference.usage),
+          actualInferenceCostUsd: calculateCost(models[modelId]!, cached.inference.usage),
           evaluatorCostUsd: cached.evaluation.evaluator.costUsd ?? 0,
           outputTokens: cached.inference.usage?.outputTokens ?? 0,
           inputTokens: cached.inference.usage?.inputTokens ?? 0,
@@ -338,6 +342,7 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
         draw,
         score: mean(cases.map((testCase) => testCase.score)),
         inferenceCostUsd: cases.reduce((sum, testCase) => sum + testCase.inferenceCostUsd, 0),
+        actualInferenceCostUsd: cases.reduce((sum, testCase) => sum + testCase.actualInferenceCostUsd, 0),
         evaluatorCostUsd: cases.reduce((sum, testCase) => sum + testCase.evaluatorCostUsd, 0),
         totalOutputTokens: cases.reduce((sum, testCase) => sum + testCase.outputTokens, 0),
         inputTokens: cases.reduce((sum, testCase) => sum + testCase.inputTokens, 0),
@@ -371,9 +376,11 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
         scoreMax: Math.max(...scores),
         scoreStddev: sampleStddev(scores),
         inferenceCostUsd: mean(observations.map((observation) => observation.inferenceCostUsd)),
+        actualInferenceCostUsd: mean(observations.map((observation) => observation.actualInferenceCostUsd)),
       };
     });
     const inferenceCostUsd = mean(draws.map((draw) => draw.inferenceCostUsd));
+    const actualInferenceCostUsd = mean(draws.map((draw) => draw.actualInferenceCostUsd));
     const evaluatorCostUsd = mean(draws.map((draw) => draw.evaluatorCostUsd));
     merged.push({
       modelId,
@@ -387,9 +394,12 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
       scoreMax: Math.max(...drawScores),
       scoreStddev: sampleStddev(drawScores),
       inferenceCostUsd,
+      normalizedInferenceCostUsd: inferenceCostUsd,
+      actualInferenceCostUsd,
       evaluatorCostUsd,
-      totalCostUsd: inferenceCostUsd + evaluatorCostUsd,
+      totalCostUsd: actualInferenceCostUsd + evaluatorCostUsd,
       cumulativeInferenceCostUsd: draws.reduce((sum, draw) => sum + draw.inferenceCostUsd, 0),
+      cumulativeActualInferenceCostUsd: draws.reduce((sum, draw) => sum + draw.actualInferenceCostUsd, 0),
       cumulativeEvaluatorCostUsd: draws.reduce((sum, draw) => sum + draw.evaluatorCostUsd, 0),
       inputTokens: draws.reduce((sum, draw) => sum + draw.inputTokens, 0),
       cacheReadTokens: draws.reduce((sum, draw) => sum + draw.cacheReadTokens, 0),
@@ -463,12 +473,18 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
       measurementStartedAt: mergedModels.map((model) => model.measurementStartedAt).filter(Boolean).sort()[0] ?? null,
       measurementFinishedAt: mergedModels.map((model) => model.measurementFinishedAt).filter(Boolean).sort().at(-1) ?? null,
     },
+    costMethodology: {
+      comparison: "Every input token is priced at the model's uncached list rate; output uses list price.",
+      actualSpend: "Provider-reported cache reads and configured cache-write rates are applied separately.",
+      comparisonField: "models[].inferenceCostUsd",
+      actualSpendField: "models[].actualInferenceCostUsd",
+    },
     exclusions: collected.exclusions,
     incrementalSpendUsd: incrementalInferenceSpendUsd + incrementalEvaluatorSpendUsd,
     incrementalInferenceSpendUsd,
     incrementalEvaluatorSpendUsd,
     totalCostUsd: mergedModels.reduce(
-      (sum, model) => sum + model.cumulativeInferenceCostUsd + model.cumulativeEvaluatorCostUsd,
+      (sum, model) => sum + model.cumulativeActualInferenceCostUsd + model.cumulativeEvaluatorCostUsd,
       0,
     ),
     models: mergedModels,
@@ -479,7 +495,13 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
     writeJson("results/latest.json", summary),
     writeFile("reports/index.html", renderReport(summary), "utf8"),
   ]);
-  console.table(mergedModels.map((model) => ({ model: model.modelId, draws: model.drawCount, score: model.score, meanInferenceSpendUsd: model.inferenceCostUsd })));
+  console.table(mergedModels.map((model) => ({
+    model: model.modelId,
+    draws: model.drawCount,
+    score: model.score,
+    meanUncachedInferenceCostUsd: model.inferenceCostUsd,
+    meanActualInferenceSpendUsd: model.actualInferenceCostUsd,
+  })));
   console.log(`Incremental model inference spend: $${incrementalInferenceSpendUsd.toFixed(6)}`);
   console.log("Report: reports/index.html");
   return summary;

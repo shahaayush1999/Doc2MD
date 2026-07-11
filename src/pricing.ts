@@ -19,3 +19,10 @@ export function calculateCost(pricing: Pricing, usage: any): number {
     1_000_000
   );
 }
+
+/** Standardized benchmark cost: price every input token as uncached. */
+export function calculateUncachedCost(pricing: Pricing, usage: any): number {
+  const input = Math.max(0, usage?.inputTokens ?? 0);
+  const output = Math.max(0, usage?.outputTokens ?? 0);
+  return (input * pricing.inputPerMillion + output * pricing.outputPerMillion) / 1_000_000;
+}
