@@ -36,7 +36,7 @@ function label(model: string | { modelId: string; configuredModel?: { modelName?
   if (typeof model === "string") return model.replace(/^vertex-/, "").replace(/^openai-/, "");
   const name: string = model.configuredModel?.modelName ?? model.modelId.replace(/^vertex-/, "").replace(/^openai-/, "");
   const reasoning = model.configuredModel?.reasoning;
-  return reasoning ? `${name} · ${reasoning[0]!.toUpperCase()}${reasoning.slice(1)} thinking` : name;
+  return reasoning ? `${name} · ${reasoning[0]!.toUpperCase()}${reasoning.slice(1)}` : name;
 }
 
 function money(value: number) {
@@ -74,7 +74,7 @@ function interactiveChart(models: any[]) {
       const x=v=>p.l+norm(v)*(right-p.l),y=v=>p.t+(1-(v-yMin)/(yMax-yMin))*(bottom-p.t);
       const yt=yTicks.map(v=>'<line x1="'+p.l+'" y1="'+y(v)+'" x2="'+right+'" y2="'+y(v)+'" class="grid"/><text x="'+(p.l-14)+'" y="'+(y(v)+5)+'" text-anchor="end" class="tick">'+v+'</text>').join("");
       const xt=(m.log?[min,Math.sqrt(min*max),max]:[0,max/3,max*2/3,max]).map(v=>'<line x1="'+x(v||min)+'" y1="'+bottom+'" x2="'+x(v||min)+'" y2="'+(bottom+7)+'" class="axis"/><text x="'+x(v||min)+'" y="'+(bottom+27)+'" text-anchor="middle" class="tick">'+m.format(v)+'</text>').join("");
-      const items=points.map((d,i)=>({d,i,px:x(m.value(d)),py:y(d.score),text:d.name+' · '+d.score.toFixed(1)}));
+      const items=points.map((d,i)=>({d,i,px:x(m.value(d)),py:y(d.score),text:d.name}));
       const box=(x,y,anchor,width)=>({l:anchor==='start'?x:anchor==='end'?x-width:x-width/2,r:anchor==='start'?x+width:anchor==='end'?x:x+width/2,t:y-13,b:y+3});
       const intersects=(a,b,pad=0)=>a.l<b.r+pad&&a.r>b.l-pad&&a.t<b.b+pad&&a.b>b.t-pad;
       const candidateSets=items.map(item=>{
