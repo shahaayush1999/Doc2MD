@@ -1,4 +1,5 @@
 const palette = ["#174f43", "#bb7a28", "#6d6f78", "#785d91", "#356c83"];
+const labColors: Record<string, string> = { openai: "#174f43", "google-vertex": "#bb7a28" };
 
 const caseContext: Record<string, { modality: string; purpose: string; covers: string[] }> = {
   "P12-pfas-method-validation": {
@@ -43,12 +44,17 @@ function money(value: number) {
   return `$${value.toFixed(value < 0.1 ? 4 : 3)}`;
 }
 
+function modelColor(model: any, fallbackIndex: number) {
+  return labColors[model.configuredModel?.provider] ?? palette[fallbackIndex % palette.length];
+}
+
 function interactiveChart(models: any[]) {
   const data = JSON.stringify(models.map((model) => ({
     name: label(model), score: model.score, cost: model.inferenceCostUsd,
     time: model.inferenceSeconds, tokens: model.totalOutputTokens,
     family: model.configuredModel?.modelName ?? model.modelId,
     reasoning: model.configuredModel?.reasoning ?? null,
+    color: modelColor(model, 0),
   }))).replaceAll("<", "\\u003c");
   return `<div class="bench-chart">
     <div class="chart-tabs" role="group" aria-label="Choose chart x-axis">
@@ -58,7 +64,7 @@ function interactiveChart(models: any[]) {
     </div>
     <div id="chart-stage"></div>
   </div><script>(() => {
-    const points=${data},palette=${JSON.stringify(palette)};
+    const points=${data};
     const metrics={
       cost:{title:"Reconstruction fidelity vs uncached inference cost",axis:"Uncached model inference cost · USD · log scale",value:p=>p.cost,format:v=>"$"+v.toFixed(v<.1?3:2),detail:v=>"$"+v.toFixed(4),log:true},
       time:{title:"Reconstruction fidelity vs model-call time",axis:"Summed inference time · seconds · log scale",value:p=>p.time,format:v=>Math.round(v)+"s",detail:v=>v.toFixed(1)+"s",log:true},
@@ -79,7 +85,7 @@ function interactiveChart(models: any[]) {
       const items=points.map((d,i)=>({d,i,px:x(m.value(d)),py:y(d.score),text:d.name}));
       const reasoningOrder={none:0,minimal:1,low:2,medium:3,high:4};
       const families=items.reduce((groups,item)=>{(groups[item.d.family]??=[]).push(item);return groups},{});
-      const connectors=Object.values(families).filter(group=>group.length>1).map(group=>'<polyline class="thinking-connector" points="'+group.sort((a,b)=>(reasoningOrder[a.d.reasoning]??99)-(reasoningOrder[b.d.reasoning]??99)).map(item=>item.px+','+item.py).join(' ')+'"/>').join('');
+      const connectors=Object.values(families).filter(group=>group.length>1).map(group=>'<polyline class="thinking-connector" style="stroke:'+group[0].d.color+'" points="'+group.sort((a,b)=>(reasoningOrder[a.d.reasoning]??99)-(reasoningOrder[b.d.reasoning]??99)).map(item=>item.px+','+item.py).join(' ')+'"/>').join('');
       const box=(x,y,anchor,width)=>({l:anchor==='start'?x:anchor==='end'?x-width:x-width/2,r:anchor==='start'?x+width:anchor==='end'?x:x+width/2,t:y-13,b:y+3});
       const intersects=(a,b,pad=0)=>a.l<b.r+pad&&a.r>b.l-pad&&a.t<b.b+pad&&a.b>b.t-pad;
       const candidateSets=items.map(item=>{
@@ -99,7 +105,7 @@ function interactiveChart(models: any[]) {
       let states=[{chosen:[],penalty:0}];
       candidateSets.forEach(candidates=>{const next=[];states.forEach(state=>candidates.forEach(candidate=>{const collisions=state.chosen.reduce((sum,placed)=>sum+(intersects(candidate.rect,placed.rect,5)?1:0),0);next.push({chosen:[...state.chosen,candidate],penalty:state.penalty+candidate.penalty+collisions*20000})}));states=next.sort((a,b)=>a.penalty-b.penalty).slice(0,2000)});
       const best=states[0].chosen;
-      const marks=best.map(({item,lx,ly,anchor})=>{const color=palette[item.i%palette.length],axisValue=m.detail(m.value(item.d)),aria=item.d.name+'; score '+item.d.score.toFixed(2)+'; '+axisValue;return '<g class="chart-point" data-point="'+item.i+'" tabindex="0" role="button" aria-label="'+esc(aria)+'"><circle class="point-dot" cx="'+item.px+'" cy="'+item.py+'" r="5.5" fill="'+color+'" stroke="#fffdf8" stroke-width="1.5"/><text x="'+lx+'" y="'+ly+'" text-anchor="'+anchor+'" class="point-label">'+esc(item.text)+'</text></g>'}).join("");
+      const marks=best.map(({item,lx,ly,anchor})=>{const axisValue=m.detail(m.value(item.d)),aria=item.d.name+'; score '+item.d.score.toFixed(2)+'; '+axisValue;return '<g class="chart-point" data-point="'+item.i+'" tabindex="0" role="button" aria-label="'+esc(aria)+'"><circle class="point-dot" cx="'+item.px+'" cy="'+item.py+'" r="5.5" fill="'+item.d.color+'" stroke="#fffdf8" stroke-width="1.5"/><text x="'+lx+'" y="'+ly+'" text-anchor="'+anchor+'" class="point-label">'+esc(item.text)+'</text></g>'}).join("");
       const crosshair='<g class="crosshair" visibility="hidden" aria-hidden="true"><line class="crosshair-line crosshair-x"/><line class="crosshair-line crosshair-y"/><text class="crosshair-value crosshair-x-value" y="'+(bottom+27)+'" text-anchor="middle"></text><text class="crosshair-value crosshair-y-value" x="'+(p.l-14)+'" text-anchor="end"></text></g>';
       const stage=document.querySelector("#chart-stage");
       stage.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(m.title)+'"><text x="'+p.l+'" y="38" class="chart-title">'+esc(m.title)+'</text>'+yt+'<line x1="'+p.l+'" y1="'+bottom+'" x2="'+right+'" y2="'+bottom+'" class="axis"/>'+xt+connectors+crosshair+marks+'<text x="24" y="'+((p.t+bottom)/2)+'" transform="rotate(-90 24 '+((p.t+bottom)/2)+')" text-anchor="middle" class="axis-label">Observed score · focused range</text><text x="'+((p.l+right)/2)+'" y="'+(H-18)+'" text-anchor="middle" class="axis-label">'+esc(m.axis)+'</text></svg>';
@@ -122,7 +128,7 @@ function caseSections(models: any[]) {
       .map((model: any, modelIndex: number) => ({ model, modelIndex, score: model.cases[index].score }))
       .sort((a: any, b: any) => b.score - a.score || a.modelIndex - b.modelIndex)
       .map(({ model, modelIndex, score }: any) =>
-        `<div class="case-score"><span class="swatch" style="background:${palette[modelIndex % palette.length]}"></span><span>${escapeHtml(label(model))}</span><span class="track"><i style="width:${score}%;background:${palette[modelIndex % palette.length]}"></i></span><strong>${score.toFixed(1)}</strong></div>`,
+        `<div class="case-score"><span class="swatch" style="background:${modelColor(model, modelIndex)}"></span><span>${escapeHtml(label(model))}</span><span class="track"><i style="width:${score}%;background:${modelColor(model, modelIndex)}"></i></span><strong>${score.toFixed(1)}</strong></div>`,
       )
       .join("");
     return `<article class="case-study"><div class="case-copy"><div class="eyebrow">${escapeHtml(testCase.title)}</div><h3>${escapeHtml(context?.purpose ?? "Document reconstruction case")}</h3><p>${escapeHtml(context?.modality ?? "Mixed document evidence.")}</p><div class="coverage">${(context?.covers ?? []).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div></div><div class="case-results"><div class="mini-label">Observed score</div>${scores}</div></article>`;
