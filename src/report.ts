@@ -83,9 +83,12 @@ function interactiveChart(models: any[]) {
       const box=(x,y,anchor,width)=>({l:anchor==='start'?x:anchor==='end'?x-width:x-width/2,r:anchor==='start'?x+width:anchor==='end'?x:x+width/2,t:y-13,b:y+3});
       const intersects=(a,b,pad=0)=>a.l<b.r+pad&&a.r>b.l-pad&&a.t<b.b+pad&&a.b>b.t-pad;
       const candidateSets=items.map(item=>{
-        const width=Math.max(76,item.text.length*6.25),positions=[
-          [item.px+15,item.py-11,'start'],[item.px-15,item.py-11,'end'],[item.px+15,item.py+20,'start'],
-          [item.px-15,item.py+20,'end'],[item.px,item.py-17,'middle'],[item.px,item.py+25,'middle']
+        const width=Math.max(72,item.text.length*6.5),positions=[
+          [item.px+13,item.py-10,'start'],[item.px-13,item.py-10,'end'],[item.px+13,item.py+19,'start'],[item.px-13,item.py+19,'end'],
+          [item.px,item.py-16,'middle'],[item.px,item.py+25,'middle'],[item.px+18,item.py-30,'start'],[item.px-18,item.py-30,'end'],
+          [item.px+18,item.py+39,'start'],[item.px-18,item.py+39,'end'],[item.px,item.py-36,'middle'],[item.px,item.py+45,'middle'],
+          [item.px+22,item.py-50,'start'],[item.px-22,item.py-50,'end'],[item.px+22,item.py+59,'start'],[item.px-22,item.py+59,'end'],
+          [item.px,item.py-56,'middle'],[item.px,item.py+65,'middle']
         ];
         return positions.map(([lx,ly,anchor],preference)=>{const rect=box(lx,ly,anchor,width);let penalty=preference;
           if(rect.l<p.l+3||rect.r>right-3||rect.t<p.t+3||rect.b>bottom-3)penalty+=100000;
@@ -93,8 +96,9 @@ function interactiveChart(models: any[]) {
           return {item,lx,ly,anchor,rect,penalty};
         });
       });
-      let best=[],bestPenalty=Infinity;
-      const search=(index,chosen,penalty)=>{if(penalty>=bestPenalty)return;if(index===candidateSets.length){best=chosen;bestPenalty=penalty;return}candidateSets[index].forEach(candidate=>{const collisions=chosen.reduce((sum,placed)=>sum+(intersects(candidate.rect,placed.rect,4)?1:0),0);search(index+1,[...chosen,candidate],penalty+candidate.penalty+collisions*20000)})};search(0,[],0);
+      let states=[{chosen:[],penalty:0}];
+      candidateSets.forEach(candidates=>{const next=[];states.forEach(state=>candidates.forEach(candidate=>{const collisions=state.chosen.reduce((sum,placed)=>sum+(intersects(candidate.rect,placed.rect,5)?1:0),0);next.push({chosen:[...state.chosen,candidate],penalty:state.penalty+candidate.penalty+collisions*20000})}));states=next.sort((a,b)=>a.penalty-b.penalty).slice(0,2000)});
+      const best=states[0].chosen;
       const marks=best.map(({item,lx,ly,anchor})=>{const color=palette[item.i%palette.length],axisValue=m.detail(m.value(item.d)),aria=item.d.name+'; score '+item.d.score.toFixed(2)+'; '+axisValue;return '<g class="chart-point" data-point="'+item.i+'" tabindex="0" role="button" aria-label="'+esc(aria)+'"><circle class="point-dot" cx="'+item.px+'" cy="'+item.py+'" r="5.5" fill="'+color+'" stroke="#fffdf8" stroke-width="1.5"/><text x="'+lx+'" y="'+ly+'" text-anchor="'+anchor+'" class="point-label">'+esc(item.text)+'</text></g>'}).join("");
       const crosshair='<g class="crosshair" visibility="hidden" aria-hidden="true"><line class="crosshair-line crosshair-x"/><line class="crosshair-line crosshair-y"/><text class="crosshair-value crosshair-x-value" y="'+(bottom+27)+'" text-anchor="middle"></text><text class="crosshair-value crosshair-y-value" x="'+(p.l-14)+'" text-anchor="end"></text></g>';
       const stage=document.querySelector("#chart-stage");
