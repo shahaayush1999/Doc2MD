@@ -6,7 +6,7 @@
   "inputProtocol": "native_pdf",
   "providerFileModePolicy": "Send the native PDF file to the provider and record the provider's documented PDF ingestion mode separately. Do not convert official inputs to page images in the harness.",
   "version": "1.0.0",
-  "description": "An unsaturated mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
+  "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
   "caseCount": 5,
   "pageCount": 84,
   "cases": [

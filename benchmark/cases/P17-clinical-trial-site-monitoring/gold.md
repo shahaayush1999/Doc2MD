@@ -355,7 +355,7 @@ For subject 014-009, V1 on 2026-04-19 is day 1; W2 target is 2026-05-03 and the 
 
 ## Page 28 - Post-visit action assignment and routing
 
-A-201 assigns MK to upload the signed Q-77 DCF and production-field audit by 2026-05-10 at 12:00. A-202 assigns RP to upload the RX-2 calibration certificate for RX2-441 by 2026-05-12 at 17:00; the certificate must cover the 18 April service reset. A-203 assigns MK to document three K-204-146 return contact attempts by 2026-05-13 at 15:00. A-204 assigns NR to sign the masking impact assessment and Q-93 response by 2026-05-11 at 16:00. A-205 assigns MK to upload the signed visit-window calculation and verify the deviation link by 2026-05-11 at 12:00. A-201 assigned is checked. A-202 assigned is checked. A-201 complete is unchecked. A-202 complete is unchecked. A-203 assigned is checked. A-204 assigned is checked. A-205 assigned is checked. All post-visit actions complete is unchecked. If A-202 is late, same-day sponsor escalation is required; an email that a vendor was contacted does not replace the certificate. LS owns the CAPA effectiveness file review from 21 May 2026 through 22 May 2026.
+A-201 assigns MK to upload the signed Q-77 DCF and production-field audit by 2026-05-10 at 12:00. A-202 assigns RP to upload the RX-2 calibration certificate for RX2-441 by 2026-05-12 at 17:00; the certificate must cover the 18 April service reset. A-203 assigns MK to document three K-204-146 return contact attempts by 2026-05-13 at 15:00. A-204 assigns NR to sign the masking impact assessment and Q-93 response by 2026-05-11 at 16:00. A-205 assigns MK to upload the signed visit-window calculation and verify the deviation link by 2026-05-11 at 12:00. A-201 assigned is checked. A-202 assigned is checked. A-201 complete is unchecked. A-202 complete is unchecked. A-203 assigned is checked. A-204 assigned is checked. A-205 assigned is checked. All post-visit actions complete is unchecked. If A-202 is not evidenced by its deadline, RP calls the sponsor supply line the same day and LS records the escalation in CAPA-014-02; an email that a vendor was contacted does not replace the certificate. LS owns the CAPA effectiveness file review from 21 May 2026 through 22 May 2026.
 
 | Owner | Primary route | Escalation contact | Review window |
 | --- | --- | --- | --- |
@@ -391,7 +391,7 @@ Eligibility is a decision at its recorded time; later events do not retroactivel
 
 014-016 treatment code displayed is unchecked.
 
-The 2026-05-04 08:06 access was by RP for kit K-204-190 custody; no treatment code was disclosed to the blinded team. Jaya Das code-view permission is disabled. Masking impact review required is checked and immediate recruitment pause active is unchecked. The original emergency-unblinding classification is corrected to restricted pharmacy custody check with no treatment code displayed by QA on 2026-05-09 at 15:44.
+The 2026-05-04 08:06 access was by RP for kit K-204-190 custody; no treatment code was disclosed to the blinded team. The 2026-05-04 18:29 site note disclosed that an unblinded pharmacist was consulted, which revealed a role interaction but not the assigned treatment. Jaya Das code-view permission is disabled. Masking impact review required is checked and immediate recruitment pause active is unchecked. The original emergency-unblinding classification is corrected to restricted pharmacy custody check with no treatment code displayed by QA on 2026-05-09 at 15:44.
 
 ## Page 31 - Laboratory method, units, and report-version register
 
@@ -414,7 +414,7 @@ Analytical versioning does not rewrite independent custody, and point-of-care re
 
 ## Page 32 - RX2-441 calibration certificate and service lineage
 
-Certificate CAL-441-2026-05 for device RX2-441 passed all three as-left points: observed 2.1 C, 5.0 C, and 7.9 C at nominal 2.0 C, 5.0 C, and 8.0 C. It covers the 2026-04-18 controller reset under SV-8821, records no sensor replacement, and is final rather than provisional. The certificate was issued at 15:24 on 2026-05-12.
+Certificate CAL-441-2026-05 for device RX2-441 passed all three as-left points: observed 2.1 C, 5.0 C, and 7.9 C at nominal 2.0 C, 5.0 C, and 8.0 C. It covers the 2026-04-18 controller reset under SV-8821, records no sensor replacement, and is final rather than provisional. As-left calibration passed and 18 Apr service reset covered are checked. Sensor replaced and Certificate provisional are unchecked. The certificate was issued at 15:24 on 2026-05-12.
 
 | Repository event | Timestamp | Actor | Object / state | Evidence effect |
 | --- | --- | --- | --- | --- |
@@ -427,7 +427,7 @@ Certificate CAL-441-2026-05 for device RX2-441 passed all three as-left points: 
 
 ## Page 33 - Consent-version transition and applicability ledger
 
-W-14 addresses translated-diary support and does not replace the main ICF.
+Safety-letter acknowledgment, re-consent, optional-component choice, translated-diary accommodation, and study withdrawal are separate states. W-14 addresses translated-diary support and does not replace or translate the main ICF.
 
 | Subject | Initial ICF | Change trigger | Notification | Re-consent state | Optional / translated component | Evidence locator |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -527,7 +527,7 @@ RP pharmacy module complete and RP restricted RTS role active are checked. JD co
 
 ## Page 39 - Data-query state-transition audit trail
 
-Draft, accepted, updated, and closed are distinct chronological transitions.
+A draft response, accepted response, production-field update, and administrative closure are four different transitions. The event sequence must be preserved per query; a later closure does not erase the earlier open duration or provisional text.
 
 | Audit event | Timestamp | Query | Subject | Actor | Transition | Evidence / note |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -550,7 +550,7 @@ Draft, accepted, updated, and closed are distinct chronological transitions.
 
 ## Page 40 - Investigator safety and dosing decision register
 
-Clinical conclusions and masking-impact review remain separate. Masking review asks whether restricted-role information reached blinded decision-makers. For subject 014-016, the low glucose, rescue carbohydrate, and dose-withheld decision were recorded before the coordinator wrote the restricted-role phrase at 18:29. DR-04 and DR-05 therefore remain clinical decisions supported by contemporaneous measurements, while DR-11 records only that masking impact was still unsigned on 10 May. A later masking conclusion may resolve Q-93 without changing the earlier glucose series, discharge decision, dose action, or AE causality classification.
+The masking-review row does not reopen the signed dose decision or causality assessment. It asks whether restricted-role information reached blinded decision-makers. Clinical conclusions and masking impact must therefore remain separate in the reconstruction. For subject 014-016, the low glucose, rescue carbohydrate, and dose-withheld decision were recorded before the coordinator wrote the restricted-role phrase at 18:29. DR-04 and DR-05 therefore remain clinical decisions supported by contemporaneous measurements, while DR-11 records only that masking impact was still unsigned on 10 May. A later masking conclusion may resolve Q-93 without changing the earlier glucose series, discharge decision, dose action, or AE causality classification.
 
 | Review | Subject / event | Source reviewed | PI conclusion | Signed | Operational effect | Separate pending item |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -569,7 +569,7 @@ Clinical conclusions and masking-impact review remain separate. Masking review a
 
 ## Page 41 - Evidence request and intake queue
 
-A verified object may satisfy its request while a linked administrative item remains open; rejected drafts remain in history. Verification time records completion of reviewer checks, not the earlier upload event. Rejected objects remain immutable in the intake history, and a revised due date requires an approved replacement obligation rather than an edited timestamp. For restricted pharmacy and masking artifacts, the submitting owner cannot substitute self-attestation for monitor or QA verification. A receipt event with an insufficient object therefore leaves the request open even when it arrived before the deadline.
+A draft can satisfy routing without satisfying evidence. A verified object may close its evidence request while a linked query, custody exception, or follow-up remains separately open. Superseding ER-207 with ER-207R preserves the rejected unsigned submission. Verification time records completion of reviewer checks, not the earlier upload event. Rejected objects remain immutable in the intake history, and a revised due date requires an approved replacement obligation rather than an edited timestamp. For restricted pharmacy and masking artifacts, the submitting owner cannot substitute self-attestation for monitor or QA verification. A receipt event with an insufficient object therefore leaves the request open even when it arrived before the deadline.
 
 | Request | Object requested | Issued | Due | Receipt event | Verification state | Residual blocker |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -611,7 +611,7 @@ The subject, not the coordinator, entered the seven items; coordinator compariso
 
 ## Page 44 - CAPA evidence verification matrix
 
-Revisions preserve prior failures; evidence acceptance, linked-item closure, and effectiveness are separate. C-04 receipt acceptance does not itself close CE-204-12.
+C-07R is an approved revised obligation, not a silent overwrite of the late C-07 evidence failure. C-04 evidence acceptance does not close CE-204-12, and preventive-action assignment does not establish effectiveness.
 
 | CAPA item | Final obligation | Due | Evidence received | Verifier | Verification result | Linked item state |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -630,7 +630,7 @@ Revisions preserve prior failures; evidence acceptance, linked-item closure, and
 
 ## Page 45 - Post-visit action state-transition ledger
 
-Completion follows evidence verification; linked administrative closure remains independent.
+Completion is recorded only after the required evidence is verified. A linked query may close after action completion; a custody exception may remain open after its evidence action is satisfied. Pre-existing evidence retains its original timestamp.
 
 | Action | Assigned | Evidence event | Evidence state | Completion decision | Administrative state | Residual requirement |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -653,7 +653,7 @@ MA-016 is the final masking-impact assessment for subject 014-016. Emergency cod
 
 ## Page 47 - Query, deviation, and exception closure ledger
 
-Evidence completion and administrative closure are distinct; retained history is not erased.
+Evidence-complete time and closure time are intentionally separate. Closing a query does not erase the retained deviation class, missing diary days, or effectiveness obligation. A dash in closure time means the item remains open.
 
 | Record | Entity | Evidence-complete time | Closure authority | Closure time | Final administrative state | Retained open dependency |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -674,7 +674,7 @@ Evidence completion and administrative closure are distinct; retained history is
 
 ## Page 48 - Archive-readiness exception register
 
-The register contains archive conditions only and does not reopen closed clinical records.
+This register lists archive conditions only. A held subtab may coexist with a closed clinical query, and a releasable assessment may still have a coaching follow-up. No-hold rows are retained to prevent an already closed item from being reopened by inference.
 
 | Hold | Object / entity | Condition at 15 May | Owner | Next evidence | Due / review | Archive effect |
 | --- | --- | --- | --- | --- | --- | --- |

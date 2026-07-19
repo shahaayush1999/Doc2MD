@@ -523,7 +523,7 @@
           "id": "p02.map.w03.pattern",
           "canonicalClaimId": "p02.map.w03.pattern",
           "claimType": "scalar",
-          "expectation": "Wafer 03 marks a three-cell C3 cluster at B4, C4, and B5.",
+          "expectation": "Wafer 03 shows a three-cell C3 cluster at B4, C4, and B5.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -536,7 +536,9 @@
                 "3"
               ],
               [
-                "marks"
+                "shows",
+                "marks",
+                "contains"
               ],
               [
                 "three-cell",
@@ -562,26 +564,18 @@
           "id": "p02.map.w05.pattern",
           "canonicalClaimId": "p02.map.w05.pattern",
           "claimType": "scalar",
-          "expectation": "Wafer 05 marks an S2 path at E2, F2, and E3.",
+          "expectation": "Wafer 05's S2 coordinate set is E2, F2, and E3.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "Wafer"
-              ],
-              [
-                "05",
-                "5"
-              ],
-              [
-                "marks"
+                "Wafer 05",
+                "WAFER 05",
+                "W05"
               ],
               [
                 "S2"
-              ],
-              [
-                "path"
               ],
               [
                 "E2"
@@ -641,7 +635,9 @@
                 "9"
               ],
               [
-                "marks"
+                "marks",
+                "shows",
+                "contains"
               ],
               [
                 "only",
@@ -672,7 +668,9 @@
                 "12"
               ],
               [
-                "marks"
+                "marks",
+                "shows",
+                "contains"
               ],
               [
                 "A6"
@@ -707,7 +705,9 @@
                 "2"
               ],
               [
-                "marks"
+                "marks",
+                "shows",
+                "contains"
               ],
               [
                 "only",
@@ -729,18 +729,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "edge_set",
-        "keys": [
-          "p02.map.w03.pattern",
-          "p02.map.w05.pattern",
-          "p02.map.w07.pattern",
-          "p02.map.w09.pattern",
-          "p02.map.w12.pattern",
-          "p02.map.w02.reference"
-        ]
-      }
+      ]
     },
     {
       "id": "p02.legend",
@@ -2443,10 +2432,10 @@
       "budget": 2,
       "leaves": [
         {
-          "id": "p05.img224.finding",
-          "canonicalClaimId": "p05.img224.finding",
+          "id": "p05.img224.count",
+          "canonicalClaimId": "p05.img224.count",
           "claimType": "visual_description",
-          "expectation": "IMG-224 visibly shows two bright irregular metal flakes, one smaller and adjacent.",
+          "expectation": "IMG-224 visibly shows two distinct objects: a larger flake and a smaller adjacent fragment.",
           "harm": 2,
           "evidencePolicy": {
             "type": "qualitative",
@@ -2456,15 +2445,41 @@
               ],
               [
                 "two",
-                "2"
+                "2",
+                "with a smaller adjacent",
+                "and a smaller adjacent"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p05.img224.morphology",
+          "canonicalClaimId": "p05.img224.morphology",
+          "claimType": "visual_description",
+          "expectation": "IMG-224 shows a bright irregular flake with a smaller adjacent object.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "IMG-224"
               ],
               [
                 "bright",
-                "high contrast"
+                "white",
+                "high contrast",
+                "high-contrast",
+                "light-colored",
+                "light colored"
               ],
               [
                 "irregular",
+                "jagged",
                 "flake"
+              ],
+              [
+                "smaller",
+                "small"
               ],
               [
                 "adjacent",
@@ -2500,10 +2515,10 @@
       "budget": 2,
       "leaves": [
         {
-          "id": "p05.img223.finding",
-          "canonicalClaimId": "p05.img223.finding",
+          "id": "p05.img223.identity",
+          "canonicalClaimId": "p05.img223.identity",
           "claimType": "visual_description",
-          "expectation": "IMG-223 visibly shows a long diagonal scratch crossing the field.",
+          "expectation": "IMG-223 visibly shows a linear scratch or groove.",
           "harm": 2,
           "evidencePolicy": {
             "type": "qualitative",
@@ -2512,10 +2527,31 @@
                 "IMG-223"
               ],
               [
-                "diagonal"
+                "scratch",
+                "groove",
+                "linear defect"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p05.img223.geometry",
+          "canonicalClaimId": "p05.img223.geometry",
+          "claimType": "visual_description",
+          "expectation": "The IMG-223 feature is long and diagonal across the field.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "IMG-223"
               ],
               [
-                "scratch"
+                "long",
+                "extended"
+              ],
+              [
+                "diagonal"
               ],
               [
                 "crossing",
@@ -2551,10 +2587,10 @@
       "budget": 2,
       "leaves": [
         {
-          "id": "p05.img227.finding",
-          "canonicalClaimId": "p05.img227.finding",
+          "id": "p05.img227.band",
+          "canonicalClaimId": "p05.img227.band",
           "claimType": "visual_description",
-          "expectation": "IMG-227 visibly shows a bright edge-residue band with bead deposits.",
+          "expectation": "IMG-227 visibly shows a bright edge-residue band or ridge.",
           "harm": 1,
           "evidencePolicy": {
             "type": "qualitative",
@@ -2568,13 +2604,34 @@
               ],
               [
                 "band",
+                "ridge",
                 "line"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p05.img227.deposits",
+          "canonicalClaimId": "p05.img227.deposits",
+          "claimType": "visual_description",
+          "expectation": "IMG-227 shows bead or droplet deposits associated with the edge band.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "IMG-227"
               ],
               [
                 "bead",
                 "deposits",
                 "droplets",
                 "bumps"
+              ],
+              [
+                "band",
+                "ridge",
+                "edge"
               ]
             ]
           }
@@ -2606,10 +2663,10 @@
       "budget": 2,
       "leaves": [
         {
-          "id": "p05.img226.finding",
-          "canonicalClaimId": "p05.img226.finding",
+          "id": "p05.img226.clean",
+          "canonicalClaimId": "p05.img226.clean",
           "claimType": "visual_description",
-          "expectation": "IMG-226 is visually clean apart from low-level background specks.",
+          "expectation": "IMG-226 presents a visually clean field lacking a prominent discrete defect.",
           "harm": 1,
           "evidencePolicy": {
             "type": "qualitative",
@@ -2618,15 +2675,37 @@
                 "IMG-226"
               ],
               [
-                "clean"
+                "clean field",
+                "visually clean",
+                "without a prominent",
+                "no prominent",
+                "without large-scale"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p05.img226.background",
+          "canonicalClaimId": "p05.img226.background",
+          "claimType": "visual_description",
+          "expectation": "IMG-226 contains fine low-level background specks or noise.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "IMG-226"
               ],
               [
                 "background",
-                "field"
+                "field",
+                "surface"
               ],
               [
                 "specks",
-                "noise"
+                "noise",
+                "grain",
+                "granular"
               ]
             ]
           }
@@ -4301,10 +4380,12 @@
                 "initial"
               ],
               [
-                "object"
+                "one",
+                "1"
               ],
               [
-                "struck"
+                "struck",
+                "crossed out"
               ]
             ]
           }
@@ -4313,7 +4394,7 @@
           "id": "p08.correction.final",
           "canonicalClaimId": "p08.correction.final",
           "claimType": "scalar",
-          "expectation": "IMG-224 is corrected to two reportable objects and the worksheet defers morphology to the controlled image archive.",
+          "expectation": "The corrected IMG-224 count is two reportable objects.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
@@ -4323,16 +4404,60 @@
                 "IMG 224"
               ],
               [
+                "corrected count",
                 "corrected"
               ],
               [
+                "two",
+                "2"
+              ],
+              [
+                "reportable objects",
                 "reportable"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.correction.archive",
+          "canonicalClaimId": "p08.correction.archive",
+          "claimType": "scalar",
+          "expectation": "The corrected-count line says to see the controlled image archive.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "corrected count",
+                "corrected"
               ],
               [
-                "morphology"
+                "see controlled image archive",
+                "controlled image archive"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.correction.basis",
+          "canonicalClaimId": "p08.correction.basis",
+          "claimType": "scalar",
+          "expectation": "The correction basis says the second object was resolved at archive magnification.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "correction basis"
               ],
               [
-                "controlled"
+                "second object"
+              ],
+              [
+                "resolved"
+              ],
+              [
+                "archive magnification"
               ]
             ]
           }
@@ -5223,10 +5348,10 @@
       "budget": 2,
       "leaves": [
         {
-          "id": "p09.authority.control",
-          "canonicalClaimId": "p09.authority.control",
+          "id": "p09.authority.void",
+          "canonicalClaimId": "p09.authority.void",
           "claimType": "source_precedence",
-          "expectation": "The preliminary all-wafer COA is void; only the signed values above authorize shipment.",
+          "expectation": "The preliminary all-wafer COA is void.",
           "harm": 2,
           "evidencePolicy": {
             "type": "ordered_tokens",
@@ -5240,19 +5365,37 @@
               ],
               [
                 "void"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p09.authority.signed",
+          "canonicalClaimId": "p09.authority.signed",
+          "claimType": "source_precedence",
+          "expectation": "Only the signed values authorize shipment.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "only",
+                "solely"
               ],
               [
-                "only"
+                "signed"
               ],
               [
-                "signed values"
-              ],
-              [
-                "above"
+                "values"
               ],
               [
                 "authorize",
-                "authority"
+                "authority",
+                "control"
+              ],
+              [
+                "shipment",
+                "ship"
               ]
             ]
           }

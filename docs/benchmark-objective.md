@@ -1,5 +1,7 @@
 # Doc2MD redesign objective
 
+> Historical design brief for the benchmark rebuild. Its one-draw, anchor-only development protocol records the original iteration phase and is not the current operating procedure.
+
 Use this as the goal prompt for the benchmark rebuild.
 
 ## Goal

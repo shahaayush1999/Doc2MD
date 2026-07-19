@@ -441,7 +441,6 @@ def build(output_root):
             ("query-key", "The data-query console is retrieved under DQC-HTX204-014."),
         ],
         budget=2,
-        closed_world=True,
     )
 
     # 2 - enrollment roster.
@@ -486,7 +485,6 @@ def build(output_root):
             ("014016", "Subject 014-016 is indexed for masking review."),
         ],
         budget=2,
-        closed_world=True,
     )
 
     # 3 - visit schedule, continued on page 10.
@@ -528,7 +526,6 @@ def build(output_root):
             ("continuation", "The visit log explicitly continues on page 10."),
         ],
         budget=2,
-        closed_world=True,
     )
 
     # 4 - accession log.
@@ -572,7 +569,6 @@ def build(output_root):
             ("custody-limit", "A receipt timestamp proves custody, not an analytical result."),
         ],
         budget=2,
-        closed_world=True,
     )
 
     # 5 - intended full-page scan: pharmacy receipt ledger.
@@ -695,7 +691,6 @@ def build(output_root):
             ("ae08", "AE-014-08 is a device issue for subject 014-014 and routes to training evidence on page 18."),
         ],
         budget=2,
-        closed_world=True,
     )
 
     # 7 - provisional query export.
@@ -733,7 +728,6 @@ def build(output_root):
             ("provisional", "The page labels console responses as provisional and not signed source.", 2),
         ],
         budget=2,
-        closed_world=True,
     )
 
     # 8 - intended full-page scan: consent and delegation source.
@@ -910,7 +904,6 @@ def build(output_root):
             ("classification", "The page defers subject 014-009's signed discrepancy classification to page 27."),
         ],
         budget=2,
-        closed_world=True,
     )
 
     # 11 - intended full-page scan: corrected ECG eCRF.
@@ -1112,7 +1105,6 @@ def build(output_root):
             ("dates", "The page treats event date, detection date, and signed classification as separate fields."),
         ],
         budget=2,
-        closed_world=True,
     )
 
     # 14 - pharmacy inventory reconciliation.  It links to, but does not repeat,
@@ -1153,7 +1145,6 @@ def build(output_root):
             ("k190", "Kit K-204-190 for subject 014-016 has returned quantity and physical balance 2 and remains linked to masking review."),
         ],
         budget=2,
-        closed_world=True,
     )
 
     # 15 - mixed: amended laboratory fax image plus native custody table.
@@ -1229,7 +1220,6 @@ def build(output_root):
             ("ack", "Dr. Neha Rao reviewed the amendment at 08:06 on 2026-05-09."),
         ],
         budget=1,
-        closed_world=True,
     )
 
     # 16 - intended full-page scan: signed DCF superseding provisional query text.
@@ -1416,7 +1406,6 @@ def build(output_root):
             ("q91", "MK attached the training source to Q-91 at 14:03."),
         ],
         budget=1,
-        closed_world=True,
     )
 
     # 19 - working CAPA tracker, deliberately superseded by page 25.
@@ -1461,7 +1450,6 @@ def build(output_root):
             ("precedence", "The page explicitly defers final owners, dates, and evidence to the signed approval on page 25.", 2),
         ],
         budget=2,
-        closed_world=True,
     )
 
     # 20 - intended full-page scan: corrected courier receipt.
@@ -1610,7 +1598,6 @@ def build(output_root):
             ("call", "The 18:16 safety call recorded self-reported glucose 88 mg/dL and no symptoms."),
         ],
         budget=1,
-        closed_world=True,
     )
 
     # 22 - intended full-page scan: PI review states.
@@ -1753,7 +1740,6 @@ def build(output_root):
             ("study", "HTX-204 maps to BLINDED THERAPY with action qualifier Withdrawn per protocol."),
         ],
         budget=1,
-        closed_world=True,
     )
 
     # 24 - transfer audit.  This page proves receipt and integrity of individual
@@ -1948,7 +1934,6 @@ def build(output_root):
             ),
         ],
         budget=2,
-        closed_world=True,
     )
 
     # 27 - mixed signed visit-window adjudication and native audit trail.
@@ -2023,7 +2008,6 @@ def build(output_root):
             ("state", "After monitor concurrence, the state is Ready to upload rather than closed."),
         ],
         budget=1,
-        closed_world=True,
     )
 
     # 28 - mixed tail action sheet.  This is intentionally an assignment record,
@@ -2086,7 +2070,7 @@ def build(output_root):
     draw_table(c, 42, 340, [70, 170, 145, 125], [route_headers, *route_rows], font_size=6.7, zebra=True)
     case.add_gold(
         "Page 28 - Post-visit action assignment and routing",
-        "A-201 assigns MK to upload the signed Q-77 DCF and production-field audit by 2026-05-10 at 12:00. A-202 assigns RP to upload the RX-2 calibration certificate for RX2-441 by 2026-05-12 at 17:00; the certificate must cover the 18 April service reset. A-203 assigns MK to document three K-204-146 return contact attempts by 2026-05-13 at 15:00. A-204 assigns NR to sign the masking impact assessment and Q-93 response by 2026-05-11 at 16:00. A-205 assigns MK to upload the signed visit-window calculation and verify the deviation link by 2026-05-11 at 12:00. A-201 assigned is checked. A-202 assigned is checked. A-201 complete is unchecked. A-202 complete is unchecked. A-203 assigned is checked. A-204 assigned is checked. A-205 assigned is checked. All post-visit actions complete is unchecked. If A-202 is late, same-day sponsor escalation is required; an email that a vendor was contacted does not replace the certificate. LS owns the CAPA effectiveness file review from 21 May 2026 through 22 May 2026.\n\n" + markdown_table(route_headers, route_rows),
+        "A-201 assigns MK to upload the signed Q-77 DCF and production-field audit by 2026-05-10 at 12:00. A-202 assigns RP to upload the RX-2 calibration certificate for RX2-441 by 2026-05-12 at 17:00; the certificate must cover the 18 April service reset. A-203 assigns MK to document three K-204-146 return contact attempts by 2026-05-13 at 15:00. A-204 assigns NR to sign the masking impact assessment and Q-93 response by 2026-05-11 at 16:00. A-205 assigns MK to upload the signed visit-window calculation and verify the deviation link by 2026-05-11 at 12:00. A-201 assigned is checked. A-202 assigned is checked. A-201 complete is unchecked. A-202 complete is unchecked. A-203 assigned is checked. A-204 assigned is checked. A-205 assigned is checked. All post-visit actions complete is unchecked. If A-202 is not evidenced by its deadline, RP calls the sponsor supply line the same day and LS records the escalation in CAPA-014-02; an email that a vendor was contacted does not replace the certificate. LS owns the CAPA effectiveness file review from 21 May 2026 through 22 May 2026.\n\n" + markdown_table(route_headers, route_rows),
     )
     _facts(
         case,
@@ -2124,7 +2108,6 @@ def build(output_root):
             ("ls", "LS owns the CAPA effectiveness file review from 21 May 2026 through 22 May 2026."),
         ],
         budget=1,
-        closed_world=True,
     )
 
     # 29 - native eligibility review.  The rows extend subject identity and
@@ -2220,7 +2203,7 @@ def build(output_root):
         form_code="RTS-AUD-09 / RESTRICTED",
     )
     _place_full_scan(c, scan)
-    _gold_scan(case, "Randomization and masking-access audit", "014-016 pharmacy custody access is checked.\n\n014-016 emergency code break initiated is unchecked.\n\n014-016 treatment code displayed is unchecked.\n\nThe 2026-05-04 08:06 access was by RP for kit K-204-190 custody; no treatment code was disclosed to the blinded team. Jaya Das code-view permission is disabled. Masking impact review required is checked and immediate recruitment pause active is unchecked. The original emergency-unblinding classification is corrected to restricted pharmacy custody check with no treatment code displayed by QA on 2026-05-09 at 15:44.")
+    _gold_scan(case, "Randomization and masking-access audit", "014-016 pharmacy custody access is checked.\n\n014-016 emergency code break initiated is unchecked.\n\n014-016 treatment code displayed is unchecked.\n\nThe 2026-05-04 08:06 access was by RP for kit K-204-190 custody; no treatment code was disclosed to the blinded team. The 2026-05-04 18:29 site note disclosed that an unblinded pharmacist was consulted, which revealed a role interaction but not the assigned treatment. Jaya Das code-view permission is disabled. Masking impact review required is checked and immediate recruitment pause active is unchecked. The original emergency-unblinding classification is corrected to restricted pharmacy custody check with no treatment code displayed by QA on 2026-05-09 at 15:44.")
     _facts(case, "masking-access", "Scanned masking-access audit", "form", [
         ("custody", "For subject 014-016, pharmacy custody access is checked.", 2, ("014-016 pharmacy custody access", "checked")),
         ("break", "014-016 emergency code break initiated is unchecked.", 2, ("014-016 emergency code break initiated", "unchecked")),
@@ -2306,7 +2289,7 @@ def build(output_root):
     draw_label(c, "Native repository service audit", 42, 378)
     draw_table(c, 38, 363, [118, 92, 72, 112, 116], [service_headers, *service_rows], font_size=6.45, zebra=True)
     gold_service_rows = [[_expand_protocol_dates(value) for value in row] for row in service_rows]
-    case.add_gold("Page 32 - RX2-441 calibration certificate and service lineage", "Certificate CAL-441-2026-05 for device RX2-441 passed all three as-left points: observed 2.1 C, 5.0 C, and 7.9 C at nominal 2.0 C, 5.0 C, and 8.0 C. It covers the 2026-04-18 controller reset under SV-8821, records no sensor replacement, and is final rather than provisional. The certificate was issued at 15:24 on 2026-05-12.\n\n" + markdown_table(service_headers, gold_service_rows))
+    case.add_gold("Page 32 - RX2-441 calibration certificate and service lineage", "Certificate CAL-441-2026-05 for device RX2-441 passed all three as-left points: observed 2.1 C, 5.0 C, and 7.9 C at nominal 2.0 C, 5.0 C, and 8.0 C. It covers the 2026-04-18 controller reset under SV-8821, records no sensor replacement, and is final rather than provisional. As-left calibration passed and 18 Apr service reset covered are checked. Sensor replaced and Certificate provisional are unchecked. The certificate was issued at 15:24 on 2026-05-12.\n\n" + markdown_table(service_headers, gold_service_rows))
     _facts(case, "cal-form", "Scanned calibration certificate", "form", [
         ("passed", "As-left calibration passed is checked.", 2, ("As-left calibration passed", "checked")),
         ("reset", "18 Apr service reset covered is checked.", 2, ("18 Apr service reset covered", "checked")),
@@ -2319,11 +2302,6 @@ def build(output_root):
         ("Monitor verification", "Timestamp"), ("Monitor verification", "Evidence effect"),
         ("Deadline comparison", "Evidence effect"),
     ], budget=1, consequential=[("Monitor verification", "Evidence effect")])
-    calibration_fusion_expectation = "RX2-441 covers the 18 April reset and passed calibration; LS verified it as A-202 evidence at 16:42 on 2026-05-12, eighteen minutes ahead of the deadline."
-    case.add_region("x32.calibration-fusion", "Certificate result joined to repository evidence", "mixed", [
-        leaf("x32.calibration-fusion.binding", calibration_fusion_expectation, harm=2, evidence=_complete_evidence(calibration_fusion_expectation, [["RX2-441"], ["18 April", "18 Apr", "2026-04-18"], ["reset"], ["passed"], ["LS"], ["16:42"], ["A-202"], ["evidence", "evidenced"], ["eighteen", "18"], ["minutes", "min"], ["ahead", "early"], ["deadline", "due"]]))
-    ], page=32, budget=2, modality="mixed", primary_axis="mixed_modality_fusion", secondary_axes=("source_precedence",), text_only_recoverable=False, source_anchors=[_source_anchor(case, 32, "raster"), _source_anchor(case, 32, "native_text")])
-
     # 33 - native consent-version and re-consent applicability ledger.
     c = case.new_page(
         "Consent-version transition and applicability ledger",
@@ -2347,7 +2325,7 @@ def build(output_root):
     ]
     consent_y = draw_table(c, 18, 675, [48, 68, 93, 78, 104, 124, 61], [consent_headers, *consent_rows], font_size=5.5, row_padding=2.8, zebra=True)
     draw_paragraph(c, "Safety-letter acknowledgment, re-consent, optional-component choice, translated-diary accommodation, and study withdrawal are separate states. W-14 addresses diary language support and does not replace or translate the main ICF.", 42, consent_y - 20, 510, size=8.0, leading=11.0, color=MUTED)
-    _gold_table(case, "Consent-version transition and applicability ledger", consent_headers, consent_rows, "W-14 addresses translated-diary support and does not replace the main ICF.")
+    _gold_table(case, "Consent-version transition and applicability ledger", consent_headers, consent_rows, "Safety-letter acknowledgment, re-consent, optional-component choice, translated-diary accommodation, and study withdrawal are separate states. W-14 addresses translated-diary support and does not replace or translate the main ICF.")
     _selected_table_region(case, "consent-ledger", "Consent-version applicability ledger", consent_headers, consent_rows, [
         ("014-003", "Re-consent state"), ("014-004", "Re-consent state"),
         ("014-009", "Notification"), ("014-012", "Re-consent state"),
@@ -2488,11 +2466,6 @@ def build(output_root):
         ("08 May practice", "Symptom score"), ("08 May practice", "Sync timestamp"),
         ("08 May daily", "Entry state"), ("09 May daily", "Audit note"),
     ], budget=1, consequential=[("02 May", "Entry state"), ("03 May", "Audit note")])
-    epro_continuity_expectation = "The exception leaves 02-03 May missing with backfill disabled; the diary export shows prospective own-credential submissions beginning with the 08 May 19:08 sync."
-    case.add_region("x36.epro-continuity-fusion", "Exception states joined to day-level diary export", "mixed", [
-        leaf("x36.epro-continuity-fusion.binding", epro_continuity_expectation, harm=2, evidence=_complete_evidence(epro_continuity_expectation, [["02 May"], ["03 May"], ["backfill"], ["disabled"], ["diary"], ["prospective"], ["own-credential", "own credential", "own credentials"], ["08 May"], ["19:08"]]))
-    ], page=36, budget=2, modality="mixed", primary_axis="mixed_modality_fusion", secondary_axes=("long_context_coherence",), text_only_recoverable=False, source_anchors=[_source_anchor(case, 36, "raster"), _source_anchor(case, 36, "native_text")])
-
     # 37 - native accountability transaction continuation.
     c = case.new_page(
         "Investigational-product transaction ledger",
@@ -2609,7 +2582,7 @@ def build(output_root):
     ]
     qa_y = draw_table(c, 16, 675, [57, 73, 45, 54, 41, 124, 202], [qa_headers, *qa_rows], font_size=5.5, row_padding=2.4, zebra=True)
     draw_paragraph(c, "A draft response, accepted response, production-field update, and administrative closure are four different transitions. The event sequence must be preserved per query; a later closure does not erase the earlier open duration or provisional text.", 42, qa_y - 17, 510, size=7.7, leading=10.4, color=MUTED)
-    _gold_table(case, "Data-query state-transition audit trail", qa_headers, qa_rows, "Draft, accepted, updated, and closed are distinct chronological transitions.")
+    _gold_table(case, "Data-query state-transition audit trail", qa_headers, qa_rows, "A draft response, accepted response, production-field update, and administrative closure are four different transitions. The event sequence must be preserved per query; a later closure does not erase the earlier open duration or provisional text.")
     _selected_table_region(case, "query-audit", "Data-query state-transition audit trail", qa_headers, qa_rows, [
         ("EV-7708", "Transition"), ("EV-7708", "Evidence / note"),
         ("EV-7722", "Timestamp"), ("EV-7735", "Transition"),
@@ -2651,7 +2624,7 @@ def build(output_root):
         "A later masking conclusion may resolve Q-93 without changing the earlier glucose series, discharge decision, dose action, or AE causality classification."
     )
     draw_paragraph(c, decision_review_note, 42, decision_note_y - 7, 510, size=7.7, leading=10.5, color=INK)
-    _gold_table(case, "Investigator safety and dosing decision register", decision_headers, decision_rows, "Clinical conclusions and masking-impact review remain separate. Masking review asks whether restricted-role information reached blinded decision-makers. " + decision_review_note)
+    _gold_table(case, "Investigator safety and dosing decision register", decision_headers, decision_rows, "The masking-review row does not reopen the signed dose decision or causality assessment. It asks whether restricted-role information reached blinded decision-makers. Clinical conclusions and masking impact must therefore remain separate in the reconstruction. " + decision_review_note)
     _selected_table_region(case, "pi-decisions", "Investigator clinical-decision register", decision_headers, decision_rows, [
         ("DR-02", "PI conclusion"), ("DR-02", "Operational effect"),
         ("DR-04", "PI conclusion"), ("DR-04", "Operational effect"),
@@ -2693,7 +2666,7 @@ def build(output_root):
         "For restricted pharmacy and masking artifacts, the submitting owner cannot substitute self-attestation for monitor or QA verification. A receipt event with an insufficient object therefore leaves the request open even when it arrived before the deadline."
     )
     draw_paragraph(c, queue_review_note, 42, request_note_y - 7, 510, size=7.7, leading=10.5, color=INK)
-    _gold_table(case, "Evidence request and intake queue", request_headers, request_rows, "A verified object may satisfy its request while a linked administrative item remains open; rejected drafts remain in history. " + queue_review_note)
+    _gold_table(case, "Evidence request and intake queue", request_headers, request_rows, "A draft can satisfy routing without satisfying evidence. A verified object may close its evidence request while a linked query, custody exception, or follow-up remains separately open. Superseding ER-207 with ER-207R preserves the rejected unsigned submission. " + queue_review_note)
     _selected_table_region(case, "evidence-queue", "Evidence request and intake queue", request_headers, request_rows, [
         ("ER-202", "Receipt event"), ("ER-202", "Verification state"),
         ("ER-203", "Verification state"), ("ER-203", "Residual blocker"),
@@ -2814,7 +2787,7 @@ def build(output_root):
     ]
     evidence_y = draw_table(c, 16, 675, [51, 154, 70, 89, 64, 97, 71], [evidence_headers, *evidence_rows], font_size=5.5, row_padding=2.5, zebra=True)
     draw_paragraph(c, "C-07R is an approved revised obligation, not a silent overwrite of the late C-07 evidence failure. C-04 evidence acceptance does not close CE-204-12, and preventive-action assignment does not establish effectiveness.", 42, evidence_y - 18, 510, size=7.8, leading=10.7, color=MUTED)
-    _gold_table(case, "CAPA evidence verification matrix", evidence_headers, evidence_rows, "Revisions preserve prior failures; evidence acceptance, linked-item closure, and effectiveness are separate. C-04 receipt acceptance does not itself close CE-204-12.")
+    _gold_table(case, "CAPA evidence verification matrix", evidence_headers, evidence_rows, "C-07R is an approved revised obligation, not a silent overwrite of the late C-07 evidence failure. C-04 evidence acceptance does not close CE-204-12, and preventive-action assignment does not establish effectiveness.")
     _selected_table_region(case, "capa-evidence", "CAPA evidence verification matrix", evidence_headers, evidence_rows, [
         ("C-01", "Verification result"), ("C-02", "Evidence received"),
         ("C-02", "Linked item state"), ("C-03", "Verification result"),
@@ -2851,7 +2824,7 @@ def build(output_root):
     ]
     state_y = draw_table(c, 14, 675, [79, 72, 121, 80, 109, 101, 32], [state_headers, *state_rows], font_size=5.5, row_padding=2.4, zebra=True)
     draw_paragraph(c, "Completion is recorded only after the required evidence is verified. A linked query may close after action completion; a custody exception may remain open after its evidence action is satisfied. Pre-existing evidence retains its original timestamp.", 42, state_y - 18, 510, size=7.8, leading=10.6, color=MUTED)
-    _gold_table(case, "Post-visit action state-transition ledger", state_headers, state_rows, "Completion follows evidence verification; linked administrative closure remains independent.")
+    _gold_table(case, "Post-visit action state-transition ledger", state_headers, state_rows, "Completion is recorded only after the required evidence is verified. A linked query may close after action completion; a custody exception may remain open after its evidence action is satisfied. Pre-existing evidence retains its original timestamp.")
     _selected_table_region(case, "action-states", "Post-visit action state-transition ledger", state_headers, state_rows, [
         ("A-201 / Q-77", "Administrative state"), ("A-202 / RX2-441", "Completion decision"),
         ("A-202 / RX2-441", "Residual requirement"), ("A-203 / K-204-146", "Evidence state"),
@@ -2943,7 +2916,7 @@ def build(output_root):
     ]
     close_y = draw_table(c, 14, 675, [71, 84, 90, 76, 78, 115, 80], [close_headers, *close_rows], font_size=5.5, row_padding=2.4, zebra=True)
     draw_paragraph(c, "Evidence-complete time and closure time are intentionally separate. Closing a query does not erase the retained deviation class, missing diary days, or effectiveness obligation. A dash in closure time means the item remains open.", 42, close_y - 18, 510, size=7.8, leading=10.6, color=MUTED)
-    _gold_table(case, "Query, deviation, and exception closure ledger", close_headers, close_rows, "Evidence completion and administrative closure are distinct; retained history is not erased.")
+    _gold_table(case, "Query, deviation, and exception closure ledger", close_headers, close_rows, "Evidence-complete time and closure time are intentionally separate. Closing a query does not erase the retained deviation class, missing diary days, or effectiveness obligation. A dash in closure time means the item remains open.")
     _selected_table_region(case, "closure", "Query, deviation, and exception closure ledger", close_headers, close_rows, [
         ("Q-77", "Closure time"), ("DEV-014-03", "Final administrative state"),
         ("CE-204-12", "Closure time"), ("Q-84", "Final administrative state"),
@@ -2982,7 +2955,7 @@ def build(output_root):
     ]
     archive_y = draw_table(c, 16, 675, [43, 108, 127, 48, 127, 80, 59], [archive_headers, *archive_rows], font_size=5.5, row_padding=2.5, zebra=True)
     draw_paragraph(c, "This register lists archive conditions only. A held subtab may coexist with a closed clinical query, and a releasable assessment may still have a coaching follow-up. No-hold rows are retained to prevent an already closed item from being reopened by inference.", 42, archive_y - 18, 510, size=7.9, leading=10.7, color=MUTED)
-    _gold_table(case, "Archive-readiness exception register", archive_headers, archive_rows, "The register contains archive conditions only and does not reopen closed clinical records.")
+    _gold_table(case, "Archive-readiness exception register", archive_headers, archive_rows, "This register lists archive conditions only. A held subtab may coexist with a closed clinical query, and a releasable assessment may still have a coaching follow-up. No-hold rows are retained to prevent an already closed item from being reopened by inference.")
     _selected_table_region(case, "archive", "Archive-readiness exception register", archive_headers, archive_rows, [
         ("H-01", "Condition at 15 May"), ("H-01", "Next evidence"),
         ("H-02", "Archive effect"), ("H-04", "Due / review"),
@@ -2995,228 +2968,6 @@ def build(output_root):
         ("coexist", "A held subtab may coexist with a closed clinical query.", 2),
         ("no-reopen", "No-hold rows prevent already closed items from being reopened by inference."),
     ], budget=1, primary_axis="long_context_coherence")
-
-    # Same-page mixed-modality bindings.  Each obligation requires evidence
-    # from both the raster source region and the native continuation; neither
-    # layer alone is sufficient.
-    mixed_gold = {
-        15: "Page 15 - Amended laboratory report and custody continuation",
-        18: "Page 18 - ePRO retraining and device-event continuation",
-        21: "Page 21 - Subject 014-016 dosing worksheet and observations",
-        23: "Page 23 - Subject 014-004 medication reconciliation",
-        27: "Page 27 - Subject 014-009 visit-window adjudication",
-        28: "Page 28 - Post-visit action assignment and routing",
-    }
-    fusion_specs = [
-        (
-            15,
-            "x15.lab-fusion",
-            "Amended laboratory result joined to native portal lineage",
-            "Amended creatinine 1.47 mg/dL corresponds to portal version 2 posted at 07:22 and NR acknowledgment at 08:06 on 2026-05-09.",
-            [["1.47 mg/dL"], ["version 2"], ["07:22"], ["NR"], ["08:06"]],
-        ),
-        (
-            18,
-            "x18.epro-fusion",
-            "ePRO competency joined to native device audit",
-            "Subject 014-014's competency accepted state corresponds to EP-441 practice sync accepted at 13:47 and Q-91 attachment by MK at 14:03.",
-            [["014-014"], ["competency accepted"], ["EP-441"], ["13:47"], ["Q-91"], ["MK"], ["14:03"]],
-        ),
-        (
-            21,
-            "x21.dose-fusion",
-            "Dosing decision joined to timed observations",
-            "Dose withheld corresponds to observations of glucose 60 mg/dL and 15 g oral carbohydrate at 08:12, with recovery to 91 mg/dL at 09:05.",
-            [["dose withheld"], ["60 mg/dL"], ["15 g"], ["08:12"], ["91 mg/dL"], ["09:05"]],
-        ),
-        (
-            23,
-            "x23.med-fusion",
-            "Marked medication states joined to coding qualifiers",
-            "Amlodipine continued and losartan held correspond respectively to coding qualifiers Ongoing and Interrupted.",
-            [["amlodipine continued"], ["losartan held"], ["ongoing"], ["interrupted"]],
-        ),
-        (
-            27,
-            "x27.window-fusion",
-            "Signed visit-window state joined to upload audit",
-            "Minor deviation with Q-86 closed unchecked corresponds to Ready to upload and a deadline not yet evidenced at 12:00 on 2026-05-11.",
-            [["minor deviation"], ["Q-86 closed", "Q-86 closed is unchecked"], ["unchecked"], ["ready to upload"], ["not yet evidenced"], ["12:00"], ["2026-05-11", "11 May 2026"]],
-        ),
-        (
-            28,
-            "x28.action-fusion",
-            "Marked action state joined to owner routing",
-            "A-202 assigned with A-202 complete unchecked corresponds to RP routing through the restricted pharmacy vault and sponsor supply line.",
-            [["A-202"], ["assigned"], ["A-202 complete"], ["unchecked"], ["RP"], ["restricted pharmacy vault"], ["sponsor supply line"]],
-        ),
-    ]
-    for page, region_id, label, expectation, evidence in fusion_specs:
-        case.add_region(
-            region_id,
-            label,
-            "mixed",
-            [
-                leaf(
-                    f"{region_id}.binding",
-                    expectation,
-                    harm=2,
-                    evidence=_complete_evidence(expectation, evidence),
-                )
-            ],
-            page=page,
-            budget=2,
-            modality="mixed",
-            primary_axis="mixed_modality_fusion",
-            secondary_axes=["source_precedence"],
-            text_only_recoverable=False,
-            gold_section=mixed_gold[page],
-            source_anchors=[
-                _source_anchor(case, page, "raster"),
-                _source_anchor(case, page, "native_text"),
-            ],
-        )
-
-    # Cross-page entity bindings.  These obligations score the coherence of a
-    # longitudinal reconstruction, not another copy of the component facts.
-    # Cross-page joins are evaluated against a gold-only synthesis section.
-    # It is never rendered into the source PDF, so the benchmark remains free
-    # of source-side answer maps while the canonical reference stays auditable.
-    lineage_gold = "Cross-page entity lineage synthesis"
-    join_specs = [
-        (
-            "x01.ecg-lineage",
-            "Subject 014-003 ECG correction lineage",
-            [3, 7, 11, 16, 26, 39, 47],
-            "Subject 014-003 moves from a partial W2 visit and provisional Q-77 Yes response to a crossed original Yes and checked corrected No, then to an accepted signed DCF while Q-77 remains not closed at aging; later the production field is updated and Q-77 closes on 2026-05-10 at 10:41.",
-            [["014-003"], ["partial"], ["provisional", "draft"], ["crossed"], ["corrected No", "not performed"], ["not closed"], ["production field updated"], ["10 May 10:41", "2026-05-10 at 10:41"]],
-        ),
-        (
-            "x02.k153-lineage",
-            "Kit K-204-153 receipt-to-action lineage",
-            [5, 12, 14, 25, 28, 32, 37, 44, 45, 48],
-            "K-204-153 is received as quantity 30 with locator corrected to RX-2/B1, carries checked Do not dose and balance 30 at Q1, then its RX2-441 certificate is verified at 16:42 before A-202 completes; the kit transfers to sponsor return on 2026-05-13 while courier delivery confirmation remains an archive hold.",
-            [["K-204-153"], ["30"], ["RX-2/B1"], ["Do not dose"], ["Q1"], ["RX2-441"], ["16:42"], ["A-202"], ["complete"], ["13 May"], ["courier delivery confirmation"]],
-        ),
-        (
-            "x03.sh20445-lineage",
-            "Shipment SH-204-45 custody-exception lineage",
-            [4, 17, 20, 26, 41, 44, 45, 47],
-            "SH-204-45 is collected at 08:44 and received two days later at 16:40, its struck 22.1 C reading is corrected to 2.1 C with analytical use accepted; receipt evidence is verified while CE-204-12 remains separately open, then the custody exception closes on 2026-05-11 at 09:22.",
-            [["SH-204-45"], ["08:44"], ["16:40"], ["22.1 C"], ["2.1 C"], ["analytical use accepted"], ["CE-204-12"], ["separate", "closure separate"], ["11 May 09:22", "2026-05-11 at 09:22"]],
-        ),
-        (
-            "x04.014009-lineage",
-            "Subject 014-009 visit-window lineage",
-            [10, 13, 22, 27, 28, 39, 44, 47],
-            "Subject 014-009 attends W2 on day 18 outside the listed window, remains pending with PI review unchecked, is signed as a minor deviation rather than a missed visit, then the calculation and active deviation link are verified before Q-86 closes and DEV-014-08 closes with the minor class retained.",
-            [["014-009"], ["day 18"], ["pending"], ["DEV-014-08 reviewed"], ["unchecked"], ["minor deviation"], ["missed visit"], ["deviation link active"], ["Q-86"], ["closed"], ["minor retained"]],
-        ),
-        (
-            "x05.014011-lineage",
-            "Subject 014-011 chemistry and safety lineage",
-            [4, 6, 15, 22, 26, 35, 39, 47],
-            "Subject 014-011 progresses from requested repeat chemistry and ongoing AE-014-04 to final amended creatinine 1.47 mg/dL; PI review posts, Q-88 closes on 2026-05-09 at 09:02, and DEV-014-09 closes with its major classification retained.",
-            [["014-011"], ["repeat"], ["AE-014-04"], ["ongoing"], ["1.47 mg/dL", "1.47"], ["PI review posted"], ["Q-88"], ["09 May 09:02"], ["DEV-014-09"], ["major retained"]],
-        ),
-        (
-            "x06.014016-lineage",
-            "Subject 014-016 safety, dosing, and masking lineage",
-            [2, 6, 10, 21, 22, 25, 28, 30, 40, 41, 44, 46, 47, 48],
-            "Subject 014-016 has ongoing related hypoglycemia followed by a safety call and checked dose withheld; masking review remains initially unchecked, restricted pharmacy access shows no treatment-code display, an unsigned assessment is rejected, final MA-016 finds no masking impact, and Q-93 closes while coaching remains an archive follow-up.",
-            [["014-016"], ["hypoglycemia"], ["dose withheld"], ["DEV-014-11"], ["unchecked"], ["no treatment code", "treatment code displayed is unchecked"], ["rejected unsigned", "rejected; signature absent"], ["no masking impact"], ["Q-93"], ["closed"], ["coaching"]],
-        ),
-        (
-            "x07.014014-lineage",
-            "Subject 014-014 ePRO lineage",
-            [2, 3, 6, 7, 18, 26, 35, 36, 39, 47],
-            "Subject 014-014 progresses from incomplete ePRO setup and an open device issue to checked competency attached to Q-91; 02-03 May remain missing with backfill disabled, prospective use resumes, and Q-91 closes while missing days remain retained.",
-            [["014-014"], ["ePRO"], ["incomplete"], ["Q-91"], ["competency"], ["02 May"], ["03 May"], ["backfill"], ["disabled"], ["prospective"], ["Q-91"], ["closed"], ["missing days retained"]],
-        ),
-        (
-            "x08.capa-lineage",
-            "Draft-to-final CAPA obligation lineage",
-            [19, 25, 28, 32, 41, 44, 45, 48],
-            "CAPA item C-02 changes from draft due 28 May to final RX2-441 certificate due 2026-05-12 at 17:00; A-202 is assigned but incomplete at issuance, the certificate is verified at 16:42 and the action completes, while sponsor-return delivery confirmation remains a separate archive hold.",
-            [["C-02"], ["28 May"], ["RX2-441", "RX-2"], ["12 May 17:00"], ["A-202"], ["assigned"], ["complete is unchecked", "not complete"], ["16:42"], ["complete"], ["delivery confirmation"]],
-        ),
-        (
-            "x09.w14-lineage",
-            "Subject 014-012 consent and diary-waiver lineage",
-            [8, 29, 33, 40, 42, 43, 47, 48],
-            "Subject 014-012 retains main ICF v6.0 while W-14 authorizes only TD-HI-204 revision 1 diary support; proxy entry is not authorized, the subject enters seven diary items, and the returned booklet remains active under the waiver until its 2026-05-31 expiry or certified Hindi ePRO release.",
-            [["014-012"], ["main ICF"], ["v6.0"], ["W-14"], ["TD-HI-204"], ["revision 1"], ["proxy entry"], ["unchecked", "not authorized"], ["subject"], ["seven"], ["returned booklet"], ["31 May", "2026-05-31"]],
-        ),
-        (
-            "x10.k146-lineage",
-            "K-204-146 return and action lineage",
-            [3, 14, 19, 25, 28, 37, 41, 44, 45, 47, 48],
-            "K-204-146 begins as subject 014-003's dispensed kit with return outstanding, becomes draft and final contact-action C-03/A-203, but only two attempts are documented by 13 May 13:00; A-203 remains open and the archive requires a third attempt plus accountability annotation.",
-            [["K-204-146"], ["014-003"], ["return outstanding"], ["C-03"], ["A-203"], ["two"], ["13 May 13:00"], ["open"], ["third attempt"], ["accountability annotation"]],
-        ),
-    ]
-    lineage_reference_parts = []
-    for _, label, _, expectation, evidence in join_specs:
-        rendered_groups = "; ".join(" / ".join(str(item) for item in group) for group in evidence)
-        lineage_reference_parts.append(f"### {label}\n\n{expectation}\n\nRequired source anchors: {rendered_groups}.")
-    case.gold_parts.append(f"## {lineage_gold}\n\n" + "\n\n".join(lineage_reference_parts) + "\n")
-
-    for region_id, label, pages, expectation, evidence in join_specs:
-        anchors = []
-        for page in pages:
-            if page in INTENDED_NATIVE_ONLY_PAGES:
-                layer = "native_text"
-            elif page in INTENDED_FULL_PAGE_SCAN_PAGES:
-                layer = "raster"
-            else:
-                layer = "mixed"
-            anchors.append(_source_anchor(case, page, layer))
-        evidence_policy = None
-        if region_id == "x01.ecg-lineage":
-            evidence_policy = {
-                "type": "ordered_tokens",
-                "tokens": [
-                    ["014-003"],
-                    ["Partial; source correction"],
-                    ["Q-77"],
-                    ["Draft says Yes"],
-                    ["ECG performed - Yes (original)"],
-                    ["crossed out"],
-                    ["ECG performed - No (corrected)"],
-                    ["checked"],
-                    ["site response accepted"],
-                    ["signed DCF controls"],
-                    ["16 d 20 h", "16 days 20 hours"],
-                    ["Accepted / not closed"],
-                    ["Production field updated"],
-                    ["2026-05-10", "10 May 2026"],
-                    ["10:41"],
-                    ["Closed"],
-                ],
-            }
-        case.add_region(
-            region_id,
-            label,
-            "structure",
-            [
-                leaf(
-                    f"{region_id}.binding",
-                    expectation,
-                    harm=2,
-                    claim_type="cross_page_join",
-                    evidence=None if evidence_policy else _complete_evidence(expectation, evidence),
-                    evidence_policy=evidence_policy,
-                )
-            ],
-            pages=pages,
-            budget=2,
-            modality="mixed",
-            primary_axis="long_context_coherence",
-            secondary_axes=["cross_page_join", "source_precedence"],
-            text_only_recoverable=False,
-            gold_section=lineage_gold,
-            source_anchors=anchors,
-        )
 
     if set(INTENDED_PAGE_MODALITY) != set(range(1, 49)):
         raise ValueError("Intended page modality map must cover pages 1 through 48 exactly")

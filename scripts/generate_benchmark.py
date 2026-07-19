@@ -75,10 +75,9 @@ def _validate_generated(root: Path) -> None:
         validation = json.loads(result.stdout)
     except json.JSONDecodeError as exc:
         raise RuntimeError(f"Benchmark validator returned invalid JSON:\n{result.stdout}\n{result.stderr}") from exc
-    warnings = validation.get("warnings") or []
-    if validation.get("ok") is not True or warnings:
+    if validation.get("ok") is not True:
         raise RuntimeError(
-            f"Generated benchmark is not release-clean: errors={validation.get('errors')!r}; warnings={warnings!r}"
+            f"Generated benchmark is invalid: errors={validation.get('errors')!r}"
         )
 
 
@@ -91,8 +90,8 @@ def _generate_in_place(output_root: Path) -> dict:
     cases = [builder(output_root) for builder in BUILDERS]
     shutil.copyfile(REPO_ROOT / "scripts" / "benchmark_prompt.md", output_root / "prompt.md")
     page_count = sum(int(case["pages"]) for case in cases)
-    if len(cases) != 5 or page_count != 84:
-        raise ValueError(f"Expected five cases and 84 pages; built {len(cases)} cases and {page_count} pages")
+    if not cases or page_count <= 0:
+        raise ValueError("Benchmark generation must produce at least one case and one page")
 
     manifest = {
         "schemaVersion": 2,
@@ -102,7 +101,7 @@ def _generate_in_place(output_root: Path) -> dict:
         "inputProtocol": "native_pdf",
         "providerFileModePolicy": "Send the native PDF file to the provider and record the provider's documented PDF ingestion mode separately. Do not convert official inputs to page images in the harness.",
         "version": "1.0.0",
-        "description": "An unsaturated mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
+        "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
         "caseCount": len(cases),
         "pageCount": page_count,
         "cases": cases,

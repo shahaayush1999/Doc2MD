@@ -95,7 +95,7 @@ Raster finance stamp: Jonah Mercer; 09 Jul 2026 16:42 MST; ceiling $28,070; cont
 | OPEN - EXCLUDE | Affected inventory stays out of the authorized quantity | Eligible inventory may proceed |
 | WATCH | Monitor and update the stated evidence channel | Continue unless a final condition fails |
 
-Email acknowledgment is context only unless the relevant row cites it as accepted evidence. The signed page 5 authorization controls GO/HOLD state; the finance validation controls cost only.
+Email acknowledgment is context only unless the relevant row cites it as accepted evidence. The signed page 5 authorization controls GO/HOLD state; the page 3 finance validation controls cost only.
 
 ## 5. Final implementation authorization
 

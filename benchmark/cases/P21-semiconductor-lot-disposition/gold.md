@@ -22,7 +22,7 @@ TIN_GATE_31 controls the actual lot run; TIN_GATE_30 is a stale alarm-printout h
 
 ## Wafer-map review
 
-Wafer 03 C3 cells: B4, C4, B5. Wafer 05 S2 cells: E2, F2, E3. Wafer 07 M1 cells: D5, D6, E5. Wafer 09 P4 cell: F3. Wafer 12 E1 cells: A6, B6. Wafer 02 E0 reference cell: A1.
+Wafer 03 shows a three-cell C3 cluster at B4, C4, and B5. Wafer 05's S2 coordinate set is E2, F2, and E3. Wafer 07 shows an adjacent M1 cluster at D5, D6, and E5. Wafer 09 marks only F3 as P4. Wafer 12 marks the A6 and B6 edge cells as E1. Wafer 02 marks only A1 as the gray E0 reference cell.
 
 | Code | Class | Map color | Disposition gate |
 | --- | --- | --- | --- |
@@ -109,7 +109,7 @@ The scanned HTOL load ticket binds REL-22-A / wafer 09 to chamber H-17 and tray 
 
 ## Defect-image verification worksheet
 
-The scanned IQC-071 worksheet covers lot Q8R7-22 and image set IMG-223/224/226/227. Wafer-map comparison and neighboring-die review are checked. Independent morphology confirmation is unchecked. Preliminary all-wafer COA release is unchecked. Reticle excursion review is disabled as not applicable to the PVD-origin event. IMG-224's initial count of one is struck and corrected to two reportable objects; the worksheet defers morphology to the controlled image archive. R. Kim signed 2026-06-11 09:42 and A. Roy reviewed at 11:06.
+The scanned IQC-071 worksheet covers lot Q8R7-22 and image set IMG-223/224/226/227. Wafer-map comparison and neighboring-die review are checked. Independent morphology confirmation is unchecked. Preliminary all-wafer COA release is unchecked. Reticle excursion review is disabled as not applicable to the PVD-origin event. IMG-224's initial count of one is struck. Its corrected count is two reportable objects with the instruction `see controlled image archive`; the correction basis says the second object was resolved at archive magnification. R. Kim signed 2026-06-11 09:42 and A. Roy reviewed at 11:06.
 
 | Archive object | Custodian | Checksum state | Packet role |
 | --- | --- | --- | --- |

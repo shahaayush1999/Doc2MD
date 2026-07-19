@@ -97,8 +97,8 @@ def build(output_root):
         family="semiconductor manufacturing quality",
         tags=["native-pdf", "wafer-maps", "metrology", "spc", "sem-images", "mrb", "source-precedence"],
         page_count=9,
-        purpose="Test wafer-coordinate bindings, process-source conflicts, metrology and SPC state, real SEM-like image regions, MRB decisions, and shipment authority.",
-        source_modality="mixed manufacturing file with native records, two full-page scanned reviews, SEM imagery, and scanned inspection forms",
+        purpose="Test wafer-coordinate bindings, process-source conflicts, metrology and SPC state, realistic but synthetic SEM-style image regions, MRB decisions, and shipment authority.",
+        source_modality="mixed manufacturing file with native records, two full-page scanned reviews, synthetic SEM-style imagery, and scanned inspection forms",
         document_ref="FAB 8 · LOT Q8R7-22 · MRB-26-071",
         metadata_date="D:20260707164500-07'00'",
     )
@@ -178,10 +178,17 @@ def build(output_root):
         ["E0", "Edge mark", "Gray", "Reference only"],
     ]
     draw_table(c, 42, 180, [70, 140, 90, 200], [legend_headers, *legend_rows], font_size=6.8, zebra=True)
-    case.add_gold("Wafer-map review", "Wafer 03 C3 cells: B4, C4, B5. Wafer 05 S2 cells: E2, F2, E3. Wafer 07 M1 cells: D5, D6, E5. Wafer 09 P4 cell: F3. Wafer 12 E1 cells: A6, B6. Wafer 02 E0 reference cell: A1.\n\n" + markdown_table(legend_headers, legend_rows))
+    case.add_gold("Wafer-map review", "Wafer 03 shows a three-cell C3 cluster at B4, C4, and B5. Wafer 05's S2 coordinate set is E2, F2, and E3. Wafer 07 shows an adjacent M1 cluster at D5, D6, and E5. Wafer 09 marks only F3 as P4. Wafer 12 marks the A6 and B6 edge cells as E1. Wafer 02 marks only A1 as the gray E0 reference cell.\n\n" + markdown_table(legend_headers, legend_rows))
     map_leaves = [
-        leaf("p02.map.w03.pattern", "Wafer 03 marks a three-cell C3 cluster at B4, C4, and B5.", evidence=[["Wafer"], ["03", "3"], ["marks"], ["three-cell", "three cell", "3-cell"], ["C3"], ["B4"], ["C4"], ["B5"]]),
-        leaf("p02.map.w05.pattern", "Wafer 05 marks an S2 path at E2, F2, and E3.", evidence=[["Wafer"], ["05", "5"], ["marks"], ["S2"], ["path"], ["E2"], ["F2"], ["E3"]]),
+        leaf("p02.map.w03.pattern", "Wafer 03 shows a three-cell C3 cluster at B4, C4, and B5.", evidence=[["Wafer"], ["03", "3"], ["shows", "marks", "contains"], ["three-cell", "three cell", "3-cell"], ["C3"], ["B4"], ["C4"], ["B5"]]),
+        leaf(
+            "p02.map.w05.pattern",
+            "Wafer 05's S2 coordinate set is E2, F2, and E3.",
+            evidence_policy={
+                "type": "lexical",
+                "allOf": [["Wafer 05", "WAFER 05", "W05"], ["S2"], ["E2"], ["F2"], ["E3"]],
+            },
+        ),
         leaf(
             "p02.map.w07.pattern",
             "Wafer 07 marks an adjacent M1 cluster at D5, D6, and E5.",
@@ -191,11 +198,11 @@ def build(output_root):
                 "tokens": [["Wafer 07", "WAFER 07", "W07"], ["M1"], ["D5"], ["D6"], ["E5"]],
             },
         ),
-        leaf("p02.map.w09.pattern", "Wafer 09 marks only F3 as P4.", evidence=[["Wafer"], ["09", "9"], ["marks"], ["only", "solely"], ["F3"], ["P4"]]),
-        leaf("p02.map.w12.pattern", "Wafer 12 marks the A6 and B6 edge cells as E1.", harm=2, evidence=[["Wafer"], ["12"], ["marks"], ["A6"], ["B6"], ["edge cells", "edge"], ["E1"]]),
-        leaf("p02.map.w02.reference", "Wafer 02 marks only A1 as the gray E0 reference cell.", evidence=[["Wafer"], ["02", "2"], ["marks"], ["only", "solely"], ["A1"], ["gray", "grey"], ["E0"], ["reference"]]),
+        leaf("p02.map.w09.pattern", "Wafer 09 marks only F3 as P4.", evidence=[["Wafer"], ["09", "9"], ["marks", "shows", "contains"], ["only", "solely"], ["F3"], ["P4"]]),
+        leaf("p02.map.w12.pattern", "Wafer 12 marks the A6 and B6 edge cells as E1.", harm=2, evidence=[["Wafer"], ["12"], ["marks", "shows", "contains"], ["A6"], ["B6"], ["edge cells", "edge"], ["E1"]]),
+        leaf("p02.map.w02.reference", "Wafer 02 marks only A1 as the gray E0 reference cell.", evidence=[["Wafer"], ["02", "2"], ["marks", "shows", "contains"], ["only", "solely"], ["A1"], ["gray", "grey"], ["E0"], ["reference"]]),
     ]
-    case.add_region("p02.maps", "Wafer-map contact sheet", "diagram", map_leaves, budget=2, closed_world=True)
+    case.add_region("p02.maps", "Wafer-map contact sheet", "diagram", map_leaves, budget=2)
     legend_bindings = {(code, field) for code in {"M1", "S2", "E1", "P4", "C3"} for field in {"Class", "Disposition gate"}}
     case.add_region("p02.legend", "Wafer-map legend", "table", table_leaves("p02.legend", legend_headers, legend_rows, scored_bindings=legend_bindings), closed_world=True)
 
@@ -427,7 +434,7 @@ def build(output_root):
     interlock_bindings = {(row[0], field) for row in interlock_rows for field in {"Observed", "State", "Disposition"}}
     case.add_region("p04.interlocks", "PVD alarm interlocks", "table", table_leaves("p04.interlocks", interlock_headers, interlock_rows, consequential={("Clamp purge", "State"), ("Monitor residual", "State")}, scored_bindings=interlock_bindings), budget=1, closed_world=True)
 
-    # Page 5 - actual SEM-like image regions.
+    # Page 5 - realistic synthetic SEM-style image regions.
     c = case.new_page(
         "SEM review contact sheet",
         subtitle="Representative reviewed frames; 20 um scale bars",
@@ -455,25 +462,36 @@ def build(output_root):
         "image",
         [
             visual_leaf(
-                "p05.img224.finding",
-                "IMG-224 visibly shows two bright irregular metal flakes, one smaller and adjacent.",
-                [["IMG-224"], ["two", "2"], ["bright", "high contrast"], ["irregular", "flake"], ["adjacent", "beside"]],
+                "p05.img224.count",
+                "IMG-224 visibly shows two distinct objects: a larger flake and a smaller adjacent fragment.",
+                [["IMG-224"], ["two", "2", "with a smaller adjacent", "and a smaller adjacent"]],
                 harm=2,
+            ),
+            visual_leaf(
+                "p05.img224.morphology",
+                "IMG-224 shows a bright irregular flake with a smaller adjacent object.",
+                [["IMG-224"], ["bright", "white", "high contrast", "high-contrast", "light-colored", "light colored"], ["irregular", "jagged", "flake"], ["smaller", "small"], ["adjacent", "beside"]],
             ),
         ],
         budget=2,
     )
-    case.add_region("p05.image.223", "IMG-223 scratch SEM", "image", [visual_leaf("p05.img223.finding", "IMG-223 visibly shows a long diagonal scratch crossing the field.", [["IMG-223"], ["diagonal"], ["scratch"], ["crossing", "across"]], harm=2)], budget=2)
+    case.add_region(
+        "p05.image.223",
+        "IMG-223 scratch SEM",
+        "image",
+        [
+            visual_leaf("p05.img223.identity", "IMG-223 visibly shows a linear scratch or groove.", [["IMG-223"], ["scratch", "groove", "linear defect"]], harm=2),
+            visual_leaf("p05.img223.geometry", "The IMG-223 feature is long and diagonal across the field.", [["IMG-223"], ["long", "extended"], ["diagonal"], ["crossing", "across"]]),
+        ],
+        budget=2,
+    )
     case.add_region(
         "p05.image.227",
         "IMG-227 edge-bead SEM",
         "image",
         [
-            visual_leaf(
-                "p05.img227.finding",
-                "IMG-227 visibly shows a bright edge-residue band with bead deposits.",
-                [["IMG-227"], ["edge", "boundary"], ["band", "line"], ["bead", "deposits", "droplets", "bumps"]],
-            ),
+            visual_leaf("p05.img227.band", "IMG-227 visibly shows a bright edge-residue band or ridge.", [["IMG-227"], ["edge", "boundary"], ["band", "ridge", "line"]]),
+            visual_leaf("p05.img227.deposits", "IMG-227 shows bead or droplet deposits associated with the edge band.", [["IMG-227"], ["bead", "deposits", "droplets", "bumps"], ["band", "ridge", "edge"]]),
         ],
         budget=2,
     )
@@ -482,7 +500,12 @@ def build(output_root):
         "IMG-226 clean SEM",
         "image",
         [
-            visual_leaf("p05.img226.finding", "IMG-226 is visually clean apart from low-level background specks.", [["IMG-226"], ["clean"], ["background", "field"], ["specks", "noise"]]),
+            visual_leaf(
+                "p05.img226.clean",
+                "IMG-226 presents a visually clean field lacking a prominent discrete defect.",
+                [["IMG-226"], ["clean field", "visually clean", "without a prominent", "no prominent", "without large-scale"]],
+            ),
+            visual_leaf("p05.img226.background", "IMG-226 contains fine low-level background specks or noise.", [["IMG-226"], ["background", "field", "surface"], ["specks", "noise", "grain", "granular"]]),
         ],
         budget=2,
     )
@@ -625,7 +648,7 @@ def build(output_root):
     draw_table(c, 42, 210, [120, 130, 105, 165], [routing_headers, *routing_rows], font_size=6.8, zebra=True)
     case.add_gold(
         "Defect-image verification worksheet",
-        "The scanned IQC-071 worksheet covers lot Q8R7-22 and image set IMG-223/224/226/227. Wafer-map comparison and neighboring-die review are checked. Independent morphology confirmation is unchecked. Preliminary all-wafer COA release is unchecked. Reticle excursion review is disabled as not applicable to the PVD-origin event. IMG-224's initial count of one is struck and corrected to two reportable objects; the worksheet defers morphology to the controlled image archive. R. Kim signed 2026-06-11 09:42 and A. Roy reviewed at 11:06.\n\n"
+        "The scanned IQC-071 worksheet covers lot Q8R7-22 and image set IMG-223/224/226/227. Wafer-map comparison and neighboring-die review are checked. Independent morphology confirmation is unchecked. Preliminary all-wafer COA release is unchecked. Reticle excursion review is disabled as not applicable to the PVD-origin event. IMG-224's initial count of one is struck. Its corrected count is two reportable objects with the instruction `see controlled image archive`; the correction basis says the second object was resolved at archive magnification. R. Kim signed 2026-06-11 09:42 and A. Roy reviewed at 11:06.\n\n"
         + markdown_table(routing_headers, routing_rows),
     )
     case.add_region(
@@ -639,8 +662,27 @@ def build(output_root):
             form_state_leaf("p08.check.coa", "Preliminary all-wafer COA release is unchecked.", ["Preliminary all-wafer COA released", "all-wafer COA release"], "unchecked", harm=2),
             form_state_leaf("p08.check.reticle", "Reticle excursion review is disabled.", ["Reticle excursion review", "reticle review"], "disabled"),
             leaf("p08.check.reticle.reason", "Reticle excursion review is marked not applicable to the PVD-origin event.", evidence=["Reticle excursion review", ["not applicable", "N/A"], "PVD"]),
-            leaf("p08.correction.old", "The initial IMG-224 count of one object is struck out."),
-            leaf("p08.correction.final", "IMG-224 is corrected to two reportable objects and the worksheet defers morphology to the controlled image archive.", harm=2),
+            leaf(
+                "p08.correction.old",
+                "The initial IMG-224 count of one object is struck out.",
+                evidence_policy={"type": "lexical", "allOf": [["IMG-224", "IMG 224"], ["initial"], ["one", "1"], ["struck", "crossed out"]]},
+            ),
+            leaf(
+                "p08.correction.final",
+                "The corrected IMG-224 count is two reportable objects.",
+                harm=2,
+                evidence_policy={"type": "lexical", "allOf": [["IMG-224", "IMG 224"], ["corrected count", "corrected"], ["two", "2"], ["reportable objects", "reportable"]]},
+            ),
+            leaf(
+                "p08.correction.archive",
+                "The corrected-count line says to see the controlled image archive.",
+                evidence_policy={"type": "lexical", "allOf": [["corrected count", "corrected"], ["see controlled image archive", "controlled image archive"]]},
+            ),
+            leaf(
+                "p08.correction.basis",
+                "The correction basis says the second object was resolved at archive magnification.",
+                evidence_policy={"type": "lexical", "allOf": [["correction basis"], ["second object"], ["resolved"], ["archive magnification"]]},
+            ),
             leaf("p08.signoff", "R. Kim signed at 2026-06-11 09:42 and A. Roy reviewed at 11:06."),
         ],
         budget=2,
@@ -692,56 +734,12 @@ def build(output_root):
         "Shipment-authority statement",
         "text",
         [
-            source_precedence_leaf(
-                "p09.authority.control",
-                "The preliminary all-wafer COA is void; only the signed values above authorize shipment.",
-                [["preliminary", "draft"], ["COA"], ["void"], ["only"], ["signed values"], ["above"], ["authorize", "authority"]],
-            )
+            source_precedence_leaf("p09.authority.void", "The preliminary all-wafer COA is void.", [["preliminary", "draft"], ["COA"], ["void"]], harm=2),
+            source_precedence_leaf("p09.authority.signed", "Only the signed values authorize shipment.", [["only", "solely"], ["signed"], ["values"], ["authorize", "authority", "control"], ["shipment", "ship"]], harm=2),
         ],
         budget=2,
         primary_axis="source_precedence",
     )
-    case.add_region(
-        "p09.cross-source",
-        "Cross-source wafer disposition joins",
-        "mixed",
-        [
-            leaf(
-                "p09.join.w07",
-                "Wafer 07's M1 map cluster and IMG-224 and IMG-225 evidence are explicitly linked to the scrap decision.",
-                harm=2,
-                claim_type="cross_page_join",
-                evidence=[["Wafer 07", "W07"], ["M1"], ["IMG-224"], ["IMG-225"], ["scrap"]],
-            ),
-            leaf(
-                "p09.join.w09",
-                "Wafer 09's visually clean IMG-226 does not negate the P4 parametric condition or the REL-22-A shipment gate.",
-                harm=2,
-                claim_type="cross_page_join",
-                evidence=[["Wafer 09", "W09"], ["IMG-226"], ["clean"], ["does not", "not"], ["P4"], ["REL-22-A"]],
-            ),
-            leaf(
-                "p09.join.w12",
-                "The W12 E1 edge map and IMG-227 evidence are explicitly linked to engineering hold.",
-                claim_type="cross_page_join",
-                evidence=[["W12"], ["E1"], ["IMG-227"], ["hold"]],
-            ),
-        ],
-        budget=3,
-        modality="mixed",
-        primary_axis="mixed_modality_fusion",
-        secondary_axes=["cross_page_join", "summarization_coverage"],
-        text_only_recoverable=False,
-        gold_section="Certificate holdback and final audit trail",
-        source_anchors=[
-            {"page": 2, "layer": "raster", "sectionPath": [case.title, "Wafer-map review"]},
-            {"page": 5, "layer": "raster", "sectionPath": [case.title, "SEM review contact sheet"]},
-            {"page": 6, "layer": "native_text", "sectionPath": [case.title, "Defect classification and MRB decisions"]},
-            {"page": 7, "layer": "mixed", "sectionPath": [case.title, "Reliability conditions and shipping allocation"]},
-            {"page": 9, "layer": "native_text", "sectionPath": [case.title, "Certificate holdback and final audit trail"]},
-        ],
-    )
-
     record = case.finish()
     rasterize_pdf_pages(
         case.pdf_path,

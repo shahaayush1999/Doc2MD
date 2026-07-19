@@ -181,17 +181,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p01.control.site",
-          "p01.control.window",
-          "p01.control.cut",
-          "p01.control.pharmacy-key",
-          "p01.control.query-key"
-        ]
-      }
+      ]
     },
     {
       "id": "p02.roster",
@@ -385,18 +375,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p02.roster.014003",
-          "p02.roster.014004",
-          "p02.roster.014007",
-          "p02.roster.014009",
-          "p02.roster.014011",
-          "p02.roster.014016"
-        ]
-      }
+      ]
     },
     {
       "id": "p03.visits-a",
@@ -602,17 +581,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p03.visits-a.014003-w2",
-          "p03.visits-a.014007-v1",
-          "p03.visits-a.014009-v1",
-          "p03.visits-a.014011-v1",
-          "p03.visits-a.continuation"
-        ]
-      }
+      ]
     },
     {
       "id": "p04.accession",
@@ -857,17 +826,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p04.accession.sh20445",
-          "p04.accession.sh20446",
-          "p04.accession.sh20452",
-          "p04.accession.sh20453",
-          "p04.accession.custody-limit"
-        ]
-      }
+      ]
     },
     {
       "id": "p05.receipt",
@@ -1313,17 +1272,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p06.ae.ae01",
-          "p06.ae.ae03",
-          "p06.ae.ae04",
-          "p06.ae.ae05",
-          "p06.ae.ae08"
-        ]
-      }
+      ]
     },
     {
       "id": "p07.queries",
@@ -1567,18 +1516,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p07.queries.q77",
-          "p07.queries.q81",
-          "p07.queries.q86",
-          "p07.queries.q88",
-          "p07.queries.q93",
-          "p07.queries.provisional"
-        ]
-      }
+      ]
     },
     {
       "id": "p08.consent",
@@ -2212,18 +2150,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p10.visits-b.continuation",
-          "p10.visits-b.014003-w4",
-          "p10.visits-b.014007-w2",
-          "p10.visits-b.014009",
-          "p10.visits-b.014011",
-          "p10.visits-b.classification"
-        ]
-      }
+      ]
     },
     {
       "id": "p11.ecg",
@@ -3033,18 +2960,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p13.deviations.dev03",
-          "p13.deviations.dev07",
-          "p13.deviations.dev08",
-          "p13.deviations.dev09",
-          "p13.deviations.dev11",
-          "p13.deviations.dates"
-        ]
-      }
+      ]
     },
     {
       "id": "p14.inventory",
@@ -3230,17 +3146,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p14.inventory.k146",
-          "p14.inventory.k153-count",
-          "p14.inventory.k153-source",
-          "p14.inventory.k160",
-          "p14.inventory.k190"
-        ]
-      }
+      ]
     },
     {
       "id": "p15.lab-report",
@@ -3611,16 +3517,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p15.custody.collection",
-          "p15.custody.receipt",
-          "p15.custody.versions",
-          "p15.custody.ack"
-        ]
-      }
+      ]
     },
     {
       "id": "p16.q77",
@@ -4409,16 +4306,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p18.epro-events.failure",
-          "p18.epro-events.replacement",
-          "p18.epro-events.sync",
-          "p18.epro-events.q91"
-        ]
-      }
+      ]
     },
     {
       "id": "p19.capa-draft",
@@ -4656,18 +4544,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p19.capa-draft.status",
-          "p19.capa-draft.c02",
-          "p19.capa-draft.c05",
-          "p19.capa-draft.c07",
-          "p19.capa-draft.c08",
-          "p19.capa-draft.precedence"
-        ]
-      }
+      ]
     },
     {
       "id": "p20.receipt",
@@ -5206,16 +5083,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p21.observations.baseline",
-          "p21.observations.rescue",
-          "p21.observations.recovery",
-          "p21.observations.call"
-        ]
-      }
+      ]
     },
     {
       "id": "p22.pi-review",
@@ -5573,15 +5441,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p23.med-codes.amlodipine",
-          "p23.med-codes.losartan",
-          "p23.med-codes.study"
-        ]
-      }
+      ]
     },
     {
       "id": "p24.import",
@@ -6618,19 +6478,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p26.aging.q77",
-          "p26.aging.ce",
-          "p26.aging.k146",
-          "p26.aging.q86",
-          "p26.aging.q93",
-          "p26.aging.capa",
-          "p26.aging.states"
-        ]
-      }
+      ]
     },
     {
       "id": "p27.window-form",
@@ -6957,15 +6805,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p27.window-audit.sign",
-          "p27.window-audit.upload",
-          "p27.window-audit.state"
-        ]
-      }
+      ]
     },
     {
       "id": "p28.actions",
@@ -7533,16 +7373,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "p28.routing.mk",
-          "p28.routing.rp",
-          "p28.routing.nr",
-          "p28.routing.ls"
-        ]
-      }
+      ]
     },
     {
       "id": "p29.eligibility",
@@ -8083,6 +7914,12 @@
                 "no",
                 "without",
                 "absent"
+              ],
+              [
+                "interaction"
+              ],
+              [
+                "pharmacist"
               ],
               [
                 "disclosed"
@@ -9131,6 +8968,15 @@
             "allOf": [
               [
                 "optional"
+              ],
+              [
+                "optional-component"
+              ],
+              [
+                "acknowledgment"
+              ],
+              [
+                "safety-letter"
               ]
             ]
           }
@@ -11129,6 +10975,12 @@
                 "accept"
               ],
               [
+                "production-field"
+              ],
+              [
+                "administrative"
+              ],
+              [
                 "transitions"
               ]
             ]
@@ -11153,6 +11005,15 @@
                 "open",
                 "unresolved",
                 "outstanding"
+              ],
+              [
+                "provisional"
+              ],
+              [
+                "duration"
+              ],
+              [
+                "closure"
               ]
             ]
           }
@@ -11929,7 +11790,13 @@
                 "draft"
               ],
               [
+                "satisfying"
+              ],
+              [
                 "requested"
+              ],
+              [
+                "evidence"
               ]
             ]
           }
@@ -11953,6 +11820,9 @@
               ],
               [
                 "verified"
+              ],
+              [
+                "evidence"
               ]
             ]
           }
@@ -11980,6 +11850,12 @@
               ],
               [
                 "unsigned"
+              ],
+              [
+                "submission"
+              ],
+              [
+                "without"
               ]
             ]
           }
@@ -12957,9 +12833,6 @@
               ],
               [
                 "evidence"
-              ],
-              [
-                "itself"
               ]
             ]
           }
@@ -12983,7 +12856,13 @@
                 "absent"
               ],
               [
+                "preventive-action"
+              ],
+              [
                 "effectiveness"
+              ],
+              [
+                "assignment"
               ]
             ]
           }
@@ -13336,9 +13215,6 @@
             "type": "lexical",
             "allOf": [
               [
-                "verification"
-              ],
-              [
                 "completion"
               ],
               [
@@ -13384,6 +13260,9 @@
             "allOf": [
               [
                 "pre-existing"
+              ],
+              [
+                "timestamp"
               ],
               [
                 "evidence"
@@ -13998,6 +13877,9 @@
               ],
               [
                 "administrative"
+              ],
+              [
+                "separate"
               ]
             ]
           }
@@ -14018,7 +13900,13 @@
                 "absent"
               ],
               [
+                "deviation"
+              ],
+              [
                 "retained"
+              ],
+              [
+                "closing"
               ]
             ]
           }
@@ -14039,6 +13927,12 @@
               ],
               [
                 "closure"
+              ],
+              [
+                "means"
+              ],
+              [
+                "dash"
               ]
             ]
           }
@@ -14445,6 +14339,9 @@
                 "clinical"
               ],
               [
+                "coexist"
+              ],
+              [
                 "subtab"
               ]
             ]
@@ -14477,6 +14374,15 @@
                 "closed",
                 "resolved",
                 "completed"
+              ],
+              [
+                "inference"
+              ],
+              [
+                "reopened"
+              ],
+              [
+                "no-hold"
               ]
             ]
           }

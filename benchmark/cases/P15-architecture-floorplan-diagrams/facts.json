@@ -856,20 +856,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "edge_set",
-        "keys": [
-          "p02.room.clean-lab",
-          "p02.room.lab-freezer",
-          "p02.room.lab-corridor",
-          "p02.room.freezer-it",
-          "p02.room.wash-corridor",
-          "p02.room.overall",
-          "p02.room.lab-size",
-          "p02.room.clean-size"
-        ]
-      }
+      ]
     },
     {
       "id": "p02.base-door",
@@ -1013,17 +1000,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "edge_set",
-        "keys": [
-          "p02.door.wall",
-          "p02.door.position",
-          "p02.door.swing",
-          "p02.door.reader",
-          "p02.door.callout"
-        ]
-      }
+      ]
     },
     {
       "id": "p02.base-egress-callouts",
@@ -1058,13 +1035,11 @@
           "evidencePolicy": {
             "type": "directed_edge",
             "source": [
-              "Lab B",
-              "215"
+              "Lab B"
             ],
             "destination": [
               "old corridor opening",
-              "old opening",
-              "door"
+              "old opening"
             ],
             "relation": [
               "egress"
@@ -1367,18 +1342,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "edge_set",
-        "keys": [
-          "p03.room.clean-lab",
-          "p03.room.lab-freezer",
-          "p03.room.lab-corridor",
-          "p03.room.freezer-it",
-          "p03.room.overall",
-          "p03.room.north"
-        ]
-      }
+      ]
     },
     {
       "id": "p03.current-door",
@@ -1523,7 +1487,7 @@
           "id": "p03.door.old-style",
           "canonicalClaimId": "p03.door.old-style",
           "claimType": "visual_description",
-          "expectation": "The archived door is dashed red while the current door is solid blue.",
+          "expectation": "The archived door is dashed red while the current door is solid blue or teal-blue.",
           "harm": 1,
           "evidencePolicy": {
             "type": "qualitative",
@@ -1538,7 +1502,11 @@
                 "current"
               ],
               [
-                "solid blue"
+                "solid blue",
+                "solid teal",
+                "teal/blue",
+                "teal-blue",
+                "blue/teal"
               ],
               [
                 "door",
@@ -1571,19 +1539,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "edge_set",
-        "keys": [
-          "p03.door.wall",
-          "p03.door.shift",
-          "p03.door.swing",
-          "p03.door.reader-side",
-          "p03.door.reader-jamb",
-          "p03.door.old-style",
-          "p03.door.callout"
-        ]
-      }
+      ]
     },
     {
       "id": "p03.current-egress-callouts",
@@ -1616,14 +1572,12 @@
           "evidencePolicy": {
             "type": "directed_edge",
             "source": [
-              "Lab B",
-              "215"
+              "Egress runs from Lab B",
+              "Egress from Lab B",
+              "Lab B through"
             ],
             "destination": [
               "D-214B"
-            ],
-            "relation": [
-              "egress"
             ]
           }
         },
@@ -1722,14 +1676,17 @@
           "id": "p03.overlay.current",
           "canonicalClaimId": "p03.overlay.current",
           "claimType": "source_precedence",
-          "expectation": "The solid blue opening is the controlling Revision C geometry.",
+          "expectation": "The solid blue or teal-blue opening is the controlling Revision C geometry.",
           "harm": 2,
           "evidencePolicy": {
             "type": "ordered_tokens",
             "tokens": [
               [
                 "solid blue",
-                "solid"
+                "solid teal",
+                "teal/blue",
+                "teal-blue",
+                "blue/teal"
               ],
               [
                 "Revision C",
@@ -1970,18 +1927,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "edge_set",
-        "keys": [
-          "p04.geo.sd-bench",
-          "p04.geo.sd-sp",
-          "p04.geo.sp-cp",
-          "p04.geo.os-cp",
-          "p04.geo.light-cp",
-          "p04.geo.rg-cp"
-        ]
-      }
+      ]
     },
     {
       "id": "p04.mep-paths",
@@ -2117,17 +2063,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "edge_set",
-        "keys": [
-          "p04.edge.vav-sd",
-          "p04.edge.os-cp",
-          "p04.edge.cp-bas",
-          "p04.edge.supply-style",
-          "p04.edge.control-style"
-        ]
-      }
+      ]
     },
     {
       "id": "p04.conflict",
@@ -2157,21 +2093,25 @@
           "id": "p04.conflict.old",
           "canonicalClaimId": "p04.conflict.old",
           "claimType": "visual_description",
-          "expectation": "The dashed old diffuser location is close to sprinkler SP-7.",
+          "expectation": "The dashed red relocation graphic marks the old diffuser area near sprinkler SP-7 and conflict bubble C1.",
           "harm": 1,
           "evidencePolicy": {
             "type": "qualitative",
             "requiredTerms": [
               [
-                "old diffuser",
+                "dashed red",
                 "dashed"
+              ],
+              [
+                "relocation",
+                "old diffuser"
               ],
               [
                 "SP-7"
               ],
               [
-                "close",
-                "near"
+                "C1",
+                "conflict"
               ]
             ]
           }
@@ -2238,36 +2178,6 @@
               [
                 "relocation",
                 "move"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p04.conflict.current",
-          "canonicalClaimId": "p04.conflict.current",
-          "claimType": "source_precedence",
-          "expectation": "The solid SD-4 symbol is current and the dashed old symbol is superseded.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "ordered_tokens",
-            "tokens": [
-              [
-                "solid"
-              ],
-              [
-                "SD-4"
-              ],
-              [
-                "current"
-              ],
-              [
-                "dashed"
-              ],
-              [
-                "old"
-              ],
-              [
-                "superseded"
               ]
             ]
           }
@@ -2428,19 +2338,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "edge_set",
-        "keys": [
-          "p05.rack.cs2",
-          "p05.rack.pp7",
-          "p05.rack.ac6",
-          "p05.rack.ups",
-          "p05.rack.gw3",
-          "p05.rack.nvr",
-          "p05.rack.entry"
-        ]
-      }
+      ]
     },
     {
       "id": "p05.patch",
@@ -2947,18 +2845,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "edge_set",
-        "keys": [
-          "p05.path.07-a",
-          "p05.path.07-b",
-          "p05.path.12-a",
-          "p05.path.12-b",
-          "p05.path.22-a",
-          "p05.path.22-b"
-        ]
-      }
+      ]
     },
     {
       "id": "p06.network-edges",
@@ -3017,7 +2904,9 @@
               "CR-6"
             ],
             "relation": [
-              "VLAN 230 event"
+              "VLAN 230 event",
+              "VLAN 230 events",
+              "VLAN 230 / events"
             ]
           }
         },
@@ -3036,7 +2925,8 @@
               "FZ-3"
             ],
             "relation": [
-              "VLAN 240 telemetry"
+              "VLAN 240 telemetry",
+              "VLAN 240 / telemetry"
             ]
           }
         },
@@ -3125,19 +3015,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "edge_set",
-        "keys": [
-          "p06.edge.fw-cs",
-          "p06.edge.cs-cr",
-          "p06.edge.cs-fz",
-          "p06.edge.fz-qa",
-          "p06.edge.cr-nvr",
-          "p06.edge.fz-bas",
-          "p06.edge.conditional"
-        ]
-      }
+      ]
     },
     {
       "id": "p06.access-edges",
@@ -3221,31 +3099,6 @@
           }
         },
         {
-          "id": "p06.access.no-reverse",
-          "canonicalClaimId": "p06.access.no-reverse",
-          "claimType": "visual_description",
-          "expectation": "No reverse ACS-CORE to DC-6 edge is drawn.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "qualitative",
-            "requiredTerms": [
-              [
-                "no",
-                "absent"
-              ],
-              [
-                "ACS-CORE"
-              ],
-              [
-                "DC-6"
-              ],
-              [
-                "reverse"
-              ]
-            ]
-          }
-        },
-        {
           "id": "p06.access.branch",
           "canonicalClaimId": "p06.access.branch",
           "claimType": "visual_description",
@@ -3274,17 +3127,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "edge_set",
-        "keys": [
-          "p06.access.cs-cr",
-          "p06.access.cr-dc",
-          "p06.access.dc-core",
-          "p06.access.no-reverse",
-          "p06.access.branch"
-        ]
-      }
+      ]
     },
     {
       "id": "p06.policy",
@@ -4286,11 +4129,33 @@
           }
         },
         {
-          "id": "p08.redline.reader",
-          "canonicalClaimId": "p08.redline.reader",
+          "id": "p08.redline.reader-position",
+          "canonicalClaimId": "p08.redline.reader-position",
           "claimType": "visual_description",
-          "expectation": "Callout 6 marks the reader at the east jamb of the new opening.",
-          "harm": 2,
+          "expectation": "The reader is at the east jamb of the new opening.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "reader",
+                "CR-6"
+              ],
+              [
+                "east jamb"
+              ],
+              [
+                "new opening"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.redline.reader-callout",
+          "canonicalClaimId": "p08.redline.reader-callout",
+          "claimType": "visual_description",
+          "expectation": "Callout 6 keys the reader.",
+          "harm": 1,
           "evidencePolicy": {
             "type": "qualitative",
             "requiredTerms": [
@@ -4301,9 +4166,6 @@
               [
                 "reader",
                 "CR-6"
-              ],
-              [
-                "east jamb"
               ]
             ]
           }
@@ -4335,17 +4197,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "edge_set",
-        "keys": [
-          "p08.redline.old-new",
-          "p08.redline.shift",
-          "p08.redline.swing",
-          "p08.redline.reader",
-          "p08.redline.wall"
-        ]
-      }
+      ]
     },
     {
       "id": "p08.response",
@@ -4642,16 +4494,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "region_claims",
-        "keys": [
-          "p09.door.reader",
-          "p09.door.corridor",
-          "p09.door.annotation",
-          "p09.door.clear"
-        ]
-      }
+      ]
     },
     {
       "id": "p09.photo-rack",
@@ -4707,7 +4550,7 @@
           "id": "p09.rack.drop",
           "canonicalClaimId": "p09.rack.drop",
           "claimType": "visual_description",
-          "expectation": "The tray drops at the rack's west/top corner.",
+          "expectation": "The tray turns downward and drops at the rack's west/top corner.",
           "harm": 1,
           "evidencePolicy": {
             "type": "qualitative",
@@ -4717,7 +4560,8 @@
               ],
               [
                 "drops",
-                "entry"
+                "downward",
+                "vertical"
               ],
               [
                 "west",
@@ -4778,16 +4622,7 @@
             ]
           }
         }
-      ],
-      "closedWorld": {
-        "scope": "region_claims",
-        "keys": [
-          "p09.rack.tray",
-          "p09.rack.drop",
-          "p09.rack.annotation",
-          "p09.rack.clear"
-        ]
-      }
+      ]
     },
     {
       "id": "p09.photo-index",

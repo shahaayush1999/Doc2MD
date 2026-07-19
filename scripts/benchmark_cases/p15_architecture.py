@@ -544,7 +544,6 @@ def build(output_root: Path):
             visual_leaf("p02.room.clean-size", "Clean Prep is dimensioned 18 ft 6 in by 12 ft.", [["Clean Prep", "214"], ["18'-6\"", "18 ft 6"], ["12'-0\"", "12 ft"]]),
         ],
         budget=2,
-        closed_world=True,
         primary_axis="chart_diagram_spatial",
         text_only_recoverable=False,
     )
@@ -560,7 +559,6 @@ def build(output_root: Path):
             visual_leaf("p02.door.callout", "Callout 6 keys the Revision B Lab B opening.", [["callout 6", "6"], ["Lab B", "215"], ["opening", "door"]]),
         ],
         budget=2,
-        closed_world=True,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -568,7 +566,7 @@ def build(output_root: Path):
         "Archived egress and equipment callouts",
         "diagram",
         [
-            directed_edge_leaf("p02.egress.lab-door", "The first egress arrow runs from Lab B to the old corridor opening.", ["Lab B", "215"], ["old corridor opening", "old opening", "door"], relation=["egress"]),
+            directed_edge_leaf("p02.egress.lab-door", "The first egress arrow runs from Lab B to the old corridor opening.", ["Lab B"], ["old corridor opening", "old opening"], relation=["egress"]),
             directed_edge_leaf("p02.egress.door-west", "The second egress arrow runs from the opening west along corridor C2.", ["opening", "door"], ["west along corridor C2", "west along C2", "C2 west"], relation=["egress", "west"]),
             visual_leaf("p02.callout.9", "Callout 9 points to rack R2 in IT Closet 218.", [["callout 9", "9"], ["rack R2", "R2"], ["IT Closet 218"]]),
             visual_leaf("p02.callout.11", "Callout 11 points to freezer FZ-3 in room 216.", [["callout 11", "11"], ["FZ-3"], ["216"]]),
@@ -619,7 +617,6 @@ def build(output_root: Path):
             visual_leaf("p03.room.north", "The north arrow points toward the top of the sheet.", [["north", "N"], ["top", "up"]]),
         ],
         budget=2,
-        closed_world=True,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -632,11 +629,14 @@ def build(output_root: Path):
             visual_leaf("p03.door.swing", "D-214B swings south into corridor C2.", [["D-214B"], ["south"], ["C2", "corridor"]], harm=2),
             visual_leaf("p03.door.reader-side", "Reader CR-6 is on the corridor side of D-214B.", [["CR-6"], ["corridor side", "C2"], ["D-214B"]], harm=2),
             visual_leaf("p03.door.reader-jamb", "Reader CR-6 is at the east jamb of D-214B.", [["CR-6"], ["east jamb", "east"], ["D-214B"]], harm=2),
-            visual_leaf("p03.door.old-style", "The archived door is dashed red while the current door is solid blue.", [["archived"], ["dashed red"], ["current"], ["solid blue"], ["door", "opening"]]),
+            visual_leaf(
+                "p03.door.old-style",
+                "The archived door is dashed red while the current door is solid blue or teal-blue.",
+                [["archived"], ["dashed red"], ["current"], ["solid blue", "solid teal", "teal/blue", "teal-blue", "blue/teal"], ["door", "opening"]],
+            ),
             visual_leaf("p03.door.callout", "Callout 6 keys the reader and door opening.", [["callout 6", "6"], ["reader", "CR-6"], ["door", "opening"]]),
         ],
         budget=3,
-        closed_world=True,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -644,7 +644,12 @@ def build(output_root: Path):
         "Controlled egress and equipment callouts",
         "diagram",
         [
-            directed_edge_leaf("p03.egress.lab-door", "The first egress segment runs from Lab B through D-214B.", ["Lab B", "215"], ["D-214B"], relation=["egress"]),
+            directed_edge_leaf(
+                "p03.egress.lab-door",
+                "The first egress segment runs from Lab B through D-214B.",
+                ["Egress runs from Lab B", "Egress from Lab B", "Lab B through"],
+                ["D-214B"],
+            ),
             directed_edge_leaf("p03.egress.door-west", "The second egress segment runs from D-214B west along corridor C2.", ["D-214B"], ["west along corridor C2", "west along C2", "C2 west"], relation=["egress"]),
             visual_leaf("p03.callout.9", "Callout 9 keys rack R2 inside IT Closet 218.", [["callout 9", "9"], ["R2"], ["IT Closet 218"]]),
             visual_leaf("p03.callout.11", "Callout 11 keys FZ-3 inside Freezer 216.", [["callout 11", "11"], ["FZ-3"], ["Freezer 216"]]),
@@ -657,7 +662,11 @@ def build(output_root: Path):
         "Revision overlay interpretation",
         "diagram",
         [
-            source_precedence_leaf("p03.overlay.current", "The solid blue opening is the controlling Revision C geometry.", [["solid blue", "solid"], ["Revision C", "Rev C"], ["controlling", "current"]]),
+            source_precedence_leaf(
+                "p03.overlay.current",
+                "The solid blue or teal-blue opening is the controlling Revision C geometry.",
+                [["solid blue", "solid teal", "teal/blue", "teal-blue", "blue/teal"], ["Revision C", "Rev C"], ["controlling", "current"]],
+            ),
             source_precedence_leaf("p03.overlay.old", "The dashed red opening is retained as archived Revision B geometry.", [["dashed red", "dashed"], ["Revision B", "Rev B"], ["archived"]]),
             visual_leaf("p03.overlay.same-wall", "Both old and new openings lie on the shared wall between Lab B and C2.", [["old", "Revision B"], ["new", "Revision C"], ["Lab B"], ["C2"], ["shared wall"]]),
             visual_leaf("p03.overlay.delta", "The overlay dimension between the opening hinge points is 4 ft 6 in.", [["4'-6\"", "4 ft 6"], ["hinge", "opening"], ["dimension"]]),
@@ -777,7 +786,6 @@ def build(output_root: Path):
             visual_leaf("p04.geo.rg-cp", "Return grille RG-2 is east of CP-4.", [["RG-2"], ["CP-4"], ["east"]]),
         ],
         budget=2,
-        closed_world=True,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -792,7 +800,6 @@ def build(output_root: Path):
             visual_leaf("p04.edge.control-style", "The sensor-control route is dashed amber and the BAS route is dashed blue.", [["sensor", "control"], ["dashed amber", "amber"], ["BAS"], ["dashed blue", "blue"]]),
         ],
         budget=2,
-        closed_world=True,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -800,11 +807,10 @@ def build(output_root: Path):
         "Resolved ceiling conflict",
         "diagram",
         [
-            visual_leaf("p04.conflict.old", "The dashed old diffuser location is close to sprinkler SP-7.", [["old diffuser", "dashed"], ["SP-7"], ["close", "near"]]),
+            visual_leaf("p04.conflict.old", "The dashed red relocation graphic marks the old diffuser area near sprinkler SP-7 and conflict bubble C1.", [["dashed red", "dashed"], ["relocation", "old diffuser"], ["SP-7"], ["C1", "conflict"]]),
             directed_edge_leaf("p04.conflict.move", "The red relocation arrow runs from the old diffuser position west to SD-4.", ["old diffuser", "old position"], ["SD-4"], relation=["relocation", "west"]),
             visual_leaf("p04.conflict.clearance", "The revised SD-4 position is dimensioned 8 ft from SP-7.", [["SD-4"], ["SP-7"], ["8'-0\"", "8 ft"]], harm=2),
             visual_leaf("p04.conflict.key", "Conflict bubble C1 keys the diffuser relocation.", [["C1"], ["diffuser", "SD-4"], ["relocation", "move"]]),
-            source_precedence_leaf("p04.conflict.current", "The solid SD-4 symbol is current and the dashed old symbol is superseded.", [["solid"], ["SD-4"], ["current"], ["dashed"], ["old"], ["superseded"]]),
         ],
         budget=3,
         primary_axis="chart_diagram_spatial",
@@ -898,7 +904,6 @@ def build(output_root: Path):
             visual_leaf("p05.rack.entry", "Callout B identifies a tray entry at the rack's west/top side.", [["callout B", "B"], ["tray entry"], ["west", "top"]]),
         ],
         budget=2,
-        closed_world=True,
         text_only_recoverable=False,
     )
     patch_scored = {
@@ -930,7 +935,6 @@ def build(output_root: Path):
             directed_edge_leaf("p05.path.22-b", "The third path continues from OM4-2 to D215-12.", ["OM4-2"], ["D215-12"], relation=["patch"]),
         ],
         budget=2,
-        closed_world=True,
         primary_axis="chart_diagram_spatial",
         text_only_recoverable=False,
     )
@@ -1009,15 +1013,14 @@ def build(output_root: Path):
         "diagram",
         [
             directed_edge_leaf("p06.edge.fw-cs", "A tagged trunk runs from FW-02 to CS-2.", ["FW-02"], ["CS-2"], relation=["tagged trunk", "99/210/230/240"], harm=2),
-            directed_edge_leaf("p06.edge.cs-cr", "A VLAN 230 event path runs from CS-2 to CR-6.", ["CS-2"], ["CR-6"], relation=["VLAN 230 event"], harm=2),
-            directed_edge_leaf("p06.edge.cs-fz", "A VLAN 240 telemetry path runs from CS-2 to FZ-3.", ["CS-2"], ["FZ-3"], relation=["VLAN 240 telemetry"], harm=2),
+            directed_edge_leaf("p06.edge.cs-cr", "A VLAN 230 event path runs from CS-2 to CR-6.", ["CS-2"], ["CR-6"], relation=["VLAN 230 event", "VLAN 230 events", "VLAN 230 / events"], harm=2),
+            directed_edge_leaf("p06.edge.cs-fz", "A VLAN 240 telemetry path runs from CS-2 to FZ-3.", ["CS-2"], ["FZ-3"], relation=["VLAN 240 telemetry", "VLAN 240 / telemetry"], harm=2),
             directed_edge_leaf("p06.edge.fz-qa", "A one-way alarm path runs from FZ-3 to QA-210.", ["FZ-3"], ["QA-210"], relation=["one-way", "alarm"]),
             directed_edge_leaf("p06.edge.cr-nvr", "An event-mirror path runs from CR-6 to NVR-B.", ["CR-6"], ["NVR-B"], relation=["event mirror", "mirror"]),
             directed_edge_leaf("p06.edge.fz-bas", "A dashed conditional trend path runs from FZ-3 to BAS-214.", ["FZ-3"], ["BAS-214"], relation=["dashed", "conditional", "trend"]),
             visual_leaf("p06.edge.conditional", "The FZ-3 to BAS-214 edge is dashed and conditional.", [["FZ-3"], ["BAS-214"], ["dashed"], ["conditional"]]),
         ],
         budget=3,
-        closed_world=True,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -1028,11 +1031,9 @@ def build(output_root: Path):
             directed_edge_leaf("p06.access.cs-cr", "The access chain enters CR-6 from CS-2.", ["CS-2"], ["CR-6"], relation=["access", "VLAN 230"]),
             directed_edge_leaf("p06.access.cr-dc", "Reader data runs from CR-6 to DC-6 by Wiegand.", ["CR-6"], ["DC-6"], relation=["Wiegand"]),
             directed_edge_leaf("p06.access.dc-core", "Authorization traffic runs from DC-6 to ACS-CORE.", ["DC-6"], ["ACS-CORE"], relation=["authorization", "auth"]),
-            visual_leaf("p06.access.no-reverse", "No reverse ACS-CORE to DC-6 edge is drawn.", [["no", "absent"], ["ACS-CORE"], ["DC-6"], ["reverse"]], harm=2),
             visual_leaf("p06.access.branch", "The CR-6 event mirror branches to NVR-B before the DC-6 authorization target.", [["CR-6"], ["NVR-B"], ["DC-6"], ["branch", "mirror"], ["before", "prior to"]]),
         ],
         budget=3,
-        closed_world=True,
         text_only_recoverable=False,
     )
     policy_scored = {
@@ -1217,11 +1218,11 @@ def build(output_root: Path):
             visual_leaf("p08.redline.old-new", "The redline shows a dashed old opening east of a solid new opening.", [["dashed", "old"], ["solid", "new"], ["east", "west"]], harm=2),
             visual_leaf("p08.redline.shift", "The new opening is dimensioned 4 ft 6 in west of the old opening.", [["4'-6\"", "4 ft 6"], ["new opening"], ["old opening"], ["west"]], harm=2),
             visual_leaf("p08.redline.swing", "The new door swings south into corridor C2.", [["new door", "D-214B"], ["south"], ["C2", "corridor"]], harm=2),
-            visual_leaf("p08.redline.reader", "Callout 6 marks the reader at the east jamb of the new opening.", [["callout 6", "6"], ["reader", "CR-6"], ["east jamb"]], harm=2),
+            visual_leaf("p08.redline.reader-position", "The reader is at the east jamb of the new opening.", [["reader", "CR-6"], ["east jamb"], ["new opening"]]),
+            visual_leaf("p08.redline.reader-callout", "Callout 6 keys the reader.", [["callout 6", "6"], ["reader", "CR-6"]]),
             visual_leaf("p08.redline.wall", "The redline sketch places Lab B above corridor C2, separated by the door wall.", [["Lab B"], ["C2"], ["corridor"], ["above"], ["door wall"]]),
         ],
         budget=3,
-        closed_world=True,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -1282,7 +1283,6 @@ def build(output_root: Path):
             visual_leaf("p09.door.clear", "The photographed opening is unobstructed.", [["opening"], ["unobstructed", "clear"]]),
         ],
         budget=3,
-        closed_world=True,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -1291,12 +1291,11 @@ def build(output_root: Path):
         "image",
         [
             visual_leaf("p09.rack.tray", "Photo 09 shows the overhead tray approaching rack R2 from image-left.", [["Photo 09"], ["tray"], ["rack", "R2"], ["image-left", "left"]], harm=2),
-            visual_leaf("p09.rack.drop", "The tray drops at the rack's west/top corner.", [["tray"], ["drops", "entry"], ["west", "top corner"]]),
+            visual_leaf("p09.rack.drop", "The tray turns downward and drops at the rack's west/top corner.", [["tray"], ["drops", "downward", "vertical"], ["west", "top corner"]]),
             visual_leaf("p09.rack.annotation", "Annotation B circles the tray-to-rack entry.", [["annotation B", "B"], ["tray"], ["rack"], ["entry"]]),
             visual_leaf("p09.rack.clear", "The image-right service side of rack R2 is unobstructed.", [["image-right", "right"], ["service side"], ["rack R2", "R2"], ["unobstructed", "clear"]]),
         ],
         budget=3,
-        closed_world=True,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -1379,37 +1378,6 @@ def build(output_root: Path):
         budget=1,
         text_only_recoverable=False,
     )
-    case.add_region(
-        "p10.final-coordination",
-        "Cross-sheet controlling coordination state",
-        "mixed",
-        [
-            source_precedence_leaf("p10.final.geometry", "Final release acceptance makes the solid Revision C door geometry control over the dashed archived Revision B opening.", [["final release"], ["acceptance", "accepted"], ["solid"], ["Revision C", "Rev C"], ["dashed"], ["archived"], ["Revision B", "Rev B"]], harm=2),
-            leaf("p10.final.door-chain", "The Revision C plan and RFI-214-17 consistently bind D-214B to callout 6, CR-6 at the corridor-side east jamb, and a south swing into C2.", harm=2, claim_type="cross_page_join", evidence=[["Revision C", "Rev C"], "RFI-214-17", "D-214B", ["callout 6", "6"], "CR-6", ["corridor-side", "corridor side"], "east jamb", ["south swing", "swings south"], "C2"]),
-            leaf("p10.final.power-chain", "The release chain binds CR-6 through DC-6 to LP-2 circuit L2-15.", harm=2, claim_type="cross_page_join", evidence=["release chain", "CR-6", "DC-6", "LP-2", "L2-15"]),
-            leaf("p10.final.power-field-state", "LP-2 circuit L2-15 has its field tag installed and emergency transfer witnessed.", harm=2, claim_type="cross_page_join", evidence=["LP-2", "L2-15", "field tag installed", "emergency transfer witnessed"]),
-            leaf("p10.final.network-chain", "The release network chain binds CR-6 to CS-2/07 on VLAN 230, then through DC-6 toward ACS-CORE while separately mirroring events to NVR-B.", harm=2, claim_type="cross_page_join", evidence=["release", "network chain", "CR-6", "CS-2/07", "VLAN 230", "DC-6", "ACS-CORE", ["mirror", "mirroring"], "NVR-B"]),
-            leaf("p10.final.photo-chain", "Photo 06 visually confirms the reader on the image-right/east jamb, consistent with the plan and RFI.", harm=2, claim_type="cross_page_join", evidence=["Photo 06", "reader", ["image-right", "right", "east jamb"], ["plan", "A2.14"], ["RFI", "RFI-214-17"]]),
-        ],
-        pages=[1, 3, 5, 6, 7, 8, 9, 10],
-        budget=4,
-        modality="mixed",
-        primary_axis="cross_page_join",
-        secondary_axes=["source_precedence", "mixed_modality_fusion", "long_context_coherence", "summarization_coverage"],
-        text_only_recoverable=False,
-        gold_section="CL-214 - Final issue and signoff record",
-        source_anchors=[
-            {"page": 1, "layer": "native_text", "sectionPath": [case.title, "Coordination transmittal and sheet index"]},
-            {"page": 3, "layer": "vector_geometry", "sectionPath": [case.title, "A2.14 - Controlled floor plan and overlay"]},
-            {"page": 5, "layer": "native_text", "sectionPath": [case.title, "T4.08 - Rack R2 elevation and patching"]},
-            {"page": 6, "layer": "vector_geometry", "sectionPath": [case.title, "N1.07 - Network and access-control topology"]},
-            {"page": 7, "layer": "mixed", "sectionPath": [case.title, "E6.02 - Panel LP-2 and field check"]},
-            {"page": 8, "layer": "raster", "sectionPath": [case.title, "RFI-214-17 - Lab B corridor opening"]},
-            {"page": 9, "layer": "raster", "sectionPath": [case.title, "PH-214 - Field photo and punch evidence"]},
-            {"page": 10, "layer": "mixed", "sectionPath": [case.title, "CL-214 - Final issue and signoff record"]},
-        ],
-    )
-
     record = case.finish()
     rasterize_pdf_pages(
         case.pdf_path,

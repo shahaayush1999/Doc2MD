@@ -175,7 +175,7 @@ Instrument panel evidence:
 | C | Original internal standard | IR-18A | accepted result |
 | D | Reinjection internal standard | IR-19B | correction scope |
 
-Exact RT, area, ratio, and internal-standard recovery values come from the instrument annotations; the routing register supplies panel identity only.
+The literal Use limitation values are `accepted result` for Panel C and `correction scope` for Panel D. Exact RT, area, ratio, and internal-standard recovery values come from the instrument annotations; the routing register supplies panel identity only.
 
 ## Page 9 - Blank, recovery, and continuing-calibration review
 

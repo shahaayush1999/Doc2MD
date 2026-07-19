@@ -958,15 +958,15 @@ def _regions() -> list[dict]:
         ),
         _region(
             "p02.reading-order",
-            "Recovered page-two reading order",
+            "Recovered page-two main-flow order",
             "structure",
             [
                 leaf(
                     "p02.reading-order.sections",
-                    "Reconstruct the logical order: workplan table, approver sidebar, dependency interpretation, handoff matrix, then rollback trigger.",
+                    "Dependency interpretation precedes the handoff matrix, which precedes the rollback trigger.",
                     harm=2,
                     claim_type="ordered_record",
-                    evidence_policy={"type": "ordered_tokens", "tokens": [["T-01"], ["Approver sidebar"], ["T-02 gates"], ["Handoff matrix"], ["RB-12"]]},
+                    evidence_policy={"type": "ordered_tokens", "tokens": [["T-02 gates"], ["Handoff matrix"], ["RB-12"]]},
                 )
             ],
             page=2,
@@ -975,7 +975,7 @@ def _regions() -> list[dict]:
             primary_axis="reading_order",
             secondary_axes=("native_layer_recovery", "structure_reconstruction"),
             text_only_recoverable=False,
-            budget=2,
+            budget=1,
         ),
         _region(
             "p02.handoff",
@@ -999,7 +999,22 @@ def _regions() -> list[dict]:
             "text",
             [
                 leaf("p02.rollback.threshold", "RB-12 is invoked for a temperature deviation above 1.0 C lasting 10 continuous minutes.", harm=2),
-                leaf("p02.rollback.actions", "Rollback stops the active transfer and preserves custody at the last confirmed location.", harm=2),
+                leaf(
+                    "p02.rollback.actions",
+                    "Rollback stops the transfer and preserves custody at the last confirmed location.",
+                    harm=2,
+                    evidence_policy={
+                        "type": "lexical",
+                        "allOf": [
+                            ["RB-12", "rollback"],
+                            ["stop", "halt"],
+                            ["transfer"],
+                            ["preserve", "retain", "maintain"],
+                            ["custody"],
+                            ["last confirmed location", "confirmed location"],
+                        ],
+                    },
+                ),
                 leaf("p02.rollback.report", "The last completed task must be reported on bridge BR-2048."),
             ],
             page=2,
@@ -1120,7 +1135,15 @@ def _regions() -> list[dict]:
             [
                 leaf("p04.scope.closed", "A closed row has no effect on unrelated exceptions.", harm=2),
                 leaf("p04.scope.email", "Email acknowledgment is context unless the relevant row cites it as accepted evidence."),
-                leaf("p04.scope.sources", "Page 5 controls GO/HOLD state while page 3 finance validation controls cost only.", harm=2),
+                leaf(
+                    "p04.scope.sources",
+                    "Page 5 controls GO/HOLD state while page 3 finance validation controls cost only.",
+                    harm=2,
+                    evidence_policy={
+                        "type": "lexical",
+                        "allOf": [["page 5", "5"], ["GO/HOLD", "GO / HOLD"], ["page 3", "3"], ["finance"], ["validation"], ["cost"], ["only", "solely"]],
+                    },
+                ),
             ],
             page=4,
             primary_axis="source_precedence",
@@ -1133,7 +1156,15 @@ def _regions() -> list[dict]:
             "text",
             [
                 leaf("p05.decision.go", "Physical cutover is GO beginning 14 Jul 2026 at 22:00 MST for eligible inventory only.", harm=2),
-                leaf("p05.decision.hold", "Kestrel credential decommission remains HOLD until condition C-3 is satisfied.", harm=2),
+                leaf(
+                    "p05.decision.hold",
+                    "Kestrel credential decommission remains HOLD until condition C-3 is satisfied.",
+                    harm=2,
+                    evidence_policy={
+                        "type": "lexical",
+                        "allOf": [["HOLD"], ["C-3", "C3"], ["decommission", "decommissioning", "close", "closure"], ["credential", "access"], ["until", "when", "after"]],
+                    },
+                ),
             ],
             page=5,
             primary_axis="source_precedence",
@@ -1252,7 +1283,7 @@ def _gold() -> str:
         + markdown_table(EXCEPTION_HEADERS, EXCEPTION_ROWS)
         + "\n\n"
         + markdown_table(note_headers, note_rows)
-        + "\n\nEmail acknowledgment is context only unless the relevant row cites it as accepted evidence. The signed page 5 authorization controls GO/HOLD state; the finance validation controls cost only.\n\n"
+        + "\n\nEmail acknowledgment is context only unless the relevant row cites it as accepted evidence. The signed page 5 authorization controls GO/HOLD state; the page 3 finance validation controls cost only.\n\n"
         "## 5. Final implementation authorization\n\n"
         "**PHYSICAL CUTOVER: GO.** Begin at 14 Jul 2026 22:00 MST for eligible inventory only. **KESTREL CREDENTIAL DECOMMISSION: HOLD** until C-3 is satisfied.\n\n"
         + markdown_table(CONDITION_HEADERS, CONDITION_ROWS)

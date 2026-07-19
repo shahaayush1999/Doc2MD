@@ -1,11 +1,17 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
+import { execFile as execFileCallback } from "node:child_process";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
+import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { generateText } from "ai";
+import { auditBenchmark } from "./audit.js";
 import {
+  evaluatorConfiguration,
   evaluatePrediction,
+  judgeInBatches,
+  type FactFile,
   type ManifestCase,
 } from "./evaluator.js";
 import { loadBenchmarkManifest } from "./manifest.js";
@@ -18,6 +24,8 @@ const promptPath = "benchmark/prompt.md";
 const maxOutputTokens = 60_000;
 const inferenceProtocolVersion = 2;
 const ingestionMode = "native PDF attached directly to the provider model API";
+const reportedInvalidInferenceSlots = new Set<string>();
+const execFile = promisify(execFileCallback);
 
 function sha256(value: string | Uint8Array) {
   return createHash("sha256").update(value).digest("hex");
@@ -38,6 +46,24 @@ async function readJsonOrNull(filePath: string) {
 async function writeJson(filePath: string, value: unknown) {
   await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, JSON.stringify(value, null, 2) + "\n", "utf8");
+}
+
+async function validateCorpusArtifacts() {
+  let stdout: string;
+  try {
+    ({ stdout } = await execFile(
+      "uv",
+      ["run", "python", "scripts/validate_benchmark.py", "--benchmark", "benchmark", "--json"],
+      { cwd: process.cwd(), maxBuffer: 16 * 1024 * 1024, encoding: "utf8" },
+    ));
+  } catch (error: any) {
+    throw new Error(`Benchmark artifact validation failed before inference: ${error?.stderr || errorMessage(error)}`);
+  }
+  const validation = JSON.parse(stdout) as { ok?: boolean; errors?: string[]; warnings?: string[] };
+  if (validation.ok !== true) {
+    throw new Error(`Benchmark artifact validation failed before inference: ${(validation.errors ?? []).join("; ")}`);
+  }
+  for (const warning of validation.warnings ?? []) console.warn(`benchmark warning: ${warning}`);
 }
 
 function cacheDirectory(modelId: string, caseId: string, draw = 1) {
@@ -77,26 +103,39 @@ async function packageLockHash() {
   return sha256(await readFile("package-lock.json"));
 }
 
-async function legacyInferenceKey(spec: ModelSpec, testCase: ManifestCase, prompt: string) {
-  const pdf = await readFile(testCase.pdf);
-  const outputLimit = spec.maxOutputTokens ?? maxOutputTokens;
-  return sha256(
-    JSON.stringify({
-      pdf: sha256(pdf),
-      prompt: sha256(prompt),
-      model: {
-        id: spec.id,
-        modelName: spec.modelName,
-        provider: spec.provider,
-        reasoning: spec.reasoning ?? null,
-        location: spec.location ?? null,
-      },
-      maxOutputTokens: outputLimit,
-    }),
-  );
+function specField(spec: string, field: string) {
+  const escapedField = field.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = spec.match(new RegExp(`^${escapedField}\\s*:\\s*(.+)$`, "im"));
+  return match?.[1]?.trim().replaceAll("`", "") || null;
+}
+
+async function reportCaseMetadata(cases: Array<ManifestCase & { spec: string }>) {
+  return Promise.all(cases.map(async (testCase) => {
+    const spec = await readFile(testCase.spec, "utf8");
+    return {
+      id: testCase.id,
+      title: testCase.title,
+      family: testCase.family,
+      tags: testCase.tags,
+      pages: testCase.pages ?? 0,
+      purpose: specField(spec, "Purpose") ?? `Test faithful PDF-to-Markdown reconstruction for ${testCase.title}.`,
+      sourceModality: specField(spec, "Source modality") ?? "Native PDF input; see the case tags for its evidence mix.",
+    };
+  }));
 }
 
 async function inferenceKey(spec: ModelSpec, testCase: ManifestCase, prompt: string) {
+  const pdf = await readFile(testCase.pdf);
+  return sha256(JSON.stringify({
+    protocolVersion: inferenceProtocolVersion,
+    ingestionMode,
+    pdf: sha256(pdf),
+    prompt: sha256(prompt),
+    model: configuredModel(spec),
+  }));
+}
+
+async function legacyInferenceKey(spec: ModelSpec, testCase: ManifestCase, prompt: string) {
   const pdf = await readFile(testCase.pdf);
   return sha256(JSON.stringify({
     protocolVersion: inferenceProtocolVersion,
@@ -114,32 +153,72 @@ async function scoreKey(testCase: ManifestCase, prediction: string, evaluatorSou
     JSON.stringify({
       prediction: sha256(prediction),
       facts: sha256(await readFile(testCase.facts)),
+      case: { id: testCase.id, title: testCase.title },
       evaluator: evaluatorSourceHash,
     }),
   );
 }
 
+function inferenceTelemetryIssue(prediction: string, inference: any): string | null {
+  const outputTokens = inference?.usage?.outputTokens;
+  const outputBytes = Buffer.byteLength(prediction, "utf8");
+  if (!Number.isSafeInteger(outputTokens) || outputTokens < 0 || (outputBytes > 0 && outputTokens === 0)) {
+    return `invalid reported output token count ${String(outputTokens)}`;
+  }
+  // Provider tokenizers differ, so this is deliberately a very loose integrity
+  // bound rather than a local token estimate. Natural document Markdown in the
+  // cache is normally around 2–5 UTF-8 bytes per token; a sustained ratio over
+  // 16 indicates that the usage record and stored response cannot describe the
+  // same provider call.
+  if (outputBytes >= 4_096 && outputBytes / outputTokens > 16) {
+    return `${outputBytes} output bytes cannot be reconciled with ${outputTokens} reported output tokens`;
+  }
+  return null;
+}
+
 async function loadCachedCase(modelId: string, testCase: ManifestCase, prompt: string, evaluatorSourceHash: string, draw = 1) {
   const directory = cacheDirectory(modelId, testCase.id, draw);
-  const [prediction, inference, evaluation] = await Promise.all([
+  const [prediction, rawInference, evaluation] = await Promise.all([
     readFile(path.join(directory, "prediction.md"), "utf8").catch(() => null),
     readJsonOrNull(path.join(directory, "inference.json")),
     readJsonOrNull(path.join(directory, "score.json")),
   ]);
-  if (!prediction || !inference) return null;
-  const expectedInferenceKey = await inferenceKey(models[modelId]!, testCase, prompt);
-  const isLegacyKey = inference.cacheKey === await legacyInferenceKey(models[modelId]!, testCase, prompt);
-  if (inference.cacheKey !== expectedInferenceKey && !isLegacyKey) return null;
-  const inferenceStat = await stat(path.join(directory, "inference.json"));
+  let inference = rawInference;
+  if (prediction === null || !inference) return null;
+  const telemetryIssue = inferenceTelemetryIssue(prediction, inference);
+  if (telemetryIssue) {
+    const slot = `${modelId}/${testCase.id}/draw-${draw}`;
+    if (!reportedInvalidInferenceSlots.has(slot)) {
+      reportedInvalidInferenceSlots.add(slot);
+      console.warn(`${slot}: ignoring invalid inference cache (${telemetryIssue})`);
+    }
+    return null;
+  }
+  const [expectedInferenceKey, previousInferenceKey] = await Promise.all([
+    inferenceKey(models[modelId]!, testCase, prompt),
+    legacyInferenceKey(models[modelId]!, testCase, prompt),
+  ]);
+  if (inference.cacheKey !== expectedInferenceKey && inference.cacheKey !== previousInferenceKey) return null;
+  if (inference.cacheKey === previousInferenceKey && previousInferenceKey !== expectedInferenceKey) {
+    inference = {
+      ...inference,
+      cacheKey: expectedInferenceKey,
+      cacheKeyMigration: {
+        from: previousInferenceKey,
+        migratedAt: new Date().toISOString(),
+        reason: "Removed unrelated package-lock coupling from inference identity.",
+      },
+    };
+    await writeJson(path.join(directory, "inference.json"), inference);
+  }
   const expectedScoreKey = await scoreKey(testCase, prediction, evaluatorSourceHash);
+  const validEvaluation = evaluation?.valid === true && Number.isFinite(evaluation.score);
   return {
     directory,
     prediction,
     inference,
-    evaluation: evaluation?.cacheKey === expectedScoreKey ? evaluation : null,
+    evaluation: validEvaluation && evaluation.cacheKey === expectedScoreKey ? evaluation : null,
     inferenceKey: expectedInferenceKey,
-    inferenceNeedsUpgrade: isLegacyKey,
-    inferenceFileMtime: inferenceStat.mtime,
     scoreKey: expectedScoreKey,
   };
 }
@@ -148,7 +227,14 @@ function errorMessage(error: unknown) {
   return error instanceof Error ? `${error.name}: ${error.message}` : String(error);
 }
 
-async function runCase(modelId: string, testCase: ManifestCase, prompt: string, evaluatorSourceHash: string, draw: number) {
+async function runCase(
+  modelId: string,
+  testCase: ManifestCase,
+  prompt: string,
+  evaluatorSourceHash: string,
+  expectedEvaluatorModel: string,
+  draw: number,
+) {
   const spec = models[modelId]!;
   const directory = cacheDirectory(modelId, testCase.id, draw);
   await mkdir(directory, { recursive: true });
@@ -158,28 +244,7 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
   let inferenceSpent = 0;
   let evaluatorSpent = 0;
 
-  if (prediction && inference && cached?.inferenceNeedsUpgrade) {
-    const finishedAt = cached.inferenceFileMtime.toISOString();
-    const startedAt = new Date(cached.inferenceFileMtime.getTime() - Math.max(0, inference.elapsedMs ?? 0)).toISOString();
-    inference = {
-      ...inference,
-      configuredModel: configuredModel(spec),
-      ingestionMode,
-      protocolVersion: inferenceProtocolVersion,
-      packageLockHash: await packageLockHash(),
-      pricingVersion: spec.pricingVersion,
-      recordedCostUsd: inference.costUsd ?? null,
-      costUsd: calculateCost(spec, inference.usage),
-      uncachedCostUsd: calculateUncachedCost(spec, inference.usage),
-      startedAt,
-      finishedAt,
-      timestampSource: "cache-file-mtime",
-      cacheKey: cached.inferenceKey,
-    };
-    await writeJson(path.join(directory, "inference.json"), inference);
-  }
-
-  if (!prediction || !inference) {
+  if (prediction === null || !inference) {
     const pdf = await readFile(testCase.pdf);
     const outputLimit = spec.maxOutputTokens ?? maxOutputTokens;
     const startedAt = new Date();
@@ -244,6 +309,17 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
     evaluatorSpent = evaluation.evaluator.costUsd;
     evaluation.cacheKey = await scoreKey(testCase, prediction, evaluatorSourceHash);
     await writeJson(path.join(directory, "score.json"), evaluation);
+    if (!evaluation.valid || !Number.isFinite(evaluation.score)) {
+      throw new Error(
+        `${modelId} draw ${draw} ${testCase.id}: evaluator failed; ${evaluation.evaluator.errors?.join("; ") || "no diagnostic"}`,
+      );
+    }
+  }
+
+  if (evaluation.evaluator.resolved?.modelId !== expectedEvaluatorModel) {
+    throw new Error(
+      `${modelId} draw ${draw} ${testCase.id}: evaluator identity ${evaluation.evaluator.resolved?.modelId ?? "missing"} does not match calibrated ${expectedEvaluatorModel}`,
+    );
   }
 
   const cacheStatus = inferenceSpent === 0 && evaluatorSpent === 0 ? "cached" : inferenceSpent === 0 ? "rescored" : "run";
@@ -257,7 +333,7 @@ async function runCase(modelId: string, testCase: ManifestCase, prompt: string, 
     title: testCase.title,
     score: evaluation.score as number | null,
     inferenceCostUsd: calculateUncachedCost(spec, inference.usage),
-    actualInferenceCostUsd: calculateCost(spec, inference.usage),
+    actualInferenceCostUsd: Number.isFinite(inference.costUsd) ? inference.costUsd : calculateCost(spec, inference.usage),
     evaluatorCostUsd: evaluation.evaluator.costUsd ?? 0,
     incrementalCostUsd: inferenceSpent + evaluatorSpent,
     incrementalInferenceCostUsd: inferenceSpent,
@@ -284,6 +360,347 @@ async function cachedModelIds() {
   return entries.filter((entry) => entry.isDirectory() && models[entry.name]).map((entry) => entry.name);
 }
 
+const semanticControlFacts = {
+  schemaVersion: 3,
+  id: "scorer-semantic-integrity",
+  title: "Scorer semantic integrity control",
+  family: "calibration",
+  tags: ["calibration"],
+  regions: [
+    {
+      id: "semantic-obligations",
+      label: "Semantic status controls",
+      sourceAnchors: [{ page: 1, layer: "native_text", sectionPath: ["Calibration excerpt"] }],
+      goldSection: "Calibration excerpt",
+      kind: "mixed",
+      modality: "native_text",
+      uniqueEvidence: true,
+      primaryAxis: "precise_recall",
+      secondaryAxes: ["image_description"],
+      textOnlyRecoverable: true,
+      budget: 1,
+      leaves: [
+        {
+          id: "control.paraphrase",
+          canonicalClaimId: "control.paraphrase",
+          claimType: "scalar",
+          expectation: "SENSOR-Q's dwell interval is 4.41 minutes.",
+          harm: 1,
+          evidencePolicy: { type: "qualitative", requiredTerms: [["SENSOR-Q"], ["4.41"]] },
+        },
+        {
+          id: "control.contradiction",
+          canonicalClaimId: "control.contradiction",
+          claimType: "scalar",
+          expectation: "At load 10, channel Z response is 0.958.",
+          harm: 2,
+          evidencePolicy: { type: "qualitative", requiredTerms: [["channel Z"], ["10"], ["0.958"]] },
+        },
+        {
+          id: "control.omission",
+          canonicalClaimId: "control.omission",
+          claimType: "ordered_record",
+          expectation: "Shipment 18 uses bin B09.",
+          harm: 1,
+          evidencePolicy: { type: "qualitative", requiredTerms: [["18"], ["B09"]] },
+        },
+        {
+          id: "control.visual-paraphrase",
+          canonicalClaimId: "control.visual-paraphrase",
+          claimType: "visual_description",
+          expectation: "Asset VX-71 contains a smaller bright chip adjacent to a larger irregular chip.",
+          harm: 1,
+          evidencePolicy: { type: "qualitative", requiredTerms: [["smaller"], ["adjacent"], ["irregular"]] },
+        },
+        {
+          id: "control.table-row-fields",
+          canonicalClaimId: "control.table-row-fields",
+          claimType: "scalar",
+          expectation: "Export row R-105 reports <0.50 mg/L with qualifier U.",
+          harm: 1,
+          evidencePolicy: { type: "qualitative", requiredTerms: [["R-105"], ["<0.50 mg/L"], ["U"]] },
+        },
+        {
+          id: "control.unordered-set",
+          canonicalClaimId: "control.unordered-set",
+          claimType: "scalar",
+          expectation: "Grid G5 marks class S2 at E2, F2, and E3.",
+          harm: 1,
+          evidencePolicy: { type: "qualitative", requiredTerms: [["Grid G5"], ["S2"], ["E2"], ["F2"], ["E3"]] },
+        },
+        {
+          id: "control.compound-color",
+          canonicalClaimId: "control.compound-color",
+          claimType: "visual_description",
+          expectation: "The active gate is solid blue or teal-blue.",
+          harm: 1,
+          evidencePolicy: { type: "qualitative", requiredTerms: [["active gate"], ["solid blue", "teal-blue", "teal/blue"]] },
+        },
+        {
+          id: "control.ordered-flow",
+          canonicalClaimId: "control.ordered-flow",
+          claimType: "ordered_record",
+          expectation: "The declared handoff order is Alpha, then Beta, then Gamma.",
+          harm: 1,
+          evidencePolicy: { type: "qualitative", requiredTerms: [["Alpha"], ["Beta"], ["Gamma"]] },
+        },
+        {
+          id: "control.unrelated-order",
+          canonicalClaimId: "control.unrelated-order",
+          claimType: "ordered_record",
+          expectation: "The deployment sequence is Cedar, then Birch, then Maple.",
+          harm: 1,
+          evidencePolicy: { type: "qualitative", requiredTerms: [["Cedar"], ["Birch"], ["Maple"]] },
+        },
+      ],
+    },
+    {
+      id: "closed-form",
+      label: "Closed release checklist",
+      sourceAnchors: [{ page: 1, layer: "native_text", sectionPath: ["Release checklist"] }],
+      goldSection: "Release checklist",
+      kind: "form",
+      modality: "native_text",
+      uniqueEvidence: true,
+      primaryAxis: "form_state",
+      secondaryAxes: [],
+      textOnlyRecoverable: true,
+      budget: 1,
+      closedWorld: { scope: "form_options", keys: ["Release approved"] },
+      leaves: [
+        {
+          id: "control.form",
+          canonicalClaimId: "control.form",
+          claimType: "form_state",
+          expectation: "Release approved is checked.",
+          harm: 1,
+          evidencePolicy: { type: "form_state", label: ["Release approved"], state: "checked" },
+        },
+      ],
+    },
+    {
+      id: "closed-archive",
+      label: "Archive checklist",
+      sourceAnchors: [{ page: 1, layer: "native_text", sectionPath: ["Archive checklist"] }],
+      goldSection: "Archive checklist",
+      kind: "form",
+      modality: "native_text",
+      uniqueEvidence: true,
+      primaryAxis: "form_state",
+      secondaryAxes: [],
+      textOnlyRecoverable: true,
+      budget: 1,
+      closedWorld: { scope: "form_options", keys: ["Audit archived"] },
+      leaves: [
+        {
+          id: "control.archive",
+          canonicalClaimId: "control.archive",
+          claimType: "form_state",
+          expectation: "Audit archived is checked.",
+          harm: 1,
+          evidencePolicy: { type: "form_state", label: ["Audit archived"], state: "checked" },
+        },
+      ],
+    },
+  ],
+} satisfies FactFile;
+
+const semanticControlPrediction = `# Calibration excerpt
+SENSOR-Q dwell time: 4.41 minutes.
+At load 10, channel Z response is 0.658.
+Asset VX-71: a tiny luminous chip lies beside a larger jagged chip.
+Grid G5 marks class S2 at E2, E3, and F2.
+The active gate is solid teal/blue.
+Declared handoff order: Alpha -> Beta -> Gamma.
+Cedar appears in the materials note.
+Birch appears in the risk note.
+Maple appears in the contacts note.
+
+| Export row | Result | Qual. |
+| --- | --- | --- |
+| R-105 | <0.50 mg/L | U |
+
+## Release checklist
+- [x] Release approved
+- [ ] Release approvde
+- [x] Secret bypass enabled
+
+## Archive checklist
+- [x] Audit archived`;
+
+const semanticControlStatuses = {
+  "control.paraphrase": "correct",
+  "control.contradiction": "incorrect",
+  "control.omission": "missing",
+  "control.visual-paraphrase": "correct",
+  "control.table-row-fields": "correct",
+  "control.unordered-set": "correct",
+  "control.compound-color": "correct",
+  "control.ordered-flow": "correct",
+  "control.unrelated-order": "missing",
+  "control.form": "correct",
+  "control.archive": "correct",
+} as const;
+
+async function calibrateSemanticIntegrity(evaluatorSourceHash: string) {
+  const calibrationKey = sha256(JSON.stringify({
+    evaluatorSourceHash,
+    facts: semanticControlFacts,
+    prediction: semanticControlPrediction,
+    expectedStatuses: semanticControlStatuses,
+    expectedUnsupportedKey: "Secret bypass enabled",
+  }));
+  const cachePath = path.join("runs/calibration/semantic-integrity", calibrationKey, "result.json");
+  const cached = await readJsonOrNull(cachePath);
+  if (cached?.passed === true && cached.calibrationKey === calibrationKey) {
+    return { ...cached, cacheStatus: "cached" as const, incrementalEvaluatorSpendUsd: 0 };
+  }
+
+  console.log("scorer calibration: semantic status, grounded invention, replacement, and cross-region controls");
+  const testCase: ManifestCase = {
+    id: semanticControlFacts.id,
+    title: semanticControlFacts.title!,
+    family: semanticControlFacts.family!,
+    tags: semanticControlFacts.tags!,
+    pages: 1,
+    pdf: "",
+    gold: "",
+  };
+  const judged = await judgeInBatches(testCase, semanticControlFacts, semanticControlPrediction);
+  const observedStatuses = judged.ok
+    ? Object.fromEntries(judged.result.leafResults.map((leaf) => [leaf.id, leaf.status]))
+    : {};
+  const unsupportedKeys = judged.ok ? judged.result.unsupportedClaims.map((claim) => claim.key) : [];
+  const statusesPass = Object.entries(semanticControlStatuses)
+    .every(([id, status]) => observedStatuses[id] === status);
+  const unsupportedPass = unsupportedKeys.length === 1 && /secret\s+bypass/i.test(unsupportedKeys[0]!);
+  const result = {
+    schemaVersion: 2,
+    calibrationKey,
+    generatedAt: new Date().toISOString(),
+    passed: judged.ok && statusesPass && unsupportedPass,
+    expectedStatuses: semanticControlStatuses,
+    observedStatuses,
+    expectedUnsupportedKey: "Secret bypass enabled",
+    observedUnsupportedKeys: unsupportedKeys,
+    evaluatorResolvedModel: judged.ok ? judged.resolved.modelId : null,
+    evaluatorBatchCount: judged.batchCount,
+    unsupportedAuditCount: judged.unsupportedAuditCount,
+    evaluatorCostUsd: judged.estimatedCostUsd,
+    errors: judged.errors,
+  };
+  await writeJson(cachePath, result);
+  return {
+    ...result,
+    cacheStatus: "run" as const,
+    incrementalEvaluatorSpendUsd: result.evaluatorCostUsd,
+  };
+}
+
+async function calibrateScorer(manifest: { cases: ManifestCase[] }, evaluatorSourceHash: string) {
+  await mkdir("reports", { recursive: true });
+  const inputs = await Promise.all(manifest.cases.map(async (testCase) => {
+    const factsHash = sha256(await readFile(testCase.facts!));
+    const goldHash = sha256(await readFile(testCase.gold));
+    const calibrationKey = sha256(JSON.stringify({
+      evaluatorSourceHash,
+      caseId: testCase.id,
+      caseTitle: testCase.title,
+      factsHash,
+      goldHash,
+    }));
+    return { testCase, calibrationKey };
+  }));
+
+  const cases = await Promise.all(inputs.map(async ({ testCase, calibrationKey }) => {
+    const cachePath = path.join("runs/calibration", testCase.id, calibrationKey, "gold.json");
+    const cached = await readJsonOrNull(cachePath);
+    if (cached?.passed === true && cached.calibrationKey === calibrationKey) {
+      return { ...cached, cacheStatus: "cached" as const, incrementalEvaluatorSpendUsd: 0 };
+    }
+
+    console.log(`scorer calibration: ${testCase.id} canonical gold`);
+    const prediction = await readFile(testCase.gold, "utf8");
+    const evaluation = await evaluatePrediction(testCase, prediction);
+    const unsupportedCount = evaluation.valid && evaluation.atomicScore
+      ? evaluation.atomicScore.unsupported.count
+      : null;
+    const failures = evaluation.valid && evaluation.judgeResult
+      ? evaluation.judgeResult.leafResults
+          .filter((leaf) => leaf.status !== "correct")
+          .map((leaf) => ({
+            id: leaf.id,
+            status: leaf.status,
+            candidateLineRefs: leaf.candidateLineRefs,
+            note: leaf.note ?? null,
+          }))
+      : [];
+    const result = {
+      schemaVersion: 7,
+      calibrationKey,
+      caseId: testCase.id,
+      generatedAt: new Date().toISOString(),
+      passed: evaluation.valid && evaluation.score === 100 && unsupportedCount === 0,
+      score: evaluation.score,
+      valid: evaluation.valid,
+      unsupportedCount,
+      statusHarm: evaluation.valid && evaluation.atomicScore ? evaluation.atomicScore.statusHarm : null,
+      evaluatorResolvedModel: evaluation.evaluator.resolved?.modelId ?? null,
+      evaluatorBatchCount: evaluation.evaluator.batchCount ?? null,
+      evaluatorCostUsd: evaluation.evaluator.costUsd ?? 0,
+      failures,
+      errors: evaluation.evaluator.errors ?? [],
+    };
+    await writeJson(cachePath, result);
+    return {
+      ...result,
+      cacheStatus: "run" as const,
+      incrementalEvaluatorSpendUsd: result.evaluatorCostUsd,
+    };
+  }));
+
+  const semanticIntegrity = await calibrateSemanticIntegrity(evaluatorSourceHash);
+  const resolvedModels = [...new Set([
+    ...cases.map((item) => item.evaluatorResolvedModel),
+    semanticIntegrity.evaluatorResolvedModel,
+  ].filter(Boolean))];
+  const passed = cases.every((item) => item.passed) && semanticIntegrity.passed && resolvedModels.length === 1;
+  const calibrationKey = sha256(JSON.stringify({
+    cases: inputs.map((item) => item.calibrationKey),
+    semanticIntegrity: semanticIntegrity.calibrationKey,
+  }));
+  const incrementalEvaluatorSpendUsd = cases.reduce(
+    (sum, item) => sum + item.incrementalEvaluatorSpendUsd,
+    semanticIntegrity.incrementalEvaluatorSpendUsd,
+  );
+  const { incrementalEvaluatorSpendUsd: _semanticIncremental, ...semanticIntegritySummary } = semanticIntegrity;
+  const summary = {
+    schemaVersion: 7,
+    calibrationKey,
+    generatedAt: new Date().toISOString(),
+    passed,
+    requirement: "Every canonical gold scores 100 with no unsupported claims; controls distinguish paraphrase, omission, contradiction, genuine additions, typo-like replacements, and members belonging to another region.",
+    evaluatorResolvedModel: resolvedModels.length === 1 ? resolvedModels[0] : null,
+    totalEstimatedCostUsd: cases.reduce(
+      (sum, item) => sum + item.evaluatorCostUsd,
+      semanticIntegrity.evaluatorCostUsd,
+    ),
+    semanticIntegrity: semanticIntegritySummary,
+    cases: cases.map(({ incrementalEvaluatorSpendUsd: _incremental, ...item }) => item),
+  };
+  await writeJson("reports/scorer-audit.json", {
+    ...summary,
+    incrementalEvaluatorSpendUsd,
+    cacheStatus: incrementalEvaluatorSpendUsd === 0 ? "cached" : "mixed",
+  });
+  if (!passed) {
+    throw new Error(
+      `Scorer calibration failed: semantic-integrity=${semanticIntegrity.passed ? "PASS" : "FAIL"}; ${cases.map((item) => `${item.caseId}=${item.score ?? "INVALID"}`).join(", ")}`,
+    );
+  }
+  return { summary, incrementalEvaluatorSpendUsd };
+}
+
 function parseOptions(argv: string[]) {
   const selected: string[] = [];
   let runs = 1;
@@ -307,7 +724,12 @@ function parseOptions(argv: string[]) {
   return { modelIds: selected, runs };
 }
 
-async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt: string, evaluatorSourceHash: string) {
+async function collectMergedResults(
+  manifest: { cases: ManifestCase[] },
+  prompt: string,
+  evaluatorSourceHash: string,
+  expectedEvaluatorModel: string,
+) {
   const merged = [];
   const exclusions: Array<{ modelId: string; reason: string }> = [];
   for (const modelId of await cachedModelIds()) {
@@ -322,7 +744,9 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
           title: testCase.title,
           score: cached.evaluation.score,
           inferenceCostUsd: calculateUncachedCost(models[modelId]!, cached.inference.usage),
-          actualInferenceCostUsd: calculateCost(models[modelId]!, cached.inference.usage),
+          actualInferenceCostUsd: Number.isFinite(cached.inference.costUsd)
+            ? cached.inference.costUsd
+            : calculateCost(models[modelId]!, cached.inference.usage),
           evaluatorCostUsd: cached.evaluation.evaluator.costUsd ?? 0,
           outputTokens: cached.inference.usage?.outputTokens ?? 0,
           inputTokens: cached.inference.usage?.inputTokens ?? 0,
@@ -354,13 +778,20 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
         cases,
       });
     }
-    if (draws.length === 0) continue;
+    if (draws.length === 0) {
+      exclusions.push({ modelId, reason: "No complete draw has a valid score for the current scorer and corpus." });
+      continue;
+    }
     const resolvedModels = [...new Set(draws.flatMap((draw) => draw.cases.map((item: any) => item.resolvedModel)).filter(Boolean))];
     const resolvedEvaluators = [...new Set(draws.flatMap((draw) => draw.cases.map((item: any) => item.evaluatorResolvedModel)).filter(Boolean))];
-    if (resolvedModels.length !== 1 || resolvedEvaluators.length !== 1) {
+    if (
+      resolvedModels.length !== 1 ||
+      resolvedEvaluators.length !== 1 ||
+      resolvedEvaluators[0] !== expectedEvaluatorModel
+    ) {
       exclusions.push({
         modelId,
-        reason: `Resolved identity drift: model=${resolvedModels.join(", ") || "missing"}; evaluator=${resolvedEvaluators.join(", ") || "missing"}`,
+        reason: `Resolved identity drift: model=${resolvedModels.join(", ") || "missing"}; evaluator=${resolvedEvaluators.join(", ") || "missing"}; calibrated=${expectedEvaluatorModel}`,
       });
       continue;
     }
@@ -423,28 +854,71 @@ async function collectMergedResults(manifest: { cases: ManifestCase[] }, prompt:
 }
 
 export async function runBenchmark(requestedModelIds: string[], requestedRuns = 1) {
+  await validateCorpusArtifacts();
   const { manifest } = await loadBenchmarkManifest();
-  const [promptFile, evaluatorSource] = await Promise.all([readFile(promptPath, "utf8"), readFile("src/evaluator.ts")]);
+  await auditBenchmark();
+  const [promptFile, evaluatorSource] = await Promise.all([
+    readFile(promptPath, "utf8"),
+    readFile("src/evaluator.ts"),
+  ]);
   const prompt = promptFile.trimEnd();
-  const evaluatorSourceHash = sha256(evaluatorSource);
+  const { pricingVersion: _pricingVersion, ...scoringConfiguration } = evaluatorConfiguration();
+  const evaluatorSourceHash = sha256(JSON.stringify({
+    evaluatorSource: sha256(evaluatorSource),
+    configuration: scoringConfiguration,
+  }));
   const modelIds = requestedModelIds.length > 0 ? requestedModelIds : [...new Set([...defaultModelIds, ...(await cachedModelIds())])];
   let incrementalInferenceSpendUsd = 0;
   let incrementalEvaluatorSpendUsd = 0;
 
+  const calibration = await calibrateScorer(manifest as { cases: ManifestCase[] }, evaluatorSourceHash);
+  incrementalEvaluatorSpendUsd += calibration.incrementalEvaluatorSpendUsd;
+  const expectedEvaluatorModel = calibration.summary.evaluatorResolvedModel;
+  if (!expectedEvaluatorModel) throw new Error("Scorer calibration did not resolve one evaluator model identity.");
+
   for (const modelId of modelIds) {
     console.log(`\n${modelId}: ensuring ${requestedRuns} draw slot${requestedRuns === 1 ? "" : "s"} × ${manifest.cases.length} cases`);
-    // Cases remain parallel. Within each case, advance only until one new
-    // provider call has warmed the prefix cache, then run every remaining draw
-    // in parallel. Cached local slots do not count as a provider warm-up.
     const cases = (await Promise.all(manifest.cases.map(async (testCase) => {
+      const drawNumbers = Array.from({ length: requestedRuns }, (_, index) => index + 1);
+      const cachedSlots = await Promise.all(drawNumbers.map((draw) =>
+        loadCachedCase(modelId, testCase as ManifestCase, prompt, evaluatorSourceHash, draw),
+      ));
+      if (cachedSlots.every(Boolean)) {
+        return Promise.all(drawNumbers.map((draw) => runCase(
+          modelId,
+          testCase as ManifestCase,
+          prompt,
+          evaluatorSourceHash,
+          expectedEvaluatorModel,
+          draw,
+        )));
+      }
+
+      // When inference is missing, one provider call warms the repeated-input
+      // cache before the remaining missing draws fan out. Existing slots do
+      // not need that serialization.
       const draws = [];
       for (let draw = 1; draw <= requestedRuns; draw += 1) {
-        const result = await runCase(modelId, testCase as ManifestCase, prompt, evaluatorSourceHash, draw);
+        const result = await runCase(
+          modelId,
+          testCase as ManifestCase,
+          prompt,
+          evaluatorSourceHash,
+          expectedEvaluatorModel,
+          draw,
+        );
         draws.push(result);
         if (result.incrementalInferenceCostUsd > 0 && draw < requestedRuns) {
           draws.push(...await Promise.all(
             Array.from({ length: requestedRuns - draw }, (_, offset) =>
-              runCase(modelId, testCase as ManifestCase, prompt, evaluatorSourceHash, draw + offset + 1),
+              runCase(
+                modelId,
+                testCase as ManifestCase,
+                prompt,
+                evaluatorSourceHash,
+                expectedEvaluatorModel,
+                draw + offset + 1,
+              ),
             ),
           ));
           break;
@@ -456,13 +930,23 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
     incrementalEvaluatorSpendUsd += cases.reduce((sum, testCase) => sum + testCase.incrementalEvaluatorCostUsd, 0);
   }
 
-  const collected = await collectMergedResults(manifest as { cases: ManifestCase[] }, prompt, evaluatorSourceHash);
+  const collected = await collectMergedResults(
+    manifest as { cases: ManifestCase[] },
+    prompt,
+    evaluatorSourceHash,
+    expectedEvaluatorModel,
+  );
   const mergedModels = collected.models;
+  const reportCases = await reportCaseMetadata(manifest.cases);
   const manifestHash = sha256(await readFile("benchmark/manifest.json"));
   const promptHash = sha256(prompt);
   const summary = {
+    name: manifest.name,
+    description: (manifest as typeof manifest & { description?: string }).description ?? "A benchmark for faithful PDF-to-Markdown reconstruction.",
     generatedAt: new Date().toISOString(),
     caseCount: manifest.cases.length,
+    pageCount: manifest.pageCount,
+    cases: reportCases,
     provenance: {
       inferenceProtocolVersion,
       ingestionMode,
@@ -479,6 +963,7 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
       comparisonField: "models[].inferenceCostUsd",
       actualSpendField: "models[].actualInferenceCostUsd",
     },
+    scorerCalibration: calibration.summary,
     exclusions: collected.exclusions,
     incrementalSpendUsd: incrementalInferenceSpendUsd + incrementalEvaluatorSpendUsd,
     incrementalInferenceSpendUsd,

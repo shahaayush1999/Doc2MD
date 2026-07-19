@@ -38,11 +38,11 @@ This internal profile defines why each case belongs in the canonical five-case, 
 ## Implemented corpus accounting
 
 - 84 pages: 47 native-only, 19 full-page raster, and 18 mixed.
-- 12,490 words recoverable from native text, concentrated deliberately rather than present on every page.
-- 200 scored regions, 1,205 atomic leaves, and 372 raw evidence-budget units.
-- Under the official equal-case score, effective modality shares are 47.20% native text, 29.90% raster, 12.60% mixed, 7.99% vector geometry, and 2.31% native-layer recovery.
-- Declared text-only-recoverable evidence is 46.77% by raw pooled budget and 47.20% under equal-case weighting. A prior text-layer review recovered only 18.57% exactly, because declarations describe potential recoverability rather than proven complete extraction.
-- The canonical references support 1,205 scored leaves. Seventy-four qualitative leaves are semantic-only and require human judgment.
+- 12,492 words recoverable from native text, concentrated deliberately rather than present on every page.
+- 177 scored regions, 1,200 atomic leaves, and 319 raw evidence-budget units.
+- Under the official equal-case score, effective modality shares are 53.81% native text, 33.44% raster, 8.50% vector geometry, 2.13% mixed, and 2.13% native-layer recovery.
+- Declared text-only-recoverable evidence is 54.55% by raw pooled budget and 53.81% under equal-case weighting.
+- The canonical references support 1,200 scored leaves. Seventy-eight qualitative-policy leaves receive semantic rather than deterministic evaluation.
 
 ## Maintenance rules
 

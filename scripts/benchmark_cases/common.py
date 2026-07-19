@@ -6,6 +6,7 @@ import random
 import re
 import reportlab
 import textwrap
+import unicodedata
 from dataclasses import dataclass, field
 from decimal import Decimal, InvalidOperation
 from io import BytesIO
@@ -647,7 +648,7 @@ def _evidence_groups(
 
 def _normalized_evidence_text(value: str) -> str:
     normalized = (
-        value.casefold()
+        unicodedata.normalize("NFKC", value).casefold()
         .replace("→", "->")
         .replace("←", "<-")
         .replace("≤", "<=")
@@ -657,7 +658,7 @@ def _normalized_evidence_text(value: str) -> str:
         .replace("−", "-")
         .replace("×", "x")
     )
-    normalized = re.sub(r"(?<=\d)(?=[a-z])|(?<=[a-z])(?=\d)", " ", normalized)
+    normalized = re.sub(r"(?<=\d)(?=[^\W\d_])|(?<=[^\W\d_])(?=\d)", " ", normalized)
     normalized = re.sub(r"[|*_`#]", " ", normalized)
     return re.sub(r"\s+", " ", normalized).strip()
 
@@ -666,8 +667,8 @@ def _evidence_alternative_present(text: str, alternative: str) -> bool:
     normalized = _normalized_evidence_text(alternative)
     if not normalized:
         return False
-    start = r"(?<![a-z0-9])" if normalized[0].isalnum() else ""
-    end = r"(?![a-z0-9])" if normalized[-1].isalnum() else ""
+    start = r"(?<!\w)" if normalized[0].isalnum() else ""
+    end = r"(?!\w)" if normalized[-1].isalnum() else ""
     return re.search(start + re.escape(normalized) + end, text) is not None
 
 
@@ -817,7 +818,12 @@ def _markdown_table_inventory(section: str) -> list[tuple[list[str], list[list[s
     def cells(line: str) -> list[str] | None:
         if "|" not in line:
             return None
-        values = [value.strip() for value in line.strip().strip("|").split("|")]
+        # Markdown escapes literal pipes as ``\|`` inside cells. Splitting on
+        # every pipe would turn one source-visible value into multiple columns.
+        values = [
+            value.replace(r"\|", "|").strip()
+            for value in re.split(r"(?<!\\)\|", line.strip().strip("|"))
+        ]
         return values if len(values) >= 2 else None
 
     def delimiter(values: list[str]) -> bool:
@@ -865,10 +871,17 @@ def _expand_closed_world_table_keys(region: dict[str, Any], gold_section: str) -
             any(_normalized_evidence_text(alternative) in normalized_headers for alternative in group)
             for group in column_groups
         )
-        row_keys = [row[0].strip() for row in rows if row and row[0].strip()]
-        normalized_rows = {_normalized_evidence_text(key) for key in row_keys}
-        if len(normalized_declared & normalized_rows) >= 2 and matched_columns >= 2:
-            matches.append(row_keys)
+        if matched_columns < 2:
+            continue
+        for column_index in range(len(headers)):
+            row_keys = [
+                row[column_index].strip()
+                for row in rows
+                if len(row) > column_index and row[column_index].strip()
+            ]
+            normalized_rows = {_normalized_evidence_text(key) for key in row_keys}
+            if len(normalized_declared & normalized_rows) >= 2:
+                matches.append(row_keys)
 
     if len(matches) > 1:
         raise ValueError(f"{region.get('id')}: closed-world table matches multiple gold tables")
@@ -876,9 +889,48 @@ def _expand_closed_world_table_keys(region: dict[str, Any], gold_section: str) -
         closed_world["keys"] = list(dict.fromkeys(matches[0]))
 
 
+def _validate_closed_world_keys(region: dict[str, Any], gold_section: str) -> None:
+    """Require closed-world members to be source-visible data, never rubric ids."""
+    closed_world = region.get("closedWorld")
+    if not isinstance(closed_world, dict):
+        return
+    keys = [str(key).strip() for key in closed_world.get("keys", []) if str(key).strip()]
+    if not keys:
+        raise ValueError(f"{region.get('id')}: closed-world metadata has no members")
+
+    internal_ids = {
+        _normalized_evidence_text(str(value))
+        for leaf_item in region.get("leaves", [])
+        for field in ("id", "canonicalClaimId")
+        if (value := leaf_item.get(field))
+    }
+    leaked_ids = [key for key in keys if _normalized_evidence_text(key) in internal_ids]
+    if leaked_ids:
+        raise ValueError(
+            f"{region.get('id')}: closed-world members must be source-visible labels, not rubric ids: "
+            + ", ".join(leaked_ids)
+        )
+
+    normalized_gold = _normalized_evidence_text(gold_section)
+    ungrounded = [key for key in keys if not _evidence_alternative_present(normalized_gold, key)]
+    if ungrounded:
+        raise ValueError(
+            f"{region.get('id')}: closed-world members are absent from its gold section: "
+            + ", ".join(ungrounded)
+        )
+
+
 def finalize_fact_regions(regions: Sequence[dict[str, Any]], gold: str) -> None:
     """Finalize generator metadata and evidence gates against audited gold."""
     headings = list(re.finditer(r"^## (.+)$", gold, flags=re.MULTILINE))
+    heading_names = [match.group(1).strip() for match in headings]
+    duplicate_headings = list(
+        dict.fromkeys(name for index, name in enumerate(heading_names) if name in heading_names[:index])
+    )
+    if duplicate_headings:
+        raise ValueError(
+            "Duplicate level-two gold headings are ambiguous: " + ", ".join(duplicate_headings)
+        )
     sections = {
         match.group(1).strip(): gold[
             match.end() : headings[index + 1].start() if index + 1 < len(headings) else len(gold)
@@ -893,6 +945,7 @@ def finalize_fact_regions(regions: Sequence[dict[str, Any]], gold: str) -> None:
             continue
         try:
             _expand_closed_world_table_keys(region, sections[section_name])
+            _validate_closed_world_keys(region, sections[section_name])
         except ValueError as exc:
             failures.append(str(exc))
             continue
@@ -1300,15 +1353,24 @@ class CaseBuilder:
             ]
             scope = "form_options"
         elif kind == "diagram":
-            keys = [leaf_item["id"] for leaf_item in leaves]
+            keys = [
+                f"{leaf_item['evidencePolicy']['source'][0]} -> {leaf_item['evidencePolicy']['destination'][0]}"
+                for leaf_item in leaves
+                if leaf_item.get("evidencePolicy", {}).get("type") == "directed_edge"
+                and leaf_item["evidencePolicy"].get("source")
+                and leaf_item["evidencePolicy"].get("destination")
+            ]
             scope = "edge_set"
-        elif kind == "structure":
-            keys = [leaf_item["id"] for leaf_item in leaves]
-            scope = "structure_children"
         else:
-            keys = [leaf_item["canonicalClaimId"] for leaf_item in leaves]
-            scope = "region_claims"
-        return scope, list(dict.fromkeys(keys)) or [leaf_item["id"] for leaf_item in leaves]
+            keys = []
+            scope = "structure_children" if kind == "structure" else "region_claims"
+        keys = list(dict.fromkeys(keys))
+        if not keys:
+            raise ValueError(
+                f"closed_world=True cannot derive source-visible members for {kind!r}; "
+                "pass explicit {'scope': ..., 'keys': [...]} metadata"
+            )
+        return scope, keys
 
     def _region_modality(self, page: int, kind: str) -> str:
         page_modality = self.page_modalities.get(page, "native_text")
@@ -1410,22 +1472,6 @@ class CaseBuilder:
         if self.page_number != self.page_count:
             raise ValueError(f"{self.case_id}: expected {self.page_count} pages, generated {self.page_number}")
         self.canvas.save()
-        # Doc2MD is a reconstruction benchmark. Regions that require a newly
-        # authored cross-record conclusion are diagnostic design notes, not
-        # scored source evidence. Long-context capability is measured through
-        # exhaustive recovery of the actual distributed records instead.
-        self.regions = [
-            region
-            for region in self.regions
-            if not str(region["id"]).startswith("x")
-            and region["primaryAxis"] != "cross_page_join"
-            and all(leaf["claimType"] != "cross_page_join" for leaf in region["leaves"])
-        ]
-        self.gold_parts = [
-            part.split("\n\nIntegrated reference conclusions:", 1)[0].rstrip() + "\n"
-            for part in self.gold_parts
-            if not part.startswith("## Cross-page entity lineage synthesis")
-        ]
         for region in self.regions:
             primary_page = int(region["sourceAnchors"][0]["page"])
             if not region.pop("_goldSectionExplicit", False) and primary_page in self.gold_headings:

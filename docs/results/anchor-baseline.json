@@ -1,5 +1,5 @@
 {
-  "note": "Historical two-draw anchor checkpoint retained after removing the old audit snapshots.",
+  "note": "Historical two-draw anchor checkpoint from a retired corpus and scorer. No complete scorer/corpus hashes were recorded, so these values are archival and must not be compared with current scores.",
   "date": "2026-07-10",
   "models": {
     "openai-gpt-5-nano": {
@@ -17,7 +17,7 @@
     "evaluation": 0.61291175,
     "total": 0.7884314499999999
   },
-  "latestMergedReport": {
+  "historicalMergedReport": {
     "vertex-gemini-3.5-flash": {
       "score": 58.73847673706467,
       "caseScores": [55.502414252414255, 39.98960337502004, 53.18938230228554, 51.45894755650853, 93.55203619909503],
@@ -31,5 +31,5 @@
       "score": 26.072882594156134
     }
   },
-  "caveat": "Two observations are a sensitivity check, not a stable variance estimate. Each draw used fresh generation and evaluation."
+  "caveat": "Non-comparable archival snapshot: the corpus and scorer have since changed. Two observations were only a sensitivity check, not a stable variance estimate; each draw used fresh generation and evaluation."
 }

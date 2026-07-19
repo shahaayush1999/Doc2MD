@@ -500,7 +500,11 @@ def build(output_root):
         [
             leaf("p02.qual.u", "U means not detected at the LOQ; preserve the leading < sign and the LOQ.", harm=2),
             leaf("p02.qual.j", "J means estimated concentration; preserve both the numeric value and J.", harm=2),
-            leaf("p02.qual.none", "A dash means no qualifier and must not be expanded into an invented qualifier."),
+            leaf(
+                "p02.qual.none",
+                "A dash means no qualifier and must not be expanded into an invented qualifier.",
+                evidence_policy={"type": "lexical", "allOf": [["-", "dash"], ["no qualifier"], ["do not invent", "must not invent", "not expanded"]]},
+            ),
         ],
     )
 
@@ -937,7 +941,7 @@ def build(output_root):
         "- Panel C, DW-240409-04/13C8-PFOA original: 4.39 min, IS recovery 38%, integration IR-18A, sequence 18.\n"
         "- Panel D, DW-240409-04/13C8-PFOA reinjection: 4.40 min, IS recovery 91%, integration IR-19B, sequence 19.\n\n"
         + _table_gold(routing_headers, routing_rows)
-        + "\n\nExact RT, area, ratio, and internal-standard recovery values come from the instrument annotations; the routing register supplies panel identity only.",
+        + "\n\nThe literal Use limitation values are `accepted result` for Panel C and `correction scope` for Panel D. Exact RT, area, ratio, and internal-standard recovery values come from the instrument annotations; the routing register supplies panel identity only.",
     )
     case.add_region(
         "p08.chromatograms",
@@ -960,8 +964,48 @@ def build(output_root):
         "Panel routing register",
         "table",
         [
-            leaf("p08.routing.c", "Panel C routes to original integration IR-18A and must not be treated as an accepted result."),
-            leaf("p08.routing.d", "Panel D routes to reinjection integration IR-19B and does not by itself define correction scope."),
+            table_binding_leaf(
+                "p08.routing.c",
+                "For Panel C, Use limitation is accepted result.",
+                "C",
+                "Use limitation",
+                "accepted result",
+            ),
+            table_binding_leaf(
+                "p08.routing.c.purpose",
+                "For Panel C, Review purpose is Original internal standard.",
+                "C",
+                "Review purpose",
+                "Original internal standard",
+            ),
+            table_binding_leaf(
+                "p08.routing.c.record",
+                "For Panel C, Related record is IR-18A.",
+                "C",
+                "Related record",
+                "IR-18A",
+            ),
+            table_binding_leaf(
+                "p08.routing.d",
+                "For Panel D, Use limitation is correction scope.",
+                "D",
+                "Use limitation",
+                "correction scope",
+            ),
+            table_binding_leaf(
+                "p08.routing.d.purpose",
+                "For Panel D, Review purpose is Reinjection internal standard.",
+                "D",
+                "Review purpose",
+                "Reinjection internal standard",
+            ),
+            table_binding_leaf(
+                "p08.routing.d.record",
+                "For Panel D, Related record is IR-19B.",
+                "D",
+                "Related record",
+                "IR-19B",
+            ),
             leaf("p08.routing.boundary", "Exact RT, area, ratio, and IS-recovery values come from the instrument annotations; the routing register supplies panel identity only."),
         ],
     )
@@ -1134,9 +1178,24 @@ def build(output_root):
         "table",
         _schema_order_leaves("p11.prelim", preliminary_headers, [row[0] for row in preliminary_rows])
         + [
-            leaf("p11.prelim.e104", "Provisional row E-104 reports DW-240409-04 PFOA as 1.84 ng/L J from sequence 18/IR-18A."),
-            leaf("p11.prelim.e105", "Provisional row E-105 reports DW-240409-04 PFOS as <0.50 ng/L U from sequence 18/IR-18A."),
-            leaf("p11.prelim.e106", "Ready row E-106 reports DW-240409-05 PFOA as 4.87 ng/L with no qualifier from sequence 20/IR-20A."),
+            table_binding_leaf("p11.prelim.e104", "For E-104, Result is 1.84 ng/L.", "E-104", "Result", "1.84 ng/L"),
+            table_binding_leaf("p11.prelim.e104.sample", "For E-104, Sample is DW-240409-04.", "E-104", "Sample", "DW-240409-04"),
+            table_binding_leaf("p11.prelim.e104.analyte", "For E-104, Analyte is PFOA.", "E-104", "Analyte", "PFOA"),
+            table_binding_leaf("p11.prelim.e104.qualifier", "For E-104, Qual. is J.", "E-104", "Qual.", "J"),
+            table_binding_leaf("p11.prelim.e104.source", "For E-104, Source is Seq 18 / IR-18A.", "E-104", "Source", "Seq 18 / IR-18A"),
+            table_binding_leaf("p11.prelim.e104.status", "For E-104, Status is Provisional.", "E-104", "Status", "Provisional"),
+            table_binding_leaf("p11.prelim.e105", "For E-105, Result is <0.50 ng/L.", "E-105", "Result", "<0.50 ng/L"),
+            table_binding_leaf("p11.prelim.e105.sample", "For E-105, Sample is DW-240409-04.", "E-105", "Sample", "DW-240409-04"),
+            table_binding_leaf("p11.prelim.e105.analyte", "For E-105, Analyte is PFOS.", "E-105", "Analyte", "PFOS"),
+            table_binding_leaf("p11.prelim.e105.qualifier", "For E-105, Qual. is U.", "E-105", "Qual.", "U"),
+            table_binding_leaf("p11.prelim.e105.source", "For E-105, Source is Seq 18 / IR-18A.", "E-105", "Source", "Seq 18 / IR-18A"),
+            table_binding_leaf("p11.prelim.e105.status", "For E-105, Status is Provisional.", "E-105", "Status", "Provisional"),
+            table_binding_leaf("p11.prelim.e106", "For E-106, Result is 4.87 ng/L.", "E-106", "Result", "4.87 ng/L"),
+            table_binding_leaf("p11.prelim.e106.sample", "For E-106, Sample is DW-240409-05.", "E-106", "Sample", "DW-240409-05"),
+            table_binding_leaf("p11.prelim.e106.analyte", "For E-106, Analyte is PFOA.", "E-106", "Analyte", "PFOA"),
+            table_binding_leaf("p11.prelim.e106.qualifier", "For E-106, Qual. is a dash.", "E-106", "Qual.", ["-", "dash", "no qualifier"]),
+            table_binding_leaf("p11.prelim.e106.source", "For E-106, Source is Seq 20 / IR-20A.", "E-106", "Source", "Seq 20 / IR-20A"),
+            table_binding_leaf("p11.prelim.e106.status", "For E-106, Status is Ready.", "E-106", "Status", "Ready"),
         ],
     )
     case.add_region(
@@ -1151,7 +1210,7 @@ def build(output_root):
                 "DW-240409-04 PFOA changes from 1.84 ng/L J to 1.06 ng/L J.",
                 ["1.84 ng/L J"],
                 ["1.06 ng/L J"],
-                relation=["DW-240409-04 PFOA changes"],
+                relation=["DW-240409-04 PFOA changes", "DW-240409-04 PFOA is corrected", "DW-240409-04 PFOA corrected"],
                 harm=2,
             ),
             leaf("p11.correction.pfos", "DW-240409-04 PFOS remains <0.50 ng/L U with no qualifier change.", harm=2),

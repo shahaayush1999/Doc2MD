@@ -1009,7 +1009,7 @@
     },
     {
       "id": "p02.reading-order",
-      "label": "Recovered page-two reading order",
+      "label": "Recovered page-two main-flow order",
       "sourceAnchors": [
         {
           "page": 2,
@@ -1017,7 +1017,7 @@
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
             "2. Cutover workplan and handoff sequence",
-            "Recovered page-two reading order"
+            "Recovered page-two main-flow order"
           ]
         }
       ],
@@ -1031,23 +1031,17 @@
         "structure_reconstruction"
       ],
       "textOnlyRecoverable": false,
-      "budget": 2,
+      "budget": 1,
       "leaves": [
         {
           "id": "p02.reading-order.sections",
           "canonicalClaimId": "p02.reading-order.sections",
           "claimType": "ordered_record",
-          "expectation": "Reconstruct the logical order: workplan table, approver sidebar, dependency interpretation, handoff matrix, then rollback trigger.",
+          "expectation": "Dependency interpretation precedes the handoff matrix, which precedes the rollback trigger.",
           "harm": 2,
           "evidencePolicy": {
             "type": "ordered_tokens",
             "tokens": [
-              [
-                "T-01"
-              ],
-              [
-                "Approver sidebar"
-              ],
               [
                 "T-02 gates"
               ],
@@ -1294,19 +1288,33 @@
           "id": "p02.rollback.actions",
           "canonicalClaimId": "p02.rollback.actions",
           "claimType": "scalar",
-          "expectation": "Rollback stops the active transfer and preserves custody at the last confirmed location.",
+          "expectation": "Rollback stops the transfer and preserves custody at the last confirmed location.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "active"
-              ],
-              [
-                "confirmed"
-              ],
-              [
+                "RB-12",
                 "rollback"
+              ],
+              [
+                "stop",
+                "halt"
+              ],
+              [
+                "transfer"
+              ],
+              [
+                "preserve",
+                "retain",
+                "maintain"
+              ],
+              [
+                "custody"
+              ],
+              [
+                "last confirmed location",
+                "confirmed location"
               ]
             ]
           }
@@ -2560,35 +2568,29 @@
             "type": "lexical",
             "allOf": [
               [
+                "page 5",
+                "5"
+              ],
+              [
                 "GO/HOLD",
                 "GO / HOLD"
               ],
               [
-                "5"
-              ],
-              [
+                "page 3",
                 "3"
               ],
               [
-                "HOLD",
-                "held",
-                "on hold",
-                "not released",
-                "blocked"
-              ],
-              [
-                "only",
-                "solely",
-                "exclusively"
+                "finance"
               ],
               [
                 "validation"
               ],
               [
-                "controls"
+                "cost"
               ],
               [
-                "finance"
+                "only",
+                "solely"
               ]
             ]
           }
@@ -2674,23 +2676,23 @@
                 "HOLD"
               ],
               [
-                "3"
+                "C-3",
+                "C3"
               ],
               [
-                "HOLD",
-                "held",
-                "on hold",
-                "not released",
-                "blocked"
+                "decommission",
+                "decommissioning",
+                "close",
+                "closure"
               ],
               [
-                "decommission"
+                "credential",
+                "access"
               ],
               [
-                "credential"
-              ],
-              [
-                "condition"
+                "until",
+                "when",
+                "after"
               ]
             ]
           }

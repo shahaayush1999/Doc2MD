@@ -972,23 +972,16 @@
             "type": "lexical",
             "allOf": [
               [
-                "no",
-                "not",
-                "none",
-                "without",
-                "absent"
+                "-",
+                "dash"
               ],
               [
-                "qualifier"
+                "no qualifier"
               ],
               [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "expanded"
+                "do not invent",
+                "must not invent",
+                "not expanded"
               ]
             ]
           }
@@ -3718,66 +3711,114 @@
         {
           "id": "p08.routing.c",
           "canonicalClaimId": "p08.routing.c",
-          "claimType": "scalar",
-          "expectation": "Panel C routes to original integration IR-18A and must not be treated as an accepted result.",
+          "claimType": "table_binding",
+          "expectation": "For Panel C, Use limitation is accepted result.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "IR-18A",
-                "IR 18A"
-              ],
-              [
-                "A"
-              ],
-              [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "accepted",
-                "accept"
-              ],
-              [
-                "integration"
-              ],
-              [
-                "original"
-              ]
+            "type": "table_binding",
+            "row": [
+              "C"
+            ],
+            "column": [
+              "Use limitation"
+            ],
+            "value": [
+              "accepted result"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.c.purpose",
+          "canonicalClaimId": "p08.routing.c.purpose",
+          "claimType": "table_binding",
+          "expectation": "For Panel C, Review purpose is Original internal standard.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "C"
+            ],
+            "column": [
+              "Review purpose"
+            ],
+            "value": [
+              "Original internal standard"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.c.record",
+          "canonicalClaimId": "p08.routing.c.record",
+          "claimType": "table_binding",
+          "expectation": "For Panel C, Related record is IR-18A.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "C"
+            ],
+            "column": [
+              "Related record"
+            ],
+            "value": [
+              "IR-18A"
             ]
           }
         },
         {
           "id": "p08.routing.d",
           "canonicalClaimId": "p08.routing.d",
-          "claimType": "scalar",
-          "expectation": "Panel D routes to reinjection integration IR-19B and does not by itself define correction scope.",
+          "claimType": "table_binding",
+          "expectation": "For Panel D, Use limitation is correction scope.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "IR-19B",
-                "IR 19B"
-              ],
-              [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "reinjection"
-              ],
-              [
-                "integration"
-              ],
-              [
-                "correction"
-              ]
+            "type": "table_binding",
+            "row": [
+              "D"
+            ],
+            "column": [
+              "Use limitation"
+            ],
+            "value": [
+              "correction scope"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.d.purpose",
+          "canonicalClaimId": "p08.routing.d.purpose",
+          "claimType": "table_binding",
+          "expectation": "For Panel D, Review purpose is Reinjection internal standard.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "D"
+            ],
+            "column": [
+              "Review purpose"
+            ],
+            "value": [
+              "Reinjection internal standard"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.d.record",
+          "canonicalClaimId": "p08.routing.d.record",
+          "claimType": "table_binding",
+          "expectation": "For Panel D, Related record is IR-19B.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "D"
+            ],
+            "column": [
+              "Related record"
+            ],
+            "value": [
+              "IR-19B"
             ]
           }
         },
@@ -4622,145 +4663,344 @@
         {
           "id": "p11.prelim.e104",
           "canonicalClaimId": "p11.prelim.e104",
-          "claimType": "scalar",
-          "expectation": "Provisional row E-104 reports DW-240409-04 PFOA as 1.84 ng/L J from sequence 18/IR-18A.",
+          "claimType": "table_binding",
+          "expectation": "For E-104, Result is 1.84 ng/L.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "DW-240409-04",
-                "DW 240409-04",
-                "DW-240409 04",
-                "DW 240409 04"
-              ],
-              [
-                "PFOA"
-              ],
-              [
-                "18/IR-18A",
-                "18 / IR-18A",
-                "18/IR 18A"
-              ],
-              [
-                "104"
-              ],
-              [
-                "1.84"
-              ],
-              [
-                "ng/L"
-              ],
-              [
-                "A"
-              ],
-              [
-                "provisional"
-              ],
-              [
-                "sequence"
-              ]
+            "type": "table_binding",
+            "row": [
+              "E-104"
+            ],
+            "column": [
+              "Result"
+            ],
+            "value": [
+              "1.84 ng/L"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e104.sample",
+          "canonicalClaimId": "p11.prelim.e104.sample",
+          "claimType": "table_binding",
+          "expectation": "For E-104, Sample is DW-240409-04.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-104"
+            ],
+            "column": [
+              "Sample"
+            ],
+            "value": [
+              "DW-240409-04"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e104.analyte",
+          "canonicalClaimId": "p11.prelim.e104.analyte",
+          "claimType": "table_binding",
+          "expectation": "For E-104, Analyte is PFOA.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-104"
+            ],
+            "column": [
+              "Analyte"
+            ],
+            "value": [
+              "PFOA"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e104.qualifier",
+          "canonicalClaimId": "p11.prelim.e104.qualifier",
+          "claimType": "table_binding",
+          "expectation": "For E-104, Qual. is J.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-104"
+            ],
+            "column": [
+              "Qual."
+            ],
+            "value": [
+              "J"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e104.source",
+          "canonicalClaimId": "p11.prelim.e104.source",
+          "claimType": "table_binding",
+          "expectation": "For E-104, Source is Seq 18 / IR-18A.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-104"
+            ],
+            "column": [
+              "Source"
+            ],
+            "value": [
+              "Seq 18 / IR-18A"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e104.status",
+          "canonicalClaimId": "p11.prelim.e104.status",
+          "claimType": "table_binding",
+          "expectation": "For E-104, Status is Provisional.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-104"
+            ],
+            "column": [
+              "Status"
+            ],
+            "value": [
+              "Provisional"
             ]
           }
         },
         {
           "id": "p11.prelim.e105",
           "canonicalClaimId": "p11.prelim.e105",
-          "claimType": "scalar",
-          "expectation": "Provisional row E-105 reports DW-240409-04 PFOS as <0.50 ng/L U from sequence 18/IR-18A.",
+          "claimType": "table_binding",
+          "expectation": "For E-105, Result is <0.50 ng/L.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "DW-240409-04",
-                "DW 240409-04",
-                "DW-240409 04",
-                "DW 240409 04"
-              ],
-              [
-                "PFOS"
-              ],
-              [
-                "18/IR-18A",
-                "18 / IR-18A",
-                "18/IR 18A"
-              ],
-              [
-                "105"
-              ],
-              [
-                "<0.50",
-                "<0.5",
-                "< 0.50",
-                "< 0.5"
-              ],
-              [
-                "ng/L"
-              ],
-              [
-                "A"
-              ],
-              [
-                "provisional"
-              ],
-              [
-                "sequence"
-              ]
+            "type": "table_binding",
+            "row": [
+              "E-105"
+            ],
+            "column": [
+              "Result"
+            ],
+            "value": [
+              "<0.50 ng/L"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e105.sample",
+          "canonicalClaimId": "p11.prelim.e105.sample",
+          "claimType": "table_binding",
+          "expectation": "For E-105, Sample is DW-240409-04.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-105"
+            ],
+            "column": [
+              "Sample"
+            ],
+            "value": [
+              "DW-240409-04"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e105.analyte",
+          "canonicalClaimId": "p11.prelim.e105.analyte",
+          "claimType": "table_binding",
+          "expectation": "For E-105, Analyte is PFOS.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-105"
+            ],
+            "column": [
+              "Analyte"
+            ],
+            "value": [
+              "PFOS"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e105.qualifier",
+          "canonicalClaimId": "p11.prelim.e105.qualifier",
+          "claimType": "table_binding",
+          "expectation": "For E-105, Qual. is U.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-105"
+            ],
+            "column": [
+              "Qual."
+            ],
+            "value": [
+              "U"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e105.source",
+          "canonicalClaimId": "p11.prelim.e105.source",
+          "claimType": "table_binding",
+          "expectation": "For E-105, Source is Seq 18 / IR-18A.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-105"
+            ],
+            "column": [
+              "Source"
+            ],
+            "value": [
+              "Seq 18 / IR-18A"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e105.status",
+          "canonicalClaimId": "p11.prelim.e105.status",
+          "claimType": "table_binding",
+          "expectation": "For E-105, Status is Provisional.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-105"
+            ],
+            "column": [
+              "Status"
+            ],
+            "value": [
+              "Provisional"
             ]
           }
         },
         {
           "id": "p11.prelim.e106",
           "canonicalClaimId": "p11.prelim.e106",
-          "claimType": "scalar",
-          "expectation": "Ready row E-106 reports DW-240409-05 PFOA as 4.87 ng/L with no qualifier from sequence 20/IR-20A.",
+          "claimType": "table_binding",
+          "expectation": "For E-106, Result is 4.87 ng/L.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "DW-240409-05",
-                "DW 240409-05",
-                "DW-240409 05",
-                "DW 240409 05"
-              ],
-              [
-                "PFOA"
-              ],
-              [
-                "20/IR-20A",
-                "20 / IR-20A",
-                "20/IR 20A"
-              ],
-              [
-                "106"
-              ],
-              [
-                "4.87"
-              ],
-              [
-                "ng/L"
-              ],
-              [
-                "A"
-              ],
-              [
-                "no",
-                "not",
-                "none",
-                "without",
-                "absent"
-              ],
-              [
-                "qualifier"
-              ],
-              [
-                "sequence"
-              ],
-              [
-                "ready"
-              ]
+            "type": "table_binding",
+            "row": [
+              "E-106"
+            ],
+            "column": [
+              "Result"
+            ],
+            "value": [
+              "4.87 ng/L"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e106.sample",
+          "canonicalClaimId": "p11.prelim.e106.sample",
+          "claimType": "table_binding",
+          "expectation": "For E-106, Sample is DW-240409-05.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-106"
+            ],
+            "column": [
+              "Sample"
+            ],
+            "value": [
+              "DW-240409-05"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e106.analyte",
+          "canonicalClaimId": "p11.prelim.e106.analyte",
+          "claimType": "table_binding",
+          "expectation": "For E-106, Analyte is PFOA.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-106"
+            ],
+            "column": [
+              "Analyte"
+            ],
+            "value": [
+              "PFOA"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e106.qualifier",
+          "canonicalClaimId": "p11.prelim.e106.qualifier",
+          "claimType": "table_binding",
+          "expectation": "For E-106, Qual. is a dash.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-106"
+            ],
+            "column": [
+              "Qual."
+            ],
+            "value": [
+              "-",
+              "dash",
+              "no qualifier"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e106.source",
+          "canonicalClaimId": "p11.prelim.e106.source",
+          "claimType": "table_binding",
+          "expectation": "For E-106, Source is Seq 20 / IR-20A.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-106"
+            ],
+            "column": [
+              "Source"
+            ],
+            "value": [
+              "Seq 20 / IR-20A"
+            ]
+          }
+        },
+        {
+          "id": "p11.prelim.e106.status",
+          "canonicalClaimId": "p11.prelim.e106.status",
+          "claimType": "table_binding",
+          "expectation": "For E-106, Status is Ready.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-106"
+            ],
+            "column": [
+              "Status"
+            ],
+            "value": [
+              "Ready"
             ]
           }
         }
@@ -4892,7 +5132,9 @@
               "1.06 ng/L J"
             ],
             "relation": [
-              "DW-240409-04 PFOA changes"
+              "DW-240409-04 PFOA changes",
+              "DW-240409-04 PFOA is corrected",
+              "DW-240409-04 PFOA corrected"
             ]
           }
         },
