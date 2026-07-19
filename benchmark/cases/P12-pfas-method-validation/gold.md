@@ -54,21 +54,16 @@ The calibration table uses grouped headers for identity, transitions, retention,
 
 ## Page 3 - Calibration curves and residual disposition
 
-Figure 03 labels each standard as concentration in ng/L | response ratio.
+Figure 03 is a 2x3 raster calibration-review plate in this panel order: PFOA, PFNA, PFOS, PFHxS, 6:2 FTS, HFPO-DA. Filled circles are included standards, an open diamond is an excluded standard, and inset bars are back-calculated residual percentages. The horizontal axis is log concentration in ng/L and the vertical axis is response ratio.
 
-- PFOA: 0.25 | 0.021, 1 | 0.077, 5 | 0.406, 20 | 1.393, 80 | 5.986
-- PFOS: 0.5 | 0.042, 2 | 0.184, 10 | 0.958, 50 | 4.753, 100 | 8.177
-- HFPO-DA: 0.5 | 0.044, 2 | 0.175, 10 | 0.790, 50 | 4.400, 80 | 6.632
+- **PFOA** - y = 0.0748x + 0.0021; R2 0.9986; range 0.25-80 ng/L. Levels: 0.25, 0.5, 1, 5, 20, 50, 80 ng/L. Responses: 0.021, 0.040, 0.077, 0.406, 1.393, 3.731, 5.986. Residuals: +11.8%, -6.1%, +3.4%, -2.8%, +1.9%, -4.2%, +5.1%. Review: Max residual +11.8% at 0.25 ng/L (L1). Disposition: L1 retained - within the +/-20% lowest-level allowance.
+- **PFNA** - y = 0.0702x + 0.0008; R2 0.9964; range 0.25-80 ng/L. Levels: 0.25, 0.5, 1, 5, 20, 50, 80 ng/L. Responses: 0.018, 0.034, 0.070, 0.352, 1.411, 3.510, 5.621. Residuals: -18.7%, +9.2%, -5.5%, +3.1%, -2.4%, +4.8%, -3.0%. Review: Max residual -18.7% at 0.25 ng/L (L1). Disposition: L1 retained - within the +/-20% lowest-level allowance.
+- **PFOS** - y = 0.0831x + 0.0184; R2 0.9978; range 0.50-100 ng/L. Levels: 0.5, 1, 2, 10, 25, 50, 100 ng/L. Responses: 0.042, 0.089, 0.184, 0.958, 2.392, 4.753, 8.177. Residuals: -9.4%, +4.1%, -3.8%, +2.5%, -6.2%, +7.9%, +14.6%. Review: Max residual +14.6% at 100 ng/L (L7). Disposition: Upper point retained - within the +/-15% criterion.
+- **PFHxS** - y = 0.0817x + 0.0019; R2 0.9991; range 0.50-100 ng/L. Levels: 0.5, 1, 2, 10, 25, 50, 100 ng/L. Responses: 0.038, 0.080, 0.162, 0.821, 2.049, 4.086, 8.169. Residuals: +7.2%, -5.1%, +3.7%, -2.9%, +2.1%, -8.4%, +4.6%. Review: Max residual -8.4% at 50 ng/L (L6). Disposition: All seven levels retained - no residual flag.
+- **6:2 FTS** - y = 0.0544x + 0.0007; R2 0.9981 after L2 exclusion; range 1.00-100 ng/L. Levels: 1, 2, 5, 10, 25, 50, 100 ng/L. Responses: 0.052, 0.141, 0.269, 0.548, 1.361, 2.716, 5.433. Residuals: -4.8%, +23.6%, +6.2%, -3.1%, +2.8%, -5.9%, +4.4%. Review: L2 residual +23.6% at 2.0 ng/L; vial bubble CAL-EX-06. Disposition: L2 excluded; six-level refit accepted under signed exception.
+- **HFPO-DA** - y = 0.0830x + 0.0041; R2 0.9989; range 0.50-80 ng/L. Levels: 0.5, 1, 2, 10, 20, 50, 80 ng/L. Responses: 0.044, 0.086, 0.175, 0.790, 1.664, 4.400, 6.632. Residuals: +9.7%, -6.8%, +3.5%, -4.2%, +2.9%, +6.1%, -5.0%. Review: Max residual +9.7% at 0.50 ng/L (L1). Disposition: All seven levels retained - no curvature flag.
 
-Chart reconstruction: the horizontal x-axis is log concentration in ng/L and the vertical y-axis is response ratio. The legend maps the blue line and points to PFOA, green to PFOS, and amber to HFPO-DA. Each panel uses weighted 1/x^2 calibration and labels every point with both concentration and response. The PFOA series rises monotonically from 0.021 to 5.986. The PFOS series rises monotonically from 0.042 to 8.177. The HFPO-DA series rises monotonically from 0.044 to 6.632.
-
-| Analyte | Weighted R2 | Max abs back-calc residual | Disposition |
-| --- | --- | --- | --- |
-| PFOA | 0.9986 | 11.8% at 0.25 ng/L | 1/x^2 retained |
-| PFOS | 0.9978 | 14.6% at 100 ng/L | Upper point retained |
-| HFPO-DA | 0.9989 | 9.7% at 0.50 ng/L | No curvature flag |
-
-Acceptance: weighted R2 >= 0.995; standards +/-15%, with +/-20% permitted at the lowest level.
+The general method rule is weighted 1/x^2, R2 >= 0.995, included standards within +/-15%, and the lowest included standard within +/-20%. Only the 6:2 FTS 2.0 ng/L L2 standard is excluded, under the source-visible CAL-EX-06 vial-bubble exception; the six-level refit is accepted.
 
 ## Page 4 - Table V4 accuracy and precision, part 1
 
@@ -163,19 +158,27 @@ Sequence 18 is held under MX-24-041 at 38% IS recovery. Sequence 19 is the accep
 ## Page 8 - Raw integration and chromatogram review
 
 Instrument panel evidence:
-- Panel A, LRB-240410-01/PFOS quantifier: 5.64 min marker, noise window 38-44 cps, no integrated peak, file 240410_10.wiff.
-- Panel B, DW-240408-03/PFOA quantifier: 4.41 min, area 25,621, quant/qual ratio 0.31, file 240410_14.wiff.
-- Panel C, DW-240409-04/13C8-PFOA original: 4.39 min, IS recovery 38%, integration IR-18A, sequence 18.
-- Panel D, DW-240409-04/13C8-PFOA reinjection: 4.40 min, IS recovery 91%, integration IR-19B, sequence 19.
+- Panel A, LRB-240410-01 / PFOS Q1: 5.64 min, noise 38-44 cps, file 240410_10.wiff, no integration, NO PEAK / BLANK ACCEPTED.
+- Panel B, DW-240408-03 / PFOA Q1: 4.41 min, area 25,621, Q1/Q2 ratio 0.31, file 240410_14.wiff, ACCEPTED / FINAL BATCH RESULT.
+- Panel C, DW-240409-04 / 13C8-PFOA IS: 4.39 min, IS recovery 38%, IR-18A, file 240410_18.wiff, SEQ 18 HOLD / ORIGINAL REJECTED.
+- Panel D, DW-240409-04-RI / 13C8-PFOA IS: 4.40 min, IS recovery 91%, IR-19B, file 240410_19.wiff, SEQ 19 ACCEPTED / CONTROLLING.
+- Panel E, DW-240409-04 / PFOA Q1: 4.42 min, area 11,180, Q1/Q2 ratio 0.27, IR-18A linked, SEQ 18 NOT REPORTABLE.
+- Panel F, DW-240409-04-RI / PFOA Q1: 4.41 min, area 8,420, Q1/Q2 ratio 0.30, IR-19B linked, SEQ 19 ACCEPTED / 1.06 ng/L J.
+- Panel G, CCV-10-CLOSE / PFOA Q1: 4.41 min, back-calculated 10.31 ng/L, area 80,755, file 240410_21.wiff, ACCEPTED / 103.1% RECOVERY.
+- Panel H, DW-240409-05 / 6:2 FTS Q2: 5.18 min, area 13,290, Q1/Q2 ratio 0.22, file 240410_20.wiff, REVIEWED / QUALIFIER CONFIRMED.
 
-| Panel | Review purpose | Related record | Use limitation |
+| Panel | Injection | Trace channel | Review role |
 | --- | --- | --- | --- |
-| A | Reagent-blank trace | LRB-240410-01 | sample concentration |
-| B | Target-analyte integration | DW-240408-03 | final batch release |
-| C | Original internal standard | IR-18A | accepted result |
-| D | Reinjection internal standard | IR-19B | correction scope |
+| A | Seq 10 | PFOS Q1 | Reagent blank |
+| B | Seq 14 | PFOA Q1 | Batch sample |
+| C | Seq 18 | 13C8-PFOA IS | Original internal standard |
+| D | Seq 19 | 13C8-PFOA IS | Reinjection internal standard |
+| E | Seq 18 | PFOA Q1 | Original quantifier |
+| F | Seq 19 | PFOA Q1 | Reinjection quantifier |
+| G | Seq 21 | PFOA Q1 | Closing CCV |
+| H | Seq 20 | 6:2 FTS Q2 | Qualifier review |
 
-The literal Use limitation values are `accepted result` for Panel C and `correction scope` for Panel D. Exact RT, area, ratio, and internal-standard recovery values come from the instrument annotations; the routing register supplies panel identity only.
+The native index supplies injection and channel identity only; the visual plate controls trace measurements and review state.
 
 ## Page 9 - Blank, recovery, and continuing-calibration review
 
@@ -257,4 +260,4 @@ Signed correction CR-24-044 applies only to DW-240409-04. It supersedes PRELIM-L
 | DW-240409-04 | Accepted as corrected | Sequence 19 / IR-19B / CR-24-044 |
 | Batch release | RELEASED | J and U qualifiers retained exactly |
 
-The batch is released with J and U qualifiers preserved. DW-240409-04 is accepted as corrected from sequence 19/IR-19B under CR-24-044. The final determination does not erase provisional exports, rejected integrations, or maintenance records. L. Chen signed 22 Apr 2024 09:40 and R. Patel released 22 Apr 2024 16:10.
+The batch is released with J and U qualifiers preserved. DW-240409-04's record lifecycle begins with held sequence 18 at 38% IS recovery and rejected original integration IR-18A, then continues through accepted DW-240409-04-RI sequence 19 at 91% IS recovery and controlling reinjection IR-19B. Panels E and F preserve the original not-reportable PFOA Q1 trace and the accepted reinjection trace. Signed CR-24-044 changes provisional PFOA 1.84 ng/L J to released R-06 at 1.06 ng/L J with U95 0.25 ng/L, while PFOS remains <0.50 ng/L U. The final determination does not erase provisional exports, rejected integrations, or maintenance records. L. Chen signed 22 Apr 2024 09:40 and R. Patel released 22 Apr 2024 16:10.

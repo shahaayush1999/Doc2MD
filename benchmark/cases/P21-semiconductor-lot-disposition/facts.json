@@ -564,7 +564,7 @@
           "id": "p02.map.w05.pattern",
           "canonicalClaimId": "p02.map.w05.pattern",
           "claimType": "scalar",
-          "expectation": "Wafer 05's S2 coordinate set is E2, F2, and E3.",
+          "expectation": "Wafer 05's unordered S2 coordinate set is E2, F2, and E3.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1600,10 +1600,10 @@
       "budget": 2,
       "leaves": [
         {
-          "id": "p04.spc.r-2241",
-          "canonicalClaimId": "p04.spc.r-2241",
+          "id": "p04.spc.r-2241.measurement",
+          "canonicalClaimId": "p04.spc.r-2241.measurement",
           "claimType": "scalar",
-          "expectation": "R-2241 is 41.2 nm with state Inside.",
+          "expectation": "R-2241 measures 41.2 nm.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1616,6 +1616,21 @@
               ],
               [
                 "nm"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.r-2241.state",
+          "canonicalClaimId": "p04.spc.r-2241.state",
+          "claimType": "scalar",
+          "expectation": "R-2241 has categorical state Inside.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2241"
               ],
               [
                 "Inside"
@@ -1624,10 +1639,10 @@
           }
         },
         {
-          "id": "p04.spc.r-2242",
-          "canonicalClaimId": "p04.spc.r-2242",
+          "id": "p04.spc.r-2242.measurement",
+          "canonicalClaimId": "p04.spc.r-2242.measurement",
           "claimType": "scalar",
-          "expectation": "R-2242 is 42.0 nm with state Inside.",
+          "expectation": "R-2242 measures 42.0 nm.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1640,6 +1655,21 @@
               ],
               [
                 "nm"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.r-2242.state",
+          "canonicalClaimId": "p04.spc.r-2242.state",
+          "claimType": "scalar",
+          "expectation": "R-2242 has categorical state Inside.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2242"
               ],
               [
                 "Inside"
@@ -1648,10 +1678,10 @@
           }
         },
         {
-          "id": "p04.spc.r-2243",
-          "canonicalClaimId": "p04.spc.r-2243",
+          "id": "p04.spc.r-2243.measurement",
+          "canonicalClaimId": "p04.spc.r-2243.measurement",
           "claimType": "scalar",
-          "expectation": "R-2243 is 43.8 nm with state Inside.",
+          "expectation": "R-2243 measures 43.8 nm.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1664,6 +1694,21 @@
               ],
               [
                 "nm"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.r-2243.state",
+          "canonicalClaimId": "p04.spc.r-2243.state",
+          "claimType": "scalar",
+          "expectation": "R-2243 has categorical state Inside.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2243"
               ],
               [
                 "Inside"
@@ -1672,10 +1717,10 @@
           }
         },
         {
-          "id": "p04.spc.r-2244",
-          "canonicalClaimId": "p04.spc.r-2244",
+          "id": "p04.spc.r-2244.measurement",
+          "canonicalClaimId": "p04.spc.r-2244.measurement",
           "claimType": "scalar",
-          "expectation": "R-2244 is 45.6 nm with state Warning.",
+          "expectation": "R-2244 measures 45.6 nm.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1688,6 +1733,21 @@
               ],
               [
                 "nm"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.r-2244.state",
+          "canonicalClaimId": "p04.spc.r-2244.state",
+          "claimType": "scalar",
+          "expectation": "R-2244 has categorical state Warning.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2244"
               ],
               [
                 "Warning"
@@ -1696,10 +1756,10 @@
           }
         },
         {
-          "id": "p04.spc.r-2245",
-          "canonicalClaimId": "p04.spc.r-2245",
+          "id": "p04.spc.r-2245.measurement",
+          "canonicalClaimId": "p04.spc.r-2245.measurement",
           "claimType": "scalar",
-          "expectation": "R-2245 is 47.4 nm with state Above UCL.",
+          "expectation": "R-2245 measures 47.4 nm.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
@@ -1712,6 +1772,21 @@
               ],
               [
                 "nm"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.r-2245.state",
+          "canonicalClaimId": "p04.spc.r-2245.state",
+          "claimType": "scalar",
+          "expectation": "R-2245 has categorical state Above UCL.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2245"
               ],
               [
                 "Above UCL"
@@ -1720,10 +1795,10 @@
           }
         },
         {
-          "id": "p04.spc.r-2246",
-          "canonicalClaimId": "p04.spc.r-2246",
+          "id": "p04.spc.r-2246.measurement",
+          "canonicalClaimId": "p04.spc.r-2246.measurement",
           "claimType": "scalar",
-          "expectation": "R-2246 is 46.2 nm with state Warning.",
+          "expectation": "R-2246 measures 46.2 nm.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1736,6 +1811,21 @@
               ],
               [
                 "nm"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.r-2246.state",
+          "canonicalClaimId": "p04.spc.r-2246.state",
+          "claimType": "scalar",
+          "expectation": "R-2246 has categorical state Warning.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2246"
               ],
               [
                 "Warning"
@@ -1744,10 +1834,10 @@
           }
         },
         {
-          "id": "p04.spc.r-2247",
-          "canonicalClaimId": "p04.spc.r-2247",
+          "id": "p04.spc.r-2247.measurement",
+          "canonicalClaimId": "p04.spc.r-2247.measurement",
           "claimType": "scalar",
-          "expectation": "R-2247 is 44.1 nm with state Recovered.",
+          "expectation": "R-2247 measures 44.1 nm.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1760,6 +1850,21 @@
               ],
               [
                 "nm"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p04.spc.r-2247.state",
+          "canonicalClaimId": "p04.spc.r-2247.state",
+          "claimType": "scalar",
+          "expectation": "R-2247 has categorical state Recovered.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "R-2247"
               ],
               [
                 "Recovered"
@@ -1797,7 +1902,7 @@
           "id": "p04.spc.axes",
           "canonicalClaimId": "p04.spc.axes",
           "claimType": "structure",
-          "expectation": "The chart uses run sequence on the horizontal x-axis and TiN thickness in nm on the vertical y-axis.",
+          "expectation": "The chart binds TiN thickness in nm on the vertical y-axis against run sequence on the horizontal x-axis; conventional 'TiN thickness in nm vs Run sequence' wording is equivalent.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
@@ -1828,16 +1933,15 @@
           "id": "p04.spc.series",
           "canonicalClaimId": "p04.spc.series",
           "claimType": "scalar",
-          "expectation": "The blue solid line is the PVD-03 measured TiN-thickness series.",
+          "expectation": "The connected measured-series line represents PVD-03 TiN thickness.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "blue"
-              ],
-              [
-                "solid line"
+                "connected line",
+                "solid line",
+                "line"
               ],
               [
                 "PVD-03"
@@ -1991,41 +2095,27 @@
         {
           "id": "p04.spc.trend",
           "canonicalClaimId": "p04.spc.trend",
-          "claimType": "scalar",
-          "expectation": "The series rises from R-2241 through a 47.4 nm peak at R-2245, then falls through R-2246 to a recovered 44.1 nm at R-2247.",
+          "claimType": "ordered_record",
+          "expectation": "The ordered run/value series rises from R-2241 / 41.2 through a peak at R-2245 / 47.4, then falls through R-2246 / 46.2 to R-2247 / 44.1.",
           "harm": 2,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
+            "type": "ordered_tokens",
+            "tokens": [
               [
-                "rises"
+                "rises from R-2241 / 41.2",
+                "R-2241 41.2"
               ],
               [
-                "R-2241"
+                "peak at R-2245 / 47.4",
+                "R-2245 47.4"
               ],
               [
-                "47.4 nm"
+                "falls through R-2246 / 46.2",
+                "R-2246 46.2"
               ],
               [
-                "peak"
-              ],
-              [
-                "R-2245"
-              ],
-              [
-                "falls"
-              ],
-              [
-                "R-2246"
-              ],
-              [
-                "44.1 nm"
-              ],
-              [
-                "R-2247"
-              ],
-              [
-                "recovered"
+                "R-2247 / 44.1",
+                "R-2247 44.1"
               ]
             ]
           }
@@ -2688,7 +2778,7 @@
           "id": "p05.img226.background",
           "canonicalClaimId": "p05.img226.background",
           "claimType": "visual_description",
-          "expectation": "IMG-226 contains fine low-level background specks or noise.",
+          "expectation": "IMG-226 contains a fine-grained, speckled, or noisy low-level background texture.",
           "harm": 1,
           "evidencePolicy": {
             "type": "qualitative",

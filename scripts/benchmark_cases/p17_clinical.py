@@ -9,7 +9,7 @@ native text plus embedded scanned source regions.
 
 import random
 import re
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 from reportlab.lib.colors import HexColor
@@ -29,6 +29,8 @@ from .common import (
     leaf,
     markdown_table,
     form_state_leaf,
+    source_precedence_leaf,
+    table_binding_leaf,
     table_leaves,
 )
 from .rasterize import ScanProfile, rasterize_pdf_pages
@@ -107,6 +109,11 @@ def _scan_checkbox(draw: ImageDraw.ImageDraw, x: int, y: int, state: str, label:
         draw.rectangle((x + 3, y + 3, x + 27, y + 27), fill=205)
         draw.line((x + 4, y + 26, x + 26, y + 4), fill=145, width=3)
     draw.text((x + 44, y + 1), label, font=font, fill=ink)
+    if state == "crossed":
+        label_box = draw.textbbox((x + 44, y + 1), label, font=font)
+        strike_y = y + 15
+        draw.line((x + 40, strike_y, label_box[2] + 7, strike_y), fill=30, width=4)
+        draw.text((label_box[2] + 20, y + 1), "VOID", font=font, fill=30)
 
 
 def _scan_document(
@@ -235,7 +242,8 @@ def _facts(
                         f"{prefix}.{leaf_suffix}",
                         expectation,
                         harm=harm,
-                        evidence=policy_spec["evidence"],
+                        evidence=policy_spec.get("evidence"),
+                        strict_evidence=bool(policy_spec.get("strict", False)),
                     )
                 )
             else:
@@ -293,6 +301,10 @@ def _selected_table_region(
     consequential: Sequence[tuple[str, str]] = (),
     primary_axis: str = "table_reconstruction",
     secondary_axes: Sequence[str] = ("precise_recall",),
+    value_aliases: Mapping[tuple[str, str], Sequence[str]] | None = None,
+    column_aliases: Mapping[str, Sequence[str]] | None = None,
+    row_parts: Mapping[str, Sequence[str | Sequence[str]]] | None = None,
+    row_order_aliases: Mapping[str, Sequence[str]] | None = None,
 ) -> None:
     """Add a bounded table region with explicit row/column/value policies."""
     prefix = f"p{case.page_number:02d}.{suffix}"
@@ -303,6 +315,9 @@ def _selected_table_region(
         for column_index in range(1, len(headers))
         if str(source_row[column_index]) != str(fact_row[column_index])
     }
+    merged_value_aliases = {key: list(values) for key, values in raw_value_aliases.items()}
+    for key, values in (value_aliases or {}).items():
+        merged_value_aliases[key] = list(dict.fromkeys([*merged_value_aliases.get(key, []), *values]))
     case.add_region(
         prefix,
         label,
@@ -313,7 +328,10 @@ def _selected_table_region(
             fact_rows,
             scored_bindings=set(bindings),
             consequential=set(consequential),
-            value_aliases=raw_value_aliases,
+            value_aliases=merged_value_aliases,
+            column_aliases=column_aliases,
+            row_parts=row_parts,
+            row_order_aliases=row_order_aliases,
         ),
         budget=budget,
         closed_world=True,
@@ -416,7 +434,7 @@ def build(output_root):
     draw_table(c, 42, y - 39, [145, 92, 120, 153], [source_headers, *source_rows], font_size=6.55, zebra=True)
     draw_paragraph(
         c,
-        "This authorization identifies what may be reviewed and how the controlled repository locates it. It deliberately does not map source classes to packet pages or determine whether any item is resolved. Signed source records control their own fields according to the hierarchy on page 9.",
+        "This authorization identifies what may be reviewed and how the controlled repository locates it. It does not determine whether any listed object is resolved; each controlled record retains its own revision, effective timestamp, and approval state.",
         42,
         145,
         510,
@@ -487,43 +505,43 @@ def build(output_root):
         budget=2,
     )
 
-    # 3 - visit schedule, continued on page 10.
+    # 3 - visit schedule, first controlled export segment.
     c = case.new_page(
         "Visit chronology - enrollment through week 2",
-        subtitle="Part 1 of 2 | Dates reflect source worksheets, not query-console normalization",
+        subtitle="Record VIS-014/R1-A | Dates reflect source worksheets, not query-console normalization",
         section_code="VISIT LOG / PART 1",
     )
     visit_headers = ["Subject", "Visit", "Planned day", "Actual date/time", "Kit / device", "Worksheet state", "Continuation"]
     visit_rows = [
-        ["014-002", "V1", "Day 1", "05 Apr 08:05", "K-204-118", "Complete", "W2 p10"],
-        ["014-002", "W2", "Day 15", "19 Apr 08:12", "K-204-142", "Complete", "W4 p10"],
+        ["014-002", "V1", "Day 1", "05 Apr 08:05", "K-204-118", "Complete", "VIS-014/R1-B"],
+        ["014-002", "W2", "Day 15", "19 Apr 08:12", "K-204-142", "Complete", "VIS-014/R1-B"],
         ["014-003", "V1", "Day 1", "07 Apr 09:10", "K-204-121", "Complete", "W2 below"],
-        ["014-003", "W2", "Day 15", "21 Apr 08:44", "K-204-146", "Partial; source correction", "DCF p16"],
-        ["014-004", "V1", "Day 1", "10 Apr 10:20", "K-204-128", "Complete", "ET p10"],
-        ["014-005", "V1", "Day 1", "12 Apr 09:32", "K-204-132", "Complete", "W2 p10"],
-        ["014-007", "V1", "Day 1", "18 Apr 09:10", "K-204-153", "Pharmacy source required", "Form p12"],
-        ["014-008", "V1", "Day 1", "20 Apr 09:15", "K-204-158", "Lab receipt pending", "Lab p15"],
-        ["014-009", "V1", "Day 1", "19 Apr 10:04", "K-204-160", "Complete", "W2 p10"],
-        ["014-011", "V1", "Day 1", "26 Apr 08:52", "K-204-171", "Repeat chemistry ordered", "Lab p15"],
-        ["014-012", "V1", "Day 1", "28 Apr 11:06", "K-204-176", "Waiver W-14 filed", "Consent p8"],
-        ["014-014", "V1", "Day 1", "01 May 09:40", "K-204-184", "ePRO setup incomplete", "Training p18"],
-        ["014-016", "V1", "Day 1", "04 May 07:58", "K-204-190", "Masking review", "Dose p21"],
+        ["014-003", "W2", "Day 15", "21 Apr 08:44", "K-204-146", "Partial; source correction", "DQC/014/Q77/F1"],
+        ["014-004", "V1", "Day 1", "10 Apr 10:20", "K-204-128", "Complete", "VIS-014/R1-B"],
+        ["014-005", "V1", "Day 1", "12 Apr 09:32", "K-204-132", "Complete", "VIS-014/R1-B"],
+        ["014-007", "V1", "Day 1", "18 Apr 09:10", "K-204-153", "Pharmacy source required", "IP-DISP-K204153/R5"],
+        ["014-008", "V1", "Day 1", "20 Apr 09:15", "K-204-158", "Lab receipt pending", "NCL-AC77152/R2"],
+        ["014-009", "V1", "Day 1", "19 Apr 10:04", "K-204-160", "Complete", "VIS-014/R1-B"],
+        ["014-011", "V1", "Day 1", "26 Apr 08:52", "K-204-171", "Repeat chemistry ordered", "NCL-AC77152/R2"],
+        ["014-012", "V1", "Day 1", "28 Apr 11:06", "K-204-176", "Waiver W-14 filed", "W-14 / TD-HI-204-R1"],
+        ["014-014", "V1", "Day 1", "01 May 09:40", "K-204-184", "ePRO setup incomplete", "TRN-014014/R1"],
+        ["014-016", "V1", "Day 1", "04 May 07:58", "K-204-190", "Masking review", "DOSE-014016/R2"],
     ]
     draw_table(c, 32, 675, [55, 45, 58, 88, 80, 147, 73], [visit_headers, *visit_rows], font_size=5.9, zebra=True)
-    draw_badge(c, "Continued on page 10", 42, 126, AMBER)
+    draw_badge(c, "Continued in VIS-014/R1-B", 42, 126, AMBER)
     draw_paragraph(c, "The continuation carries later visits and termination records. Do not infer a later visit from an enrollment row when the continuation is absent.", 42, 96, 500, size=8, leading=11, color=MUTED)
-    _gold_table(case, "Visit chronology - enrollment through week 2", visit_headers, visit_rows)
+    _gold_table(case, "Visit chronology - enrollment through week 2", visit_headers, visit_rows, "Record VIS-014/R1-A continues in VIS-014/R1-B.")
     _facts(
         case,
         "visits-a",
         "Visit chronology part 1",
         "table",
         [
-            ("014003-w2", "Subject 014-003 had a partial W2 visit on 2026-04-21 at 08:44 and its source correction continues to DCF page 16.", 2),
-            ("014007-v1", "Subject 014-007 V1 on 2026-04-18 points to the pharmacy form on page 12.", 2),
+            ("014003-w2", "Subject 014-003 had a partial W2 visit on 2026-04-21 at 08:44 and its source correction links to DQC/014/Q77/F1.", 2),
+            ("014007-v1", "Subject 014-007 V1 on 2026-04-18 links to disposition IP-DISP-K204153/R5.", 2),
             ("014009-v1", "Subject 014-009 V1 occurred on 2026-04-19 at 10:04."),
             ("014011-v1", "Subject 014-011 V1 on 2026-04-26 ordered repeat chemistry."),
-            ("continuation", "The visit log explicitly continues on page 10."),
+            ("continuation", "Visit export VIS-014/R1-A explicitly continues in VIS-014/R1-B."),
         ],
         budget=2,
     )
@@ -541,20 +559,20 @@ def build(output_root):
         ["SH-204-46", "014-008", "Chemistry", "20 Apr 09:15", "20 Apr 15:55", "Not posted", "Interface pending"],
         ["SH-204-47", "014-009", "PK-W2", "06 May 09:04", "06 May 10:15", "06 May 11:20", "Accepted"],
         ["SH-204-48", "014-011", "Chemistry", "26 Apr 08:52", "26 Apr 16:20", "27 Apr 10:05", "Repeat requested"],
-        ["SH-204-52", "014-011", "Chemistry repeat", "08 May 07:46", "08 May 12:05", "08 May 15:31", "Amended report p15"],
+        ["SH-204-52", "014-011", "Chemistry repeat", "08 May 07:46", "08 May 12:05", "08 May 15:31", "NCL-AC77152/R2"],
         ["SH-204-49", "014-016", "Glucose", "04 May 07:58", "04 May 16:40", "05 May 09:44", "Safety call linked"],
         ["SH-204-50", "014-014", "PK-V1", "01 May 09:40", "01 May 15:20", "02 May 08:55", "Accepted"],
         ["SH-204-53", "014-007", "Potassium repeat", "02 May 09:22", "02 May 14:10", "03 May 08:40", "Final"],
         ["SH-204-54", "014-004", "ET chemistry", "24 Apr 10:11", "24 Apr 15:48", "25 Apr 09:26", "Accepted"],
     ]
     draw_table(c, 32, 675, [71, 55, 78, 82, 88, 86, 111], [lab_headers, *lab_rows], font_size=5.85, zebra=True)
-    draw_paragraph(c, "A receipt timestamp proves custody, not the analytical result. For SH-204-45 use the signed receipt on page 20 for the corrected seal and temperature fields; for SH-204-52 use the amended report image on page 15.", 42, 128, 510, size=8, leading=11, color=MUTED)
+    draw_paragraph(c, "A receipt timestamp proves custody, not the analytical result. Corrected fields remain in NCL-CUST-AC76881/R1 for SH-204-45 and NCL-AC77152/R2 for SH-204-52.", 42, 128, 510, size=8, leading=11, color=MUTED)
     _gold_table(
         case,
         "Central laboratory accession and custody register",
         lab_headers,
         lab_rows,
-        "A receipt timestamp proves custody, not the analytical result. SH-204-45's signed receipt on page 20 controls corrected seal and temperature fields; SH-204-52's amended report on page 15 controls amended analytical values.",
+        "A receipt timestamp proves custody, not the analytical result. NCL-CUST-AC76881/R1 controls SH-204-45 corrected seal and temperature fields; NCL-AC77152/R2 controls SH-204-52 amended analytical values.",
     )
     _facts(
         case,
@@ -564,7 +582,7 @@ def build(output_root):
         [
             ("sh20445", "Shipment SH-204-45 belongs to subject 014-003, was collected 2026-04-21 at 08:44, and was received 2026-04-23 at 16:40.", 2),
             ("sh20446", "Shipment SH-204-46 for subject 014-008 has no posted lab receipt and is interface pending."),
-            ("sh20452", "Shipment SH-204-52 is the 2026-05-08 repeat chemistry for subject 014-011 and points to the amended report on page 15.", 2),
+            ("sh20452", "Shipment SH-204-52 is the 2026-05-08 repeat chemistry for subject 014-011 and links to amended report NCL-AC77152/R2.", 2),
             ("sh20453", "Shipment SH-204-53 is the final potassium repeat for subject 014-007."),
             ("custody-limit", "A receipt timestamp proves custody, not an analytical result."),
         ],
@@ -574,12 +592,12 @@ def build(output_root):
     # 5 - intended full-page scan: pharmacy receipt ledger.
     c = case.new_page(
         "Pharmacy receipt ledger - shipment PS-778",
-        subtitle="Scanned controlled source | Original corrections retained",
+        subtitle="Record IP-RCV-PS778/R1 | Scanned controlled source | Original corrections retained",
         section_code="PHARMACY / RECEIPT",
     )
     scan = _scan_document(
         "INVESTIGATIONAL PRODUCT RECEIPT LEDGER",
-        "Protocol HTX-204 | Site 014 | Shipment PS-778 | Received 06 Apr 2026 14:26",
+        "IP-RCV-PS778/R1 | Protocol HTX-204 | Site 014 | Received 06 Apr 2026 14:26",
         [
             (
                 "Courier and packaging",
@@ -629,7 +647,7 @@ def build(output_root):
     _gold_scan(
         case,
         "Pharmacy receipt ledger",
-        "Shipment PS-778 was received 2026-04-06 at 14:26. Carton C-19 held kits K-204-118 through K-204-152; carton C-22 held K-204-153 through K-204-177. K-204-153 is lot H24C, expiry 2027-01-31, quantity 30, with its original RX-2/A2 locator struck and corrected to RX-2/B1 by RP at 14:41. C-19 tamper seal intact is checked. C-22 tamper seal intact is crossed out, while C-22 seal discrepancy photographed is checked. Shipment placed in released stock is unchecked. The correction states that C-22's outer seal was split but its inner pouch was intact. R. Patel received the shipment; J. Das witnessed the count.",
+        "Controlled record IP-RCV-PS778/R1 documents shipment PS-778 received 2026-04-06 at 14:26. Carton C-19 held kits K-204-118 through K-204-152; carton C-22 held K-204-153 through K-204-177. K-204-153 is lot H24C, expiry 2027-01-31, quantity 30, with its original RX-2/A2 locator struck and corrected to RX-2/B1 by RP at 14:41. C-19 tamper seal intact is checked. C-22 tamper seal intact is crossed out, while C-22 seal discrepancy photographed is checked. Shipment placed in released stock is unchecked. The correction states that C-22's outer seal was split but its inner pouch was intact. R. Patel received the shipment; J. Das witnessed the count.",
     )
     _facts(
         case,
@@ -669,11 +687,11 @@ def build(output_root):
         ["AE-014-08", "014-014", "03 May", "Missed diary entries", "N/A", "Device issue", "Retraining", "Open"],
     ]
     draw_table(c, 28, 675, [69, 54, 55, 109, 40, 75, 92, 90], [ae_headers, *ae_rows], font_size=5.75, zebra=True)
-    follow_headers = ["Record", "Required evidence", "Owner", "Due", "Linked page"]
+    follow_headers = ["Record", "Required evidence", "Owner", "Due", "Controlled record"]
     follow_rows = [
-        ["AE-014-04", "Repeat chemistry report", "MK", "09 May", "p15"],
-        ["AE-014-05", "Dose worksheet and masking review", "NR", "10 May", "p21 / p28"],
-        ["AE-014-08", "Training competency source", "MK", "08 May", "p18"],
+        ["AE-014-04", "Repeat chemistry report", "MK", "09 May", "NCL-AC77152/R2"],
+        ["AE-014-05", "Dose worksheet and masking review", "NR", "10 May", "DOSE-014016/R2"],
+        ["AE-014-08", "Training competency source", "MK", "08 May", "TRN-014014/R1"],
     ]
     draw_label(c, "Follow-up routing", 42, 326)
     draw_table(c, 42, 311, [92, 196, 55, 72, 95], [follow_headers, *follow_rows], font_size=6.7, zebra=True)
@@ -688,7 +706,7 @@ def build(output_root):
             ("ae03", "AE-014-03 for subject 014-007 is potassium increased, classified unrelated, with repeat testing and resolution on 2026-05-03."),
             ("ae04", "AE-014-04 for subject 014-011 is possible-related creatinine increased and was ongoing at the cut.", 2),
             ("ae05", "AE-014-05 for subject 014-016 is related grade 2 hypoglycemia and was ongoing at the cut.", 2),
-            ("ae08", "AE-014-08 is a device issue for subject 014-014 and routes to training evidence on page 18."),
+            ("ae08", "AE-014-08 is a device issue for subject 014-014 and links to training record TRN-014014/R1."),
         ],
         budget=2,
     )
@@ -702,13 +720,13 @@ def build(output_root):
     query_headers = ["Query", "Subject", "Opened", "Field / issue", "Console state", "Provisional response", "Next source"]
     query_rows = [
         ["Q-74", "014-004", "25 Apr", "AE stop date", "Answered", "Site entered 24 Apr", "Safety review"],
-        ["Q-77", "014-003", "22 Apr", "W2 ECG performed", "Open", "Draft says Yes; tracing requested", "DCF p16"],
-        ["Q-81", "014-007", "19 Apr", "Excursion dosing", "Answered", "Pharmacy form pending", "Form p12"],
+        ["Q-77", "014-003", "22 Apr", "W2 ECG performed", "Open", "Draft says Yes; tracing requested", "DQC/014/Q77/F1"],
+        ["Q-81", "014-007", "19 Apr", "Excursion dosing", "Answered", "Pharmacy form pending", "IP-DISP-K204153/R5"],
         ["Q-84", "014-008", "23 Apr", "Central lab receipt", "Open", "Courier ticket filed", "Receipt interface"],
-        ["Q-86", "014-009", "07 May", "W2 visit window", "Open", "Calendar note drafted", "Adjudication p27"],
-        ["Q-88", "014-011", "28 Apr", "Repeat chemistry", "Open", "Specimen booked", "Report p15"],
-        ["Q-91", "014-014", "04 May", "ePRO activation", "Answered", "Retraining scheduled", "Roster p18"],
-        ["Q-93", "014-016", "05 May", "Masking note", "Open", "PI review requested", "Action p28"],
+        ["Q-86", "014-009", "07 May", "W2 visit window", "Open", "Calendar note drafted", "WIN-014009/R1"],
+        ["Q-88", "014-011", "28 Apr", "Repeat chemistry", "Open", "Specimen booked", "NCL-AC77152/R2"],
+        ["Q-91", "014-014", "04 May", "ePRO activation", "Answered", "Retraining scheduled", "TRN-014014/R1"],
+        ["Q-93", "014-016", "05 May", "Masking note", "Open", "PI review requested", "Unsigned MA-016/D0"],
     ]
     draw_table(c, 26, 675, [57, 52, 54, 118, 67, 169, 69], [query_headers, *query_rows], font_size=5.7, zebra=True)
     draw_paragraph(c, "Console responses describe what had been typed by the snapshot time. A later signed clarification can retain, correct, or reject that response. When states conflict, retain both timestamps and bind the final field to the controlling source.", 42, 260, 510, size=8.4, leading=11.5, color=MUTED)
@@ -720,11 +738,11 @@ def build(output_root):
         "Provisional query-console snapshot",
         "table",
         [
-            ("q77", "At the 2026-05-06 snapshot, Q-77 is open and its provisional response says Yes with tracing requested; it points to DCF page 16.", 2),
-            ("q81", "Q-81 is answered in the console but explicitly points to the pending pharmacy form on page 12."),
-            ("q86", "Q-86 is open for subject 014-009's W2 visit window and continues to page 27.", 2),
-            ("q88", "Q-88 is open for subject 014-011 repeat chemistry and points to page 15."),
-            ("q93", "Q-93 is open for subject 014-016's masking note and continues to page 28."),
+            ("q77", "At the 2026-05-06 snapshot, Q-77 is open and its provisional response says Yes with tracing requested; its next controlled record is DQC/014/Q77/F1.", 2),
+            ("q81", "Q-81 is answered in the console but explicitly links to pending pharmacy record IP-DISP-K204153/R5."),
+            ("q86", "Q-86 is open for subject 014-009's W2 visit window and links to WIN-014009/R1.", 2),
+            ("q88", "Q-88 is open for subject 014-011 repeat chemistry and links to NCL-AC77152/R2."),
+            ("q93", "Q-93 is open for subject 014-016's masking note and links to unsigned draft MA-016/D0."),
             ("provisional", "The page labels console responses as provisional and not signed source.", 2),
         ],
         budget=2,
@@ -868,7 +886,7 @@ def build(output_root):
     # 10 - visit chronology continuation.
     c = case.new_page(
         "Visit chronology - week 2 through termination",
-        subtitle="Part 2 of 2 | Continuation of page 3",
+        subtitle="Record VIS-014/R1-B | Continuation of VIS-014/R1-A",
         section_code="VISIT LOG / PART 2",
     )
     visit2_headers = ["Subject", "Visit", "Target / window", "Actual", "Elapsed from V1", "State", "Linked record"]
@@ -880,28 +898,28 @@ def build(output_root):
         ["014-005", "W4", "10 May +/-2 d", "Scheduled", "-", "Not yet due", "Calendar"],
         ["014-007", "W2", "02 May +/-2 d", "02 May 09:22", "Day 15", "Partial", "Repeat K final"],
         ["014-008", "W2", "04 May +/-2 d", "04 May 08:48", "Day 15", "Complete", "Receipt unresolved"],
-        ["014-009", "W2", "03 May +/-2 d", "06 May 09:04", "Day 18", "Outside listed window", "Q-86 / p27"],
+        ["014-009", "W2", "03 May +/-2 d", "06 May 09:04", "Day 18", "Outside listed window", "Q-86 / WIN-014009/R1"],
         ["014-011", "Unscheduled", "Repeat chemistry", "08 May 07:46", "Day 13", "Source obtained", "SH-204-52"],
         ["014-012", "W2", "12 May +/-2 d", "Scheduled", "-", "Not yet due", "Waiver W-14"],
         ["014-013", "Follow-up", "After missed contact", "05 May 17:20", "Day 7", "No contact", "FU-013"],
-        ["014-014", "Unscheduled", "ePRO training", "08 May 13:30", "Day 8", "Source on p18", "Q-91"],
+        ["014-014", "Unscheduled", "ePRO training", "08 May 13:30", "Day 8", "Source TRN-014014/R1", "Q-91"],
         ["014-016", "Safety call", "Within 24 h", "04 May 18:16", "Day 1", "Completed", "AE-014-05"],
     ]
     draw_table(c, 28, 675, [56, 79, 95, 85, 74, 93, 102], [visit2_headers, *visit2_rows], font_size=5.75, zebra=True)
-    draw_paragraph(c, "For subject 014-009, the table records the operational window and actual attendance. The signed classification of that discrepancy appears on page 27; this log does not assign the deviation class.", 42, 112, 510, size=8.2, leading=11.2, color=MUTED)
-    _gold_table(case, "Visit chronology - week 2 through termination", visit2_headers, visit2_rows, "This is part 2 of the visit log begun on page 3. Subject 014-009's signed discrepancy classification is deferred to page 27.")
+    draw_paragraph(c, "VIS-014/R1-B records the operational window and actual attendance for subject 014-009. Classification is pending here; signed record WIN-014009/R1 carries the adjudicated state.", 42, 112, 510, size=8.2, leading=11.2, color=MUTED)
+    _gold_table(case, "Visit chronology - week 2 through termination", visit2_headers, visit2_rows, "VIS-014/R1-B continues VIS-014/R1-A. Subject 014-009's classification is pending in this log and is controlled by signed record WIN-014009/R1.")
     _facts(
         case,
         "visits-b",
         "Visit chronology continuation",
         "table",
         [
-            ("continuation", "This page is explicitly part 2 of the visit log begun on page 3."),
+            ("continuation", "Visit export VIS-014/R1-B explicitly continues VIS-014/R1-A."),
             ("014003-w4", "Subject 014-003 completed W4 on 2026-05-05 while Q-77 remained open."),
             ("014007-w2", "Subject 014-007 had a partial W2 visit on 2026-05-02 and the repeat potassium was final."),
             ("014009", "Subject 014-009 attended W2 on 2026-05-06, day 18, outside the listed 2026-05-03 +/-2 day window.", 2),
             ("014011", "Subject 014-011 had an unscheduled repeat-chemistry visit on 2026-05-08 at 07:46 linked to SH-204-52."),
-            ("classification", "The page defers subject 014-009's signed discrepancy classification to page 27."),
+            ("classification", "VIS-014/R1-B defers subject 014-009's signed discrepancy classification to WIN-014009/R1."),
         ],
         budget=2,
     )
@@ -909,13 +927,19 @@ def build(output_root):
     # 11 - intended full-page scan: corrected ECG eCRF.
     c = case.new_page(
         "Subject 014-003 W2 electrocardiogram eCRF",
-        subtitle="Scanned source correction | Original and corrected states visible",
+        subtitle="Record ECG-014003-W2/R2 | Supersedes R1 at 22 Apr 2026 14:18",
         section_code="eCRF / ECG",
     )
     scan = _scan_document(
         "ELECTROCARDIOGRAM eCRF - WEEK 2",
-        "Protocol HTX-204 | Site 014 | Subject 014-003 | Visit date 21 Apr 2026",
+        "ECG-014003-W2/R2 | Site 014 | Subject 014-003 | Visit date 21 Apr 2026",
         [
+            (
+                "Controlled record",
+                [
+                    "Revision R2 supersedes ECG-014003-W2/R1 for the performed field and correction rationale. Effective 22 Apr 2026 14:18; the original R1 entry remains visible.",
+                ],
+            ),
             (
                 "Visit context",
                 [
@@ -960,7 +984,7 @@ def build(output_root):
     _gold_scan(
         case,
         "Corrected W2 ECG eCRF",
-        "For subject 014-003 at W2 on 2026-04-21, ECG performed - Yes (original) is crossed out and ECG performed - No (corrected) is checked. Tracing attached is unchecked. Equipment unavailable is checked and subject refused is unchecked. The source says asset ECG-2 showed service code E17, no tracing identifier was generated, and no tracing is filed. MK made the original entry at 09:02 and corrected it on 2026-04-22 at 14:18. DEV-014-03 is major and Q-77 was opened. LS verified the source on 2026-05-08 at 11:26. PI deviation review completed is unchecked.",
+        "Controlled record ECG-014003-W2/R2 supersedes ECG-014003-W2/R1. For subject 014-003 at W2 on 2026-04-21, ECG performed - Yes (original) is crossed out and ECG performed - No (corrected) is checked. Tracing attached is unchecked. Equipment unavailable is checked and subject refused is unchecked. The source says asset ECG-2 showed service code E17, no tracing identifier was generated, and no tracing is filed. MK made the original entry at 09:02 and corrected it on 2026-04-22 at 14:18. DEV-014-03 is major and Q-77 was opened. LS verified the source on 2026-05-08 at 11:26. PI deviation review completed is unchecked.",
     )
     _facts(
         case,
@@ -986,12 +1010,12 @@ def build(output_root):
     # 12 - intended full-page scan: temperature excursion source.
     c = case.new_page(
         "Investigational-product temperature excursion",
-        subtitle="Scanned pharmacy source | Signed disposition controls over working notes",
+        subtitle="Record IP-DISP-K204153/R5 | Signed disposition controls over working notes",
         section_code="PHARMACY / DEV-014-07",
     )
     scan = _scan_document(
         "TEMPERATURE EXCURSION AND KIT DISPOSITION",
-        "HTX-204 | Site 014 | Refrigerator RX-2 | Kit K-204-153 | 18 Apr 2026",
+        "IP-DISP-K204153/R5 | Refrigerator RX-2 | Kit K-204-153 | 18 Apr 2026",
         [
             (
                 "Logger sequence",
@@ -1048,8 +1072,10 @@ def build(output_root):
         "Temperature excursion and disposition scan",
         "form",
         [
-            ("identity", "The form concerns kit K-204-153 assigned to subject 014-007 in refrigerator RX-2."),
-            ("peak", "The peak recorded reading is 9.1 C at 10:10 on 2026-04-18.", 2),
+            ("identity", "The form concerns kit K-204-153 assigned to subject 014-007 in refrigerator RX-2.", 1, {"strict": True, "evidence": [["RX-2", "RX 2"], ["K-204-153"], ["014-007"], ["refrigerator"], ["assigned", "assignment"]]}),
+            ("peak", "The peak recorded reading is 9.1 C at 10:10 on 2026-04-18.", 2, {"strict": True, "evidence": [
+                ["18 Apr 2026", "2026-04-18"], ["10:10"], ["9.1 C", "9.1C"],
+            ]}),
             ("final-reading", "The final recorded reading is 4.7 C at 13:40."),
             ("return", "Return to usable stock is crossed.", 1, ("Return to usable stock", "crossed")),
             ("do-not-dose", "Do not dose is checked and controls the kit disposition.", 2, ("Do not dose", "checked")),
@@ -1072,24 +1098,23 @@ def build(output_root):
     dev_headers = ["Deviation", "Subject", "Event date", "Detected", "Issue", "Provisional class", "Controlling source"]
     dev_rows = [
         ["DEV-014-02", "014-002", "19 Apr", "20 Apr", "Diary page returned late", "Minor", "Resolved note"],
-        ["DEV-014-03", "014-003", "21 Apr", "22 Apr", "W2 ECG source discrepancy", "Major", "eCRF p11 / DCF p16"],
+        ["DEV-014-03", "014-003", "21 Apr", "22 Apr", "W2 ECG source discrepancy", "Major", "ECG-014003-W2/R2 + DQC/014/Q77/F1"],
         ["DEV-014-04", "014-004", "24 Apr", "25 Apr", "ET lab outside processing target", "Minor", "Lab receipt"],
-        ["DEV-014-07", "014-007", "18 Apr", "18 Apr", "IP storage excursion", "Major", "Pharmacy form p12"],
-        ["DEV-014-08", "014-009", "06 May", "07 May", "W2 attendance outside listed window", "Pending signed class", "Adjudication p27"],
-        ["DEV-014-09", "014-011", "27 Apr", "28 Apr", "Repeat chemistry evidence absent", "Major", "Amended report p15"],
-        ["DEV-014-10", "014-014", "01 May", "04 May", "ePRO activation incomplete", "Minor", "Training p18"],
-        ["DEV-014-11", "014-016", "04 May", "05 May", "Unblinded detail in site note", "Major", "PI review p22 / p28"],
+        ["DEV-014-07", "014-007", "18 Apr", "18 Apr", "IP storage excursion", "Major", "IP-DISP-K204153/R5"],
+        ["DEV-014-08", "014-009", "06 May", "07 May", "W2 attendance outside listed window", "Pending signed class", "WIN-014009/R1"],
+        ["DEV-014-09", "014-011", "27 Apr", "28 Apr", "Repeat chemistry evidence absent", "Major", "NCL-AC77152/R2"],
+        ["DEV-014-10", "014-014", "01 May", "04 May", "ePRO activation incomplete", "Minor", "TRN-014014/R1"],
+        ["DEV-014-11", "014-016", "04 May", "05 May", "Unblinded detail in site note", "Major", "PI-DEV-014/R6 + A-204"],
     ]
     draw_table(c, 28, 675, [78, 55, 59, 58, 142, 103, 89], [dev_headers, *dev_rows], font_size=5.75, zebra=True)
     draw_label(c, "Chronology rule", 42, 340)
-    draw_paragraph(c, "Event date, detection date, and signed classification are separate fields. DEV-014-08 remains pending here because page 27 carries the signed classification. DEV-014-03 and DEV-014-07 retain their original source corrections even after downstream review.", 42, 318, 510, size=8.3, leading=11.4)
-    draw_paragraph(c, "The register links evidence without copying the checkbox or corrected field states from those source forms. Review the referenced page for the exact marked state.", 42, 238, 510, size=8.3, leading=11.4, color=MUTED)
+    draw_paragraph(c, "Event date, detection date, and signed classification are separate fields. DEV-014-08 remains pending in this register; WIN-014009/R1 carries the signed classification. DEV-014-03 and DEV-014-07 retain their original source corrections after downstream review.", 42, 318, 510, size=8.3, leading=11.4)
     _gold_table(
         case,
         "Protocol deviation chronology",
         dev_headers,
         dev_rows,
-        "Event date, detection date, and signed classification are separate fields. The register links evidence but does not replace exact marked states on the referenced source forms.",
+        "Event date, detection date, and signed classification are separate fields. Controlling-source identifiers link the register to the exact corrected records without copying their marked states.",
     )
     _facts(
         case,
@@ -1097,11 +1122,11 @@ def build(output_root):
         "Protocol deviation chronology",
         "table",
         [
-            ("dev03", "DEV-014-03 concerns subject 014-003's 2026-04-21 W2 ECG discrepancy and routes to pages 11 and 16.", 2),
-            ("dev07", "DEV-014-07 concerns subject 014-007's 2026-04-18 IP storage excursion and routes to page 12.", 2),
-            ("dev08", "DEV-014-08 for subject 014-009 has a pending signed class here and routes to page 27.", 2),
-            ("dev09", "DEV-014-09 concerns absent repeat chemistry evidence for subject 014-011 and routes to page 15."),
-            ("dev11", "DEV-014-11 concerns unblinded detail in subject 014-016's site note and routes to pages 22 and 28."),
+            ("dev03", "DEV-014-03 concerns subject 014-003's 2026-04-21 W2 ECG discrepancy and links ECG-014003-W2/R2 with DQC/014/Q77/F1.", 2),
+            ("dev07", "DEV-014-07 concerns subject 014-007's 2026-04-18 IP storage excursion and links to IP-DISP-K204153/R5.", 2),
+            ("dev08", "DEV-014-08 for subject 014-009 has a pending signed class here and links to WIN-014009/R1.", 2),
+            ("dev09", "DEV-014-09 concerns absent repeat chemistry evidence for subject 014-011 and links to NCL-AC77152/R2."),
+            ("dev11", "DEV-014-11 concerns unblinded detail in subject 014-016's site note and links PI-DEV-014/R6 with action A-204."),
             ("dates", "The page treats event date, detection date, and signed classification as separate fields."),
         ],
         budget=2,
@@ -1111,7 +1136,7 @@ def build(output_root):
     # the visually encoded disposition on page 12.
     c = case.new_page(
         "Investigational-product inventory reconciliation",
-        subtitle="Physical count 08 May 14:35 | Status labels defer to signed disposition forms",
+        subtitle="Record IP-COUNT-014-20260508/R1 | Physical count 08 May 14:35",
         section_code="PHARMACY / COUNT",
     )
     ip_headers = ["Kit", "Subject", "Receipt qty", "Dispensed qty", "Returned qty", "Physical balance", "Inventory locator / status"]
@@ -1121,7 +1146,7 @@ def build(output_root):
         ["K-204-166", "014-002", "15", "15", "2", "2", "RX-2/B2 / dose-reduction return"],
         ["K-204-121", "014-003", "30", "30", "5", "5", "RX-2/A1 / reconciled"],
         ["K-204-146", "014-003", "30", "30", "Not returned", "0", "Subject return outstanding"],
-        ["K-204-153", "014-007", "30", "See source", "N/A", "30", "Q1 / signed form p12 controls"],
+        ["K-204-153", "014-007", "30", "See source", "N/A", "30", "Q1 / IP-DISP-K204153/R5"],
         ["K-204-158", "014-008", "30", "30", "Pending", "0", "Subject custody"],
         ["K-204-160", "014-009", "30", "30", "3", "3", "RX-2/B1 / window query"],
         ["K-204-171", "014-011", "30", "30", "Pending", "0", "Subject custody / lab follow-up"],
@@ -1130,8 +1155,14 @@ def build(output_root):
         ["K-204-190", "014-016", "30", "30", "2", "2", "RX-2/B2 / masking review"],
     ]
     draw_table(c, 26, 675, [74, 51, 61, 69, 69, 78, 171], [ip_headers, *ip_rows], font_size=5.7, zebra=True)
-    draw_paragraph(c, "For K-204-153, the count sheet deliberately records 'See source' for dispensed quantity. The signed marked state on page 12, not this reconciliation row, determines whether dosing occurred and which disposition controls.", 42, 160, 510, size=8.2, leading=11.3, color=MUTED)
-    _gold_table(case, "Investigational-product inventory reconciliation", ip_headers, ip_rows)
+    draw_paragraph(c, "For K-204-153, this count record retains 'See source' for dispensed quantity. Signed record IP-DISP-K204153/R5 determines whether dosing occurred and which disposition controls.", 42, 160, 510, size=8.2, leading=11.3, color=MUTED)
+    _gold_table(
+        case,
+        "Investigational-product inventory reconciliation",
+        ip_headers,
+        ip_rows,
+        "Controlled count record IP-COUNT-014-20260508/R1 captures the physical count on 08 May at 14:35.",
+    )
     _facts(
         case,
         "inventory",
@@ -1140,7 +1171,7 @@ def build(output_root):
         [
             ("k146", "Kit K-204-146 for subject 014-003 has a subject return outstanding and physical site balance 0.", 2),
             ("k153-count", "Kit K-204-153 has receipt quantity 30, physical balance 30, and locator Q1."),
-            ("k153-source", "The K-204-153 row defers dispensed quantity and status to the signed form on page 12 rather than restating them.", 2),
+            ("k153-source", "The K-204-153 row defers dispensed quantity and status to record IP-DISP-K204153/R5 rather than restating them.", 2),
             ("k160", "Kit K-204-160 for subject 014-009 has returned quantity and physical balance 3."),
             ("k190", "Kit K-204-190 for subject 014-016 has returned quantity and physical balance 2 and remains linked to masking review."),
         ],
@@ -1204,7 +1235,10 @@ def build(output_root):
             ("original", "Preliminary creatinine 1.74 mg/dL is struck."),
             ("final", "Final amended creatinine is 1.47 mg/dL, high against reference 0.60-1.30 mg/dL.", 2),
             ("egfr", "The amended eGFR is 54 mL/min/1.73 m2 and is flagged low."),
-            ("verification", "C. Liu verified the final amendment on 2026-05-09 at 07:18."),
+            ("verification", "C. Liu verified the final amendment on 2026-05-09 at 07:18.", 1, {"strict": True, "evidence": [
+                ["C. Liu", "C Liu"], ["verified"], ["final amendment", "final amended"],
+                ["2026-05-09", "09 May 2026", "9 May 2026"], ["07:18", "7:18"],
+            ]}),
         ],
         budget=2,
     )
@@ -1217,7 +1251,7 @@ def build(output_root):
             ("collection", "Tube CH-551 was collected on 2026-05-08 at 07:46 and sealed."),
             ("receipt", "The laboratory accepted the specimen as accession AC-77152 at 15:31."),
             ("versions", "Portal version 1 posted at 21:42 on 2026-05-08 and version 2 posted at 07:22 on 2026-05-09."),
-            ("ack", "Dr. Neha Rao reviewed the amendment at 08:06 on 2026-05-09."),
+            ("ack", "NR reviewed the amendment at 08:06 on 2026-05-09."),
         ],
         budget=1,
     )
@@ -1225,13 +1259,19 @@ def build(output_root):
     # 16 - intended full-page scan: signed DCF superseding provisional query text.
     c = case.new_page(
         "Signed data clarification form Q-77",
-        subtitle="Scanned controlling clarification | Draft response retained and struck",
+        subtitle="Record DQC/014/Q77/F1 | Signed 09 May 2026 08:42 | Draft retained",
         section_code="DCF / Q-77",
     )
     scan = _scan_document(
         "DATA CLARIFICATION FORM Q-77 - SIGNED RESPONSE",
-        "HTX-204 | Site 014 | Subject 014-003 | Field: W2 ECG performed",
+        "DQC/014/Q77/F1 | Site 014 | Subject 014-003 | Field: W2 ECG performed",
         [
+            (
+                "Controlled record",
+                [
+                    "Final signed response F1 references ECG-014003-W2/R2 and supersedes the unsigned console draft for this field. Author signature time is 09 May 2026 08:42; data-management acceptance is a separate 09:14 event.",
+                ],
+            ),
             (
                 "Query issued by data management",
                 [
@@ -1275,7 +1315,7 @@ def build(output_root):
     _gold_scan(
         case,
         "Signed data clarification form Q-77",
-        "Q-77 concerns subject 014-003's W2 ECG-performed field. The draft response 'ECG performed; tracing will be uploaded' is struck. The final response says ECG was not performed because the machine was unavailable and no tracing exists. PI response signed and site response accepted are checked. Request missing tracing is crossed. Production field updated, query closed, and deviation review complete are unchecked. Dr. Neha Rao signed the final response on 2026-05-09 at 08:42. A. Thomas accepted it at 09:14. The signed DCF controls over the provisional console response on page 7, but administrative closure still awaits upload.",
+        "DQC/014/Q77/F1 concerns subject 014-003's W2 ECG-performed field and references ECG-014003-W2/R2. The draft response 'ECG performed; tracing will be uploaded' is struck. The final response says ECG was not performed because the machine was unavailable and no tracing exists. PI response signed and site response accepted are checked. Request missing tracing is crossed. Production field updated is unchecked. Query closed is unchecked. Deviation review complete is unchecked. Dr. Neha Rao signed the final response on 2026-05-09 at 08:42. A. Thomas accepted it at 09:14. F1 controls over the unsigned 2026-05-06 console draft for this field, but administrative closure still awaits upload.",
     )
     _facts(
         case,
@@ -1284,7 +1324,11 @@ def build(output_root):
         "form",
         [
             ("draft", "The draft Q-77 response saying ECG performed and tracing will be uploaded is struck.", 2),
-            ("final", "The signed final response says ECG was not performed because the machine was unavailable and no tracing exists.", 2),
+            ("final", "The signed final response says ECG was not performed because the machine was unavailable and no tracing exists.", 2, {"strict": True, "evidence": [
+                ["signed final response", "final signed response", "signed the final response", "final response signed"], ["ECG not performed", "ECG was not performed"],
+                ["machine was unavailable", "machine unavailable", "equipment unavailable"],
+                ["no tracing exists", "no tracing", "tracing absent", "without tracing"],
+            ]}),
             ("pi-signed", "PI response signed is checked.", 1, ("PI response signed", "checked")),
             ("site-accepted", "Site response accepted is checked.", 1, ("Site response accepted", "checked")),
             ("tracing", "Request missing tracing is crossed.", 1, ("Request missing tracing", "crossed")),
@@ -1292,7 +1336,7 @@ def build(output_root):
             ("closed", "Query closed is unchecked.", 2, ("Query closed", "unchecked")),
             ("deviation-complete", "Deviation review complete is unchecked.", 2, ("Deviation review complete", "unchecked")),
             ("signatures", "Dr. Neha Rao signed at 08:42 and A. Thomas accepted at 09:14 on 2026-05-09."),
-            ("precedence", "The signed DCF controls over the provisional console response on page 7 while both states remain part of the record.", 2),
+            ("precedence", "Signed record DQC/014/Q77/F1 controls over the unsigned 2026-05-06 console draft while both states remain part of the audit history.", 2),
         ],
         budget=2,
     )
@@ -1408,10 +1452,10 @@ def build(output_root):
         budget=1,
     )
 
-    # 19 - working CAPA tracker, deliberately superseded by page 25.
+    # 19 - working CAPA tracker, later superseded for named fields.
     c = case.new_page(
         "Corrective-action working tracker - draft 2",
-        subtitle="Working copy exported 08 May 16:10 | Signed CAPA approval controls final owners and dates",
+        subtitle="Record CAPA-014-02/D2 | Exported 08 May 16:10 | Not approved",
         section_code="CAPA / DRAFT",
     )
     capa_headers = ["Draft item", "Linked record", "Proposed action", "Draft owner", "Draft due", "Working state"]
@@ -1427,14 +1471,14 @@ def build(output_root):
     ]
     draw_table(c, 30, 675, [60, 104, 190, 70, 66, 92], [capa_headers, *capa_rows], font_size=5.9, zebra=True)
     draw_badge(c, "Draft - not approved", 42, 340, AMBER)
-    draw_paragraph(c, "Dates and owners on this page are proposals captured before final review. Keep them as draft audit history. Page 25 contains the signed CAPA approval and may change an owner, due date, or required evidence without invalidating this snapshot.", 42, 304, 510, size=8.5, leading=11.6)
+    draw_paragraph(c, "CAPA-014-02/D2 preserves proposed owners and dates as draft audit history. Approved revision CAPA-014-02/R1 may supersede a named field without altering this timestamped export.", 42, 304, 510, size=8.5, leading=11.6)
     draw_paragraph(c, "Completion cannot be inferred from vendor contact, a planned call, a pending report, or an opened template. Those phrases describe working activity only.", 42, 216, 510, size=8.2, leading=11.2, color=MUTED)
     _gold_table(
         case,
         "Corrective-action working tracker - draft 2",
         capa_headers,
         capa_rows,
-        "This page is draft 2, exported on 2026-05-08 at 16:10, and is not approved; it is retained as audit history.\n\nThe signed approval on page 25 controls final owners, due dates, and required evidence; vendor contact, planned calls, pending reports, and opened templates do not prove completion.",
+        "CAPA-014-02/D2 is draft 2, exported on 2026-05-08 at 16:10, and is not approved; it is retained as audit history. D2 preserves proposed owners and dates as draft audit history. Approved revision CAPA-014-02/R1 may supersede a named field without altering the timestamped export. Vendor contact, planned calls, pending reports, and opened templates do not prove completion.",
     )
     _facts(
         case,
@@ -1447,7 +1491,16 @@ def build(output_root):
             ("c05", "Draft item C-05 proposes NR review the amended chemistry by 2026-05-10."),
             ("c07", "Draft item C-07 proposes NR complete the masking impact assessment by 2026-05-20."),
             ("c08", "Draft item C-08 proposes MK file the visit-window calculation by 2026-05-16."),
-            ("precedence", "The page explicitly defers final owners, dates, and evidence to the signed approval on page 25.", 2),
+            (
+                "precedence",
+                "CAPA-014-02/D2 preserves proposed owners and dates as draft audit history; approved CAPA-014-02/R1 may supersede a named field without altering D2's timestamped export.",
+                2,
+                {"strict": True, "evidence": [
+                    ["CAPA-014-02/D2"], ["CAPA-014-02/R1"], ["preserves"], ["proposed owners"], ["dates"],
+                    ["draft audit history"], ["approved"], ["may supersede", "supersedes"], ["named field"],
+                    ["without altering the timestamped export", "without altering this timestamped export", "without altering D2's timestamped export", "timestamped export remains unchanged"],
+                ]},
+            ),
         ],
         budget=2,
     )
@@ -1669,7 +1722,6 @@ def build(output_root):
             ("dev09", "DEV-014-09 reviewed is checked."),
             ("dev10", "DEV-014-10 PI review required is disabled.", 1, ("DEV-014-10 PI review required", "disabled")),
             ("dev11", "DEV-014-11 reviewed is unchecked.", 2),
-            ("withdrawn", "Proposed DEV-014-06 review is crossed."),
             ("complete", "All deviations complete is unchecked.", 2),
         ],
         budget=2,
@@ -1804,16 +1856,22 @@ def build(output_root):
         primary_axis="source_precedence",
     )
 
-    # 25 - intended full-page scan: signed CAPA approval superseding page 19.
+    # 25 - intended full-page scan: signed CAPA approval superseding draft D2.
     c = case.new_page(
         "Signed CAPA approval and revised obligations",
-        subtitle="Scanned final approval | Revised dates supersede draft tracker only for named fields",
+        subtitle="Record CAPA-014-02/R1 | Effective 09 May 2026 12:18 | Supersedes D2 named fields",
         section_code="CAPA / FINAL",
     )
     scan = _scan_document(
         "CORRECTIVE AND PREVENTIVE ACTION PLAN - FINAL APPROVAL",
-        "HTX-204 Site 014 | CAPA-014-02 | Approved 09 May 2026 12:18",
+        "CAPA-014-02/R1 | Site 014 | Effective 09 May 2026 12:18 | Supersedes D2 named fields",
         [
+            (
+                "Record control",
+                [
+                    "Approved revision R1 supersedes CAPA-014-02/D2 only for the named owner, due, and evidence fields. Draft D2 remains immutable audit history at its 08 May 16:10 export timestamp.",
+                ],
+            ),
             (
                 "Approved corrective actions",
                 [
@@ -1836,7 +1894,7 @@ def build(output_root):
             (
                 "Change from draft",
                 [
-                    "Final review accelerated C-02, C-04, C-07, and C-08 and changed the required evidence. Draft dates on page 19 remain audit history and are not completion targets.",
+                    "Final review accelerated C-02, C-04, C-07, and C-08 and changed the required evidence. CAPA-014-02/D2 remains audit history and its dates are not completion targets.",
                 ],
             ),
         ],
@@ -1848,18 +1906,25 @@ def build(output_root):
             ("Effectiveness check required", "checked"),
             ("CAPA complete at approval", "unchecked"),
         ],
+        corrections=[
+            (
+                "Typed original D2 C-07 due 20 May; masking template opened",
+                "R1 C-07 due 11 May 16:00; signed MA-016 and Q-93 required",
+                "NR 12:14 / LS 12:18",
+            ),
+        ],
         signatures=[
             "PI approval Neha Rao 09 May 2026 12:14. Monitor acceptance Lina Sen 09 May 12:18.",
             "Effectiveness check owner: LS. Review window 21 May 09:00-22 May 17:00. Completion requires evidence, not assignment alone.",
         ],
         seed=1725,
-        form_code="CAPA-014-02 / FINAL",
+        form_code="CAPA-014-02/R1 / FINAL",
     )
     _place_full_scan(c, scan)
     _gold_scan(
         case,
         "Signed CAPA approval and revised obligations",
-        "CAPA-014-02 was approved on 2026-05-09. Final C-01: MK upload Q-77 DCF and verify production field by 2026-05-10 12:00. Final C-02: RP obtain RX-2 calibration certificate by 2026-05-12 17:00. Final C-03: MK document three K-204-146 return contact attempts by 2026-05-13 15:00. Final C-04: MK file corrected SH-204-45 receipt by 2026-05-11 12:00. Final C-05: NR document amended-chemistry review by 2026-05-09 17:00. Final C-06: MK attach ePRO competency record by 2026-05-09 14:00. Final C-07: NR complete DEV-014-11 masking impact assessment by 2026-05-11 16:00. Final C-08: MK upload signed Q-86 window calculation by 2026-05-11 12:00. CAPA approved by PI is checked. CAPA accepted by monitor is checked. Effectiveness check required is checked. Sponsor escalation required and CAPA complete at approval are unchecked. Draft due dates remain operative is crossed. The final signed dates control. LS owns the effectiveness check scheduled for 2026-05-21 through 2026-05-22.",
+        "CAPA-014-02/R1 became effective on 2026-05-09 at 12:18 and supersedes CAPA-014-02/D2 only for named owner, due, and evidence fields. Final C-01: MK upload Q-77 DCF and verify production field by 2026-05-10 12:00. Final C-02: RP obtain RX-2 calibration certificate by 2026-05-12 17:00. Final C-03: MK document three K-204-146 return contact attempts by 2026-05-13 15:00. Final C-04: MK file corrected SH-204-45 receipt by 2026-05-11 12:00. Final C-05: NR document amended-chemistry review by 2026-05-09 17:00. Final C-06: MK attach ePRO competency record by 2026-05-09 14:00. The typed D2 C-07 target of 20 May is struck; R1 assigns NR to complete the signed DEV-014-11 masking assessment MA-016 and Q-93 response by 2026-05-11 16:00. Final C-08: MK upload signed Q-86 window calculation by 2026-05-11 12:00. CAPA approved by PI is checked. CAPA accepted by monitor is checked. Effectiveness check required is checked. Sponsor escalation required and CAPA complete at approval are unchecked. Draft due dates remain operative is crossed. NR approved at 12:14 and LS made R1 effective at 12:18. LS owns the effectiveness check scheduled for 2026-05-21 through 2026-05-22.",
     )
     _facts(
         case,
@@ -1878,10 +1943,13 @@ def build(output_root):
             ("sponsor-escalation", "Sponsor escalation required is unchecked.", 1, ("Sponsor escalation required", "unchecked")),
             ("not-complete", "CAPA complete at approval is unchecked.", 1, ("CAPA complete at approval", "unchecked")),
             ("draft", "Draft due dates remain operative is crossed.", 2, ("Draft due dates remain operative", "crossed")),
-            ("signed-control", "The final signed CAPA dates control over draft dates.", 2, {"evidence": ["CAPA", "final", "signed", "control", "draft"]}),
+            ("signed-control", "Approved CAPA-014-02/R1 supersedes CAPA-014-02/D2 only for named owner, due, and evidence fields.", 2, {"strict": True, "evidence": [
+                ["CAPA-014-02/R1"], ["approved"], ["CAPA-014-02/D2"], ["supersedes"],
+                ["only", "solely", "exclusively"], ["owner"], ["due"], ["evidence"], ["fields"],
+            ]}),
             ("effectiveness", "LS owns the effectiveness check scheduled for 2026-05-21 through 2026-05-22."),
         ],
-        budget=2,
+        budget=3,
     )
 
     # 26 - aging table, not a duplicate of final action assignments.
@@ -1896,12 +1964,12 @@ def build(output_root):
         ["CE-204-12", "SH-204-45", "23 Apr 16:52", "15 d 20 h", "Corrected receipt", "Receipt verified", "Exception closure"],
         ["K-204-146 return", "014-003", "05 May 09:05", "4 d 3 h", "No returned kit", "Contact evidence absent", "CAPA C-03"],
         ["Q-84", "014-008", "23 Apr 10:20", "16 d 2 h", "Courier ticket", "Portal receipt absent", "Interface post"],
-        ["Q-86", "014-009", "07 May 08:30", "2 d 4 h", "Adjudication drafted", "Signature route", "Signed page 27"],
+        ["Q-86", "014-009", "07 May 08:30", "2 d 4 h", "Adjudication drafted", "Signature route", "WIN-014009/R1"],
         ["Q-88", "014-011", "28 Apr 09:10", "11 d 3 h", "Amended report", "PI reviewed", "Query close"],
         ["Q-91", "014-014", "04 May 12:16", "5 d 0 h", "Competency source", "Attached", "Console close"],
         ["Q-93", "014-016", "05 May 11:40", "4 d 1 h", "PI review incomplete", "Assessment absent", "CAPA C-07"],
-        ["DEV-014-08", "014-009", "07 May 09:05", "2 d 3 h", "Window calculation", "PI review absent", "Signed page 27"],
-        ["CAPA-014-02", "Site 014", "09 May 12:18", "0 d 0 h", "Final approval", "Assigned / open", "Action sheet p28"],
+        ["DEV-014-08", "014-009", "07 May 09:05", "2 d 3 h", "Window calculation", "PI review absent", "WIN-014009/R1"],
+        ["CAPA-014-02", "Site 014", "09 May 12:18", "0 d 0 h", "Final approval", "Assigned / open", "A-201 through A-205"],
     ]
     draw_table(c, 24, 675, [74, 60, 65, 50, 112, 105, 122], [aging_headers, *aging_rows], font_size=5.65, zebra=True)
     draw_label(c, "Interpretation", 42, 288)
@@ -1923,7 +1991,7 @@ def build(output_root):
             ("q77", "At 2026-05-09 13:00, Q-77 is aged 16 d 20 h from 2026-04-22 16:05 and is accepted but not closed.", 2),
             ("ce", "CE-204-12 is aged 15 d 20 h; its corrected receipt is verified but exception closure remains next."),
             ("k146", "The K-204-146 return item has absent contact evidence and routes to CAPA C-03."),
-            ("q86", "Q-86 is on signature route and points to signed page 27."),
+            ("q86", "Q-86 is on signature route and links to signed record WIN-014009/R1."),
             ("q93", "Q-93 has PI review incomplete, assessment absent, and routes to CAPA C-07.", 2),
             ("capa", "CAPA-014-02 is assigned and open, not complete, at approval."),
             (
@@ -1939,16 +2007,15 @@ def build(output_root):
     # 27 - mixed signed visit-window adjudication and native audit trail.
     c = case.new_page(
         "Subject 014-009 visit-window adjudication",
-        subtitle="Mixed source: signed classification above, native calculation lineage below",
+        subtitle="Record WIN-014009/R1 | Signed 09 May 2026 11:22 | Supersedes CAL-014009/D0",
         section_code="Q-86 / DEV-014-08",
     )
     window_scan = _scan_document(
         "SIGNED VISIT-WINDOW ADJUDICATION",
-        "Subject 014-009 | W2 attended 06 May 2026 | Query Q-86 | DEV-014-08",
+        "WIN-014009/R1 | Subject 014-009 | Query Q-86 | DEV-014-08",
         [
-            ("Protocol calculation", ["V1 date 19 Apr 2026 is study day 1. W2 target is study day 15, corresponding to 03 May. Allowed window is plus or minus two calendar days: 01 May through 05 May inclusive."]),
+            ("Protocol calculation", ["WIN-014009/R1 supersedes unsigned CAL-014009/D0 for the classification. V1 on 19 Apr is day 1; W2 target is 03 May and the allowed window is 01 May through 05 May inclusive."]),
             ("Adjudication", ["Attendance on 06 May is one day beyond the allowed window. The visit procedures remain usable. The discrepancy is retained as a minor protocol deviation and is not reclassified as missed visit."]),
-            ("Administrative state", ["The site response is accepted. Closure requires upload of this signed calculation to the production query record and confirmation that the deviation link is active."]),
         ],
         controls=[
             ("Within allowed window", "crossed"),
@@ -1958,27 +2025,34 @@ def build(output_root):
             ("Site response accepted", "checked"),
             ("Q-86 closed", "unchecked"),
         ],
+        corrections=[
+            (
+                "Typed original CAL-014009/D0 classification: within allowed window",
+                "WIN-014009/R1 classification: minor deviation; visit usable; not a missed visit",
+                "NR 09 May 11:22",
+            ),
+        ],
         signatures=["Calculated MK 09 May 10:46; adjudicated NR 09 May 11:22; monitor concurrence LS 09 May 11:28."],
         seed=1727,
         width=1900,
         height=1020,
-        form_code="WIN-ADJ-06 / SIGNED",
+        form_code="WIN-014009/R1 / SIGNED",
     )
     _place_mixed_scan(c, window_scan, y=404, height=266)
     audit_headers = ["Audit event", "Timestamp", "Actor", "State after event"]
     audit_rows = [
-        ["Calendar note created", "07 May 08:12", "MK", "Draft"],
-        ["Q-86 opened", "07 May 08:30", "AT", "Open"],
-        ["Deviation linked", "07 May 09:05", "MK", "Class pending"],
-        ["Calculation signed", "09 May 11:22", "NR", "Signed source posted"],
-        ["Monitor concurred", "09 May 11:28", "LS", "Ready to upload"],
-        ["Production upload due", "11 May 12:00", "MK", "Not yet evidenced"],
+        ["WIN-E01 / draft created", "07 May 08:12", "MK", "CAL-014009/D0"],
+        ["WIN-E02 / Q-86 opened", "07 May 08:30", "AT", "Open"],
+        ["WIN-E03 / deviation linked", "07 May 09:05", "MK", "Class pending"],
+        ["WIN-E04 / R1 signed", "09 May 11:22", "NR", "WIN-014009/R1 effective"],
+        ["WIN-E05 / monitor concurred", "09 May 11:28", "LS", "Ready to upload"],
+        ["WIN-E06 / upload due", "11 May 12:00", "MK", "Not yet evidenced"],
     ]
     draw_label(c, "Native calculation audit trail", 42, 375)
     draw_table(c, 42, 360, [150, 110, 70, 180], [audit_headers, *audit_rows], font_size=6.65, zebra=True)
     case.add_gold(
         "Page 27 - Subject 014-009 visit-window adjudication",
-        "For subject 014-009, V1 on 2026-04-19 is day 1; W2 target is 2026-05-03 and the allowed window is 2026-05-01 through 2026-05-05 inclusive. Attendance on 2026-05-06 is one day beyond the window. Within allowed window is crossed out. Minor deviation and site response accepted are checked. Major deviation, missed visit, and Q-86 closed are unchecked. NR adjudicated on 2026-05-09 at 11:22; LS concurred at 11:28. Production upload is due 2026-05-11 at 12:00 and is not yet evidenced.\n\n" + markdown_table(audit_headers, audit_rows),
+        "WIN-014009/R1 supersedes unsigned CAL-014009/D0 for subject 014-009's visit classification. V1 on 2026-04-19 is day 1; W2 target is 2026-05-03 and the allowed window is 2026-05-01 through 2026-05-05 inclusive. Attendance on 2026-05-06 is one day beyond the window. The typed D0 classification within allowed window is struck. R1 records minor deviation, visit usable, and not a missed visit. Within allowed window is crossed out. Minor deviation and site response accepted are checked. Major deviation, missed visit, and Q-86 closed are unchecked. NR signed R1 on 2026-05-09 at 11:22; LS concurred at 11:28. Production upload is due 2026-05-11 at 12:00 and is not yet evidenced.\n\n" + markdown_table(audit_headers, audit_rows),
     )
     _facts(
         case,
@@ -1994,6 +2068,7 @@ def build(output_root):
             ("missed", "Missed visit is unchecked.", 2, ("Missed visit", "unchecked")),
             ("accepted", "Visit-window site response accepted is checked.", 2, ("Site response accepted", "checked")),
             ("q86-closed", "Q-86 closed is unchecked.", 2, ("Q-86 closed", "unchecked")),
+            ("record", "WIN-014009/R1 supersedes CAL-014009/D0 and became effective when NR signed on 2026-05-09 at 11:22.", 2),
         ],
         budget=2,
     )
@@ -2096,17 +2171,27 @@ def build(output_root):
         ],
         budget=2,
     )
-    _facts(
-        case,
-        "routing",
+    routing_leaves = []
+    for owner, primary_route, escalation_contact, review_window in route_rows:
+        for field_id, column, value in (
+            ("primary-route", "Primary route", primary_route),
+            ("escalation-contact", "Escalation contact", escalation_contact),
+            ("review-window", "Review window", review_window),
+        ):
+            routing_leaves.append(
+                table_binding_leaf(
+                    f"p28.routing.{owner.lower()}.{field_id}",
+                    f"For {owner}, {column} is {value}.",
+                    owner,
+                    column,
+                    value,
+                )
+            )
+    case.add_region(
+        "p28.routing",
         "Native action routing directory",
         "table",
-        [
-            ("mk", "MK uses the secure trial repository and escalates to AT/data management during 2026-05-10 through 2026-05-13."),
-            ("rp", "RP uses the restricted pharmacy vault and sponsor supply line on 2026-05-12."),
-            ("nr", "NR uses the PI electronic signature queue and escalates to LS on 2026-05-11."),
-            ("ls", "LS owns the CAPA effectiveness file review from 21 May 2026 through 22 May 2026."),
-        ],
+        routing_leaves,
         budget=1,
     )
 
@@ -2164,12 +2249,12 @@ def build(output_root):
     # 30 - full-page scan: masking access and emergency-code audit.
     c = case.new_page(
         "Randomization and masking-access audit",
-        subtitle="Scanned restricted source | Role, access reason, and code-break state",
+        subtitle="Record RTS-AUD-014016/R1 | Corrected 09 May 2026 15:44",
         section_code="MASKING / ACCESS",
     )
     scan = _scan_document(
         "RANDOMIZATION AND MASKING ACCESS AUDIT",
-        "HTX-204 | Site 014 | System RTS-204 | Audit through 09 May 2026 16:00",
+        "RTS-AUD-014016/R1 | Site 014 | System RTS-204 | Audit through 09 May 2026 16:00",
         [
             ("Authorized roles", [
                 "Ravi Patel has unblinded pharmacy access for receipt, assignment confirmation, accountability, and product disposition. Jaya Das may witness counts but has no code-view permission.",
@@ -2203,7 +2288,7 @@ def build(output_root):
         form_code="RTS-AUD-09 / RESTRICTED",
     )
     _place_full_scan(c, scan)
-    _gold_scan(case, "Randomization and masking-access audit", "014-016 pharmacy custody access is checked.\n\n014-016 emergency code break initiated is unchecked.\n\n014-016 treatment code displayed is unchecked.\n\nThe 2026-05-04 08:06 access was by RP for kit K-204-190 custody; no treatment code was disclosed to the blinded team. The 2026-05-04 18:29 site note disclosed that an unblinded pharmacist was consulted, which revealed a role interaction but not the assigned treatment. Jaya Das code-view permission is disabled. Masking impact review required is checked and immediate recruitment pause active is unchecked. The original emergency-unblinding classification is corrected to restricted pharmacy custody check with no treatment code displayed by QA on 2026-05-09 at 15:44.")
+    _gold_scan(case, "Randomization and masking-access audit", "Controlled audit record RTS-AUD-014016/R1 covers subject 014-016.\n\n014-016 pharmacy custody access is checked.\n\n014-016 emergency code break initiated is unchecked.\n\n014-016 treatment code displayed is unchecked.\n\nThe 2026-05-04 08:06 access was by RP for kit K-204-190 custody; no treatment code was disclosed to the blinded team. The 2026-05-04 18:29 site note disclosed that an unblinded pharmacist was consulted, which revealed a role interaction but not the assigned treatment. Jaya Das code-view permission is disabled. Masking impact review required is checked and immediate recruitment pause active is unchecked. The original emergency-unblinding classification is corrected to restricted pharmacy custody check with no treatment code displayed by QA on 2026-05-09 at 15:44.")
     _facts(case, "masking-access", "Scanned masking-access audit", "form", [
         ("custody", "For subject 014-016, pharmacy custody access is checked.", 2, ("014-016 pharmacy custody access", "checked")),
         ("break", "014-016 emergency code break initiated is unchecked.", 2, ("014-016 emergency code break initiated", "unchecked")),
@@ -2211,7 +2296,11 @@ def build(output_root):
         ("jaya", "Jaya Das code-view permission is disabled.", 1, ("Jaya Das code-view permission", "disabled")),
         ("review", "Masking impact review required is checked.", 2, ("Masking impact review required", "checked")),
         ("pause", "Immediate recruitment pause active is unchecked.", 2, ("Immediate recruitment pause active", "unchecked")),
-        ("correction", "QA corrected emergency unblinding to restricted pharmacy custody check with no treatment code displayed on 2026-05-09 at 15:44.", 2),
+        ("correction", "QA corrected emergency unblinding to restricted pharmacy custody check with no treatment code displayed or disclosed on 2026-05-09 at 15:44.", 2, {"strict": True, "evidence": [
+            ["QA"], ["corrected"], ["emergency unblinding", "emergency-unblinding"], ["restricted pharmacy custody check"],
+            ["no treatment code displayed", "no treatment code disclosed"],
+            ["2026-05-09", "09 May 2026", "9 May 2026", "09 May", "9 May"], ["15:44"],
+        ]}),
         ("role", "The site note disclosed an unblinded pharmacist interaction but not the assigned treatment."),
     ], budget=2, primary_axis="low_quality_scan", secondary_axes=("form_state", "source_precedence"))
 
@@ -2408,7 +2497,27 @@ def build(output_root):
         ("AE-014-04 request / 014-011", "Resulting state"), ("AE-014-04 review / 014-011", "Next obligation"),
         ("AE-014-05 call / 014-016", "Clinical content"), ("AE-014-05 call / 014-016", "Next obligation"),
         ("AE-014-08 evidence / 014-014", "Resulting state"), ("FU-013 / 014-013", "Resulting state"),
-    ], consequential=[("AE-014-05 call / 014-016", "Next obligation"), ("FU-013 / 014-013", "Resulting state")])
+    ], consequential=[("AE-014-05 call / 014-016", "Next obligation"), ("FU-013 / 014-013", "Resulting state")], value_aliases={
+        ("AE-014-01 resolution / 014-004", "Resulting state"): ["Resolved 27 Apr"],
+    }, row_parts={
+        "AE-014-01 resolution / 014-004": ["AE-014-01", "014-004", "27 Apr 09:02"],
+        "AE-014-03 result / 014-007": ["AE-014-03", "014-007", "03 May 09:18"],
+        "AE-014-04 request / 014-011": ["AE-014-04", "014-011", "28 Apr 09:10"],
+        "AE-014-04 review / 014-011": ["AE-014-04", "014-011", "09 May 08:06"],
+        "AE-014-05 call / 014-016": ["AE-014-05", "014-016", "04 May 18:16"],
+        "AE-014-08 evidence / 014-014": ["AE-014-08", "014-014", "08 May 14:03"],
+    }, row_order_aliases={
+        "AE-014-01 initial / 014-004": ["AE-014-01 / 014-004 24 Apr 18:05"],
+        "AE-014-01 resolution / 014-004": ["AE-014-01 / 014-004 27 Apr 09:02"],
+        "AE-014-03 arrange / 014-007": ["AE-014-03 / 014-007 19 Apr 08:44"],
+        "AE-014-03 result / 014-007": ["AE-014-03 / 014-007 03 May 09:18"],
+        "AE-014-04 request / 014-011": ["AE-014-04 / 014-011 28 Apr 09:10"],
+        "AE-014-04 review / 014-011": ["AE-014-04 / 014-011 09 May 08:06"],
+        "AE-014-05 call / 014-016": ["AE-014-05 / 014-016 04 May 18:16"],
+        "AE-014-05 day-1 / 014-016": ["AE-014-05 / 014-016 05 May 08:20 Day-1"],
+        "AE-014-08 ticket / 014-014": ["AE-014-08 / 014-014 04 May 12:16"],
+        "AE-014-08 evidence / 014-014": ["AE-014-08 / 014-014 08 May 14:03"],
+    })
     _facts(case, "follow-rule", "Safety state-transition rule", "text", [
         ("contact", "A completed safety contact does not by itself prove medical review, query closure, or deviation closure.", 2),
         ("event", "Each event row records only the state produced at that timestamp."),
@@ -2465,11 +2574,15 @@ def build(output_root):
         ("02 May", "Entry state"), ("03 May", "Audit note"),
         ("08 May practice", "Symptom score"), ("08 May practice", "Sync timestamp"),
         ("08 May daily", "Entry state"), ("09 May daily", "Audit note"),
-    ], budget=1, consequential=[("02 May", "Entry state"), ("03 May", "Audit note")])
+    ], budget=1, consequential=[("02 May", "Entry state"), ("03 May", "Audit note")], row_parts={
+        "08 May practice": ["08 May", "Practice 13:31"],
+        "08 May daily": ["08 May", "Daily 19:06"],
+        "09 May daily": ["09 May", "Daily 18:42"],
+    })
     # 37 - native accountability transaction continuation.
     c = case.new_page(
         "Investigational-product transaction ledger",
-        subtitle="Receipt, assignment, dispense, return, quarantine, and transfer are distinct movements",
+        subtitle="Record IP-TX-014/R3 | Exported 14 May 2026 08:00",
         section_code="PHARMACY / TRANSACTIONS",
     )
     tx_headers = ["Transaction", "Timestamp", "Kit", "Subject", "Movement", "Quantity / balance", "Source / resulting state"]
@@ -2490,8 +2603,13 @@ def build(output_root):
         ["TX-194", "13 May 10:18", "K-204-153", "014-007", "Sponsor return", "-30 / 0", "Transfer SRN-551 sealed"],
     ]
     tx_y = draw_table(c, 16, 675, [51, 74, 67, 56, 86, 89, 173], [tx_headers, *tx_rows], font_size=5.5, row_padding=2.5, zebra=True)
-    draw_paragraph(c, "A randomization assignment or attempted dispense with zero movement does not establish subject custody. For K-204-153, the balance remains 30 through calibration verification and becomes zero only at the documented sponsor-return transfer on 13 May.", 42, tx_y - 18, 510, size=7.8, leading=10.6, color=MUTED)
-    _gold_table(case, "Investigational-product transaction ledger", tx_headers, tx_rows, "Assignment and blocked dispense do not establish subject custody. K-204-153 remains at balance 30 until sponsor return on 13 May.")
+    _gold_table(
+        case,
+        "Investigational-product transaction ledger",
+        tx_headers,
+        tx_rows,
+        "Controlled transaction record IP-TX-014/R3 preserves the accountability sequence through sponsor return.",
+    )
     _selected_table_region(case, "transactions", "Investigational-product transaction ledger", tx_headers, tx_rows, [
         ("TX-101", "Quantity / balance"), ("TX-119", "Source / resulting state"),
         ("TX-121", "Quantity / balance"), ("TX-121", "Source / resulting state"),
@@ -2499,11 +2617,6 @@ def build(output_root):
         ("TX-188", "Source / resulting state"), ("TX-194", "Quantity / balance"),
         ("TX-194", "Source / resulting state"),
     ], consequential=[("TX-121", "Source / resulting state"), ("TX-194", "Quantity / balance")])
-    _facts(case, "transaction-rule", "Accountability movement rule", "text", [
-        ("assignment", "An RTS assignment does not establish subject custody."),
-        ("balance", "K-204-153 remains at balance 30 through calibration verification and reaches balance 0 only on sponsor return at 2026-05-13 10:18.", 2),
-    ], budget=1, primary_axis="long_context_coherence")
-
     # 38 - full-page scan: role-specific training and delegation correction.
     c = case.new_page(
         "Role-specific training and delegation correction",
@@ -2558,7 +2671,7 @@ def build(output_root):
     # 39 - native query audit trail with multiple transitions per entity.
     c = case.new_page(
         "Data-query state-transition audit trail",
-        subtitle="Chronological events retain provisional, accepted, updated, and closed states",
+        subtitle="Record DQC-HTX204-014/AUD-R1 | Exported 14 May 2026 09:00",
         section_code="QUERY / AUDIT",
     )
     qa_headers = ["Audit event", "Timestamp", "Query", "Subject", "Actor", "Transition", "Evidence / note"]
@@ -2581,8 +2694,7 @@ def build(output_root):
         ["EV-8164", "14 May 08:22", "Q-93", "014-016", "AT", "Open -> Closed", "No treatment code disclosed"],
     ]
     qa_y = draw_table(c, 16, 675, [57, 73, 45, 54, 41, 124, 202], [qa_headers, *qa_rows], font_size=5.5, row_padding=2.4, zebra=True)
-    draw_paragraph(c, "A draft response, accepted response, production-field update, and administrative closure are four different transitions. The event sequence must be preserved per query; a later closure does not erase the earlier open duration or provisional text.", 42, qa_y - 17, 510, size=7.7, leading=10.4, color=MUTED)
-    _gold_table(case, "Data-query state-transition audit trail", qa_headers, qa_rows, "A draft response, accepted response, production-field update, and administrative closure are four different transitions. The event sequence must be preserved per query; a later closure does not erase the earlier open duration or provisional text.")
+    _gold_table(case, "Data-query state-transition audit trail", qa_headers, qa_rows)
     _selected_table_region(case, "query-audit", "Data-query state-transition audit trail", qa_headers, qa_rows, [
         ("EV-7708", "Transition"), ("EV-7708", "Evidence / note"),
         ("EV-7722", "Timestamp"), ("EV-7735", "Transition"),
@@ -2590,11 +2702,6 @@ def build(output_root):
         ("EV-8032", "Evidence / note"), ("EV-8034", "Timestamp"),
         ("EV-8160", "Evidence / note"), ("EV-8164", "Transition"),
     ], consequential=[("EV-7736", "Timestamp"), ("EV-8164", "Transition")])
-    _facts(case, "query-transition-rule", "Query transition chronology", "text", [
-        ("distinct", "Draft response, accepted response, production-field update, and administrative closure are distinct transitions.", 2),
-        ("history", "Later query closure does not erase earlier open duration or provisional text."),
-    ], budget=1, primary_axis="long_context_coherence")
-
     # 40 - native causality and clinical-decision review register.
     c = case.new_page(
         "Investigator safety and dosing decision register",
@@ -2641,7 +2748,7 @@ def build(output_root):
     # 41 - native evidence-request and intake queue.
     c = case.new_page(
         "Evidence request and intake queue",
-        subtitle="Requested, received, verified, rejected, and superseded are non-equivalent states",
+        subtitle="Record ERQ-014/R2 | Exported 14 May 2026 09:15",
         section_code="MONITOR / EVIDENCE",
     )
     request_headers = ["Request", "Object requested", "Issued", "Due", "Receipt event", "Verification state", "Residual blocker"]
@@ -2660,13 +2767,7 @@ def build(output_root):
         ["ER-211", "FU-013 certified letter", "09 May 13:10", "15 May 17:00", "Not received", "Open", "Mail proof absent"],
     ]
     request_y = draw_table(c, 16, 675, [49, 148, 72, 70, 100, 89, 68], [request_headers, *request_rows], font_size=5.5, row_padding=2.6, zebra=True)
-    request_note_y = draw_paragraph(c, "A draft can satisfy routing without satisfying evidence. A verified object may close its evidence request while a linked query, custody exception, or follow-up remains separately open. Superseding ER-207 with ER-207R preserves the rejected unsigned submission.", 42, request_y - 18, 510, size=7.9, leading=10.8, color=MUTED)
-    queue_review_note = (
-        "Verification time records completion of reviewer checks, not the earlier upload event. Rejected objects remain immutable in the intake history, and a revised due date requires an approved replacement obligation rather than an edited timestamp. "
-        "For restricted pharmacy and masking artifacts, the submitting owner cannot substitute self-attestation for monitor or QA verification. A receipt event with an insufficient object therefore leaves the request open even when it arrived before the deadline."
-    )
-    draw_paragraph(c, queue_review_note, 42, request_note_y - 7, 510, size=7.7, leading=10.5, color=INK)
-    _gold_table(case, "Evidence request and intake queue", request_headers, request_rows, "A draft can satisfy routing without satisfying evidence. A verified object may close its evidence request while a linked query, custody exception, or follow-up remains separately open. Superseding ER-207 with ER-207R preserves the rejected unsigned submission. " + queue_review_note)
+    _gold_table(case, "Evidence request and intake queue", request_headers, request_rows)
     _selected_table_region(case, "evidence-queue", "Evidence request and intake queue", request_headers, request_rows, [
         ("ER-202", "Receipt event"), ("ER-202", "Verification state"),
         ("ER-203", "Verification state"), ("ER-203", "Residual blocker"),
@@ -2674,13 +2775,6 @@ def build(output_root):
         ("ER-207R", "Receipt event"), ("ER-207R", "Verification state"),
         ("ER-209", "Verification state"), ("ER-211", "Residual blocker"),
     ], consequential=[("ER-203", "Residual blocker"), ("ER-207", "Verification state"), ("ER-209", "Verification state")])
-    _facts(case, "evidence-rule", "Evidence intake state rule", "text", [
-        ("draft", "A draft can satisfy routing without satisfying the requested evidence."),
-        ("separate", "A verified object may close its evidence request while a linked query or custody exception remains open.", 2),
-        ("history", "ER-207R supersedes ER-207 without erasing the rejected unsigned submission."),
-        ("verification-time", "Verification time records completion of reviewer checks rather than the upload event."),
-    ], budget=1, primary_axis="long_context_coherence")
-
     # 42 - full-page scan: translated-diary waiver W-14.
     c = case.new_page(
         "Protocol waiver W-14 - translated diary accommodation",
@@ -2767,36 +2861,34 @@ def build(output_root):
     # 44 - native CAPA evidence-verification matrix.
     c = case.new_page(
         "CAPA evidence verification matrix",
-        subtitle="Evidence acceptance is evaluated against each final approved obligation",
+        subtitle="Record CAPA-014-02/EVID-R2 | Verified through 13 May 2026 15:44",
         section_code="CAPA / EVIDENCE",
     )
-    evidence_headers = ["CAPA item", "Final obligation", "Due", "Evidence received", "Verifier", "Verification result", "Linked item state"]
+    evidence_headers = ["CAPA item / rev", "Final obligation", "Due", "Evidence received", "Verifier", "Verification result", "Linked item state"]
     evidence_rows = [
         ["C-01", "Q-77 DCF + production audit", "10 May 12:00", "10 May 10:31", "LS 10:38", "Meets both elements", "Q-77 closed 10:41"],
         ["C-02", "RX2-441 certificate covering reset", "12 May 17:00", "12 May 16:07", "LS 16:42", "Final certificate accepted", "A-202 evidenced"],
         ["C-03", "Three K-204-146 contact attempts", "13 May 15:00", "Two by 13 May 13:00", "LS 13:08", "Incomplete", "A-203 open"],
-        ["C-04", "Corrected SH-204-45 receipt", "11 May 12:00", "09 May 09:41", "LS 09:48", "Receipt accepted", "CE closure separate"],
+        ["C-04", "Corrected SH-204-45 receipt", "11 May 12:00", "09 May 09:41", "LS 09:48", "Receipt accepted", "CE-204-12 closure separate"],
         ["C-05", "PI amended-chemistry review", "09 May 17:00", "09 May 08:06", "LS 12:46", "Portal acknowledgment valid", "Q-88 closed"],
         ["C-06", "ePRO competency + Q-91 audit", "09 May 14:00", "09 May 10:12", "LS 10:16", "Both elements accepted", "Q-91 closed"],
-        ["C-07", "Signed masking assessment + Q-93", "11 May 16:00", "Unsigned draft 11 May", "LS 15:24", "Rejected; signature absent", "Revised due approved"],
-        ["C-07R", "Signed assessment MA-016", "13 May 16:00", "13 May 15:26", "LS 15:44", "Accepted under revision", "Q-93 closure pending"],
+        ["C-07 / R1", "Signed masking assessment + Q-93", "11 May 16:00", "Unsigned MA-016/D0", "LS 11 May 15:24", "Rejected; signature absent", "C-07R/R2 approved; R1 retained"],
+        ["C-07R / R2", "Signed assessment MA-016/R1", "13 May 16:00", "13 May 15:26", "LS 13 May 15:44", "Accepted under revision", "Supersedes C-07/R1; Q-93 pending"],
         ["C-08", "Signed Q-86 calculation + link", "11 May 12:00", "11 May 10:42", "LS 10:58", "Both elements accepted", "Q-86 closed 11:15"],
         ["P-01", "Weekly certificate check added", "13 May opening", "13 May 07:42", "RP 07:48", "Opening-log field active", "Effectiveness pending"],
         ["P-02", "Coordinator precedence refresher", "20 May 17:00", "Scheduled 18 May", "LS", "Not yet due", "Attendance absent"],
         ["EC-01", "CAPA effectiveness review", "21-22 May", "Not yet due", "LS", "Open", "Archive hold"],
     ]
     evidence_y = draw_table(c, 16, 675, [51, 154, 70, 89, 64, 97, 71], [evidence_headers, *evidence_rows], font_size=5.5, row_padding=2.5, zebra=True)
-    draw_paragraph(c, "C-07R is an approved revised obligation, not a silent overwrite of the late C-07 evidence failure. C-04 evidence acceptance does not close CE-204-12, and preventive-action assignment does not establish effectiveness.", 42, evidence_y - 18, 510, size=7.8, leading=10.7, color=MUTED)
-    _gold_table(case, "CAPA evidence verification matrix", evidence_headers, evidence_rows, "C-07R is an approved revised obligation, not a silent overwrite of the late C-07 evidence failure. C-04 evidence acceptance does not close CE-204-12, and preventive-action assignment does not establish effectiveness.")
+    _gold_table(case, "CAPA evidence verification matrix", evidence_headers, evidence_rows)
     _selected_table_region(case, "capa-evidence", "CAPA evidence verification matrix", evidence_headers, evidence_rows, [
         ("C-01", "Verification result"), ("C-02", "Evidence received"),
         ("C-02", "Linked item state"), ("C-03", "Verification result"),
-        ("C-04", "Linked item state"), ("C-07", "Verification result"),
-        ("C-07R", "Due"), ("C-07R", "Verification result"),
+        ("C-04", "Linked item state"), ("C-07 / R1", "Verification result"),
+        ("C-07R / R2", "Due"), ("C-07R / R2", "Verification result"),
         ("C-08", "Linked item state"), ("EC-01", "Linked item state"),
-    ], consequential=[("C-02", "Linked item state"), ("C-03", "Verification result"), ("C-07", "Verification result")])
+    ], consequential=[("C-02", "Linked item state"), ("C-03", "Verification result"), ("C-07 / R1", "Verification result")])
     _facts(case, "capa-evidence-rule", "CAPA evidence-state rule", "text", [
-        ("revision", "C-07R preserves rather than erases the rejected unsigned C-07 submission.", 2),
         ("ce", "C-04 evidence acceptance does not itself close CE-204-12.", 2),
         ("effectiveness", "Preventive-action assignment does not establish CAPA effectiveness."),
     ], budget=1, primary_axis="source_precedence")
@@ -2804,7 +2896,7 @@ def build(output_root):
     # 45 - native action-state ledger after evidence intake.
     c = case.new_page(
         "Post-visit action state-transition ledger",
-        subtitle="As of 13 May 2026 13:00 | Assignment, evidence, completion, and closure",
+        subtitle="Record ACT-014/R3 | State export 13 May 2026 13:00",
         section_code="ACTION / TRANSITIONS",
     )
     state_headers = ["Action", "Assigned", "Evidence event", "Evidence state", "Completion decision", "Administrative state", "Residual requirement"]
@@ -2812,42 +2904,41 @@ def build(output_root):
         ["A-201 / Q-77", "09 May 15:52", "10 May 10:31", "Verified", "Complete 10 May 10:38", "Q-77 closed 10:41", "None"],
         ["A-202 / RX2-441", "09 May 15:56", "12 May 16:07", "Verified 16:42", "Complete 12 May 16:42", "CAPA evidence linked", "Sponsor return record"],
         ["A-203 / K-204-146", "09 May 15:52", "Two calls by 13 May 13:00", "Incomplete", "Not complete", "Open", "Third attempt by 15:00"],
-        ["A-204 / masking", "09 May 16:02", "Unsigned draft 11 May", "Rejected", "Revised due 13 May", "Open", "Signed MA-016"],
+        ["A-204 / masking", "09 May 16:02", "MA-016/D0 unsigned", "Rejected", "C-07R/R2 due 13 May", "Open", "Signed MA-016/R1"],
         ["A-205 / Q-86", "09 May 15:52", "11 May 10:42", "Verified 10:58", "Complete 11 May 10:58", "Q-86 closed 11:15", "None"],
         ["ER-204 / receipt", "09 May 12:24", "09 May 09:41 pre-existing", "Verified", "Evidence satisfied", "CE-204-12 open", "Exception closure"],
         ["ER-205 / chemistry", "09 May 12:24", "09 May 08:06 pre-existing", "Verified", "Evidence satisfied", "Q-88 closed", "None"],
         ["ER-206 / ePRO", "09 May 12:24", "09 May 10:12", "Verified", "Evidence satisfied", "Q-91 closed", "None"],
         ["ER-209 / receipt", "09 May 13:06", "Courier ticket only", "Insufficient", "Not complete", "Q-84 open", "Portal receipt"],
-        ["ER-210 / return", "12 May 16:42", "13 May 10:26", "Under review", "Not decided", "Open", "Verify sealed transfer"],
+        ["ER-210 / SRN-551", "12 May 16:42", "13 May 10:26", "Under review", "Not decided", "Open", "Verify sealed transfer"],
         ["ER-211 / FU-013", "09 May 13:10", "No mail proof", "Absent", "Not complete", "Open", "Certified-letter receipt"],
         ["EC-01 / effectiveness", "09 May 12:18", "Review not due", "Not applicable yet", "Not complete", "Open", "21-22 May review"],
     ]
     state_y = draw_table(c, 14, 675, [79, 72, 121, 80, 109, 101, 32], [state_headers, *state_rows], font_size=5.5, row_padding=2.4, zebra=True)
-    draw_paragraph(c, "Completion is recorded only after the required evidence is verified. A linked query may close after action completion; a custody exception may remain open after its evidence action is satisfied. Pre-existing evidence retains its original timestamp.", 42, state_y - 18, 510, size=7.8, leading=10.6, color=MUTED)
-    _gold_table(case, "Post-visit action state-transition ledger", state_headers, state_rows, "Completion is recorded only after the required evidence is verified. A linked query may close after action completion; a custody exception may remain open after its evidence action is satisfied. Pre-existing evidence retains its original timestamp.")
+    _gold_table(case, "Post-visit action state-transition ledger", state_headers, state_rows)
     _selected_table_region(case, "action-states", "Post-visit action state-transition ledger", state_headers, state_rows, [
         ("A-201 / Q-77", "Administrative state"), ("A-202 / RX2-441", "Completion decision"),
         ("A-202 / RX2-441", "Residual requirement"), ("A-203 / K-204-146", "Evidence state"),
         ("A-203 / K-204-146", "Residual requirement"), ("A-204 / masking", "Evidence state"),
         ("A-205 / Q-86", "Administrative state"), ("ER-204 / receipt", "Administrative state"),
         ("ER-209 / receipt", "Evidence state"), ("EC-01 / effectiveness", "Residual requirement"),
-    ], consequential=[("A-202 / RX2-441", "Completion decision"), ("A-203 / K-204-146", "Evidence state"), ("A-204 / masking", "Evidence state")])
-    _facts(case, "action-state-rule", "Action completion and closure rule", "text", [
-        ("complete", "Action completion follows evidence verification.", 2),
-        ("independent", "A custody exception may remain open when its evidence action is satisfied."),
-        ("timestamps", "Pre-existing evidence retains its original timestamp."),
-    ], budget=1, primary_axis="long_context_coherence")
-
+    ], consequential=[("A-202 / RX2-441", "Completion decision"), ("A-203 / K-204-146", "Evidence state"), ("A-204 / masking", "Evidence state")], column_aliases={
+        "Administrative state": ["Admin state"],
+        "Residual requirement": ["Residual"],
+    })
     # 46 - full-page scan: final masking-impact assessment.
     c = case.new_page(
         "Final masking-impact assessment MA-016",
-        subtitle="Scanned signed assessment | Subject 014-016 and Q-93",
+        subtitle="Record MA-016/R1 | Supersedes unsigned D0 | Signed 13 May 2026 15:18",
         section_code="MASKING / FINAL",
     )
     scan = _scan_document(
         "MASKING IMPACT ASSESSMENT MA-016 - FINAL",
-        "HTX-204 | Site 014 | Subject 014-016 | Signed 13 May 2026",
+        "MA-016/R1 | Site 014 | Subject 014-016 | Signed 13 May 2026 15:18",
         [
+            ("Record control", [
+                "MA-016/R1 supersedes unsigned draft MA-016/D0. R1 became effective with NR's signature at 15:18; QA review at 15:36 and monitor acceptance at 15:44 are separate attributed events.",
+            ]),
             ("Records reviewed", [
                 "Reviewed dosing worksheet, timed glucose observations, RTS restricted-access audit, pharmacy access record for kit K-204-190, site note dated 04 May, Q-93 history, and staff role/delegation records.",
                 "The blinded note stated that an unblinded pharmacist was consulted. It did not include treatment assignment, kit-arm mapping, RTS code, or product identity. RP's RTS session was limited to controlled-custody confirmation.",
@@ -2870,14 +2961,21 @@ def build(output_root):
             ("Assessment complete", "checked"),
             ("Q-93 closed on this form", "unchecked"),
         ],
+        corrections=[
+            (
+                "Typed original MA-016/D0 conclusion: masking impact pending; author signature absent",
+                "MA-016/R1 conclusion: no masking impact; blinded-note coaching required",
+                "NR 13 May 15:18 / QA 15:36 / LS 15:44",
+            ),
+        ],
         signatures=[
             "Assessment author NR 13 May 2026 15:18. Independent QA review S. Mehta 15:36. Monitor acceptance LS 15:44.",
         ],
         seed=1746,
-        form_code="MA-016 / FINAL SIGNED",
+        form_code="MA-016/R1 / FINAL SIGNED",
     )
     _place_full_scan(c, scan)
-    _gold_scan(case, "Final masking-impact assessment MA-016", "MA-016 is the final masking-impact assessment for subject 014-016. Emergency code break occurred, treatment code disclosed, masking impact identified, clinical decision affected, recruitment pause required, and Q-93 closed on this form are unchecked. Blinded-note coaching required and assessment complete are checked. MA-016 concludes no masking impact because the role-interaction phrase disclosed no treatment assignment or code. NR signed MA-016 at 15:18, QA reviewed at 15:36, and LS accepted at 15:44 on 2026-05-13. Console closure remains a later administrative event.")
+    _gold_scan(case, "Final masking-impact assessment MA-016", "MA-016/R1 supersedes unsigned draft MA-016/D0. The typed D0 conclusion of masking impact pending with author signature absent is struck; R1 records no masking impact and blinded-note coaching required. Emergency code break occurred, treatment code disclosed, masking impact identified, clinical decision affected, recruitment pause required, and Q-93 closed on this form are unchecked. Blinded-note coaching required and assessment complete are checked. MA-016/R1 concludes no masking impact because the role-interaction phrase disclosed no treatment assignment or code. NR signed R1 at 15:18, QA reviewed at 15:36, and LS accepted at 15:44 on 2026-05-13. Console closure remains a later administrative event.")
     _facts(case, "masking-final", "Scanned final masking-impact assessment", "form", [
         ("break", "Emergency code break occurred is unchecked.", 2, ("Emergency code break occurred", "unchecked")),
         ("code", "Treatment code disclosed is unchecked.", 2, ("Treatment code disclosed", "unchecked")),
@@ -2888,13 +2986,14 @@ def build(output_root):
         ("complete", "Assessment complete is checked.", 2, ("Assessment complete", "checked")),
         ("q93", "Q-93 closed on this form is unchecked.", 2, ("Q-93 closed on this form", "unchecked")),
         ("conclusion", "MA-016 concludes no masking impact because the note disclosed no treatment assignment or code.", 2),
+        ("record", "MA-016/R1 supersedes unsigned MA-016/D0 and became effective when NR signed on 2026-05-13 at 15:18.", 2),
         ("signatures", "NR signed MA-016 at 15:18, QA reviewed at 15:36, and LS accepted at 15:44 on 2026-05-13."),
-    ], budget=2, primary_axis="low_quality_scan", secondary_axes=("form_state", "source_precedence"))
+    ], budget=3, primary_axis="low_quality_scan", secondary_axes=("form_state", "source_precedence"))
 
     # 47 - native query, deviation, and exception closure ledger.
     c = case.new_page(
         "Query, deviation, and exception closure ledger",
-        subtitle="State as of 14 May 2026 09:00 | Closure requires its own dated event",
+        subtitle="Record CLS-014/R1 | State export 14 May 2026 09:00",
         section_code="CLOSURE / LEDGER",
     )
     close_headers = ["Record", "Entity", "Evidence-complete time", "Closure authority", "Closure time", "Final administrative state", "Retained open dependency"]
@@ -2915,8 +3014,7 @@ def build(output_root):
         ["EC-01", "CAPA-014-02", "Not due", "LS", "-", "Open", "21-22 May review"],
     ]
     close_y = draw_table(c, 14, 675, [71, 84, 90, 76, 78, 115, 80], [close_headers, *close_rows], font_size=5.5, row_padding=2.4, zebra=True)
-    draw_paragraph(c, "Evidence-complete time and closure time are intentionally separate. Closing a query does not erase the retained deviation class, missing diary days, or effectiveness obligation. A dash in closure time means the item remains open.", 42, close_y - 18, 510, size=7.8, leading=10.6, color=MUTED)
-    _gold_table(case, "Query, deviation, and exception closure ledger", close_headers, close_rows, "Evidence-complete time and closure time are intentionally separate. Closing a query does not erase the retained deviation class, missing diary days, or effectiveness obligation. A dash in closure time means the item remains open.")
+    _gold_table(case, "Query, deviation, and exception closure ledger", close_headers, close_rows)
     _selected_table_region(case, "closure", "Query, deviation, and exception closure ledger", close_headers, close_rows, [
         ("Q-77", "Closure time"), ("DEV-014-03", "Final administrative state"),
         ("CE-204-12", "Closure time"), ("Q-84", "Final administrative state"),
@@ -2924,18 +3022,17 @@ def build(output_root):
         ("Q-91", "Retained open dependency"), ("Q-93", "Closure time"),
         ("DEV-014-11", "Final administrative state"), ("A-203", "Retained open dependency"),
         ("EC-01", "Final administrative state"),
-    ], consequential=[("Q-77", "Closure time"), ("Q-84", "Final administrative state"), ("Q-93", "Closure time")])
-    _facts(case, "closure-rule", "Closure chronology rule", "text", [
-        ("separate", "Evidence-complete time and administrative closure time are separate fields.", 2),
-        ("history", "Closing a query does not erase a retained deviation class or missing diary days."),
-        ("dash", "A dash in closure time means the item remains open."),
-    ], budget=1, primary_axis="long_context_coherence")
-
+    ], consequential=[("Q-77", "Closure time"), ("Q-84", "Final administrative state"), ("Q-93", "Closure time")], value_aliases={
+        ("Q-91", "Retained open dependency"): ["Missing days"],
+    }, column_aliases={
+        "Evidence-complete time": ["Evidence-complete"],
+        "Retained open dependency": ["Retained open"],
+    })
     # 48 - native archive exception register.  This is a tail control, not a
     # recap of all findings or a map to their controlling pages.
     c = case.new_page(
         "Archive-readiness exception register",
-        subtitle="Tail control as of 15 May 2026 09:30 | Only unresolved archive conditions",
+        subtitle="Record ARCH-014/R1 | State export 15 May 2026 09:30",
         section_code="ARCHIVE / HOLDS",
     )
     archive_headers = ["Hold", "Object / entity", "Condition at 15 May", "Owner", "Next evidence", "Due / review", "Archive effect"]
@@ -2945,7 +3042,7 @@ def build(output_root):
         ["H-03", "FU-013 / 014-013", "Certified-mail proof absent", "MK", "Postal acceptance receipt", "15 May 17:00", "Follow-up tab held"],
         ["H-04", "EC-01 / CAPA-014-02", "Effectiveness review not due", "LS", "21-22 May effectiveness record", "22 May 17:00", "CAPA finalization held"],
         ["H-05", "P-02 training", "Session scheduled, attendance absent", "LS", "Signed attendance roster", "20 May 17:00", "Training tab held"],
-        ["H-06", "K-204-153 sponsor return", "Sealed transfer verified 13 May", "RP", "Courier delivery confirmation", "16 May 17:00", "Pharmacy shipment subtab held"],
+        ["H-06", "SRN-551 / K-204-153", "Sealed transfer verified 13 May", "RP", "Courier delivery confirmation", "16 May 17:00", "Pharmacy shipment subtab held"],
         ["H-07", "Q-93 coaching", "Coaching assigned after closure", "NR", "Blinded-note coaching acknowledgment", "15 May 16:00", "Masking subtab held"],
         ["H-08", "TD-HI-204-014", "Returned booklet in vault TR-6", "MK", "Destruction or reissue decision", "31 May expiry", "Waiver subtab active"],
         ["H-09", "CE-204-12", "Closed 11 May; receipt retained", "CL", "None", "Complete", "No hold"],
@@ -2954,8 +3051,13 @@ def build(output_root):
         ["H-12", "MV-03 workpaper", "Monitor signatures complete", "LS", "Resolve H-01 through H-08", "After all holds", "Packet index held"],
     ]
     archive_y = draw_table(c, 16, 675, [43, 108, 127, 48, 127, 80, 59], [archive_headers, *archive_rows], font_size=5.5, row_padding=2.5, zebra=True)
-    draw_paragraph(c, "This register lists archive conditions only. A held subtab may coexist with a closed clinical query, and a releasable assessment may still have a coaching follow-up. No-hold rows are retained to prevent an already closed item from being reopened by inference.", 42, archive_y - 18, 510, size=7.9, leading=10.7, color=MUTED)
-    _gold_table(case, "Archive-readiness exception register", archive_headers, archive_rows, "This register lists archive conditions only. A held subtab may coexist with a closed clinical query, and a releasable assessment may still have a coaching follow-up. No-hold rows are retained to prevent an already closed item from being reopened by inference.")
+    _gold_table(
+        case,
+        "Archive-readiness exception register",
+        archive_headers,
+        archive_rows,
+        "Controlled archive record ARCH-014/R1 captures the 15 May readiness state and unresolved holds.",
+    )
     _selected_table_region(case, "archive", "Archive-readiness exception register", archive_headers, archive_rows, [
         ("H-01", "Condition at 15 May"), ("H-01", "Next evidence"),
         ("H-02", "Archive effect"), ("H-04", "Due / review"),
@@ -2963,11 +3065,210 @@ def build(output_root):
         ("H-08", "Due / review"), ("H-09", "Archive effect"),
         ("H-11", "Archive effect"), ("H-12", "Archive effect"),
     ], consequential=[("H-01", "Next evidence"), ("H-04", "Due / review"), ("H-12", "Archive effect")])
-    _facts(case, "archive-rule", "Archive-hold interpretation", "text", [
-        ("scope", "The tail register records archive conditions only; it is not a recap of all clinical findings.", 1, {"evidence": [["tail", "archive"], ["register"], ["conditions"], ["only"], ["not", "no"], ["recap", "summary"], ["clinical"], ["findings"]]}),
-        ("coexist", "A held subtab may coexist with a closed clinical query.", 2),
-        ("no-reopen", "No-hold rows prevent already closed items from being reopened by inference."),
-    ], budget=1, primary_axis="long_context_coherence")
+    # Multi-page lifecycle regions use ordinary controlled-record lineage.
+    # Each leaf is one independently falsifiable state transition rather than
+    # a synthetic packet summary, and no single source page establishes a full
+    # lifecycle.
+    case.add_region(
+        "join.visit-window-014009",
+        "Subject 014-009 visit-window lifecycle",
+        "text",
+        [
+            source_precedence_leaf(
+                "join.visit-window-014009.attendance",
+                "VIS-014/R1-B records subject 014-009 attending W2 on 2026-05-06 at 09:04 outside the listed window while DEV-014-08 still has a pending class.",
+                [["VIS-014/R1-B"], ["014-009"], ["2026-05-06"], ["09:04"], ["outside"], ["DEV-014-08"], ["pending"]],
+            ),
+            source_precedence_leaf(
+                "join.visit-window-014009.revision",
+                "WIN-014009/R1 supersedes CAL-014009/D0 and becomes effective when NR signs on 2026-05-09 at 11:22; the current classification is minor deviation, visit usable, and not a missed visit.",
+                [["WIN-014009/R1"], ["supersedes"], ["CAL-014009/D0"], ["NR"], ["2026-05-09"], ["11:22"], ["current"], ["minor deviation"], ["visit usable"], ["not"], ["missed visit"]],
+                required_bindings=[[["not a missed visit", "not reclassified as missed visit", "[ ] Missed visit", "Missed visit is unchecked"]]],
+            ),
+            source_precedence_leaf(
+                "join.visit-window-014009.query-close",
+                "A-205 evidence is verified on 2026-05-11 at 10:58 before Q-86 closes at 11:15.",
+                [["A-205"], ["verified"], ["2026-05-11"], ["10:58"], ["before"], ["Q-86"], ["closes", "closed"], ["11:15"]],
+            ),
+            source_precedence_leaf(
+                "join.visit-window-014009.deviation-close",
+                "DEV-014-08 closes on 2026-05-11 at 11:24 with the minor classification retained.",
+                [["DEV-014-08"], ["closes", "closed"], ["2026-05-11"], ["11:24"], ["minor"], ["retained"]],
+            ),
+        ],
+        pages=[10, 13, 27, 45, 47],
+        budget=2,
+        modality="mixed",
+        unique_evidence=False,
+        primary_axis="long_context_coherence",
+        secondary_axes=("source_precedence",),
+        text_only_recoverable=False,
+        gold_section="Page 47 - Query, deviation, and exception closure ledger",
+        source_anchors=[
+            _source_anchor(case, 10, "native_text"),
+            _source_anchor(case, 13, "native_text"),
+            _source_anchor(case, 27, "raster"),
+            _source_anchor(case, 45, "native_text"),
+            _source_anchor(case, 47, "native_text"),
+        ],
+    )
+    case.add_region(
+        "join.capa-c07-revision",
+        "CAPA C-07 authority and evidence lifecycle",
+        "text",
+        [
+            source_precedence_leaf(
+                "join.capa-c07-revision.draft",
+                "CAPA-014-02/D2 is a draft exported on 2026-05-08 at 16:10 whose C-07 target is 2026-05-20; D2 is not approved.",
+                [["CAPA-014-02/D2"], ["draft"], ["2026-05-08"], ["16:10"], ["C-07"], ["2026-05-20"], ["not approved"]],
+            ),
+            source_precedence_leaf(
+                "join.capa-c07-revision.final",
+                "CAPA-014-02/R1 becomes effective on 2026-05-09 at 12:18, supersedes D2 only for named fields, and sets C-07 due on 2026-05-11 at 16:00.",
+                [["CAPA-014-02/R1"], ["effective"], ["2026-05-09"], ["12:18"], ["supersedes"], ["D2"], ["only"], ["named"], ["fields"], ["C-07"], ["2026-05-11"], ["16:00"]],
+                required_bindings=[[["CAPA-014-02/R1", "R1"], ["CAPA-014-02/D2", "D2"], ["supersedes"], ["owner"], ["due"], ["evidence"]]],
+            ),
+            source_precedence_leaf(
+                "join.capa-c07-revision.revision",
+                "The unsigned MA-016/D0 submission for C-07/R1 is rejected on 2026-05-11; C-07R/R2 supersedes that obligation with a 2026-05-13 16:00 due time.",
+                [["unsigned"], ["MA-016/D0"], ["C-07/R1"], ["rejected"], ["2026-05-11"], ["C-07R/R2"], ["supersedes"], ["2026-05-13"], ["16:00"]],
+            ),
+            source_precedence_leaf(
+                "join.capa-c07-revision.acceptance",
+                "Signed assessment MA-016/R1 is accepted for C-07R/R2 by LS on 2026-05-13 at 15:44.",
+                [["Signed"], ["MA-016/R1"], ["accepted"], ["C-07R/R2"], ["LS"], ["2026-05-13"], ["15:44"]],
+                required_bindings=[[["C-07R / R2", "C-07R/R2"], ["MA-016/R1"], ["LS"], ["15:44"], ["accepted"]]],
+            ),
+        ],
+        pages=[19, 25, 44, 46],
+        budget=2,
+        modality="mixed",
+        unique_evidence=False,
+        primary_axis="long_context_coherence",
+        secondary_axes=("source_precedence",),
+        text_only_recoverable=False,
+        gold_section="Page 44 - CAPA evidence verification matrix",
+    )
+    case.add_region(
+        "join.masking-014016",
+        "Subject 014-016 masking resolution and residual obligations",
+        "text",
+        [
+            source_precedence_leaf(
+                "join.masking-014016.access",
+                "RTS-AUD-014016/R1 corrects emergency unblinding to a restricted pharmacy custody check for subject 014-016 with no treatment code displayed on 2026-05-09 at 15:44.",
+                [["RTS-AUD-014016/R1"], ["corrects", "corrected"], ["emergency unblinding"], ["restricted pharmacy custody check"], ["014-016"], ["no treatment code"], ["2026-05-09"], ["15:44"]],
+            ),
+            source_precedence_leaf(
+                "join.masking-014016.clinical-sequence",
+                "DR-04 records dose withheld for subject 014-016 before the 18:29 restricted-role phrase, and DR-11 later records clinical causality unaffected while masking assessment remains unsigned.",
+                [["DR-04"], ["dose withheld"], ["014-016"], ["before"], ["18:29"], ["restricted-role", "restricted role"], ["DR-11"], ["clinical causality unaffected"], ["masking assessment"], ["unsigned"]],
+            ),
+            source_precedence_leaf(
+                "join.masking-014016.final",
+                "MA-016/R1 supersedes unsigned MA-016/D0, concludes no masking impact with the clinical decision unaffected, and becomes effective when NR signs on 2026-05-13 at 15:18.",
+                [["MA-016/R1"], ["supersedes"], ["unsigned"], ["MA-016/D0"], ["no masking impact"], ["clinical decision"], ["unaffected"], ["NR"], ["2026-05-13"], ["15:18"]],
+                required_bindings=[
+                    [["MA-016/R1"], ["supersedes"], ["MA-016/D0", "unsigned D0"]],
+                    [["no masking impact", "masking impact is assessed as none"]],
+                    [["NR"], ["15:18"]],
+                ],
+            ),
+            source_precedence_leaf(
+                "join.masking-014016.close-and-retain",
+                "Q-93 closes on 2026-05-14 at 08:22 and DEV-014-11 closes at 08:34 with major retained, while coaching acknowledgment and CAPA effectiveness remain required.",
+                [["Q-93"], ["closes", "closed"], ["2026-05-14"], ["08:22"], ["DEV-014-11"], ["closes", "closed"], ["08:34"], ["major"], ["retained"], ["coaching acknowledgment"], ["CAPA effectiveness"], ["required"]],
+            ),
+        ],
+        pages=[30, 40, 46, 47, 48],
+        budget=2,
+        modality="mixed",
+        unique_evidence=False,
+        primary_axis="long_context_coherence",
+        secondary_axes=("source_precedence",),
+        text_only_recoverable=False,
+        gold_section="Page 48 - Archive-readiness exception register",
+    )
+    case.add_region(
+        "join.q77-ecg",
+        "Q-77 ECG correction and closure lifecycle",
+        "text",
+        [
+            source_precedence_leaf(
+                "join.q77-ecg.provisional",
+                "At the 2026-05-06 18:04 snapshot, Q-77 remains open with the unsigned draft saying ECG performed and tracing requested, linked to DQC/014/Q77/F1.",
+                [["2026-05-06"], ["18:04"], ["Q-77"], ["open"], ["unsigned"], ["draft"], ["ECG performed"], ["tracing requested"], ["DQC/014/Q77/F1"]],
+            ),
+            source_precedence_leaf(
+                "join.q77-ecg.source-correction",
+                "ECG-014003-W2/R2 supersedes R1 on 2026-04-22 at 14:18 and records ECG not performed with no tracing identifier.",
+                [["ECG-014003-W2/R2"], ["supersedes"], ["R1"], ["2026-04-22"], ["14:18"], ["ECG not performed"], ["no tracing identifier"]],
+            ),
+            source_precedence_leaf(
+                "join.q77-ecg.signed-response",
+                "DQC/014/Q77/F1 supersedes the unsigned draft, is signed by NR on 2026-05-09 at 08:42, and is accepted at 09:14 while production update and query closure remain unchecked.",
+                [["DQC/014/Q77/F1"], ["supersedes", "controls over"], ["unsigned"], ["draft"], ["signed"], ["NR"], ["2026-05-09"], ["08:42"], ["accepted"], ["09:14"], ["production"], ["unchecked"], ["query closure", "query closed"], ["unchecked"]],
+                required_bindings=[
+                    [["DQC/014/Q77/F1", "Final signed response F1"], ["supersedes", "controls over"], ["draft"]],
+                    [["NR", "Neha Rao"], ["08:42"]],
+                    [["[ ] Production field updated", "Production field updated is unchecked"]],
+                    [["[ ] Query closed", "Query closed is unchecked"]],
+                ],
+            ),
+            source_precedence_leaf(
+                "join.q77-ecg.close",
+                "EV-7735 updates the Q-77 production field to ECG not performed on 2026-05-10 at 10:24; EV-7736 closes Q-77 at 10:41, and DEV-014-03 closes at 11:06 with major retained.",
+                [["EV-7735"], ["Q-77"], ["production field"], ["ECG not performed"], ["2026-05-10"], ["10:24"], ["EV-7736"], ["closes", "closed"], ["Q-77"], ["10:41"], ["DEV-014-03"], ["closes", "closed"], ["11:06"], ["major"], ["retained"]],
+            ),
+        ],
+        pages=[7, 11, 16, 39, 47],
+        budget=2,
+        modality="mixed",
+        unique_evidence=False,
+        primary_axis="long_context_coherence",
+        secondary_axes=("source_precedence",),
+        text_only_recoverable=False,
+        gold_section="Page 47 - Query, deviation, and exception closure ledger",
+    )
+    case.add_region(
+        "join.k204153-custody",
+        "K-204-153 custody and disposition lifecycle",
+        "text",
+        [
+            source_precedence_leaf(
+                "join.k204153-custody.receipt",
+                "IP-RCV-PS778/R1 records K-204-153 received on 2026-04-06 at 14:26 with quantity 30 and its locator corrected from RX-2/A2 to RX-2/B1 at 14:41.",
+                [["IP-RCV-PS778/R1"], ["K-204-153"], ["2026-04-06"], ["14:26"], ["30"], ["RX-2/A2"], ["corrected"], ["RX-2/B1"], ["14:41"]],
+            ),
+            source_precedence_leaf(
+                "join.k204153-custody.disposition",
+                "IP-DISP-K204153/R5 records K-204-153 quarantined in QG-19 on 2026-04-18 at 10:10 and a signed Do not dose disposition at 14:02; the kit was not dispensed.",
+                [["IP-DISP-K204153/R5"], ["K-204-153"], ["quarantined"], ["QG-19"], ["2026-04-18"], ["10:10"], ["signed"], ["Do not dose"], ["14:02"], ["not dispensed", "was not dispensed"]],
+            ),
+            source_precedence_leaf(
+                "join.k204153-custody.transfer",
+                "IP-COUNT-014-20260508/R1 records K-204-153 at physical balance 30, and IP-TX-014/R3 retains balance 30 until sponsor-return transfer SRN-551 on 2026-05-13 at 10:18 reduces it to 0.",
+                [["IP-COUNT-014-20260508/R1"], ["K-204-153"], ["physical balance"], ["30"], ["IP-TX-014/R3"], ["balance 30"], ["until"], ["SRN-551"], ["2026-05-13"], ["10:18"], ["0"]],
+            ),
+            source_precedence_leaf(
+                "join.k204153-custody.archive-hold",
+                "ARCH-014/R1 records SRN-551 sealed transfer verified for K-204-153 on 2026-05-13 while courier delivery confirmation remains due on 2026-05-16 at 17:00 and the pharmacy shipment subtab remains held.",
+                [["ARCH-014/R1"], ["SRN-551"], ["K-204-153"], ["sealed transfer"], ["verified"], ["2026-05-13"], ["courier delivery confirmation"], ["2026-05-16"], ["17:00"], ["pharmacy shipment subtab"], ["held"]],
+                required_bindings=[
+                    [["SRN-551"], ["K-204-153"], ["sealed transfer"], ["verified 13 May", "verified on 2026-05-13"]],
+                    [["courier delivery confirmation"], ["16 May", "2026-05-16"], ["17:00"], ["pharmacy shipment subtab"], ["held"]],
+                ],
+            ),
+        ],
+        pages=[5, 12, 14, 37, 48],
+        budget=2,
+        modality="mixed",
+        unique_evidence=False,
+        primary_axis="long_context_coherence",
+        secondary_axes=("source_precedence",),
+        text_only_recoverable=False,
+        gold_section="Page 48 - Archive-readiness exception register",
+    )
 
     if set(INTENDED_PAGE_MODALITY) != set(range(1, 49)):
         raise ValueError("Intended page modality map must cover pages 1 through 48 exactly")

@@ -403,7 +403,7 @@
           "id": "p03.visits-a.014003-w2",
           "canonicalClaimId": "p03.visits-a.014003-w2",
           "claimType": "scalar",
-          "expectation": "Subject 014-003 had a partial W2 visit on 2026-04-21 at 08:44 and its source correction continues to DCF page 16.",
+          "expectation": "Subject 014-003 had a partial W2 visit on 2026-04-21 at 08:44 and its source correction links to DQC/014/Q77/F1.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
@@ -424,7 +424,8 @@
                 "8:44"
               ],
               [
-                "DCF"
+                "DQC/014/Q77/F1",
+                "DQC / 014 / Q77 / F1"
               ],
               [
                 "014",
@@ -435,13 +436,13 @@
                 "3"
               ],
               [
-                "16"
-              ],
-              [
                 "correction"
               ],
               [
                 "subject"
+              ],
+              [
+                "partial"
               ]
             ]
           }
@@ -450,7 +451,7 @@
           "id": "p03.visits-a.014007-v1",
           "canonicalClaimId": "p03.visits-a.014007-v1",
           "claimType": "scalar",
-          "expectation": "Subject 014-007 V1 on 2026-04-18 points to the pharmacy form on page 12.",
+          "expectation": "Subject 014-007 V1 on 2026-04-18 links to disposition IP-DISP-K204153/R5.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
@@ -467,18 +468,19 @@
                 "April 18"
               ],
               [
+                "IP-DISP-K204153/R5",
+                "IP-DISP-K204153 / R5",
+                "IP DISP-K204153/R5",
+                "IP-DISP K204153/R5",
+                "IP DISP K204153/R5"
+              ],
+              [
                 "014",
                 "14"
               ],
               [
                 "007",
                 "7"
-              ],
-              [
-                "12"
-              ],
-              [
-                "pharmacy"
               ],
               [
                 "subject"
@@ -567,16 +569,27 @@
           "id": "p03.visits-a.continuation",
           "canonicalClaimId": "p03.visits-a.continuation",
           "claimType": "scalar",
-          "expectation": "The visit log explicitly continues on page 10.",
+          "expectation": "Visit export VIS-014/R1-A explicitly continues in VIS-014/R1-B.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "10"
+                "VIS-014/R1-A",
+                "VIS-014 / R1-A",
+                "VIS 014/R1-A",
+                "VIS-014/R1 A",
+                "VIS 014/R1 A"
               ],
               [
-                "visit"
+                "VIS-014/R1-B",
+                "VIS-014 / R1-B",
+                "VIS 014/R1-B",
+                "VIS-014/R1 B",
+                "VIS 014/R1 B"
+              ],
+              [
+                "continues"
               ]
             ]
           }
@@ -717,7 +730,7 @@
           "id": "p04.accession.sh20452",
           "canonicalClaimId": "p04.accession.sh20452",
           "claimType": "scalar",
-          "expectation": "Shipment SH-204-52 is the 2026-05-08 repeat chemistry for subject 014-011 and points to the amended report on page 15.",
+          "expectation": "Shipment SH-204-52 is the 2026-05-08 repeat chemistry for subject 014-011 and links to amended report NCL-AC77152/R2.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
@@ -738,15 +751,17 @@
                 "SH 204 52"
               ],
               [
+                "NCL-AC77152/R2",
+                "NCL-AC77152 / R2",
+                "NCL AC77152/R2"
+              ],
+              [
                 "014",
                 "14"
               ],
               [
                 "011",
                 "11"
-              ],
-              [
-                "15"
               ],
               [
                 "chemistry"
@@ -1242,7 +1257,7 @@
           "id": "p06.ae.ae08",
           "canonicalClaimId": "p06.ae.ae08",
           "claimType": "scalar",
-          "expectation": "AE-014-08 is a device issue for subject 014-014 and routes to training evidence on page 18.",
+          "expectation": "AE-014-08 is a device issue for subject 014-014 and links to training record TRN-014014/R1.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -1254,20 +1269,22 @@
                 "AE 014 08"
               ],
               [
-                "014",
-                "14"
+                "TRN-014014/R1",
+                "TRN-014014 / R1",
+                "TRN 014014/R1"
               ],
               [
-                "18"
+                "014",
+                "14"
               ],
               [
                 "training"
               ],
               [
-                "evidence"
+                "subject"
               ],
               [
-                "subject"
+                "device"
               ]
             ]
           }
@@ -1300,7 +1317,7 @@
           "id": "p07.queries.q77",
           "canonicalClaimId": "p07.queries.q77",
           "claimType": "scalar",
-          "expectation": "At the 2026-05-06 snapshot, Q-77 is open and its provisional response says Yes with tracing requested; it points to DCF page 16.",
+          "expectation": "At the 2026-05-06 snapshot, Q-77 is open and its provisional response says Yes with tracing requested; its next controlled record is DQC/014/Q77/F1.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
@@ -1315,13 +1332,11 @@
                 "May 6"
               ],
               [
-                "DCF"
+                "DQC/014/Q77/F1",
+                "DQC / 014 / Q77 / F1"
               ],
               [
                 "77"
-              ],
-              [
-                "16"
               ],
               [
                 "open",
@@ -1336,9 +1351,6 @@
               ],
               [
                 "requested"
-              ],
-              [
-                "snapshot"
               ]
             ]
           }
@@ -1347,16 +1359,20 @@
           "id": "p07.queries.q81",
           "canonicalClaimId": "p07.queries.q81",
           "claimType": "scalar",
-          "expectation": "Q-81 is answered in the console but explicitly points to the pending pharmacy form on page 12.",
+          "expectation": "Q-81 is answered in the console but explicitly links to pending pharmacy record IP-DISP-K204153/R5.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "81"
+                "IP-DISP-K204153/R5",
+                "IP-DISP-K204153 / R5",
+                "IP DISP-K204153/R5",
+                "IP-DISP K204153/R5",
+                "IP DISP K204153/R5"
               ],
               [
-                "12"
+                "81"
               ],
               [
                 "pending",
@@ -1376,11 +1392,16 @@
           "id": "p07.queries.q86",
           "canonicalClaimId": "p07.queries.q86",
           "claimType": "scalar",
-          "expectation": "Q-86 is open for subject 014-009's W2 visit window and continues to page 27.",
+          "expectation": "Q-86 is open for subject 014-009's W2 visit window and links to WIN-014009/R1.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
+              [
+                "WIN-014009/R1",
+                "WIN-014009 / R1",
+                "WIN 014009/R1"
+              ],
               [
                 "86"
               ],
@@ -1393,9 +1414,6 @@
                 "9"
               ],
               [
-                "27"
-              ],
-              [
                 "open",
                 "unresolved",
                 "outstanding"
@@ -1405,6 +1423,9 @@
               ],
               [
                 "window"
+              ],
+              [
+                "visit"
               ]
             ]
           }
@@ -1413,11 +1434,16 @@
           "id": "p07.queries.q88",
           "canonicalClaimId": "p07.queries.q88",
           "claimType": "scalar",
-          "expectation": "Q-88 is open for subject 014-011 repeat chemistry and points to page 15.",
+          "expectation": "Q-88 is open for subject 014-011 repeat chemistry and links to NCL-AC77152/R2.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
+              [
+                "NCL-AC77152/R2",
+                "NCL-AC77152 / R2",
+                "NCL AC77152/R2"
+              ],
               [
                 "88"
               ],
@@ -1428,9 +1454,6 @@
               [
                 "011",
                 "11"
-              ],
-              [
-                "15"
               ],
               [
                 "open",
@@ -1453,11 +1476,16 @@
           "id": "p07.queries.q93",
           "canonicalClaimId": "p07.queries.q93",
           "claimType": "scalar",
-          "expectation": "Q-93 is open for subject 014-016's masking note and continues to page 28.",
+          "expectation": "Q-93 is open for subject 014-016's masking note and links to unsigned draft MA-016/D0.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
+              [
+                "MA-016/D0",
+                "MA-016 / D0",
+                "MA 016/D0"
+              ],
               [
                 "93"
               ],
@@ -1470,12 +1498,18 @@
                 "16"
               ],
               [
-                "28"
+                "MA"
               ],
               [
                 "open",
                 "unresolved",
                 "outstanding"
+              ],
+              [
+                "unsigned"
+              ],
+              [
+                "draft"
               ],
               [
                 "subject"
@@ -1911,22 +1945,27 @@
           "id": "p10.visits-b.continuation",
           "canonicalClaimId": "p10.visits-b.continuation",
           "claimType": "scalar",
-          "expectation": "This page is explicitly part 2 of the visit log begun on page 3.",
+          "expectation": "Visit export VIS-014/R1-B explicitly continues VIS-014/R1-A.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "2"
+                "VIS-014/R1-B",
+                "VIS-014 / R1-B",
+                "VIS 014/R1-B",
+                "VIS-014/R1 B",
+                "VIS 014/R1 B"
               ],
               [
-                "3"
+                "VIS-014/R1-A",
+                "VIS-014 / R1-A",
+                "VIS 014/R1-A",
+                "VIS-014/R1 A",
+                "VIS 014/R1 A"
               ],
               [
-                "visit"
-              ],
-              [
-                "begun"
+                "continues"
               ]
             ]
           }
@@ -2119,11 +2158,23 @@
           "id": "p10.visits-b.classification",
           "canonicalClaimId": "p10.visits-b.classification",
           "claimType": "scalar",
-          "expectation": "The page defers subject 014-009's signed discrepancy classification to page 27.",
+          "expectation": "VIS-014/R1-B defers subject 014-009's signed discrepancy classification to WIN-014009/R1.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
+              [
+                "VIS-014/R1-B",
+                "VIS-014 / R1-B",
+                "VIS 014/R1-B",
+                "VIS-014/R1 B",
+                "VIS 014/R1 B"
+              ],
+              [
+                "WIN-014009/R1",
+                "WIN-014009 / R1",
+                "WIN 014009/R1"
+              ],
               [
                 "014",
                 "14"
@@ -2133,16 +2184,10 @@
                 "9"
               ],
               [
-                "27"
-              ],
-              [
                 "signed"
               ],
               [
                 "classification"
-              ],
-              [
-                "discrepancy"
               ],
               [
                 "subject"
@@ -2460,26 +2505,20 @@
                 "RX 2"
               ],
               [
-                "204"
+                "K-204-153"
               ],
               [
-                "153"
-              ],
-              [
-                "014",
-                "14"
-              ],
-              [
-                "007",
-                "7"
+                "014-007"
               ],
               [
                 "refrigerator"
               ],
               [
-                "assigned"
+                "assigned",
+                "assignment"
               ]
-            ]
+            ],
+            "strict": true
           }
         },
         {
@@ -2492,32 +2531,18 @@
             "type": "lexical",
             "allOf": [
               [
-                "2026-04-18",
                 "18 Apr 2026",
-                "18 April 2026",
-                "Apr 18 2026",
-                "April 18 2026",
-                "18 Apr",
-                "18 April",
-                "Apr 18",
-                "April 18"
+                "2026-04-18"
               ],
               [
                 "10:10"
               ],
               [
-                "9.1"
-              ],
-              [
-                "C"
-              ],
-              [
-                "recorded"
-              ],
-              [
-                "reading"
+                "9.1 C",
+                "9.1C"
               ]
-            ]
+            ],
+            "strict": true
           }
         },
         {
@@ -2723,7 +2748,7 @@
           "id": "p13.deviations.dev03",
           "canonicalClaimId": "p13.deviations.dev03",
           "claimType": "scalar",
-          "expectation": "DEV-014-03 concerns subject 014-003's 2026-04-21 W2 ECG discrepancy and routes to pages 11 and 16.",
+          "expectation": "DEV-014-03 concerns subject 014-003's 2026-04-21 W2 ECG discrepancy and links ECG-014003-W2/R2 with DQC/014/Q77/F1.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
@@ -2749,18 +2774,23 @@
                 "ECG"
               ],
               [
+                "ECG-014003-W2/R2",
+                "ECG-014003-W2 / R2",
+                "ECG 014003-W2/R2",
+                "ECG-014003 W2/R2",
+                "ECG 014003 W2/R2"
+              ],
+              [
+                "DQC/014/Q77/F1",
+                "DQC / 014 / Q77 / F1"
+              ],
+              [
                 "014",
                 "14"
               ],
               [
                 "003",
                 "3"
-              ],
-              [
-                "11"
-              ],
-              [
-                "16"
               ],
               [
                 "discrepancy"
@@ -2775,7 +2805,7 @@
           "id": "p13.deviations.dev07",
           "canonicalClaimId": "p13.deviations.dev07",
           "claimType": "scalar",
-          "expectation": "DEV-014-07 concerns subject 014-007's 2026-04-18 IP storage excursion and routes to page 12.",
+          "expectation": "DEV-014-07 concerns subject 014-007's 2026-04-18 IP storage excursion and links to IP-DISP-K204153/R5.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
@@ -2801,15 +2831,19 @@
                 "IP"
               ],
               [
+                "IP-DISP-K204153/R5",
+                "IP-DISP-K204153 / R5",
+                "IP DISP-K204153/R5",
+                "IP-DISP K204153/R5",
+                "IP DISP K204153/R5"
+              ],
+              [
                 "014",
                 "14"
               ],
               [
                 "007",
                 "7"
-              ],
-              [
-                "12"
               ],
               [
                 "excursion"
@@ -2824,7 +2858,7 @@
           "id": "p13.deviations.dev08",
           "canonicalClaimId": "p13.deviations.dev08",
           "claimType": "scalar",
-          "expectation": "DEV-014-08 for subject 014-009 has a pending signed class here and routes to page 27.",
+          "expectation": "DEV-014-08 for subject 014-009 has a pending signed class here and links to WIN-014009/R1.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
@@ -2836,15 +2870,17 @@
                 "DEV 014 08"
               ],
               [
+                "WIN-014009/R1",
+                "WIN-014009 / R1",
+                "WIN 014009/R1"
+              ],
+              [
                 "014",
                 "14"
               ],
               [
                 "009",
                 "9"
-              ],
-              [
-                "27"
               ],
               [
                 "pending",
@@ -2867,7 +2903,7 @@
           "id": "p13.deviations.dev09",
           "canonicalClaimId": "p13.deviations.dev09",
           "claimType": "scalar",
-          "expectation": "DEV-014-09 concerns absent repeat chemistry evidence for subject 014-011 and routes to page 15.",
+          "expectation": "DEV-014-09 concerns absent repeat chemistry evidence for subject 014-011 and links to NCL-AC77152/R2.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -2879,15 +2915,17 @@
                 "DEV 014 09"
               ],
               [
+                "NCL-AC77152/R2",
+                "NCL-AC77152 / R2",
+                "NCL AC77152/R2"
+              ],
+              [
                 "014",
                 "14"
               ],
               [
                 "011",
                 "11"
-              ],
-              [
-                "15"
               ],
               [
                 "chemistry"
@@ -2902,7 +2940,7 @@
           "id": "p13.deviations.dev11",
           "canonicalClaimId": "p13.deviations.dev11",
           "claimType": "scalar",
-          "expectation": "DEV-014-11 concerns unblinded detail in subject 014-016's site note and routes to pages 22 and 28.",
+          "expectation": "DEV-014-11 concerns unblinded detail in subject 014-016's site note and links PI-DEV-014/R6 with action A-204.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -2914,6 +2952,13 @@
                 "DEV 014 11"
               ],
               [
+                "PI-DEV-014/R6",
+                "PI-DEV-014 / R6",
+                "PI DEV-014/R6",
+                "PI-DEV 014/R6",
+                "PI DEV 014/R6"
+              ],
+              [
                 "014",
                 "14"
               ],
@@ -2922,10 +2967,7 @@
                 "16"
               ],
               [
-                "22"
-              ],
-              [
-                "28"
+                "204"
               ],
               [
                 "unblinded"
@@ -3053,22 +3095,23 @@
           "id": "p14.inventory.k153-source",
           "canonicalClaimId": "p14.inventory.k153-source",
           "claimType": "scalar",
-          "expectation": "The K-204-153 row defers dispensed quantity and status to the signed form on page 12 rather than restating them.",
+          "expectation": "The K-204-153 row defers dispensed quantity and status to record IP-DISP-K204153/R5 rather than restating them.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
+                "IP-DISP-K204153/R5",
+                "IP-DISP-K204153 / R5",
+                "IP DISP-K204153/R5",
+                "IP-DISP K204153/R5",
+                "IP DISP K204153/R5"
+              ],
+              [
                 "204"
               ],
               [
                 "153"
-              ],
-              [
-                "12"
-              ],
-              [
-                "signed"
               ],
               [
                 "dispensed"
@@ -3318,29 +3361,27 @@
             "type": "lexical",
             "allOf": [
               [
+                "C. Liu",
+                "C Liu"
+              ],
+              [
+                "verified"
+              ],
+              [
+                "final amendment",
+                "final amended"
+              ],
+              [
                 "2026-05-09",
-                "9 May 2026",
                 "09 May 2026",
-                "May 9 2026",
-                "9 May",
-                "09 May",
-                "May 9"
+                "9 May 2026"
               ],
               [
                 "07:18",
                 "7:18"
-              ],
-              [
-                "final",
-                "finalized"
-              ],
-              [
-                "amendment"
-              ],
-              [
-                "verified"
               ]
-            ]
+            ],
+            "strict": true
           }
         }
       ]
@@ -3490,7 +3531,7 @@
           "id": "p15.custody.ack",
           "canonicalClaimId": "p15.custody.ack",
           "claimType": "scalar",
-          "expectation": "Dr. Neha Rao reviewed the amendment at 08:06 on 2026-05-09.",
+          "expectation": "NR reviewed the amendment at 08:06 on 2026-05-09.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -3507,6 +3548,9 @@
               [
                 "08:06",
                 "8:06"
+              ],
+              [
+                "NR"
               ],
               [
                 "amendment"
@@ -3583,38 +3627,28 @@
             "type": "lexical",
             "allOf": [
               [
-                "ECG"
+                "signed final response",
+                "final signed response",
+                "signed the final response",
+                "final response signed"
               ],
               [
-                "signed"
+                "ECG not performed",
+                "ECG was not performed"
               ],
               [
-                "final",
-                "finalized"
+                "machine was unavailable",
+                "machine unavailable",
+                "equipment unavailable"
               ],
               [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "no",
-                "not",
-                "none",
-                "without",
-                "absent"
-              ],
-              [
-                "unavailable"
-              ],
-              [
-                "performed"
-              ],
-              [
-                "response"
+                "no tracing exists",
+                "no tracing",
+                "tracing absent",
+                "without tracing"
               ]
-            ]
+            ],
+            "strict": true
           }
         },
         {
@@ -3747,28 +3781,38 @@
           "id": "p16.q77.precedence",
           "canonicalClaimId": "p16.q77.precedence",
           "claimType": "scalar",
-          "expectation": "The signed DCF controls over the provisional console response on page 7 while both states remain part of the record.",
+          "expectation": "Signed record DQC/014/Q77/F1 controls over the unsigned 2026-05-06 console draft while both states remain part of the audit history.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "DCF"
+                "2026-05-06",
+                "6 May 2026",
+                "06 May 2026",
+                "May 6 2026",
+                "6 May",
+                "06 May",
+                "May 6"
               ],
               [
-                "7"
+                "DQC/014/Q77/F1",
+                "DQC / 014 / Q77 / F1"
               ],
               [
-                "signed"
+                "Signed"
               ],
               [
-                "provisional"
+                "unsigned"
+              ],
+              [
+                "draft"
               ],
               [
                 "controls"
               ],
               [
-                "response"
+                "console"
               ]
             ]
           }
@@ -4520,28 +4564,47 @@
           "id": "p19.capa-draft.precedence",
           "canonicalClaimId": "p19.capa-draft.precedence",
           "claimType": "scalar",
-          "expectation": "The page explicitly defers final owners, dates, and evidence to the signed approval on page 25.",
+          "expectation": "CAPA-014-02/D2 preserves proposed owners and dates as draft audit history; approved CAPA-014-02/R1 may supersede a named field without altering D2's timestamped export.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "25"
+                "CAPA-014-02/D2"
               ],
               [
-                "final",
-                "finalized"
+                "CAPA-014-02/R1"
               ],
               [
-                "signed"
+                "preserves"
               ],
               [
-                "evidence"
+                "proposed owners"
               ],
               [
-                "approval"
+                "dates"
+              ],
+              [
+                "draft audit history"
+              ],
+              [
+                "approved"
+              ],
+              [
+                "may supersede",
+                "supersedes"
+              ],
+              [
+                "named field"
+              ],
+              [
+                "without altering the timestamped export",
+                "without altering this timestamped export",
+                "without altering D2's timestamped export",
+                "timestamped export remains unchanged"
               ]
-            ]
+            ],
+            "strict": true
           }
         }
       ]
@@ -5194,20 +5257,6 @@
           }
         },
         {
-          "id": "p22.pi-review.withdrawn",
-          "canonicalClaimId": "p22.pi-review.withdrawn",
-          "claimType": "form_state",
-          "expectation": "Proposed DEV-014-06 review is crossed.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "form_state",
-            "label": [
-              "Proposed DEV-014-06 review"
-            ],
-            "state": "crossed"
-          }
-        },
-        {
           "id": "p22.pi-review.complete",
           "canonicalClaimId": "p22.pi-review.complete",
           "claimType": "form_state",
@@ -5816,7 +5865,7 @@
         "low_quality_scan"
       ],
       "textOnlyRecoverable": false,
-      "budget": 2,
+      "budget": 3,
       "leaves": [
         {
           "id": "p25.capa-final.c01",
@@ -5856,6 +5905,9 @@
               ],
               [
                 "production"
+              ],
+              [
+                "assigns"
               ],
               [
                 "upload"
@@ -5902,6 +5954,9 @@
               ],
               [
                 "certificate"
+              ],
+              [
+                "assigns"
               ]
             ]
           }
@@ -5944,6 +5999,9 @@
               ],
               [
                 "corrected"
+              ],
+              [
+                "assigns"
               ],
               [
                 "receipt"
@@ -5995,6 +6053,9 @@
               ],
               [
                 "complete"
+              ],
+              [
+                "assigns"
               ]
             ]
           }
@@ -6037,6 +6098,9 @@
               ],
               [
                 "calculation"
+              ],
+              [
+                "assigns"
               ],
               [
                 "upload"
@@ -6132,27 +6196,42 @@
           "id": "p25.capa-final.signed-control",
           "canonicalClaimId": "p25.capa-final.signed-control",
           "claimType": "scalar",
-          "expectation": "The final signed CAPA dates control over draft dates.",
+          "expectation": "Approved CAPA-014-02/R1 supersedes CAPA-014-02/D2 only for named owner, due, and evidence fields.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "CAPA"
+                "CAPA-014-02/R1"
               ],
               [
-                "final"
+                "approved"
               ],
               [
-                "signed"
+                "CAPA-014-02/D2"
               ],
               [
-                "control"
+                "supersedes"
               ],
               [
-                "draft"
+                "only",
+                "solely",
+                "exclusively"
+              ],
+              [
+                "owner"
+              ],
+              [
+                "due"
+              ],
+              [
+                "evidence"
+              ],
+              [
+                "fields"
               ]
-            ]
+            ],
+            "strict": true
           }
         },
         {
@@ -6356,16 +6435,18 @@
           "id": "p26.aging.q86",
           "canonicalClaimId": "p26.aging.q86",
           "claimType": "scalar",
-          "expectation": "Q-86 is on signature route and points to signed page 27.",
+          "expectation": "Q-86 is on signature route and links to signed record WIN-014009/R1.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "86"
+                "WIN-014009/R1",
+                "WIN-014009 / R1",
+                "WIN 014009/R1"
               ],
               [
-                "27"
+                "86"
               ],
               [
                 "signed"
@@ -6670,6 +6751,52 @@
             ],
             "state": "unchecked"
           }
+        },
+        {
+          "id": "p27.window-form.record",
+          "canonicalClaimId": "p27.window-form.record",
+          "claimType": "scalar",
+          "expectation": "WIN-014009/R1 supersedes CAL-014009/D0 and became effective when NR signed on 2026-05-09 at 11:22.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "2026-05-09",
+                "9 May 2026",
+                "09 May 2026",
+                "May 9 2026",
+                "9 May",
+                "09 May",
+                "May 9"
+              ],
+              [
+                "11:22"
+              ],
+              [
+                "WIN-014009/R1",
+                "WIN-014009 / R1",
+                "WIN 014009/R1"
+              ],
+              [
+                "CAL-014009/D0",
+                "CAL-014009 / D0",
+                "CAL 014009/D0"
+              ],
+              [
+                "NR"
+              ],
+              [
+                "signed"
+              ],
+              [
+                "supersedes"
+              ],
+              [
+                "effective"
+              ]
+            ]
+          }
         }
       ]
     },
@@ -6727,9 +6854,6 @@
               ],
               [
                 "signed"
-              ],
-              [
-                "calculation"
               ],
               [
                 "concurred"
@@ -7230,146 +7354,230 @@
       "budget": 1,
       "leaves": [
         {
-          "id": "p28.routing.mk",
-          "canonicalClaimId": "p28.routing.mk",
-          "claimType": "scalar",
-          "expectation": "MK uses the secure trial repository and escalates to AT/data management during 2026-05-10 through 2026-05-13.",
+          "id": "p28.routing.mk.primary-route",
+          "canonicalClaimId": "p28.routing.mk.primary-route",
+          "claimType": "table_binding",
+          "expectation": "For MK, Primary route is Secure trial repository.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "2026-05-10",
-                "10 May 2026",
-                "May 10 2026",
-                "10 May",
-                "May 10"
-              ],
-              [
-                "2026-05-13",
-                "13 May 2026",
-                "May 13 2026",
-                "13 May",
-                "May 13"
-              ],
-              [
-                "MK"
-              ],
-              [
-                "AT"
-              ],
-              [
-                "repository"
-              ],
-              [
-                "management"
-              ]
+            "type": "table_binding",
+            "row": [
+              "MK"
+            ],
+            "column": [
+              "Primary route"
+            ],
+            "value": [
+              "Secure trial repository"
             ]
           }
         },
         {
-          "id": "p28.routing.rp",
-          "canonicalClaimId": "p28.routing.rp",
-          "claimType": "scalar",
-          "expectation": "RP uses the restricted pharmacy vault and sponsor supply line on 2026-05-12.",
+          "id": "p28.routing.mk.escalation-contact",
+          "canonicalClaimId": "p28.routing.mk.escalation-contact",
+          "claimType": "table_binding",
+          "expectation": "For MK, Escalation contact is AT / data management.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "2026-05-12",
-                "12 May 2026",
-                "May 12 2026",
-                "12 May",
-                "May 12"
-              ],
-              [
-                "RP"
-              ],
-              [
-                "restricted"
-              ],
-              [
-                "pharmacy"
-              ],
-              [
-                "sponsor"
-              ]
+            "type": "table_binding",
+            "row": [
+              "MK"
+            ],
+            "column": [
+              "Escalation contact"
+            ],
+            "value": [
+              "AT / data management"
             ]
           }
         },
         {
-          "id": "p28.routing.nr",
-          "canonicalClaimId": "p28.routing.nr",
-          "claimType": "scalar",
-          "expectation": "NR uses the PI electronic signature queue and escalates to LS on 2026-05-11.",
+          "id": "p28.routing.mk.review-window",
+          "canonicalClaimId": "p28.routing.mk.review-window",
+          "claimType": "table_binding",
+          "expectation": "For MK, Review window is 10-13 May.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "2026-05-11",
-                "11 May 2026",
-                "May 11 2026",
-                "11 May",
-                "May 11"
-              ],
-              [
-                "NR"
-              ],
-              [
-                "PI"
-              ],
-              [
-                "LS"
-              ],
-              [
-                "electronic"
-              ],
-              [
-                "signature"
-              ]
+            "type": "table_binding",
+            "row": [
+              "MK"
+            ],
+            "column": [
+              "Review window"
+            ],
+            "value": [
+              "10-13 May"
             ]
           }
         },
         {
-          "id": "p28.routing.ls",
-          "canonicalClaimId": "p28.routing.ls",
-          "claimType": "scalar",
-          "expectation": "LS owns the CAPA effectiveness file review from 21 May 2026 through 22 May 2026.",
+          "id": "p28.routing.rp.primary-route",
+          "canonicalClaimId": "p28.routing.rp.primary-route",
+          "claimType": "table_binding",
+          "expectation": "For RP, Primary route is Restricted pharmacy vault.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "21 May 2026",
-                "2026-05-21",
-                "May 21 2026",
-                "21 May",
-                "May 21"
-              ],
-              [
-                "22 May 2026",
-                "2026-05-22",
-                "May 22 2026",
-                "22 May",
-                "May 22"
-              ],
-              [
-                "LS"
-              ],
-              [
-                "CAPA"
-              ],
-              [
-                "effectiveness"
-              ],
-              [
-                "review"
-              ],
-              [
-                "owns"
-              ]
+            "type": "table_binding",
+            "row": [
+              "RP"
+            ],
+            "column": [
+              "Primary route"
+            ],
+            "value": [
+              "Restricted pharmacy vault"
+            ]
+          }
+        },
+        {
+          "id": "p28.routing.rp.escalation-contact",
+          "canonicalClaimId": "p28.routing.rp.escalation-contact",
+          "claimType": "table_binding",
+          "expectation": "For RP, Escalation contact is Sponsor supply line.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "RP"
+            ],
+            "column": [
+              "Escalation contact"
+            ],
+            "value": [
+              "Sponsor supply line"
+            ]
+          }
+        },
+        {
+          "id": "p28.routing.rp.review-window",
+          "canonicalClaimId": "p28.routing.rp.review-window",
+          "claimType": "table_binding",
+          "expectation": "For RP, Review window is 12 May.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "RP"
+            ],
+            "column": [
+              "Review window"
+            ],
+            "value": [
+              "12 May"
+            ]
+          }
+        },
+        {
+          "id": "p28.routing.nr.primary-route",
+          "canonicalClaimId": "p28.routing.nr.primary-route",
+          "claimType": "table_binding",
+          "expectation": "For NR, Primary route is PI electronic signature queue.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "NR"
+            ],
+            "column": [
+              "Primary route"
+            ],
+            "value": [
+              "PI electronic signature queue"
+            ]
+          }
+        },
+        {
+          "id": "p28.routing.nr.escalation-contact",
+          "canonicalClaimId": "p28.routing.nr.escalation-contact",
+          "claimType": "table_binding",
+          "expectation": "For NR, Escalation contact is LS / monitor.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "NR"
+            ],
+            "column": [
+              "Escalation contact"
+            ],
+            "value": [
+              "LS / monitor"
+            ]
+          }
+        },
+        {
+          "id": "p28.routing.nr.review-window",
+          "canonicalClaimId": "p28.routing.nr.review-window",
+          "claimType": "table_binding",
+          "expectation": "For NR, Review window is 11 May.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "NR"
+            ],
+            "column": [
+              "Review window"
+            ],
+            "value": [
+              "11 May"
+            ]
+          }
+        },
+        {
+          "id": "p28.routing.ls.primary-route",
+          "canonicalClaimId": "p28.routing.ls.primary-route",
+          "claimType": "table_binding",
+          "expectation": "For LS, Primary route is CAPA effectiveness file.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "LS"
+            ],
+            "column": [
+              "Primary route"
+            ],
+            "value": [
+              "CAPA effectiveness file"
+            ]
+          }
+        },
+        {
+          "id": "p28.routing.ls.escalation-contact",
+          "canonicalClaimId": "p28.routing.ls.escalation-contact",
+          "claimType": "table_binding",
+          "expectation": "For LS, Escalation contact is Clinical lead.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "LS"
+            ],
+            "column": [
+              "Escalation contact"
+            ],
+            "value": [
+              "Clinical lead"
+            ]
+          }
+        },
+        {
+          "id": "p28.routing.ls.review-window",
+          "canonicalClaimId": "p28.routing.ls.review-window",
+          "claimType": "table_binding",
+          "expectation": "For LS, Review window is 21-22 May.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "LS"
+            ],
+            "column": [
+              "Review window"
+            ],
+            "value": [
+              "21-22 May"
             ]
           }
         }
@@ -7858,23 +8066,11 @@
           "id": "p30.masking-access.correction",
           "canonicalClaimId": "p30.masking-access.correction",
           "claimType": "scalar",
-          "expectation": "QA corrected emergency unblinding to restricted pharmacy custody check with no treatment code displayed on 2026-05-09 at 15:44.",
+          "expectation": "QA corrected emergency unblinding to restricted pharmacy custody check with no treatment code displayed or disclosed on 2026-05-09 at 15:44.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
-              [
-                "2026-05-09",
-                "9 May 2026",
-                "09 May 2026",
-                "May 9 2026",
-                "9 May",
-                "09 May",
-                "May 9"
-              ],
-              [
-                "15:44"
-              ],
               [
                 "QA"
               ],
@@ -7882,22 +8078,28 @@
                 "corrected"
               ],
               [
-                "no",
-                "not",
-                "none",
-                "without",
-                "absent"
+                "emergency unblinding",
+                "emergency-unblinding"
               ],
               [
-                "unblinding"
+                "restricted pharmacy custody check"
               ],
               [
-                "restricted"
+                "no treatment code displayed",
+                "no treatment code disclosed"
               ],
               [
-                "emergency"
+                "2026-05-09",
+                "09 May 2026",
+                "9 May 2026",
+                "09 May",
+                "9 May"
+              ],
+              [
+                "15:44"
               ]
-            ]
+            ],
+            "strict": true
           }
         },
         {
@@ -9443,37 +9645,47 @@
             "type": "ordered_tokens",
             "tokens": [
               [
-                "AE-014-01 initial / 014-004"
+                "AE-014-01 initial / 014-004",
+                "AE-014-01 / 014-004 24 Apr 18:05"
               ],
               [
-                "AE-014-01 resolution / 014-004"
+                "AE-014-01 resolution / 014-004",
+                "AE-014-01 / 014-004 27 Apr 09:02"
               ],
               [
-                "AE-014-03 arrange / 014-007"
+                "AE-014-03 arrange / 014-007",
+                "AE-014-03 / 014-007 19 Apr 08:44"
               ],
               [
-                "AE-014-03 result / 014-007"
+                "AE-014-03 result / 014-007",
+                "AE-014-03 / 014-007 03 May 09:18"
               ],
               [
-                "AE-014-04 request / 014-011"
+                "AE-014-04 request / 014-011",
+                "AE-014-04 / 014-011 28 Apr 09:10"
               ],
               [
-                "AE-014-04 review / 014-011"
+                "AE-014-04 review / 014-011",
+                "AE-014-04 / 014-011 09 May 08:06"
               ],
               [
-                "AE-014-05 call / 014-016"
+                "AE-014-05 call / 014-016",
+                "AE-014-05 / 014-016 04 May 18:16"
               ],
               [
-                "AE-014-05 day-1 / 014-016"
+                "AE-014-05 day-1 / 014-016",
+                "AE-014-05 / 014-016 05 May 08:20 Day-1"
               ],
               [
                 "AE-014-07 / 014-009"
               ],
               [
-                "AE-014-08 ticket / 014-014"
+                "AE-014-08 ticket / 014-014",
+                "AE-014-08 / 014-014 04 May 12:16"
               ],
               [
-                "AE-014-08 evidence / 014-014"
+                "AE-014-08 evidence / 014-014",
+                "AE-014-08 / 014-014 08 May 14:03"
               ],
               [
                 "FU-013 / 014-013"
@@ -9492,11 +9704,23 @@
             "row": [
               "AE-014-01 resolution / 014-004"
             ],
+            "rowParts": [
+              [
+                "AE-014-01"
+              ],
+              [
+                "014-004"
+              ],
+              [
+                "27 Apr 09:02"
+              ]
+            ],
             "column": [
               "Resulting state"
             ],
             "value": [
-              "Resolution dated 27 Apr"
+              "Resolution dated 27 Apr",
+              "Resolved 27 Apr"
             ]
           }
         },
@@ -9510,6 +9734,17 @@
             "type": "table_binding",
             "row": [
               "AE-014-03 result / 014-007"
+            ],
+            "rowParts": [
+              [
+                "AE-014-03"
+              ],
+              [
+                "014-007"
+              ],
+              [
+                "03 May 09:18"
+              ]
             ],
             "column": [
               "Clinical content"
@@ -9530,6 +9765,17 @@
             "row": [
               "AE-014-04 request / 014-011"
             ],
+            "rowParts": [
+              [
+                "AE-014-04"
+              ],
+              [
+                "014-011"
+              ],
+              [
+                "28 Apr 09:10"
+              ]
+            ],
             "column": [
               "Resulting state"
             ],
@@ -9548,6 +9794,17 @@
             "type": "table_binding",
             "row": [
               "AE-014-04 review / 014-011"
+            ],
+            "rowParts": [
+              [
+                "AE-014-04"
+              ],
+              [
+                "014-011"
+              ],
+              [
+                "09 May 08:06"
+              ]
             ],
             "column": [
               "Next obligation"
@@ -9568,6 +9825,17 @@
             "row": [
               "AE-014-05 call / 014-016"
             ],
+            "rowParts": [
+              [
+                "AE-014-05"
+              ],
+              [
+                "014-016"
+              ],
+              [
+                "04 May 18:16"
+              ]
+            ],
             "column": [
               "Clinical content"
             ],
@@ -9587,6 +9855,17 @@
             "row": [
               "AE-014-05 call / 014-016"
             ],
+            "rowParts": [
+              [
+                "AE-014-05"
+              ],
+              [
+                "014-016"
+              ],
+              [
+                "04 May 18:16"
+              ]
+            ],
             "column": [
               "Next obligation"
             ],
@@ -9605,6 +9884,17 @@
             "type": "table_binding",
             "row": [
               "AE-014-08 evidence / 014-014"
+            ],
+            "rowParts": [
+              [
+                "AE-014-08"
+              ],
+              [
+                "014-014"
+              ],
+              [
+                "08 May 14:03"
+              ]
             ],
             "column": [
               "Resulting state"
@@ -9955,6 +10245,14 @@
             "row": [
               "08 May practice"
             ],
+            "rowParts": [
+              [
+                "08 May"
+              ],
+              [
+                "Practice 13:31"
+              ]
+            ],
             "column": [
               "Symptom score"
             ],
@@ -9973,6 +10271,14 @@
             "type": "table_binding",
             "row": [
               "08 May practice"
+            ],
+            "rowParts": [
+              [
+                "08 May"
+              ],
+              [
+                "Practice 13:31"
+              ]
             ],
             "column": [
               "Sync timestamp"
@@ -9993,6 +10299,14 @@
             "row": [
               "08 May daily"
             ],
+            "rowParts": [
+              [
+                "08 May"
+              ],
+              [
+                "Daily 19:06"
+              ]
+            ],
             "column": [
               "Entry state"
             ],
@@ -10011,6 +10325,14 @@
             "type": "table_binding",
             "row": [
               "09 May daily"
+            ],
+            "rowParts": [
+              [
+                "09 May"
+              ],
+              [
+                "Daily 18:42"
+              ]
             ],
             "column": [
               "Audit note"
@@ -10336,108 +10658,6 @@
           "TX-194"
         ]
       }
-    },
-    {
-      "id": "p37.transaction-rule",
-      "label": "Accountability movement rule",
-      "sourceAnchors": [
-        {
-          "page": 37,
-          "layer": "native_text",
-          "sectionPath": [
-            "HTX-204 Site 014 Monitoring Source Packet",
-            "Investigational-product transaction ledger"
-          ]
-        }
-      ],
-      "goldSection": "Page 37 - Investigational-product transaction ledger",
-      "kind": "text",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "long_context_coherence",
-      "secondaryAxes": [],
-      "textOnlyRecoverable": true,
-      "budget": 1,
-      "leaves": [
-        {
-          "id": "p37.transaction-rule.assignment",
-          "canonicalClaimId": "p37.transaction-rule.assignment",
-          "claimType": "scalar",
-          "expectation": "An RTS assignment does not establish subject custody.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "RTS"
-              ],
-              [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "assignment"
-              ],
-              [
-                "establish"
-              ],
-              [
-                "subject"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p37.transaction-rule.balance",
-          "canonicalClaimId": "p37.transaction-rule.balance",
-          "claimType": "scalar",
-          "expectation": "K-204-153 remains at balance 30 through calibration verification and reaches balance 0 only on sponsor return at 2026-05-13 10:18.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "2026-05-13",
-                "13 May 2026",
-                "May 13 2026",
-                "13 May",
-                "May 13"
-              ],
-              [
-                "10:18"
-              ],
-              [
-                "204"
-              ],
-              [
-                "153"
-              ],
-              [
-                "30"
-              ],
-              [
-                "0"
-              ],
-              [
-                "only",
-                "solely",
-                "exclusively"
-              ],
-              [
-                "verification"
-              ],
-              [
-                "calibration"
-              ],
-              [
-                "balance"
-              ]
-            ]
-          }
-        }
-      ]
     },
     {
       "id": "p38.staff-training",
@@ -10935,90 +11155,6 @@
           "EV-8164"
         ]
       }
-    },
-    {
-      "id": "p39.query-transition-rule",
-      "label": "Query transition chronology",
-      "sourceAnchors": [
-        {
-          "page": 39,
-          "layer": "native_text",
-          "sectionPath": [
-            "HTX-204 Site 014 Monitoring Source Packet",
-            "Data-query state-transition audit trail"
-          ]
-        }
-      ],
-      "goldSection": "Page 39 - Data-query state-transition audit trail",
-      "kind": "text",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "long_context_coherence",
-      "secondaryAxes": [],
-      "textOnlyRecoverable": true,
-      "budget": 1,
-      "leaves": [
-        {
-          "id": "p39.query-transition-rule.distinct",
-          "canonicalClaimId": "p39.query-transition-rule.distinct",
-          "claimType": "scalar",
-          "expectation": "Draft response, accepted response, production-field update, and administrative closure are distinct transitions.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "Draft"
-              ],
-              [
-                "accepted",
-                "accept"
-              ],
-              [
-                "production-field"
-              ],
-              [
-                "administrative"
-              ],
-              [
-                "transitions"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p39.query-transition-rule.history",
-          "canonicalClaimId": "p39.query-transition-rule.history",
-          "claimType": "scalar",
-          "expectation": "Later query closure does not erase earlier open duration or provisional text.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "open",
-                "unresolved",
-                "outstanding"
-              ],
-              [
-                "provisional"
-              ],
-              [
-                "duration"
-              ],
-              [
-                "closure"
-              ]
-            ]
-          }
-        }
-      ]
     },
     {
       "id": "p40.pi-decisions",
@@ -11756,134 +11892,6 @@
       }
     },
     {
-      "id": "p41.evidence-rule",
-      "label": "Evidence intake state rule",
-      "sourceAnchors": [
-        {
-          "page": 41,
-          "layer": "native_text",
-          "sectionPath": [
-            "HTX-204 Site 014 Monitoring Source Packet",
-            "Evidence request and intake queue"
-          ]
-        }
-      ],
-      "goldSection": "Page 41 - Evidence request and intake queue",
-      "kind": "text",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "long_context_coherence",
-      "secondaryAxes": [],
-      "textOnlyRecoverable": true,
-      "budget": 1,
-      "leaves": [
-        {
-          "id": "p41.evidence-rule.draft",
-          "canonicalClaimId": "p41.evidence-rule.draft",
-          "claimType": "scalar",
-          "expectation": "A draft can satisfy routing without satisfying the requested evidence.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "draft"
-              ],
-              [
-                "satisfying"
-              ],
-              [
-                "requested"
-              ],
-              [
-                "evidence"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p41.evidence-rule.separate",
-          "canonicalClaimId": "p41.evidence-rule.separate",
-          "claimType": "scalar",
-          "expectation": "A verified object may close its evidence request while a linked query or custody exception remains open.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "open",
-                "unresolved",
-                "outstanding"
-              ],
-              [
-                "exception"
-              ],
-              [
-                "verified"
-              ],
-              [
-                "evidence"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p41.evidence-rule.history",
-          "canonicalClaimId": "p41.evidence-rule.history",
-          "claimType": "scalar",
-          "expectation": "ER-207R supersedes ER-207 without erasing the rejected unsigned submission.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "ER-207R",
-                "ER 207R"
-              ],
-              [
-                "ER-207",
-                "ER 207"
-              ],
-              [
-                "rejected",
-                "reject"
-              ],
-              [
-                "unsigned"
-              ],
-              [
-                "submission"
-              ],
-              [
-                "without"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p41.evidence-rule.verification-time",
-          "canonicalClaimId": "p41.evidence-rule.verification-time",
-          "claimType": "scalar",
-          "expectation": "Verification time records completion of reviewer checks rather than the upload event.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "verification"
-              ],
-              [
-                "completion"
-              ],
-              [
-                "reviewer"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
       "id": "p42.waiver",
       "label": "Scanned translated-diary waiver W-14",
       "sourceAnchors": [
@@ -12468,13 +12476,13 @@
           "id": "p44.capa-evidence.schema",
           "canonicalClaimId": "p44.capa-evidence.schema",
           "claimType": "structure",
-          "expectation": "The region preserves the source field schema in order: CAPA item, Final obligation, Due, Evidence received, Verifier, Verification result, Linked item state.",
+          "expectation": "The region preserves the source field schema in order: CAPA item / rev, Final obligation, Due, Evidence received, Verifier, Verification result, Linked item state.",
           "harm": 1,
           "evidencePolicy": {
             "type": "ordered_tokens",
             "tokens": [
               [
-                "CAPA item"
+                "CAPA item / rev"
               ],
               [
                 "Final obligation"
@@ -12501,7 +12509,7 @@
           "id": "p44.capa-evidence.row-order",
           "canonicalClaimId": "p44.capa-evidence.row-order",
           "claimType": "ordered_record",
-          "expectation": "The source row order is recoverable as: C-01 -> C-02 -> C-03 -> C-04 -> C-05 -> C-06 -> C-07 -> C-07R -> C-08 -> P-01 -> P-02 -> EC-01.",
+          "expectation": "The source row order is recoverable as: C-01 -> C-02 -> C-03 -> C-04 -> C-05 -> C-06 -> C-07 / R1 -> C-07R / R2 -> C-08 -> P-01 -> P-02 -> EC-01.",
           "harm": 1,
           "evidencePolicy": {
             "type": "ordered_tokens",
@@ -12525,10 +12533,10 @@
                 "C-06"
               ],
               [
-                "C-07"
+                "C-07 / R1"
               ],
               [
-                "C-07R"
+                "C-07R / R2"
               ],
               [
                 "C-08"
@@ -12625,7 +12633,7 @@
           "id": "p44.capa-evidence.c-04.linked-item-state",
           "canonicalClaimId": "p44.capa-evidence.c-04.linked-item-state",
           "claimType": "table_binding",
-          "expectation": "For C-04, Linked item state is CE closure separate.",
+          "expectation": "For C-04, Linked item state is CE-204-12 closure separate.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -12636,20 +12644,20 @@
               "Linked item state"
             ],
             "value": [
-              "CE closure separate"
+              "CE-204-12 closure separate"
             ]
           }
         },
         {
-          "id": "p44.capa-evidence.c-07.verification-result",
-          "canonicalClaimId": "p44.capa-evidence.c-07.verification-result",
+          "id": "p44.capa-evidence.c-07-r1.verification-result",
+          "canonicalClaimId": "p44.capa-evidence.c-07-r1.verification-result",
           "claimType": "table_binding",
-          "expectation": "For C-07, Verification result is Rejected; signature absent.",
+          "expectation": "For C-07 / R1, Verification result is Rejected; signature absent.",
           "harm": 2,
           "evidencePolicy": {
             "type": "table_binding",
             "row": [
-              "C-07"
+              "C-07 / R1"
             ],
             "column": [
               "Verification result"
@@ -12660,15 +12668,15 @@
           }
         },
         {
-          "id": "p44.capa-evidence.c-07r.due",
-          "canonicalClaimId": "p44.capa-evidence.c-07r.due",
+          "id": "p44.capa-evidence.c-07r-r2.due",
+          "canonicalClaimId": "p44.capa-evidence.c-07r-r2.due",
           "claimType": "table_binding",
-          "expectation": "For C-07R, Due is 13 May 16:00.",
+          "expectation": "For C-07R / R2, Due is 13 May 16:00.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
             "row": [
-              "C-07R"
+              "C-07R / R2"
             ],
             "column": [
               "Due"
@@ -12679,15 +12687,15 @@
           }
         },
         {
-          "id": "p44.capa-evidence.c-07r.verification-result",
-          "canonicalClaimId": "p44.capa-evidence.c-07r.verification-result",
+          "id": "p44.capa-evidence.c-07r-r2.verification-result",
+          "canonicalClaimId": "p44.capa-evidence.c-07r-r2.verification-result",
           "claimType": "table_binding",
-          "expectation": "For C-07R, Verification result is Accepted under revision.",
+          "expectation": "For C-07R / R2, Verification result is Accepted under revision.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
             "row": [
-              "C-07R"
+              "C-07R / R2"
             ],
             "column": [
               "Verification result"
@@ -12745,8 +12753,8 @@
           "C-04",
           "C-05",
           "C-06",
-          "C-07",
-          "C-07R",
+          "C-07 / R1",
+          "C-07R / R2",
           "C-08",
           "P-01",
           "P-02",
@@ -12777,33 +12785,6 @@
       "budget": 1,
       "leaves": [
         {
-          "id": "p44.capa-evidence-rule.revision",
-          "canonicalClaimId": "p44.capa-evidence-rule.revision",
-          "claimType": "scalar",
-          "expectation": "C-07R preserves rather than erases the rejected unsigned C-07 submission.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "C-07R",
-                "C 07R"
-              ],
-              [
-                "07",
-                "7"
-              ],
-              [
-                "rejected",
-                "reject"
-              ],
-              [
-                "unsigned"
-              ]
-            ]
-          }
-        },
-        {
           "id": "p44.capa-evidence-rule.ce",
           "canonicalClaimId": "p44.capa-evidence-rule.ce",
           "claimType": "scalar",
@@ -12827,9 +12808,6 @@
                 "no",
                 "without",
                 "absent"
-              ],
-              [
-                "acceptance"
               ],
               [
                 "evidence"
@@ -12856,13 +12834,7 @@
                 "absent"
               ],
               [
-                "preventive-action"
-              ],
-              [
                 "effectiveness"
-              ],
-              [
-                "assignment"
               ]
             ]
           }
@@ -12918,10 +12890,12 @@
                 "Completion decision"
               ],
               [
-                "Administrative state"
+                "Administrative state",
+                "Admin state"
               ],
               [
-                "Residual requirement"
+                "Residual requirement",
+                "Residual"
               ]
             ]
           }
@@ -12930,7 +12904,7 @@
           "id": "p45.action-states.row-order",
           "canonicalClaimId": "p45.action-states.row-order",
           "claimType": "ordered_record",
-          "expectation": "The source row order is recoverable as: A-201 / Q-77 -> A-202 / RX2-441 -> A-203 / K-204-146 -> A-204 / masking -> A-205 / Q-86 -> ER-204 / receipt -> ER-205 / chemistry -> ER-206 / ePRO -> ER-209 / receipt -> ER-210 / return -> ER-211 / FU-013 -> EC-01 / effectiveness.",
+          "expectation": "The source row order is recoverable as: A-201 / Q-77 -> A-202 / RX2-441 -> A-203 / K-204-146 -> A-204 / masking -> A-205 / Q-86 -> ER-204 / receipt -> ER-205 / chemistry -> ER-206 / ePRO -> ER-209 / receipt -> ER-210 / SRN-551 -> ER-211 / FU-013 -> EC-01 / effectiveness.",
           "harm": 1,
           "evidencePolicy": {
             "type": "ordered_tokens",
@@ -12963,7 +12937,7 @@
                 "ER-209 / receipt"
               ],
               [
-                "ER-210 / return"
+                "ER-210 / SRN-551"
               ],
               [
                 "ER-211 / FU-013"
@@ -12986,7 +12960,8 @@
               "A-201 / Q-77"
             ],
             "column": [
-              "Administrative state"
+              "Administrative state",
+              "Admin state"
             ],
             "value": [
               "Q-77 closed 10:41"
@@ -13024,7 +12999,8 @@
               "A-202 / RX2-441"
             ],
             "column": [
-              "Residual requirement"
+              "Residual requirement",
+              "Residual"
             ],
             "value": [
               "Sponsor return record"
@@ -13062,7 +13038,8 @@
               "A-203 / K-204-146"
             ],
             "column": [
-              "Residual requirement"
+              "Residual requirement",
+              "Residual"
             ],
             "value": [
               "Third attempt by 15:00"
@@ -13100,7 +13077,8 @@
               "A-205 / Q-86"
             ],
             "column": [
-              "Administrative state"
+              "Administrative state",
+              "Admin state"
             ],
             "value": [
               "Q-86 closed 11:15"
@@ -13119,7 +13097,8 @@
               "ER-204 / receipt"
             ],
             "column": [
-              "Administrative state"
+              "Administrative state",
+              "Admin state"
             ],
             "value": [
               "CE-204-12 open"
@@ -13157,7 +13136,8 @@
               "EC-01 / effectiveness"
             ],
             "column": [
-              "Residual requirement"
+              "Residual requirement",
+              "Residual"
             ],
             "value": [
               "21-22 May review"
@@ -13177,100 +13157,11 @@
           "ER-205 / chemistry",
           "ER-206 / ePRO",
           "ER-209 / receipt",
-          "ER-210 / return",
+          "ER-210 / SRN-551",
           "ER-211 / FU-013",
           "EC-01 / effectiveness"
         ]
       }
-    },
-    {
-      "id": "p45.action-state-rule",
-      "label": "Action completion and closure rule",
-      "sourceAnchors": [
-        {
-          "page": 45,
-          "layer": "native_text",
-          "sectionPath": [
-            "HTX-204 Site 014 Monitoring Source Packet",
-            "Post-visit action state-transition ledger"
-          ]
-        }
-      ],
-      "goldSection": "Page 45 - Post-visit action state-transition ledger",
-      "kind": "text",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "long_context_coherence",
-      "secondaryAxes": [],
-      "textOnlyRecoverable": true,
-      "budget": 1,
-      "leaves": [
-        {
-          "id": "p45.action-state-rule.complete",
-          "canonicalClaimId": "p45.action-state-rule.complete",
-          "claimType": "scalar",
-          "expectation": "Action completion follows evidence verification.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "completion"
-              ],
-              [
-                "evidence"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p45.action-state-rule.independent",
-          "canonicalClaimId": "p45.action-state-rule.independent",
-          "claimType": "scalar",
-          "expectation": "A custody exception may remain open when its evidence action is satisfied.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "open",
-                "unresolved",
-                "outstanding"
-              ],
-              [
-                "exception"
-              ],
-              [
-                "satisfied"
-              ],
-              [
-                "evidence"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p45.action-state-rule.timestamps",
-          "canonicalClaimId": "p45.action-state-rule.timestamps",
-          "claimType": "scalar",
-          "expectation": "Pre-existing evidence retains its original timestamp.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "pre-existing"
-              ],
-              [
-                "timestamp"
-              ],
-              [
-                "evidence"
-              ]
-            ]
-          }
-        }
-      ]
     },
     {
       "id": "p46.masking-final",
@@ -13295,7 +13186,7 @@
         "source_precedence"
       ],
       "textOnlyRecoverable": false,
-      "budget": 2,
+      "budget": 3,
       "leaves": [
         {
           "id": "p46.masking-final.break",
@@ -13445,6 +13336,53 @@
           }
         },
         {
+          "id": "p46.masking-final.record",
+          "canonicalClaimId": "p46.masking-final.record",
+          "claimType": "scalar",
+          "expectation": "MA-016/R1 supersedes unsigned MA-016/D0 and became effective when NR signed on 2026-05-13 at 15:18.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "2026-05-13",
+                "13 May 2026",
+                "May 13 2026",
+                "13 May",
+                "May 13"
+              ],
+              [
+                "15:18"
+              ],
+              [
+                "MA-016/R1",
+                "MA-016 / R1",
+                "MA 016/R1"
+              ],
+              [
+                "MA-016/D0",
+                "MA-016 / D0",
+                "MA 016/D0"
+              ],
+              [
+                "NR"
+              ],
+              [
+                "MA"
+              ],
+              [
+                "unsigned"
+              ],
+              [
+                "signed"
+              ],
+              [
+                "supersedes"
+              ]
+            ]
+          }
+        },
+        {
           "id": "p46.masking-final.signatures",
           "canonicalClaimId": "p46.masking-final.signatures",
           "claimType": "scalar",
@@ -13540,7 +13478,8 @@
                 "Entity"
               ],
               [
-                "Evidence-complete time"
+                "Evidence-complete time",
+                "Evidence-complete"
               ],
               [
                 "Closure authority"
@@ -13552,7 +13491,8 @@
                 "Final administrative state"
               ],
               [
-                "Retained open dependency"
+                "Retained open dependency",
+                "Retained open"
               ]
             ]
           }
@@ -13737,10 +13677,12 @@
               "Q-91"
             ],
             "column": [
-              "Retained open dependency"
+              "Retained open dependency",
+              "Retained open"
             ],
             "value": [
-              "Missing days retained"
+              "Missing days retained",
+              "Missing days"
             ]
           }
         },
@@ -13794,7 +13736,8 @@
               "A-203"
             ],
             "column": [
-              "Retained open dependency"
+              "Retained open dependency",
+              "Retained open"
             ],
             "value": [
               "Third contact attempt"
@@ -13840,104 +13783,6 @@
           "EC-01"
         ]
       }
-    },
-    {
-      "id": "p47.closure-rule",
-      "label": "Closure chronology rule",
-      "sourceAnchors": [
-        {
-          "page": 47,
-          "layer": "native_text",
-          "sectionPath": [
-            "HTX-204 Site 014 Monitoring Source Packet",
-            "Query, deviation, and exception closure ledger"
-          ]
-        }
-      ],
-      "goldSection": "Page 47 - Query, deviation, and exception closure ledger",
-      "kind": "text",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "long_context_coherence",
-      "secondaryAxes": [],
-      "textOnlyRecoverable": true,
-      "budget": 1,
-      "leaves": [
-        {
-          "id": "p47.closure-rule.separate",
-          "canonicalClaimId": "p47.closure-rule.separate",
-          "claimType": "scalar",
-          "expectation": "Evidence-complete time and administrative closure time are separate fields.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "evidence-complete"
-              ],
-              [
-                "administrative"
-              ],
-              [
-                "separate"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p47.closure-rule.history",
-          "canonicalClaimId": "p47.closure-rule.history",
-          "claimType": "scalar",
-          "expectation": "Closing a query does not erase a retained deviation class or missing diary days.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "deviation"
-              ],
-              [
-                "retained"
-              ],
-              [
-                "closing"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p47.closure-rule.dash",
-          "canonicalClaimId": "p47.closure-rule.dash",
-          "claimType": "scalar",
-          "expectation": "A dash in closure time means the item remains open.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "open",
-                "unresolved",
-                "outstanding"
-              ],
-              [
-                "closure"
-              ],
-              [
-                "means"
-              ],
-              [
-                "dash"
-              ]
-            ]
-          }
-        }
-      ]
     },
     {
       "id": "p48.archive",
@@ -14254,9 +14099,506 @@
       }
     },
     {
-      "id": "p48.archive-rule",
-      "label": "Archive-hold interpretation",
+      "id": "join.visit-window-014009",
+      "label": "Subject 014-009 visit-window lifecycle",
       "sourceAnchors": [
+        {
+          "page": 10,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Visit chronology - week 2 through termination"
+          ]
+        },
+        {
+          "page": 13,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Protocol deviation chronology and evidence routing"
+          ]
+        },
+        {
+          "page": 27,
+          "layer": "raster",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Subject 014-009 visit-window adjudication"
+          ]
+        },
+        {
+          "page": 45,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Post-visit action state-transition ledger"
+          ]
+        },
+        {
+          "page": 47,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Query, deviation, and exception closure ledger"
+          ]
+        }
+      ],
+      "goldSection": "Page 47 - Query, deviation, and exception closure ledger",
+      "kind": "text",
+      "modality": "mixed",
+      "uniqueEvidence": false,
+      "primaryAxis": "long_context_coherence",
+      "secondaryAxes": [
+        "source_precedence",
+        "cross_page_join",
+        "mixed_modality_fusion"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "join.visit-window-014009.attendance",
+          "canonicalClaimId": "join.visit-window-014009.attendance",
+          "claimType": "source_precedence",
+          "expectation": "VIS-014/R1-B records subject 014-009 attending W2 on 2026-05-06 at 09:04 outside the listed window while DEV-014-08 still has a pending class.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "VIS-014/R1-B"
+              ],
+              [
+                "014-009"
+              ],
+              [
+                "2026-05-06"
+              ],
+              [
+                "09:04"
+              ],
+              [
+                "outside"
+              ],
+              [
+                "DEV-014-08"
+              ],
+              [
+                "pending"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.visit-window-014009.revision",
+          "canonicalClaimId": "join.visit-window-014009.revision",
+          "claimType": "source_precedence",
+          "expectation": "WIN-014009/R1 supersedes CAL-014009/D0 and becomes effective when NR signs on 2026-05-09 at 11:22; the current classification is minor deviation, visit usable, and not a missed visit.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "WIN-014009/R1"
+              ],
+              [
+                "supersedes"
+              ],
+              [
+                "CAL-014009/D0"
+              ],
+              [
+                "NR"
+              ],
+              [
+                "2026-05-09"
+              ],
+              [
+                "11:22"
+              ],
+              [
+                "current"
+              ],
+              [
+                "minor deviation"
+              ],
+              [
+                "visit usable"
+              ],
+              [
+                "not"
+              ],
+              [
+                "missed visit"
+              ]
+            ],
+            "requiredBindings": [
+              [
+                [
+                  "not a missed visit",
+                  "not reclassified as missed visit",
+                  "[ ] Missed visit",
+                  "Missed visit is unchecked"
+                ]
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.visit-window-014009.query-close",
+          "canonicalClaimId": "join.visit-window-014009.query-close",
+          "claimType": "source_precedence",
+          "expectation": "A-205 evidence is verified on 2026-05-11 at 10:58 before Q-86 closes at 11:15.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "A-205"
+              ],
+              [
+                "verified"
+              ],
+              [
+                "2026-05-11"
+              ],
+              [
+                "10:58"
+              ],
+              [
+                "before"
+              ],
+              [
+                "Q-86"
+              ],
+              [
+                "closes",
+                "closed"
+              ],
+              [
+                "11:15"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.visit-window-014009.deviation-close",
+          "canonicalClaimId": "join.visit-window-014009.deviation-close",
+          "claimType": "source_precedence",
+          "expectation": "DEV-014-08 closes on 2026-05-11 at 11:24 with the minor classification retained.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "DEV-014-08"
+              ],
+              [
+                "closes",
+                "closed"
+              ],
+              [
+                "2026-05-11"
+              ],
+              [
+                "11:24"
+              ],
+              [
+                "minor"
+              ],
+              [
+                "retained"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "join.capa-c07-revision",
+      "label": "CAPA C-07 authority and evidence lifecycle",
+      "sourceAnchors": [
+        {
+          "page": 19,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Corrective-action working tracker - draft 2"
+          ]
+        },
+        {
+          "page": 25,
+          "layer": "raster",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Signed CAPA approval and revised obligations"
+          ]
+        },
+        {
+          "page": 44,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "CAPA evidence verification matrix"
+          ]
+        },
+        {
+          "page": 46,
+          "layer": "raster",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Final masking-impact assessment MA-016"
+          ]
+        }
+      ],
+      "goldSection": "Page 44 - CAPA evidence verification matrix",
+      "kind": "text",
+      "modality": "mixed",
+      "uniqueEvidence": false,
+      "primaryAxis": "long_context_coherence",
+      "secondaryAxes": [
+        "source_precedence",
+        "cross_page_join",
+        "mixed_modality_fusion"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "join.capa-c07-revision.draft",
+          "canonicalClaimId": "join.capa-c07-revision.draft",
+          "claimType": "source_precedence",
+          "expectation": "CAPA-014-02/D2 is a draft exported on 2026-05-08 at 16:10 whose C-07 target is 2026-05-20; D2 is not approved.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "CAPA-014-02/D2"
+              ],
+              [
+                "draft"
+              ],
+              [
+                "2026-05-08"
+              ],
+              [
+                "16:10"
+              ],
+              [
+                "C-07"
+              ],
+              [
+                "2026-05-20"
+              ],
+              [
+                "not approved"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.capa-c07-revision.final",
+          "canonicalClaimId": "join.capa-c07-revision.final",
+          "claimType": "source_precedence",
+          "expectation": "CAPA-014-02/R1 becomes effective on 2026-05-09 at 12:18, supersedes D2 only for named fields, and sets C-07 due on 2026-05-11 at 16:00.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "CAPA-014-02/R1"
+              ],
+              [
+                "effective"
+              ],
+              [
+                "2026-05-09"
+              ],
+              [
+                "12:18"
+              ],
+              [
+                "supersedes"
+              ],
+              [
+                "D2"
+              ],
+              [
+                "only"
+              ],
+              [
+                "named"
+              ],
+              [
+                "fields"
+              ],
+              [
+                "C-07"
+              ],
+              [
+                "2026-05-11"
+              ],
+              [
+                "16:00"
+              ]
+            ],
+            "requiredBindings": [
+              [
+                [
+                  "CAPA-014-02/R1",
+                  "R1"
+                ],
+                [
+                  "CAPA-014-02/D2",
+                  "D2"
+                ],
+                [
+                  "supersedes"
+                ],
+                [
+                  "owner"
+                ],
+                [
+                  "due"
+                ],
+                [
+                  "evidence"
+                ]
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.capa-c07-revision.revision",
+          "canonicalClaimId": "join.capa-c07-revision.revision",
+          "claimType": "source_precedence",
+          "expectation": "The unsigned MA-016/D0 submission for C-07/R1 is rejected on 2026-05-11; C-07R/R2 supersedes that obligation with a 2026-05-13 16:00 due time.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "unsigned"
+              ],
+              [
+                "MA-016/D0"
+              ],
+              [
+                "C-07/R1"
+              ],
+              [
+                "rejected"
+              ],
+              [
+                "2026-05-11"
+              ],
+              [
+                "C-07R/R2"
+              ],
+              [
+                "supersedes"
+              ],
+              [
+                "2026-05-13"
+              ],
+              [
+                "16:00"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.capa-c07-revision.acceptance",
+          "canonicalClaimId": "join.capa-c07-revision.acceptance",
+          "claimType": "source_precedence",
+          "expectation": "Signed assessment MA-016/R1 is accepted for C-07R/R2 by LS on 2026-05-13 at 15:44.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Signed"
+              ],
+              [
+                "MA-016/R1"
+              ],
+              [
+                "accepted"
+              ],
+              [
+                "C-07R/R2"
+              ],
+              [
+                "LS"
+              ],
+              [
+                "2026-05-13"
+              ],
+              [
+                "15:44"
+              ]
+            ],
+            "requiredBindings": [
+              [
+                [
+                  "C-07R / R2",
+                  "C-07R/R2"
+                ],
+                [
+                  "MA-016/R1"
+                ],
+                [
+                  "LS"
+                ],
+                [
+                  "15:44"
+                ],
+                [
+                  "accepted"
+                ]
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "join.masking-014016",
+      "label": "Subject 014-016 masking resolution and residual obligations",
+      "sourceAnchors": [
+        {
+          "page": 30,
+          "layer": "raster",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Randomization and masking-access audit"
+          ]
+        },
+        {
+          "page": 40,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Investigator safety and dosing decision register"
+          ]
+        },
+        {
+          "page": 46,
+          "layer": "raster",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Final masking-impact assessment MA-016"
+          ]
+        },
+        {
+          "page": 47,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Query, deviation, and exception closure ledger"
+          ]
+        },
         {
           "page": 48,
           "layer": "native_text",
@@ -14268,121 +14610,763 @@
       ],
       "goldSection": "Page 48 - Archive-readiness exception register",
       "kind": "text",
-      "modality": "native_text",
-      "uniqueEvidence": true,
+      "modality": "mixed",
+      "uniqueEvidence": false,
       "primaryAxis": "long_context_coherence",
-      "secondaryAxes": [],
-      "textOnlyRecoverable": true,
-      "budget": 1,
+      "secondaryAxes": [
+        "source_precedence",
+        "cross_page_join",
+        "mixed_modality_fusion"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
       "leaves": [
         {
-          "id": "p48.archive-rule.scope",
-          "canonicalClaimId": "p48.archive-rule.scope",
-          "claimType": "scalar",
-          "expectation": "The tail register records archive conditions only; it is not a recap of all clinical findings.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "tail",
-                "archive"
-              ],
-              [
-                "register"
-              ],
-              [
-                "conditions"
-              ],
-              [
-                "only"
-              ],
-              [
-                "not",
-                "no"
-              ],
-              [
-                "recap",
-                "summary"
-              ],
-              [
-                "clinical"
-              ],
-              [
-                "findings"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p48.archive-rule.coexist",
-          "canonicalClaimId": "p48.archive-rule.coexist",
-          "claimType": "scalar",
-          "expectation": "A held subtab may coexist with a closed clinical query.",
+          "id": "join.masking-014016.access",
+          "canonicalClaimId": "join.masking-014016.access",
+          "claimType": "source_precedence",
+          "expectation": "RTS-AUD-014016/R1 corrects emergency unblinding to a restricted pharmacy custody check for subject 014-016 with no treatment code displayed on 2026-05-09 at 15:44.",
           "harm": 2,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
+            "type": "ordered_tokens",
+            "tokens": [
               [
-                "held",
-                "hold",
-                "on hold",
-                "not released",
-                "blocked"
+                "RTS-AUD-014016/R1"
               ],
               [
-                "closed",
-                "resolved",
-                "completed"
+                "corrects",
+                "corrected"
               ],
               [
-                "clinical"
+                "emergency unblinding"
               ],
               [
-                "coexist"
+                "restricted pharmacy custody check"
               ],
               [
-                "subtab"
+                "014-016"
+              ],
+              [
+                "no treatment code"
+              ],
+              [
+                "2026-05-09"
+              ],
+              [
+                "15:44"
               ]
             ]
           }
         },
         {
-          "id": "p48.archive-rule.no-reopen",
-          "canonicalClaimId": "p48.archive-rule.no-reopen",
-          "claimType": "scalar",
-          "expectation": "No-hold rows prevent already closed items from being reopened by inference.",
-          "harm": 1,
+          "id": "join.masking-014016.clinical-sequence",
+          "canonicalClaimId": "join.masking-014016.clinical-sequence",
+          "claimType": "source_precedence",
+          "expectation": "DR-04 records dose withheld for subject 014-016 before the 18:29 restricted-role phrase, and DR-11 later records clinical causality unaffected while masking assessment remains unsigned.",
+          "harm": 2,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
+            "type": "ordered_tokens",
+            "tokens": [
               [
-                "No",
-                "not",
-                "none",
-                "without",
-                "absent"
+                "DR-04"
               ],
               [
-                "hold",
-                "held",
-                "on hold",
-                "not released",
-                "blocked"
+                "dose withheld"
               ],
               [
-                "closed",
-                "resolved",
-                "completed"
+                "014-016"
               ],
               [
-                "inference"
+                "before"
               ],
               [
-                "reopened"
+                "18:29"
               ],
               [
-                "no-hold"
+                "restricted-role",
+                "restricted role"
+              ],
+              [
+                "DR-11"
+              ],
+              [
+                "clinical causality unaffected"
+              ],
+              [
+                "masking assessment"
+              ],
+              [
+                "unsigned"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.masking-014016.final",
+          "canonicalClaimId": "join.masking-014016.final",
+          "claimType": "source_precedence",
+          "expectation": "MA-016/R1 supersedes unsigned MA-016/D0, concludes no masking impact with the clinical decision unaffected, and becomes effective when NR signs on 2026-05-13 at 15:18.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "MA-016/R1"
+              ],
+              [
+                "supersedes"
+              ],
+              [
+                "unsigned"
+              ],
+              [
+                "MA-016/D0"
+              ],
+              [
+                "no masking impact"
+              ],
+              [
+                "clinical decision"
+              ],
+              [
+                "unaffected"
+              ],
+              [
+                "NR"
+              ],
+              [
+                "2026-05-13"
+              ],
+              [
+                "15:18"
+              ]
+            ],
+            "requiredBindings": [
+              [
+                [
+                  "MA-016/R1"
+                ],
+                [
+                  "supersedes"
+                ],
+                [
+                  "MA-016/D0",
+                  "unsigned D0"
+                ]
+              ],
+              [
+                [
+                  "no masking impact",
+                  "masking impact is assessed as none"
+                ]
+              ],
+              [
+                [
+                  "NR"
+                ],
+                [
+                  "15:18"
+                ]
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.masking-014016.close-and-retain",
+          "canonicalClaimId": "join.masking-014016.close-and-retain",
+          "claimType": "source_precedence",
+          "expectation": "Q-93 closes on 2026-05-14 at 08:22 and DEV-014-11 closes at 08:34 with major retained, while coaching acknowledgment and CAPA effectiveness remain required.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Q-93"
+              ],
+              [
+                "closes",
+                "closed"
+              ],
+              [
+                "2026-05-14"
+              ],
+              [
+                "08:22"
+              ],
+              [
+                "DEV-014-11"
+              ],
+              [
+                "closes",
+                "closed"
+              ],
+              [
+                "08:34"
+              ],
+              [
+                "major"
+              ],
+              [
+                "retained"
+              ],
+              [
+                "coaching acknowledgment"
+              ],
+              [
+                "CAPA effectiveness"
+              ],
+              [
+                "required"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "join.q77-ecg",
+      "label": "Q-77 ECG correction and closure lifecycle",
+      "sourceAnchors": [
+        {
+          "page": 7,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Data-query console export - pre-monitor state"
+          ]
+        },
+        {
+          "page": 11,
+          "layer": "raster",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Subject 014-003 W2 electrocardiogram eCRF"
+          ]
+        },
+        {
+          "page": 16,
+          "layer": "raster",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Signed data clarification form Q-77"
+          ]
+        },
+        {
+          "page": 39,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Data-query state-transition audit trail"
+          ]
+        },
+        {
+          "page": 47,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Query, deviation, and exception closure ledger"
+          ]
+        }
+      ],
+      "goldSection": "Page 47 - Query, deviation, and exception closure ledger",
+      "kind": "text",
+      "modality": "mixed",
+      "uniqueEvidence": false,
+      "primaryAxis": "long_context_coherence",
+      "secondaryAxes": [
+        "source_precedence",
+        "cross_page_join",
+        "mixed_modality_fusion"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "join.q77-ecg.provisional",
+          "canonicalClaimId": "join.q77-ecg.provisional",
+          "claimType": "source_precedence",
+          "expectation": "At the 2026-05-06 18:04 snapshot, Q-77 remains open with the unsigned draft saying ECG performed and tracing requested, linked to DQC/014/Q77/F1.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "2026-05-06"
+              ],
+              [
+                "18:04"
+              ],
+              [
+                "Q-77"
+              ],
+              [
+                "open"
+              ],
+              [
+                "unsigned"
+              ],
+              [
+                "draft"
+              ],
+              [
+                "ECG performed"
+              ],
+              [
+                "tracing requested"
+              ],
+              [
+                "DQC/014/Q77/F1"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.q77-ecg.source-correction",
+          "canonicalClaimId": "join.q77-ecg.source-correction",
+          "claimType": "source_precedence",
+          "expectation": "ECG-014003-W2/R2 supersedes R1 on 2026-04-22 at 14:18 and records ECG not performed with no tracing identifier.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "ECG-014003-W2/R2"
+              ],
+              [
+                "supersedes"
+              ],
+              [
+                "R1"
+              ],
+              [
+                "2026-04-22"
+              ],
+              [
+                "14:18"
+              ],
+              [
+                "ECG not performed"
+              ],
+              [
+                "no tracing identifier"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.q77-ecg.signed-response",
+          "canonicalClaimId": "join.q77-ecg.signed-response",
+          "claimType": "source_precedence",
+          "expectation": "DQC/014/Q77/F1 supersedes the unsigned draft, is signed by NR on 2026-05-09 at 08:42, and is accepted at 09:14 while production update and query closure remain unchecked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "DQC/014/Q77/F1"
+              ],
+              [
+                "supersedes",
+                "controls over"
+              ],
+              [
+                "unsigned"
+              ],
+              [
+                "draft"
+              ],
+              [
+                "signed"
+              ],
+              [
+                "NR"
+              ],
+              [
+                "2026-05-09"
+              ],
+              [
+                "08:42"
+              ],
+              [
+                "accepted"
+              ],
+              [
+                "09:14"
+              ],
+              [
+                "production"
+              ],
+              [
+                "unchecked"
+              ],
+              [
+                "query closure",
+                "query closed"
+              ],
+              [
+                "unchecked"
+              ]
+            ],
+            "requiredBindings": [
+              [
+                [
+                  "DQC/014/Q77/F1",
+                  "Final signed response F1"
+                ],
+                [
+                  "supersedes",
+                  "controls over"
+                ],
+                [
+                  "draft"
+                ]
+              ],
+              [
+                [
+                  "NR",
+                  "Neha Rao"
+                ],
+                [
+                  "08:42"
+                ]
+              ],
+              [
+                [
+                  "[ ] Production field updated",
+                  "Production field updated is unchecked"
+                ]
+              ],
+              [
+                [
+                  "[ ] Query closed",
+                  "Query closed is unchecked"
+                ]
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.q77-ecg.close",
+          "canonicalClaimId": "join.q77-ecg.close",
+          "claimType": "source_precedence",
+          "expectation": "EV-7735 updates the Q-77 production field to ECG not performed on 2026-05-10 at 10:24; EV-7736 closes Q-77 at 10:41, and DEV-014-03 closes at 11:06 with major retained.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "EV-7735"
+              ],
+              [
+                "Q-77"
+              ],
+              [
+                "production field"
+              ],
+              [
+                "ECG not performed"
+              ],
+              [
+                "2026-05-10"
+              ],
+              [
+                "10:24"
+              ],
+              [
+                "EV-7736"
+              ],
+              [
+                "closes",
+                "closed"
+              ],
+              [
+                "Q-77"
+              ],
+              [
+                "10:41"
+              ],
+              [
+                "DEV-014-03"
+              ],
+              [
+                "closes",
+                "closed"
+              ],
+              [
+                "11:06"
+              ],
+              [
+                "major"
+              ],
+              [
+                "retained"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "join.k204153-custody",
+      "label": "K-204-153 custody and disposition lifecycle",
+      "sourceAnchors": [
+        {
+          "page": 5,
+          "layer": "raster",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Pharmacy receipt ledger - shipment PS-778"
+          ]
+        },
+        {
+          "page": 12,
+          "layer": "raster",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Investigational-product temperature excursion"
+          ]
+        },
+        {
+          "page": 14,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Investigational-product inventory reconciliation"
+          ]
+        },
+        {
+          "page": 37,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Investigational-product transaction ledger"
+          ]
+        },
+        {
+          "page": 48,
+          "layer": "native_text",
+          "sectionPath": [
+            "HTX-204 Site 014 Monitoring Source Packet",
+            "Archive-readiness exception register"
+          ]
+        }
+      ],
+      "goldSection": "Page 48 - Archive-readiness exception register",
+      "kind": "text",
+      "modality": "mixed",
+      "uniqueEvidence": false,
+      "primaryAxis": "long_context_coherence",
+      "secondaryAxes": [
+        "source_precedence",
+        "cross_page_join",
+        "mixed_modality_fusion"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "join.k204153-custody.receipt",
+          "canonicalClaimId": "join.k204153-custody.receipt",
+          "claimType": "source_precedence",
+          "expectation": "IP-RCV-PS778/R1 records K-204-153 received on 2026-04-06 at 14:26 with quantity 30 and its locator corrected from RX-2/A2 to RX-2/B1 at 14:41.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "IP-RCV-PS778/R1"
+              ],
+              [
+                "K-204-153"
+              ],
+              [
+                "2026-04-06"
+              ],
+              [
+                "14:26"
+              ],
+              [
+                "30"
+              ],
+              [
+                "RX-2/A2"
+              ],
+              [
+                "corrected"
+              ],
+              [
+                "RX-2/B1"
+              ],
+              [
+                "14:41"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.k204153-custody.disposition",
+          "canonicalClaimId": "join.k204153-custody.disposition",
+          "claimType": "source_precedence",
+          "expectation": "IP-DISP-K204153/R5 records K-204-153 quarantined in QG-19 on 2026-04-18 at 10:10 and a signed Do not dose disposition at 14:02; the kit was not dispensed.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "IP-DISP-K204153/R5"
+              ],
+              [
+                "K-204-153"
+              ],
+              [
+                "quarantined"
+              ],
+              [
+                "QG-19"
+              ],
+              [
+                "2026-04-18"
+              ],
+              [
+                "10:10"
+              ],
+              [
+                "signed"
+              ],
+              [
+                "Do not dose"
+              ],
+              [
+                "14:02"
+              ],
+              [
+                "not dispensed",
+                "was not dispensed"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.k204153-custody.transfer",
+          "canonicalClaimId": "join.k204153-custody.transfer",
+          "claimType": "source_precedence",
+          "expectation": "IP-COUNT-014-20260508/R1 records K-204-153 at physical balance 30, and IP-TX-014/R3 retains balance 30 until sponsor-return transfer SRN-551 on 2026-05-13 at 10:18 reduces it to 0.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "IP-COUNT-014-20260508/R1"
+              ],
+              [
+                "K-204-153"
+              ],
+              [
+                "physical balance"
+              ],
+              [
+                "30"
+              ],
+              [
+                "IP-TX-014/R3"
+              ],
+              [
+                "balance 30"
+              ],
+              [
+                "until"
+              ],
+              [
+                "SRN-551"
+              ],
+              [
+                "2026-05-13"
+              ],
+              [
+                "10:18"
+              ],
+              [
+                "0"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.k204153-custody.archive-hold",
+          "canonicalClaimId": "join.k204153-custody.archive-hold",
+          "claimType": "source_precedence",
+          "expectation": "ARCH-014/R1 records SRN-551 sealed transfer verified for K-204-153 on 2026-05-13 while courier delivery confirmation remains due on 2026-05-16 at 17:00 and the pharmacy shipment subtab remains held.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "ARCH-014/R1"
+              ],
+              [
+                "SRN-551"
+              ],
+              [
+                "K-204-153"
+              ],
+              [
+                "sealed transfer"
+              ],
+              [
+                "verified"
+              ],
+              [
+                "2026-05-13"
+              ],
+              [
+                "courier delivery confirmation"
+              ],
+              [
+                "2026-05-16"
+              ],
+              [
+                "17:00"
+              ],
+              [
+                "pharmacy shipment subtab"
+              ],
+              [
+                "held"
+              ]
+            ],
+            "requiredBindings": [
+              [
+                [
+                  "SRN-551"
+                ],
+                [
+                  "K-204-153"
+                ],
+                [
+                  "sealed transfer"
+                ],
+                [
+                  "verified 13 May",
+                  "verified on 2026-05-13"
+                ]
+              ],
+              [
+                [
+                  "courier delivery confirmation"
+                ],
+                [
+                  "16 May",
+                  "2026-05-16"
+                ],
+                [
+                  "17:00"
+                ],
+                [
+                  "pharmacy shipment subtab"
+                ],
+                [
+                  "held"
+                ]
               ]
             ]
           }

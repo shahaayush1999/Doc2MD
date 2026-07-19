@@ -183,7 +183,7 @@ def build(output_root):
         leaf("p02.map.w03.pattern", "Wafer 03 shows a three-cell C3 cluster at B4, C4, and B5.", evidence=[["Wafer"], ["03", "3"], ["shows", "marks", "contains"], ["three-cell", "three cell", "3-cell"], ["C3"], ["B4"], ["C4"], ["B5"]]),
         leaf(
             "p02.map.w05.pattern",
-            "Wafer 05's S2 coordinate set is E2, F2, and E3.",
+            "Wafer 05's unordered S2 coordinate set is E2, F2, and E3.",
             evidence_policy={
                 "type": "lexical",
                 "allOf": [["Wafer 05", "WAFER 05", "W05"], ["S2"], ["E2"], ["F2"], ["E3"]],
@@ -349,21 +349,34 @@ def build(output_root):
         "SPC points: "
         + ", ".join(f"{run} {value:.1f} nm ({state})" for run, value, state in series)
         + ". Warning is 45.0 nm and UCL is 47.0 nm.\n\n"
-        + "Chart reconstruction: the horizontal x-axis is run sequence and the vertical y-axis is TiN thickness in nm. The blue solid line is the PVD-03 measured TiN-thickness series. Blue points mean inside or recovered below the warning threshold; amber points mean warning at or above 45.0 nm but below 47.0 nm; a red point means above the 47.0 nm UCL. The amber dashed line is the 45.0 nm warning threshold and the red dashed line is the 47.0 nm UCL. The series rises from R-2241 through a 47.4 nm peak at R-2245, then falls through R-2246 to a recovered 44.1 nm at R-2247.\n\n"
+        + "Chart reconstruction: the horizontal x-axis is run sequence and the vertical y-axis is TiN thickness in nm. The connected measured-series line represents PVD-03 TiN thickness. Blue points mean inside or recovered below the warning threshold; amber points mean warning at or above 45.0 nm but below 47.0 nm; a red point means above the 47.0 nm UCL. The amber dashed line is the 45.0 nm warning threshold and the red dashed line is the 47.0 nm UCL. The ordered run/value series rises from R-2241 / 41.2 through a peak at R-2245 / 47.4, then falls through R-2246 / 46.2 to R-2247 / 44.1.\n\n"
         + markdown_table(interlock_headers, interlock_rows),
     )
-    spc_point_leaves = [
-        leaf(
-            f"p04.spc.{run.lower()}",
-            f"{run} is {value:.1f} nm with state {state}.",
-            harm=2 if run == "R-2245" else 1,
-            evidence_policy={
-                "type": "lexical",
-                "allOf": [[run], [f"{value:.1f}"], ["nm"], [state]],
-            },
+    spc_point_leaves = []
+    for run, value, state in series:
+        harm = 2 if run == "R-2245" else 1
+        spc_point_leaves.extend(
+            [
+                leaf(
+                    f"p04.spc.{run.lower()}.measurement",
+                    f"{run} measures {value:.1f} nm.",
+                    harm=harm,
+                    evidence_policy={
+                        "type": "lexical",
+                        "allOf": [[run], [f"{value:.1f}"], ["nm"]],
+                    },
+                ),
+                leaf(
+                    f"p04.spc.{run.lower()}.state",
+                    f"{run} has categorical state {state}.",
+                    harm=harm,
+                    evidence_policy={
+                        "type": "lexical",
+                        "allOf": [[run], [state]],
+                    },
+                ),
+            ]
         )
-        for run, value, state in series
-    ]
     case.add_region("p04.spc", "PVD thickness SPC chart points", "chart", spc_point_leaves, budget=2)
     case.add_region(
         "p04.spc-contract",
@@ -372,7 +385,7 @@ def build(output_root):
         [
             leaf(
                 "p04.spc.axes",
-                "The chart uses run sequence on the horizontal x-axis and TiN thickness in nm on the vertical y-axis.",
+                "The chart binds TiN thickness in nm on the vertical y-axis against run sequence on the horizontal x-axis; conventional 'TiN thickness in nm vs Run sequence' wording is equivalent.",
                 harm=2,
                 claim_type="structure",
                 evidence_policy={
@@ -388,9 +401,9 @@ def build(output_root):
             ),
             leaf(
                 "p04.spc.series",
-                "The blue solid line is the PVD-03 measured TiN-thickness series.",
+                "The connected measured-series line represents PVD-03 TiN thickness.",
                 harm=2,
-                evidence_policy={"type": "lexical", "allOf": [["blue"], ["solid line"], ["PVD-03"], ["measured"], ["TiN thickness", "TiN-thickness"]]},
+                evidence_policy={"type": "lexical", "allOf": [["connected line", "solid line", "line"], ["PVD-03"], ["measured"], ["TiN thickness", "TiN-thickness"]]},
             ),
             leaf(
                 "p04.spc.threshold.warning",
@@ -421,11 +434,17 @@ def build(output_root):
             ),
             leaf(
                 "p04.spc.trend",
-                "The series rises from R-2241 through a 47.4 nm peak at R-2245, then falls through R-2246 to a recovered 44.1 nm at R-2247.",
+                "The ordered run/value series rises from R-2241 / 41.2 through a peak at R-2245 / 47.4, then falls through R-2246 / 46.2 to R-2247 / 44.1.",
                 harm=2,
+                claim_type="ordered_record",
                 evidence_policy={
-                    "type": "lexical",
-                    "allOf": [["rises"], ["R-2241"], ["47.4 nm"], ["peak"], ["R-2245"], ["falls"], ["R-2246"], ["44.1 nm"], ["R-2247"], ["recovered"]],
+                    "type": "ordered_tokens",
+                    "tokens": [
+                        ["rises from R-2241 / 41.2", "R-2241 41.2"],
+                        ["peak at R-2245 / 47.4", "R-2245 47.4"],
+                        ["falls through R-2246 / 46.2", "R-2246 46.2"],
+                        ["R-2247 / 44.1", "R-2247 44.1"],
+                    ],
                 },
             ),
         ],
@@ -455,7 +474,7 @@ def build(output_root):
         c.setFillColor(INK)
         c.setFont("DocSans-Bold", 7)
         c.drawString(x, y - 14, f"{image_id} / {site}")
-    case.add_gold("SEM review contact sheet", "The page labels only the archive frame and inspected site; the morphology must be recovered from each image. IMG-224 / W07 D5 shows two bright irregular metal flakes, including an adjacent smaller flake. IMG-223 / W05 E2 shows a long diagonal scratch crossing the field. IMG-227 / W12 A6 shows a bright edge-residue band with small bead deposits. IMG-226 / W09 F3 is visually clean apart from low-level background specks.")
+    case.add_gold("SEM review contact sheet", "The page labels only the archive frame and inspected site; the morphology must be recovered from each image. IMG-224 / W07 D5 shows two bright irregular metal flakes, including an adjacent smaller flake. IMG-223 / W05 E2 shows a long diagonal scratch crossing the field. IMG-227 / W12 A6 shows a bright edge-residue band with small bead deposits. IMG-226 / W09 F3 is visually clean apart from a fine-grained, speckled, or noisy low-level background texture.")
     case.add_region(
         "p05.image.224",
         "IMG-224 metal-flake SEM",
@@ -505,7 +524,7 @@ def build(output_root):
                 "IMG-226 presents a visually clean field lacking a prominent discrete defect.",
                 [["IMG-226"], ["clean field", "visually clean", "without a prominent", "no prominent", "without large-scale"]],
             ),
-            visual_leaf("p05.img226.background", "IMG-226 contains fine low-level background specks or noise.", [["IMG-226"], ["background", "field", "surface"], ["specks", "noise", "grain", "granular"]]),
+            visual_leaf("p05.img226.background", "IMG-226 contains a fine-grained, speckled, or noisy low-level background texture.", [["IMG-226"], ["background", "field", "surface"], ["specks", "noise", "grain", "granular"]]),
         ],
         budget=2,
     )
@@ -632,8 +651,11 @@ def build(output_root):
         width=1500,
         height=900,
         seed=2108,
-        marks=[(55, 296, "strike")],
     )
+    # Strike the complete superseded value, not merely its field label.  The
+    # generic scan helper's short mark ends before this unusually long line.
+    worksheet_draw = ImageDraw.Draw(worksheet)
+    worksheet_draw.line((55, 305, 300, 301), fill="#232323", width=4)
     c.drawImage(image_reader(worksheet), 42, 260, width=528, height=355, preserveAspectRatio=True, mask="auto")
     c.setStrokeColor(HexColor("#969CA2"))
     c.rect(42, 260, 528, 355, fill=0, stroke=1)

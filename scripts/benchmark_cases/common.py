@@ -261,6 +261,7 @@ def leaf(
     claim_type: str = "scalar",
     evidence: Sequence[str | Sequence[str]] | None = None,
     evidence_policy: dict[str, Any] | None = None,
+    strict_evidence: bool = False,
     allow_partial: bool | None = None,
 ) -> dict[str, Any]:
     # ``allow_partial`` remains accepted while the case builders are migrated,
@@ -298,6 +299,22 @@ def leaf(
         else:
             groups = _evidence_groups(expectation, evidence)
             evidence_policy = {"type": "lexical", "allOf": groups}
+    if strict_evidence:
+        if evidence_policy.get("type") != "lexical":
+            raise ValueError("strict_evidence is supported only for lexical policies")
+        seen_alternatives: dict[str, int] = {}
+        for group_index, group in enumerate(evidence_policy.get("allOf", [])):
+            for alternative in group:
+                normalized = _normalized_evidence_text(str(alternative))
+                prior_group = seen_alternatives.get(normalized)
+                if normalized and prior_group is not None and prior_group != group_index:
+                    raise ValueError(
+                        f"Strict evidence for {leaf_id} repeats {alternative!r} across mandatory groups; "
+                        "one occurrence could satisfy two obligations"
+                    )
+                if normalized:
+                    seen_alternatives[normalized] = group_index
+        evidence_policy["strict"] = True
     return {
         "id": leaf_id,
         "canonicalClaimId": canonical_claim_id or leaf_id,
@@ -997,6 +1014,7 @@ def directed_edge_leaf(
     destination: str | Sequence[str],
     *,
     relation: str | Sequence[str] | None = None,
+    identifier: str | Sequence[str] | None = None,
     harm: int = 1,
     canonical_claim_id: str | None = None,
 ) -> dict[str, Any]:
@@ -1005,6 +1023,12 @@ def directed_edge_leaf(
     policy: dict[str, Any] = {"type": "directed_edge", "source": sources, "destination": destinations}
     if relation is not None:
         policy["relation"] = [relation] if isinstance(relation, str) else list(relation)
+    # An identifier is a joining key, not an additional semantic requirement.
+    # It lets an evaluator reconcile a directed ``source —E01→ destination``
+    # record with a separate ``E01 | relation`` legend while still accepting a
+    # direct source/relation/destination statement that does not repeat the key.
+    if identifier is not None:
+        policy["identifier"] = [identifier] if isinstance(identifier, str) else list(identifier)
     return leaf(
         leaf_id,
         expectation,
@@ -1020,16 +1044,26 @@ def visual_leaf(
     expectation: str,
     required_terms: Sequence[str | Sequence[str]],
     *,
+    local_bindings: Sequence[Sequence[str | Sequence[str]]] | None = None,
     harm: int = 1,
     canonical_claim_id: str | None = None,
 ) -> dict[str, Any]:
+    policy: dict[str, Any] = {
+        "type": "qualitative",
+        "requiredTerms": _evidence_groups(expectation, required_terms),
+    }
+    if local_bindings is not None:
+        policy["localBindings"] = [
+            _evidence_groups(expectation, binding)
+            for binding in local_bindings
+        ]
     return leaf(
         leaf_id,
         expectation,
         harm=harm,
         canonical_claim_id=canonical_claim_id,
         claim_type="visual_description",
-        evidence_policy={"type": "qualitative", "requiredTerms": _evidence_groups(expectation, required_terms)},
+        evidence_policy=policy,
     )
 
 
@@ -1038,16 +1072,23 @@ def source_precedence_leaf(
     expectation: str,
     ordered_tokens: Sequence[str | Sequence[str]],
     *,
+    required_bindings: Sequence[Sequence[str | Sequence[str]]] | None = None,
     harm: int = 2,
     canonical_claim_id: str | None = None,
 ) -> dict[str, Any]:
+    policy: dict[str, Any] = {"type": "ordered_tokens", "tokens": _evidence_groups(expectation, ordered_tokens)}
+    if required_bindings is not None:
+        policy["requiredBindings"] = [
+            _evidence_groups(expectation, binding)
+            for binding in required_bindings
+        ]
     return leaf(
         leaf_id,
         expectation,
         harm=harm,
         canonical_claim_id=canonical_claim_id,
         claim_type="source_precedence",
-        evidence_policy={"type": "ordered_tokens", "tokens": _evidence_groups(expectation, ordered_tokens)},
+        evidence_policy=policy,
     )
 
 
@@ -1098,23 +1139,59 @@ def table_leaves(
     skip_columns: set[int] | None = None,
     scored_bindings: set[tuple[str, str]] | None = None,
     value_aliases: Mapping[tuple[str, str], Sequence[str]] | None = None,
+    column_aliases: Mapping[str, Sequence[str]] | None = None,
+    row_parts: Mapping[str, Sequence[str | Sequence[str]]] | None = None,
+    row_order_aliases: Mapping[str, Sequence[str]] | None = None,
 ) -> list[dict[str, Any]]:
     consequential = consequential or set()
     skip_columns = skip_columns or set()
     value_aliases = value_aliases or {}
+    column_aliases = column_aliases or {}
+    row_parts = row_parts or {}
+    row_order_aliases = row_order_aliases or {}
     key_order = [str(row[key_column]) for row in rows]
+    unknown_row_part_keys = set(row_parts) - set(key_order)
+    if unknown_row_part_keys:
+        raise ValueError(f"Row parts reference unknown table keys: {sorted(unknown_row_part_keys)}")
+    claimed_row_parts: dict[str, str] = {}
+    for key in key_order:
+        if key not in row_parts:
+            continue
+        normalized = "\u0000".join(
+            "\u0001".join(
+                " ".join(str(value).casefold().split())
+                for value in ([part] if isinstance(part, str) else part)
+            )
+            for part in row_parts[key]
+        )
+        owner = claimed_row_parts.get(normalized)
+        if owner is not None and owner != key:
+            raise ValueError(f"Row parts for {key!r} are ambiguous with {owner!r}")
+        claimed_row_parts[normalized] = key
     leaves: list[dict[str, Any]] = [
         leaf(
             f"{prefix}.schema",
             "The region preserves the source field schema in order: " + ", ".join(str(header) for header in headers) + ".",
             claim_type="structure",
-            evidence_policy={"type": "ordered_tokens", "tokens": [[str(header)] for header in headers]},
+            evidence_policy={
+                "type": "ordered_tokens",
+                "tokens": [
+                    list(dict.fromkeys([str(header), *column_aliases.get(str(header), ())]))
+                    for header in headers
+                ],
+            },
         ),
         leaf(
             f"{prefix}.row-order",
             "The source row order is recoverable as: " + " -> ".join(key_order) + ".",
             claim_type="ordered_record",
-            evidence_policy={"type": "ordered_tokens", "tokens": [[key] for key in key_order]},
+            evidence_policy={
+                "type": "ordered_tokens",
+                "tokens": [
+                    list(dict.fromkeys([key, *row_order_aliases.get(key, ())]))
+                    for key in key_order
+                ],
+            },
         ),
     ]
     for row in rows:
@@ -1135,7 +1212,28 @@ def table_leaves(
                     evidence_policy={
                         "type": "table_binding",
                         "row": _term_alternatives(key),
-                        "column": _term_alternatives(header),
+                        **(
+                            {
+                                "rowParts": [
+                                    list(
+                                        dict.fromkeys(
+                                            alternative
+                                            for raw_part in ([part] if isinstance(part, str) else part)
+                                            for alternative in _term_alternatives(str(raw_part))
+                                        )
+                                    )
+                                    for part in row_parts[key]
+                                ]
+                            }
+                            if key in row_parts else {}
+                        ),
+                        "column": list(
+                            dict.fromkeys(
+                                alternative
+                                for raw_column in [header, *column_aliases.get(header, ())]
+                                for alternative in _term_alternatives(str(raw_column))
+                            )
+                        ),
                         "value": list(
                             dict.fromkeys(
                                 [

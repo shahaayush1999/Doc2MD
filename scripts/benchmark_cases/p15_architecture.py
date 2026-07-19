@@ -261,6 +261,11 @@ def _draw_scan_checkbox(draw, x, y, state, label, *, font):
         draw.line((x + 3, y + 3, x + 23, y + 23), fill=(140, 40, 40), width=3)
         draw.line((x + 23, y + 3, x + 3, y + 23), fill=(140, 40, 40), width=3)
     draw.text((x + 38, y + 2), label, fill=(35, 35, 32), font=font)
+    if state == "crossed":
+        label_box = draw.textbbox((x + 38, y + 2), label, font=font)
+        strike_y = y + 14
+        draw.line((x + 35, strike_y, label_box[2] + 6, strike_y), fill=(140, 40, 40), width=3)
+        draw.text((label_box[2] + 18, y + 2), "VOID", fill=(140, 40, 40), font=font)
 
 
 def _commissioning_scan() -> Image.Image:
@@ -359,9 +364,18 @@ def _field_photo(kind: str) -> Image.Image:
         for x in range(85, 600, 58):
             draw.line((x, 122, x + 42, 121), fill=(34, 64, 83), width=5)
             draw.line((x, 137, x + 42, 136), fill=(167, 117, 38), width=4)
-        draw.line((620, 120, 650, 180), fill=(195, 47, 43), width=6)
-        draw.ellipse((585, 82, 675, 182), outline=(195, 47, 43), width=7)
-        draw.line((590, 75, 485, 36), fill=(195, 47, 43), width=6)
+        # The metal tray makes a visible elbow and vertical drop into the
+        # rack's image-left/west top corner. Keep the gray assembly distinct
+        # from the red annotation so the physical direction is unambiguous.
+        draw.polygon(
+            [(585, 108), (635, 108), (635, 215), (605, 215), (605, 158), (585, 158)],
+            fill=(96, 100, 101),
+            outline=(52, 55, 56),
+        )
+        draw.line((603, 125, 618, 125, 618, 198), fill=(34, 64, 83), width=5)
+        draw.line((590, 141, 608, 141, 608, 198), fill=(167, 117, 38), width=4)
+        draw.ellipse((565, 86, 676, 242), outline=(195, 47, 43), width=7)
+        draw.line((578, 78, 485, 36), fill=(195, 47, 43), width=6)
         draw.ellipse((435, 12, 495, 68), fill=(250, 243, 234), outline=(195, 47, 43), width=5)
         draw.text((465, 40), "B", fill=(195, 47, 43), font=_pil_font(27, bold=True), anchor="mm")
         draw.rectangle((990, 180, 1145, 680), fill=(199, 196, 185))
@@ -527,7 +541,7 @@ def build(output_root: Path):
     c.drawRightString(734, 107, "FIELD BACKGROUND 214-B-0707")
     case.add_gold(
         "A2.14-B - Archived floor plan",
-        "Revision B is visibly stamped superseded and dated 7 June 2026; the archived field-background record is 214-B-0707. The overall footprint is 45 ft by 22 ft. Clean Prep 214 is 18 ft 6 in by 12 ft and is west of Lab B 215, which is 16 ft by 12 ft. Freezer 216 is east of Lab B; Lab B is directly north of corridor C2; Wash 217 is immediately west of corridor C2; IT Closet 218 is south of Freezer 216 and east of C2. The old Lab B opening is near the middle of its south wall, has a north swing into Lab B, and is keyed by callout 6. Callout 9 points to rack R2 in IT Closet 218; callout 11 points to FZ-3 in Freezer 216. The first egress segment runs from Lab B through the old opening and the second turns west along C2. The base sheet carries no reader symbol at the opening.",
+        "Revision B is visibly stamped superseded and dated 7 June 2026; the archived field-background record is 214-B-0707. The overall footprint is 45 ft by 22 ft. Clean Prep 214 is 18 ft 6 in by 12 ft and is west of Lab B 215, which is 16 ft by 12 ft. Freezer 216 is east of Lab B; Lab B is directly north of corridor C2; Wash 217 is immediately west of corridor C2; IT Closet 218 is south of Freezer 216 and east of C2. The old Lab B opening is near the middle of its south wall, has a north swing into Lab B, and is keyed by callout 6. Callout 9 points to rack R2 in IT Closet 218; callout 11 points to FZ-3 in Freezer 216. The first egress segment runs from Lab B through the old opening and the second turns west along C2.",
     )
     case.add_region(
         "p02.base-rooms",
@@ -545,6 +559,7 @@ def build(output_root: Path):
         ],
         budget=2,
         primary_axis="chart_diagram_spatial",
+        unique_evidence=False,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -555,10 +570,10 @@ def build(output_root: Path):
             visual_leaf("p02.door.wall", "The Revision B Lab B opening is in the wall shared with corridor C2.", [["Lab B"], ["C2"], ["corridor"], ["shared", "south wall"]], harm=2),
             visual_leaf("p02.door.position", "The Revision B opening is near the middle of the Lab B south wall.", [["Lab B", "215"], ["middle", "center"], ["south wall"]]),
             visual_leaf("p02.door.swing", "The Revision B door leaf swings north into Lab B.", [["Lab B", "215"], ["north"], ["swing"]], harm=2),
-            visual_leaf("p02.door.reader", "No card-reader symbol appears beside the Revision B opening.", [["no", "absent"], ["card reader", "reader"], ["Revision B", "Rev B"]]),
             visual_leaf("p02.door.callout", "Callout 6 keys the Revision B Lab B opening.", [["callout 6", "6"], ["Lab B", "215"], ["opening", "door"]]),
         ],
         budget=2,
+        unique_evidence=False,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -567,11 +582,12 @@ def build(output_root: Path):
         "diagram",
         [
             directed_edge_leaf("p02.egress.lab-door", "The first egress arrow runs from Lab B to the old corridor opening.", ["Lab B"], ["old corridor opening", "old opening"], relation=["egress"]),
-            directed_edge_leaf("p02.egress.door-west", "The second egress arrow runs from the opening west along corridor C2.", ["opening", "door"], ["west along corridor C2", "west along C2", "C2 west"], relation=["egress", "west"]),
+            directed_edge_leaf("p02.egress.door-west", "The second egress arrow runs from the archived Revision B opening west along corridor C2.", ["archived opening", "Revision B opening", "old opening", "old corridor opening"], ["west along corridor C2", "west along C2", "west through C2", "C2 west"], relation=["egress", "west"]),
             visual_leaf("p02.callout.9", "Callout 9 points to rack R2 in IT Closet 218.", [["callout 9", "9"], ["rack R2", "R2"], ["IT Closet 218"]]),
             visual_leaf("p02.callout.11", "Callout 11 points to freezer FZ-3 in room 216.", [["callout 11", "11"], ["FZ-3"], ["216"]]),
         ],
         budget=2,
+        unique_evidence=False,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -617,6 +633,7 @@ def build(output_root: Path):
             visual_leaf("p03.room.north", "The north arrow points toward the top of the sheet.", [["north", "N"], ["top", "up"]]),
         ],
         budget=2,
+        unique_evidence=False,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -627,16 +644,27 @@ def build(output_root: Path):
             visual_leaf("p03.door.wall", "D-214B is set in the wall shared by Lab B 215 and corridor C2.", [["D-214B"], ["Lab B 215"], ["C2"], ["corridor"]], harm=2),
             visual_leaf("p03.door.shift", "The solid Revision C opening is 4 ft 6 in west of the dashed Revision B opening.", [["Revision C", "Rev C"], ["Revision B", "Rev B"], ["4'-6\"", "4 ft 6"], ["west"]], harm=2),
             visual_leaf("p03.door.swing", "D-214B swings south into corridor C2.", [["D-214B"], ["south"], ["C2", "corridor"]], harm=2),
-            visual_leaf("p03.door.reader-side", "Reader CR-6 is on the corridor side of D-214B.", [["CR-6"], ["corridor side", "C2"], ["D-214B"]], harm=2),
+            visual_leaf(
+                "p03.door.reader-side",
+                "Reader CR-6 is on the corridor side of D-214B.",
+                [["CR-6"], ["corridor side", "C2"], ["D-214B"]],
+                local_bindings=[[["CR-6"], ["corridor side", "C2"], ["D-214B"]]],
+                harm=2,
+            ),
             visual_leaf("p03.door.reader-jamb", "Reader CR-6 is at the east jamb of D-214B.", [["CR-6"], ["east jamb", "east"], ["D-214B"]], harm=2),
             visual_leaf(
                 "p03.door.old-style",
                 "The archived door is dashed red while the current door is solid blue or teal-blue.",
                 [["archived"], ["dashed red"], ["current"], ["solid blue", "solid teal", "teal/blue", "teal-blue", "blue/teal"], ["door", "opening"]],
+                local_bindings=[
+                    [["archived"], ["dashed red"], ["door", "opening"]],
+                    [["current"], ["solid blue", "solid teal", "teal/blue", "teal-blue", "blue/teal"], ["door", "opening"]],
+                ],
             ),
             visual_leaf("p03.door.callout", "Callout 6 keys the reader and door opening.", [["callout 6", "6"], ["reader", "CR-6"], ["door", "opening"]]),
         ],
         budget=3,
+        unique_evidence=False,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -647,14 +675,22 @@ def build(output_root: Path):
             directed_edge_leaf(
                 "p03.egress.lab-door",
                 "The first egress segment runs from Lab B through D-214B.",
-                ["Egress runs from Lab B", "Egress from Lab B", "Lab B through"],
+                ["Lab B"],
                 ["D-214B"],
+                relation=["egress", "through"],
             ),
-            directed_edge_leaf("p03.egress.door-west", "The second egress segment runs from D-214B west along corridor C2.", ["D-214B"], ["west along corridor C2", "west along C2", "C2 west"], relation=["egress"]),
+            directed_edge_leaf(
+                "p03.egress.door-west",
+                "The second egress segment continues west along corridor C2.",
+                ["D-214B", "current opening"],
+                ["west along corridor C2", "west along C2", "west through C2", "C2 west"],
+                relation=["egress"],
+            ),
             visual_leaf("p03.callout.9", "Callout 9 keys rack R2 inside IT Closet 218.", [["callout 9", "9"], ["R2"], ["IT Closet 218"]]),
             visual_leaf("p03.callout.11", "Callout 11 keys FZ-3 inside Freezer 216.", [["callout 11", "11"], ["FZ-3"], ["Freezer 216"]]),
         ],
         budget=2,
+        unique_evidence=False,
         text_only_recoverable=False,
     )
     case.add_region(
@@ -668,7 +704,12 @@ def build(output_root: Path):
                 [["solid blue", "solid teal", "teal/blue", "teal-blue", "blue/teal"], ["Revision C", "Rev C"], ["controlling", "current"]],
             ),
             source_precedence_leaf("p03.overlay.old", "The dashed red opening is retained as archived Revision B geometry.", [["dashed red", "dashed"], ["Revision B", "Rev B"], ["archived"]]),
-            visual_leaf("p03.overlay.same-wall", "Both old and new openings lie on the shared wall between Lab B and C2.", [["old", "Revision B"], ["new", "Revision C"], ["Lab B"], ["C2"], ["shared wall"]]),
+            visual_leaf(
+                "p03.overlay.same-wall",
+                "Both old and new openings lie on the shared wall between Lab B and C2.",
+                [["old", "Revision B"], ["new", "Revision C"], ["Lab B"], ["C2"], ["shared wall"]],
+                local_bindings=[[["old", "Revision B"], ["new", "Revision C"], ["Lab B"], ["C2"], ["shared wall"]]],
+            ),
             visual_leaf("p03.overlay.delta", "The overlay dimension between the opening hinge points is 4 ft 6 in.", [["4'-6\"", "4 ft 6"], ["hinge", "opening"], ["dimension"]]),
         ],
         budget=2,
@@ -808,7 +849,13 @@ def build(output_root: Path):
         "diagram",
         [
             visual_leaf("p04.conflict.old", "The dashed red relocation graphic marks the old diffuser area near sprinkler SP-7 and conflict bubble C1.", [["dashed red", "dashed"], ["relocation", "old diffuser"], ["SP-7"], ["C1", "conflict"]]),
-            directed_edge_leaf("p04.conflict.move", "The red relocation arrow runs from the old diffuser position west to SD-4.", ["old diffuser", "old position"], ["SD-4"], relation=["relocation", "west"]),
+            directed_edge_leaf(
+                "p04.conflict.move",
+                "The red relocation arrow runs from the old diffuser position west to SD-4.",
+                ["old diffuser", "old position", "SP-7", "C1 conflict area", "SP-7/C1 conflict area"],
+                ["SD-4"],
+                relation=["relocation", "west"],
+            ),
             visual_leaf("p04.conflict.clearance", "The revised SD-4 position is dimensioned 8 ft from SP-7.", [["SD-4"], ["SP-7"], ["8'-0\"", "8 ft"]], harm=2),
             visual_leaf("p04.conflict.key", "Conflict bubble C1 keys the diffuser relocation.", [["C1"], ["diffuser", "SD-4"], ["relocation", "move"]]),
         ],
@@ -895,12 +942,12 @@ def build(output_root: Path):
         "Rack-unit elevation",
         "diagram",
         [
-            visual_leaf("p05.rack.cs2", "Core switch CS-2 occupies U42-U43.", [["CS-2"], ["U42-U43"]]),
-            visual_leaf("p05.rack.pp7", "Patch panel PP-7 occupies U36-U37.", [["PP-7"], ["U36-U37"]]),
-            visual_leaf("p05.rack.ac6", "Door controller AC-6 occupies U31-U32.", [["AC-6"], ["U31-U32"]], harm=2),
-            visual_leaf("p05.rack.ups", "UPS-A occupies U26-U28.", [["UPS-A", "UPS A"], ["U26-U28"]]),
-            visual_leaf("p05.rack.gw3", "Freezer gateway GW-3 occupies U19.", [["GW-3"], ["U19"]]),
-            visual_leaf("p05.rack.nvr", "NVR-B occupies U14-U15.", [["NVR-B"], ["U14-U15"]]),
+            visual_leaf("p05.rack.cs2", "Core switch CS-2 occupies U42-U43.", [["CS-2"], ["U42-U43"]], local_bindings=[["CS-2", "U42-U43"]]),
+            visual_leaf("p05.rack.pp7", "Patch panel PP-7 occupies U36-U37.", [["PP-7"], ["U36-U37"]], local_bindings=[["PP-7", "U36-U37"]]),
+            visual_leaf("p05.rack.ac6", "Door controller AC-6 occupies U31-U32.", [["AC-6"], ["U31-U32"]], local_bindings=[["AC-6", "U31-U32"]], harm=2),
+            visual_leaf("p05.rack.ups", "UPS-A occupies U26-U28.", [["UPS-A", "UPS A"], ["U26-U28"]], local_bindings=[["UPS-A", "U26-U28"]]),
+            visual_leaf("p05.rack.gw3", "Freezer gateway GW-3 occupies U19.", [["GW-3"], ["U19"]], local_bindings=[["GW-3", "U19"]]),
+            visual_leaf("p05.rack.nvr", "NVR-B occupies U14-U15.", [["NVR-B"], ["U14-U15"]], local_bindings=[["NVR-B", "U14-U15"]]),
             visual_leaf("p05.rack.entry", "Callout B identifies a tray entry at the rack's west/top side.", [["callout B", "B"], ["tray entry"], ["west", "top"]]),
         ],
         budget=2,
@@ -1269,7 +1316,7 @@ def build(output_root: Path):
     draw_table(c, 115, 170, [92, 110, 105, 86, 120], [photo_headers, *photo_rows], font_size=6.5, zebra=True)
     case.add_gold(
         "PH-214 - Field photo and punch evidence",
-        "Photo 06 is a corridor-side view of D-214B. The reader is mounted on the image-right/east jamb, outside the Lab B opening; annotation A circles the reader rather than the opening. The opening remains clear. Photo 09 shows rack R2 in room 218. The overhead tray approaches from image-left/west and drops at the rack's west/top corner; annotation B circles that entry. The service side on the image-right/east side of rack R2 is unobstructed.\n\n"
+        "Photo 06 is a corridor-side view of D-214B. The reader is mounted on the image-right/east jamb, outside the Lab B opening; annotation A circles the reader rather than the opening. Photo 09 shows rack R2 in room 218. The overhead tray approaches from image-left/west and drops at the rack's west/top corner; annotation B circles that entry.\n\n"
         + markdown_table(photo_headers, photo_rows),
     )
     case.add_region(
@@ -1278,9 +1325,7 @@ def build(output_root: Path):
         "image",
         [
             visual_leaf("p09.door.reader", "Photo 06 shows the reader on the image-right jamb of the doorway.", [["Photo 06"], ["reader"], ["image-right", "right jamb"]], harm=2),
-            visual_leaf("p09.door.corridor", "Photo 06 is taken from the corridor side of the opening.", [["Photo 06"], ["corridor", "C2"], ["side", "view"]]),
             visual_leaf("p09.door.annotation", "Annotation A circles the reader rather than the opening.", [["annotation A", "A"], ["circles"], ["reader"], ["not", "rather than"]]),
-            visual_leaf("p09.door.clear", "The photographed opening is unobstructed.", [["opening"], ["unobstructed", "clear"]]),
         ],
         budget=3,
         text_only_recoverable=False,
@@ -1291,9 +1336,12 @@ def build(output_root: Path):
         "image",
         [
             visual_leaf("p09.rack.tray", "Photo 09 shows the overhead tray approaching rack R2 from image-left.", [["Photo 09"], ["tray"], ["rack", "R2"], ["image-left", "left"]], harm=2),
-            visual_leaf("p09.rack.drop", "The tray turns downward and drops at the rack's west/top corner.", [["tray"], ["drops", "downward", "vertical"], ["west", "top corner"]]),
+            visual_leaf(
+                "p09.rack.drop",
+                "The tray drops at the rack's west/top corner.",
+                [["tray"], ["drop", "drops", "transition", "downward", "vertical"], ["image-upper-left", "image upper left", "upper-left", "upper left", "west/top", "west-top", "west", "top corner"]],
+            ),
             visual_leaf("p09.rack.annotation", "Annotation B circles the tray-to-rack entry.", [["annotation B", "B"], ["tray"], ["rack"], ["entry"]]),
-            visual_leaf("p09.rack.clear", "The image-right service side of rack R2 is unobstructed.", [["image-right", "right"], ["service side"], ["rack R2", "R2"], ["unobstructed", "clear"]]),
         ],
         budget=3,
         text_only_recoverable=False,
@@ -1371,7 +1419,7 @@ def build(output_root: Path):
         "form",
         [
             leaf("p10.identity.package", "The release package is ARC-214-C.", evidence=["ARC-214-C"]),
-            leaf("p10.identity.date", "The release date is 2026-06-16.", evidence=[["16 JUN 2026", "16 June 2026"]]),
+            leaf("p10.identity.date", "The release date is 16 June 2026 (2026-06-16).", evidence=[["16 JUN 2026", "16 June 2026"]]),
             leaf("p10.identity.seal", "The release seal is 214-C-0616.", evidence=["214-C-0616"]),
             leaf("p10.identity.signers", "The release names AV, TN, JH, and LS as signatories.", evidence=["AV", "TN", "JH", "LS"]),
         ],

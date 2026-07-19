@@ -44,25 +44,27 @@
 
 ## Page 03 - Visit chronology - enrollment through week 2
 
+Record VIS-014/R1-A continues in VIS-014/R1-B.
+
 | Subject | Visit | Planned day | Actual date/time | Kit / device | Worksheet state | Continuation |
 | --- | --- | --- | --- | --- | --- | --- |
-| 014-002 | V1 | Day 1 | 05 Apr 08:05 | K-204-118 | Complete | W2 p10 |
-| 014-002 | W2 | Day 15 | 19 Apr 08:12 | K-204-142 | Complete | W4 p10 |
+| 014-002 | V1 | Day 1 | 05 Apr 08:05 | K-204-118 | Complete | VIS-014/R1-B |
+| 014-002 | W2 | Day 15 | 19 Apr 08:12 | K-204-142 | Complete | VIS-014/R1-B |
 | 014-003 | V1 | Day 1 | 07 Apr 09:10 | K-204-121 | Complete | W2 below |
-| 014-003 | W2 | Day 15 | 21 Apr 08:44 | K-204-146 | Partial; source correction | DCF p16 |
-| 014-004 | V1 | Day 1 | 10 Apr 10:20 | K-204-128 | Complete | ET p10 |
-| 014-005 | V1 | Day 1 | 12 Apr 09:32 | K-204-132 | Complete | W2 p10 |
-| 014-007 | V1 | Day 1 | 18 Apr 09:10 | K-204-153 | Pharmacy source required | Form p12 |
-| 014-008 | V1 | Day 1 | 20 Apr 09:15 | K-204-158 | Lab receipt pending | Lab p15 |
-| 014-009 | V1 | Day 1 | 19 Apr 10:04 | K-204-160 | Complete | W2 p10 |
-| 014-011 | V1 | Day 1 | 26 Apr 08:52 | K-204-171 | Repeat chemistry ordered | Lab p15 |
-| 014-012 | V1 | Day 1 | 28 Apr 11:06 | K-204-176 | Waiver W-14 filed | Consent p8 |
-| 014-014 | V1 | Day 1 | 01 May 09:40 | K-204-184 | ePRO setup incomplete | Training p18 |
-| 014-016 | V1 | Day 1 | 04 May 07:58 | K-204-190 | Masking review | Dose p21 |
+| 014-003 | W2 | Day 15 | 21 Apr 08:44 | K-204-146 | Partial; source correction | DQC/014/Q77/F1 |
+| 014-004 | V1 | Day 1 | 10 Apr 10:20 | K-204-128 | Complete | VIS-014/R1-B |
+| 014-005 | V1 | Day 1 | 12 Apr 09:32 | K-204-132 | Complete | VIS-014/R1-B |
+| 014-007 | V1 | Day 1 | 18 Apr 09:10 | K-204-153 | Pharmacy source required | IP-DISP-K204153/R5 |
+| 014-008 | V1 | Day 1 | 20 Apr 09:15 | K-204-158 | Lab receipt pending | NCL-AC77152/R2 |
+| 014-009 | V1 | Day 1 | 19 Apr 10:04 | K-204-160 | Complete | VIS-014/R1-B |
+| 014-011 | V1 | Day 1 | 26 Apr 08:52 | K-204-171 | Repeat chemistry ordered | NCL-AC77152/R2 |
+| 014-012 | V1 | Day 1 | 28 Apr 11:06 | K-204-176 | Waiver W-14 filed | W-14 / TD-HI-204-R1 |
+| 014-014 | V1 | Day 1 | 01 May 09:40 | K-204-184 | ePRO setup incomplete | TRN-014014/R1 |
+| 014-016 | V1 | Day 1 | 04 May 07:58 | K-204-190 | Masking review | DOSE-014016/R2 |
 
 ## Page 04 - Central laboratory accession and custody register
 
-A receipt timestamp proves custody, not the analytical result. SH-204-45's signed receipt on page 20 controls corrected seal and temperature fields; SH-204-52's amended report on page 15 controls amended analytical values.
+A receipt timestamp proves custody, not the analytical result. NCL-CUST-AC76881/R1 controls SH-204-45 corrected seal and temperature fields; NCL-AC77152/R2 controls SH-204-52 amended analytical values.
 
 | Shipment | Subject | Specimen | Collected | Courier pickup | Lab receipt | Accession state |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -71,7 +73,7 @@ A receipt timestamp proves custody, not the analytical result. SH-204-45's signe
 | SH-204-46 | 014-008 | Chemistry | 20 Apr 09:15 | 20 Apr 15:55 | Not posted | Interface pending |
 | SH-204-47 | 014-009 | PK-W2 | 06 May 09:04 | 06 May 10:15 | 06 May 11:20 | Accepted |
 | SH-204-48 | 014-011 | Chemistry | 26 Apr 08:52 | 26 Apr 16:20 | 27 Apr 10:05 | Repeat requested |
-| SH-204-52 | 014-011 | Chemistry repeat | 08 May 07:46 | 08 May 12:05 | 08 May 15:31 | Amended report p15 |
+| SH-204-52 | 014-011 | Chemistry repeat | 08 May 07:46 | 08 May 12:05 | 08 May 15:31 | NCL-AC77152/R2 |
 | SH-204-49 | 014-016 | Glucose | 04 May 07:58 | 04 May 16:40 | 05 May 09:44 | Safety call linked |
 | SH-204-50 | 014-014 | PK-V1 | 01 May 09:40 | 01 May 15:20 | 02 May 08:55 | Accepted |
 | SH-204-53 | 014-007 | Potassium repeat | 02 May 09:22 | 02 May 14:10 | 03 May 08:40 | Final |
@@ -79,15 +81,15 @@ A receipt timestamp proves custody, not the analytical result. SH-204-45's signe
 
 ## Page 05 - Pharmacy receipt ledger
 
-Shipment PS-778 was received 2026-04-06 at 14:26. Carton C-19 held kits K-204-118 through K-204-152; carton C-22 held K-204-153 through K-204-177. K-204-153 is lot H24C, expiry 2027-01-31, quantity 30, with its original RX-2/A2 locator struck and corrected to RX-2/B1 by RP at 14:41. C-19 tamper seal intact is checked. C-22 tamper seal intact is crossed out, while C-22 seal discrepancy photographed is checked. Shipment placed in released stock is unchecked. The correction states that C-22's outer seal was split but its inner pouch was intact. R. Patel received the shipment; J. Das witnessed the count.
+Controlled record IP-RCV-PS778/R1 documents shipment PS-778 received 2026-04-06 at 14:26. Carton C-19 held kits K-204-118 through K-204-152; carton C-22 held K-204-153 through K-204-177. K-204-153 is lot H24C, expiry 2027-01-31, quantity 30, with its original RX-2/A2 locator struck and corrected to RX-2/B1 by RP at 14:41. C-19 tamper seal intact is checked. C-22 tamper seal intact is crossed out, while C-22 seal discrepancy photographed is checked. Shipment placed in released stock is unchecked. The correction states that C-22's outer seal was split but its inner pouch was intact. R. Patel received the shipment; J. Das witnessed the count.
 
 ## Page 06 - Adverse-event line listing
 
-| Record | Required evidence | Owner | Due | Linked page |
+| Record | Required evidence | Owner | Due | Controlled record |
 | --- | --- | --- | --- | --- |
-| AE-014-04 | Repeat chemistry report | MK | 09 May | p15 |
-| AE-014-05 | Dose worksheet and masking review | NR | 10 May | p21 / p28 |
-| AE-014-08 | Training competency source | MK | 08 May | p18 |
+| AE-014-04 | Repeat chemistry report | MK | 09 May | NCL-AC77152/R2 |
+| AE-014-05 | Dose worksheet and masking review | NR | 10 May | DOSE-014016/R2 |
+| AE-014-08 | Training competency source | MK | 08 May | TRN-014014/R1 |
 
 | AE | Subject | Onset | Term | Grade | Relatedness | Action | Status at cut |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -107,13 +109,13 @@ At the 06 May 2026 snapshot, console responses are provisional and are not signe
 | Query | Subject | Opened | Field / issue | Console state | Provisional response | Next source |
 | --- | --- | --- | --- | --- | --- | --- |
 | Q-74 | 014-004 | 25 Apr | AE stop date | Answered | Site entered 24 Apr | Safety review |
-| Q-77 | 014-003 | 22 Apr | W2 ECG performed | Open | Draft says Yes; tracing requested | DCF p16 |
-| Q-81 | 014-007 | 19 Apr | Excursion dosing | Answered | Pharmacy form pending | Form p12 |
+| Q-77 | 014-003 | 22 Apr | W2 ECG performed | Open | Draft says Yes; tracing requested | DQC/014/Q77/F1 |
+| Q-81 | 014-007 | 19 Apr | Excursion dosing | Answered | Pharmacy form pending | IP-DISP-K204153/R5 |
 | Q-84 | 014-008 | 23 Apr | Central lab receipt | Open | Courier ticket filed | Receipt interface |
-| Q-86 | 014-009 | 07 May | W2 visit window | Open | Calendar note drafted | Adjudication p27 |
-| Q-88 | 014-011 | 28 Apr | Repeat chemistry | Open | Specimen booked | Report p15 |
-| Q-91 | 014-014 | 04 May | ePRO activation | Answered | Retraining scheduled | Roster p18 |
-| Q-93 | 014-016 | 05 May | Masking note | Open | PI review requested | Action p28 |
+| Q-86 | 014-009 | 07 May | W2 visit window | Open | Calendar note drafted | WIN-014009/R1 |
+| Q-88 | 014-011 | 28 Apr | Repeat chemistry | Open | Specimen booked | NCL-AC77152/R2 |
+| Q-91 | 014-014 | 04 May | ePRO activation | Answered | Retraining scheduled | TRN-014014/R1 |
+| Q-93 | 014-016 | 05 May | Masking note | Open | PI review requested | Unsigned MA-016/D0 |
 
 ## Page 08 - Delegation and consent verification worksheet
 
@@ -139,7 +141,7 @@ Dr. Neha Rao is delegated consent, eligibility, dose decisions, AE causality, an
 
 ## Page 10 - Visit chronology - week 2 through termination
 
-This is part 2 of the visit log begun on page 3. Subject 014-009's signed discrepancy classification is deferred to page 27.
+VIS-014/R1-B continues VIS-014/R1-A. Subject 014-009's classification is pending in this log and is controlled by signed record WIN-014009/R1.
 
 | Subject | Visit | Target / window | Actual | Elapsed from V1 | State | Linked record |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -150,16 +152,16 @@ This is part 2 of the visit log begun on page 3. Subject 014-009's signed discre
 | 014-005 | W4 | 10 May +/-2 d | Scheduled | - | Not yet due | Calendar |
 | 014-007 | W2 | 02 May +/-2 d | 02 May 09:22 | Day 15 | Partial | Repeat K final |
 | 014-008 | W2 | 04 May +/-2 d | 04 May 08:48 | Day 15 | Complete | Receipt unresolved |
-| 014-009 | W2 | 03 May +/-2 d | 06 May 09:04 | Day 18 | Outside listed window | Q-86 / p27 |
+| 014-009 | W2 | 03 May +/-2 d | 06 May 09:04 | Day 18 | Outside listed window | Q-86 / WIN-014009/R1 |
 | 014-011 | Unscheduled | Repeat chemistry | 08 May 07:46 | Day 13 | Source obtained | SH-204-52 |
 | 014-012 | W2 | 12 May +/-2 d | Scheduled | - | Not yet due | Waiver W-14 |
 | 014-013 | Follow-up | After missed contact | 05 May 17:20 | Day 7 | No contact | FU-013 |
-| 014-014 | Unscheduled | ePRO training | 08 May 13:30 | Day 8 | Source on p18 | Q-91 |
+| 014-014 | Unscheduled | ePRO training | 08 May 13:30 | Day 8 | Source TRN-014014/R1 | Q-91 |
 | 014-016 | Safety call | Within 24 h | 04 May 18:16 | Day 1 | Completed | AE-014-05 |
 
 ## Page 11 - Corrected W2 ECG eCRF
 
-For subject 014-003 at W2 on 2026-04-21, ECG performed - Yes (original) is crossed out and ECG performed - No (corrected) is checked. Tracing attached is unchecked. Equipment unavailable is checked and subject refused is unchecked. The source says asset ECG-2 showed service code E17, no tracing identifier was generated, and no tracing is filed. MK made the original entry at 09:02 and corrected it on 2026-04-22 at 14:18. DEV-014-03 is major and Q-77 was opened. LS verified the source on 2026-05-08 at 11:26. PI deviation review completed is unchecked.
+Controlled record ECG-014003-W2/R2 supersedes ECG-014003-W2/R1. For subject 014-003 at W2 on 2026-04-21, ECG performed - Yes (original) is crossed out and ECG performed - No (corrected) is checked. Tracing attached is unchecked. Equipment unavailable is checked and subject refused is unchecked. The source says asset ECG-2 showed service code E17, no tracing identifier was generated, and no tracing is filed. MK made the original entry at 09:02 and corrected it on 2026-04-22 at 14:18. DEV-014-03 is major and Q-77 was opened. LS verified the source on 2026-05-08 at 11:26. PI deviation review completed is unchecked.
 
 ## Page 12 - Temperature excursion and disposition
 
@@ -167,20 +169,22 @@ For kit K-204-153 assigned to subject 014-007 in refrigerator RX-2, the readings
 
 ## Page 13 - Protocol deviation chronology
 
-Event date, detection date, and signed classification are separate fields. The register links evidence but does not replace exact marked states on the referenced source forms.
+Event date, detection date, and signed classification are separate fields. Controlling-source identifiers link the register to the exact corrected records without copying their marked states.
 
 | Deviation | Subject | Event date | Detected | Issue | Provisional class | Controlling source |
 | --- | --- | --- | --- | --- | --- | --- |
 | DEV-014-02 | 014-002 | 19 Apr | 20 Apr | Diary page returned late | Minor | Resolved note |
-| DEV-014-03 | 014-003 | 21 Apr | 22 Apr | W2 ECG source discrepancy | Major | eCRF p11 / DCF p16 |
+| DEV-014-03 | 014-003 | 21 Apr | 22 Apr | W2 ECG source discrepancy | Major | ECG-014003-W2/R2 + DQC/014/Q77/F1 |
 | DEV-014-04 | 014-004 | 24 Apr | 25 Apr | ET lab outside processing target | Minor | Lab receipt |
-| DEV-014-07 | 014-007 | 18 Apr | 18 Apr | IP storage excursion | Major | Pharmacy form p12 |
-| DEV-014-08 | 014-009 | 06 May | 07 May | W2 attendance outside listed window | Pending signed class | Adjudication p27 |
-| DEV-014-09 | 014-011 | 27 Apr | 28 Apr | Repeat chemistry evidence absent | Major | Amended report p15 |
-| DEV-014-10 | 014-014 | 01 May | 04 May | ePRO activation incomplete | Minor | Training p18 |
-| DEV-014-11 | 014-016 | 04 May | 05 May | Unblinded detail in site note | Major | PI review p22 / p28 |
+| DEV-014-07 | 014-007 | 18 Apr | 18 Apr | IP storage excursion | Major | IP-DISP-K204153/R5 |
+| DEV-014-08 | 014-009 | 06 May | 07 May | W2 attendance outside listed window | Pending signed class | WIN-014009/R1 |
+| DEV-014-09 | 014-011 | 27 Apr | 28 Apr | Repeat chemistry evidence absent | Major | NCL-AC77152/R2 |
+| DEV-014-10 | 014-014 | 01 May | 04 May | ePRO activation incomplete | Minor | TRN-014014/R1 |
+| DEV-014-11 | 014-016 | 04 May | 05 May | Unblinded detail in site note | Major | PI-DEV-014/R6 + A-204 |
 
 ## Page 14 - Investigational-product inventory reconciliation
+
+Controlled count record IP-COUNT-014-20260508/R1 captures the physical count on 08 May at 14:35.
 
 | Kit | Subject | Receipt qty | Dispensed qty | Returned qty | Physical balance | Inventory locator / status |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -189,7 +193,7 @@ Event date, detection date, and signed classification are separate fields. The r
 | K-204-166 | 014-002 | 15 | 15 | 2 | 2 | RX-2/B2 / dose-reduction return |
 | K-204-121 | 014-003 | 30 | 30 | 5 | 5 | RX-2/A1 / reconciled |
 | K-204-146 | 014-003 | 30 | 30 | Not returned | 0 | Subject return outstanding |
-| K-204-153 | 014-007 | 30 | See source | N/A | 30 | Q1 / signed form p12 controls |
+| K-204-153 | 014-007 | 30 | See source | N/A | 30 | Q1 / IP-DISP-K204153/R5 |
 | K-204-158 | 014-008 | 30 | 30 | Pending | 0 | Subject custody |
 | K-204-160 | 014-009 | 30 | 30 | 3 | 3 | RX-2/B1 / window query |
 | K-204-171 | 014-011 | 30 | 30 | Pending | 0 | Subject custody / lab follow-up |
@@ -212,7 +216,7 @@ The scanned final amended report for accession AC-77152 / subject 014-011 / spec
 
 ## Page 16 - Signed data clarification form Q-77
 
-Q-77 concerns subject 014-003's W2 ECG-performed field. The draft response 'ECG performed; tracing will be uploaded' is struck. The final response says ECG was not performed because the machine was unavailable and no tracing exists. PI response signed and site response accepted are checked. Request missing tracing is crossed. Production field updated, query closed, and deviation review complete are unchecked. Dr. Neha Rao signed the final response on 2026-05-09 at 08:42. A. Thomas accepted it at 09:14. The signed DCF controls over the provisional console response on page 7, but administrative closure still awaits upload.
+DQC/014/Q77/F1 concerns subject 014-003's W2 ECG-performed field and references ECG-014003-W2/R2. The draft response 'ECG performed; tracing will be uploaded' is struck. The final response says ECG was not performed because the machine was unavailable and no tracing exists. PI response signed and site response accepted are checked. Request missing tracing is crossed. Production field updated is unchecked. Query closed is unchecked. Deviation review complete is unchecked. Dr. Neha Rao signed the final response on 2026-05-09 at 08:42. A. Thomas accepted it at 09:14. F1 controls over the unsigned 2026-05-06 console draft for this field, but administrative closure still awaits upload.
 
 ## Page 17 - Monitor field notes - source review chronology
 
@@ -256,9 +260,7 @@ The signed record for subject 014-014 / device EP-441 documents retraining from 
 
 ## Page 19 - Corrective-action working tracker - draft 2
 
-This page is draft 2, exported on 2026-05-08 at 16:10, and is not approved; it is retained as audit history.
-
-The signed approval on page 25 controls final owners, due dates, and required evidence; vendor contact, planned calls, pending reports, and opened templates do not prove completion.
+CAPA-014-02/D2 is draft 2, exported on 2026-05-08 at 16:10, and is not approved; it is retained as audit history. D2 preserves proposed owners and dates as draft audit history. Approved revision CAPA-014-02/R1 may supersede a named field without altering the timestamped export. Vendor contact, planned calls, pending reports, and opened templates do not prove completion.
 
 | Draft item | Linked record | Proposed action | Draft owner | Draft due | Working state |
 | --- | --- | --- | --- | --- | --- |
@@ -321,7 +323,7 @@ An import disposition establishes only that a named object reached the controlle
 
 ## Page 25 - Signed CAPA approval and revised obligations
 
-CAPA-014-02 was approved on 2026-05-09. Final C-01: MK upload Q-77 DCF and verify production field by 2026-05-10 12:00. Final C-02: RP obtain RX-2 calibration certificate by 2026-05-12 17:00. Final C-03: MK document three K-204-146 return contact attempts by 2026-05-13 15:00. Final C-04: MK file corrected SH-204-45 receipt by 2026-05-11 12:00. Final C-05: NR document amended-chemistry review by 2026-05-09 17:00. Final C-06: MK attach ePRO competency record by 2026-05-09 14:00. Final C-07: NR complete DEV-014-11 masking impact assessment by 2026-05-11 16:00. Final C-08: MK upload signed Q-86 window calculation by 2026-05-11 12:00. CAPA approved by PI is checked. CAPA accepted by monitor is checked. Effectiveness check required is checked. Sponsor escalation required and CAPA complete at approval are unchecked. Draft due dates remain operative is crossed. The final signed dates control. LS owns the effectiveness check scheduled for 2026-05-21 through 2026-05-22.
+CAPA-014-02/R1 became effective on 2026-05-09 at 12:18 and supersedes CAPA-014-02/D2 only for named owner, due, and evidence fields. Final C-01: MK upload Q-77 DCF and verify production field by 2026-05-10 12:00. Final C-02: RP obtain RX-2 calibration certificate by 2026-05-12 17:00. Final C-03: MK document three K-204-146 return contact attempts by 2026-05-13 15:00. Final C-04: MK file corrected SH-204-45 receipt by 2026-05-11 12:00. Final C-05: NR document amended-chemistry review by 2026-05-09 17:00. Final C-06: MK attach ePRO competency record by 2026-05-09 14:00. The typed D2 C-07 target of 20 May is struck; R1 assigns NR to complete the signed DEV-014-11 masking assessment MA-016 and Q-93 response by 2026-05-11 16:00. Final C-08: MK upload signed Q-86 window calculation by 2026-05-11 12:00. CAPA approved by PI is checked. CAPA accepted by monitor is checked. Effectiveness check required is checked. Sponsor escalation required and CAPA complete at approval are unchecked. Draft due dates remain operative is crossed. NR approved at 12:14 and LS made R1 effective at 12:18. LS owns the effectiveness check scheduled for 2026-05-21 through 2026-05-22.
 
 ## Page 26 - Open-item aging and evidence status
 
@@ -333,25 +335,25 @@ Calculated on 09 May 2026 at 13:00. Accepted, verified, reviewed, attached, assi
 | CE-204-12 | SH-204-45 | 23 Apr 16:52 | 15 d 20 h | Corrected receipt | Receipt verified | Exception closure |
 | K-204-146 return | 014-003 | 05 May 09:05 | 4 d 3 h | No returned kit | Contact evidence absent | CAPA C-03 |
 | Q-84 | 014-008 | 23 Apr 10:20 | 16 d 2 h | Courier ticket | Portal receipt absent | Interface post |
-| Q-86 | 014-009 | 07 May 08:30 | 2 d 4 h | Adjudication drafted | Signature route | Signed page 27 |
+| Q-86 | 014-009 | 07 May 08:30 | 2 d 4 h | Adjudication drafted | Signature route | WIN-014009/R1 |
 | Q-88 | 014-011 | 28 Apr 09:10 | 11 d 3 h | Amended report | PI reviewed | Query close |
 | Q-91 | 014-014 | 04 May 12:16 | 5 d 0 h | Competency source | Attached | Console close |
 | Q-93 | 014-016 | 05 May 11:40 | 4 d 1 h | PI review incomplete | Assessment absent | CAPA C-07 |
-| DEV-014-08 | 014-009 | 07 May 09:05 | 2 d 3 h | Window calculation | PI review absent | Signed page 27 |
-| CAPA-014-02 | Site 014 | 09 May 12:18 | 0 d 0 h | Final approval | Assigned / open | Action sheet p28 |
+| DEV-014-08 | 014-009 | 07 May 09:05 | 2 d 3 h | Window calculation | PI review absent | WIN-014009/R1 |
+| CAPA-014-02 | Site 014 | 09 May 12:18 | 0 d 0 h | Final approval | Assigned / open | A-201 through A-205 |
 
 ## Page 27 - Subject 014-009 visit-window adjudication
 
-For subject 014-009, V1 on 2026-04-19 is day 1; W2 target is 2026-05-03 and the allowed window is 2026-05-01 through 2026-05-05 inclusive. Attendance on 2026-05-06 is one day beyond the window. Within allowed window is crossed out. Minor deviation and site response accepted are checked. Major deviation, missed visit, and Q-86 closed are unchecked. NR adjudicated on 2026-05-09 at 11:22; LS concurred at 11:28. Production upload is due 2026-05-11 at 12:00 and is not yet evidenced.
+WIN-014009/R1 supersedes unsigned CAL-014009/D0 for subject 014-009's visit classification. V1 on 2026-04-19 is day 1; W2 target is 2026-05-03 and the allowed window is 2026-05-01 through 2026-05-05 inclusive. Attendance on 2026-05-06 is one day beyond the window. The typed D0 classification within allowed window is struck. R1 records minor deviation, visit usable, and not a missed visit. Within allowed window is crossed out. Minor deviation and site response accepted are checked. Major deviation, missed visit, and Q-86 closed are unchecked. NR signed R1 on 2026-05-09 at 11:22; LS concurred at 11:28. Production upload is due 2026-05-11 at 12:00 and is not yet evidenced.
 
 | Audit event | Timestamp | Actor | State after event |
 | --- | --- | --- | --- |
-| Calendar note created | 07 May 08:12 | MK | Draft |
-| Q-86 opened | 07 May 08:30 | AT | Open |
-| Deviation linked | 07 May 09:05 | MK | Class pending |
-| Calculation signed | 09 May 11:22 | NR | Signed source posted |
-| Monitor concurred | 09 May 11:28 | LS | Ready to upload |
-| Production upload due | 11 May 12:00 | MK | Not yet evidenced |
+| WIN-E01 / draft created | 07 May 08:12 | MK | CAL-014009/D0 |
+| WIN-E02 / Q-86 opened | 07 May 08:30 | AT | Open |
+| WIN-E03 / deviation linked | 07 May 09:05 | MK | Class pending |
+| WIN-E04 / R1 signed | 09 May 11:22 | NR | WIN-014009/R1 effective |
+| WIN-E05 / monitor concurred | 09 May 11:28 | LS | Ready to upload |
+| WIN-E06 / upload due | 11 May 12:00 | MK | Not yet evidenced |
 
 ## Page 28 - Post-visit action assignment and routing
 
@@ -384,6 +386,8 @@ Eligibility is a decision at its recorded time; later events do not retroactivel
 | 014-016 | 6.0 | Glucose 94 / NCL-4691 | Eligible | 04 May 07:31 | Masking issue post-dose | Verified 09 May |
 
 ## Page 30 - Randomization and masking-access audit
+
+Controlled audit record RTS-AUD-014016/R1 covers subject 014-016.
 
 014-016 pharmacy custody access is checked.
 
@@ -500,7 +504,7 @@ For subject 014-014, 02 May diary received and 03 May diary received are uncheck
 
 ## Page 37 - Investigational-product transaction ledger
 
-Assignment and blocked dispense do not establish subject custody. K-204-153 remains at balance 30 until sponsor return on 13 May.
+Controlled transaction record IP-TX-014/R3 preserves the accountability sequence through sponsor return.
 
 | Transaction | Timestamp | Kit | Subject | Movement | Quantity / balance | Source / resulting state |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -526,8 +530,6 @@ JD treatment-code access is disabled.
 RP pharmacy module complete and RP restricted RTS role active are checked. JD count-and-seal module complete is checked. JD product disposition authority is crossed. MK treatment-code access is disabled. The original JD disposition-decision delegation is corrected to witness count and seal verification only, with no disposition decision, by NR on 2026-03-26 at 10:08.
 
 ## Page 39 - Data-query state-transition audit trail
-
-A draft response, accepted response, production-field update, and administrative closure are four different transitions. The event sequence must be preserved per query; a later closure does not erase the earlier open duration or provisional text.
 
 | Audit event | Timestamp | Query | Subject | Actor | Transition | Evidence / note |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -569,8 +571,6 @@ The masking-review row does not reopen the signed dose decision or causality ass
 
 ## Page 41 - Evidence request and intake queue
 
-A draft can satisfy routing without satisfying evidence. A verified object may close its evidence request while a linked query, custody exception, or follow-up remains separately open. Superseding ER-207 with ER-207R preserves the rejected unsigned submission. Verification time records completion of reviewer checks, not the earlier upload event. Rejected objects remain immutable in the intake history, and a revised due date requires an approved replacement obligation rather than an edited timestamp. For restricted pharmacy and masking artifacts, the submitting owner cannot substitute self-attestation for monitor or QA verification. A receipt event with an insufficient object therefore leaves the request open even when it arrived before the deadline.
-
 | Request | Object requested | Issued | Due | Receipt event | Verification state | Residual blocker |
 | --- | --- | --- | --- | --- | --- | --- |
 | ER-201 | Q-77 DCF + production audit | 09 May 12:24 | 10 May 12:00 | 10 May 10:31 | Verified 10:38 | None |
@@ -611,18 +611,16 @@ The subject, not the coordinator, entered the seven items; coordinator compariso
 
 ## Page 44 - CAPA evidence verification matrix
 
-C-07R is an approved revised obligation, not a silent overwrite of the late C-07 evidence failure. C-04 evidence acceptance does not close CE-204-12, and preventive-action assignment does not establish effectiveness.
-
-| CAPA item | Final obligation | Due | Evidence received | Verifier | Verification result | Linked item state |
+| CAPA item / rev | Final obligation | Due | Evidence received | Verifier | Verification result | Linked item state |
 | --- | --- | --- | --- | --- | --- | --- |
 | C-01 | Q-77 DCF + production audit | 10 May 12:00 | 10 May 10:31 | LS 10:38 | Meets both elements | Q-77 closed 10:41 |
 | C-02 | RX2-441 certificate covering reset | 12 May 17:00 | 12 May 16:07 | LS 16:42 | Final certificate accepted | A-202 evidenced |
 | C-03 | Three K-204-146 contact attempts | 13 May 15:00 | Two by 13 May 13:00 | LS 13:08 | Incomplete | A-203 open |
-| C-04 | Corrected SH-204-45 receipt | 11 May 12:00 | 09 May 09:41 | LS 09:48 | Receipt accepted | CE closure separate |
+| C-04 | Corrected SH-204-45 receipt | 11 May 12:00 | 09 May 09:41 | LS 09:48 | Receipt accepted | CE-204-12 closure separate |
 | C-05 | PI amended-chemistry review | 09 May 17:00 | 09 May 08:06 | LS 12:46 | Portal acknowledgment valid | Q-88 closed |
 | C-06 | ePRO competency + Q-91 audit | 09 May 14:00 | 09 May 10:12 | LS 10:16 | Both elements accepted | Q-91 closed |
-| C-07 | Signed masking assessment + Q-93 | 11 May 16:00 | Unsigned draft 11 May | LS 15:24 | Rejected; signature absent | Revised due approved |
-| C-07R | Signed assessment MA-016 | 13 May 16:00 | 13 May 15:26 | LS 15:44 | Accepted under revision | Q-93 closure pending |
+| C-07 / R1 | Signed masking assessment + Q-93 | 11 May 16:00 | Unsigned MA-016/D0 | LS 11 May 15:24 | Rejected; signature absent | C-07R/R2 approved; R1 retained |
+| C-07R / R2 | Signed assessment MA-016/R1 | 13 May 16:00 | 13 May 15:26 | LS 13 May 15:44 | Accepted under revision | Supersedes C-07/R1; Q-93 pending |
 | C-08 | Signed Q-86 calculation + link | 11 May 12:00 | 11 May 10:42 | LS 10:58 | Both elements accepted | Q-86 closed 11:15 |
 | P-01 | Weekly certificate check added | 13 May opening | 13 May 07:42 | RP 07:48 | Opening-log field active | Effectiveness pending |
 | P-02 | Coordinator precedence refresher | 20 May 17:00 | Scheduled 18 May | LS | Not yet due | Attendance absent |
@@ -630,30 +628,26 @@ C-07R is an approved revised obligation, not a silent overwrite of the late C-07
 
 ## Page 45 - Post-visit action state-transition ledger
 
-Completion is recorded only after the required evidence is verified. A linked query may close after action completion; a custody exception may remain open after its evidence action is satisfied. Pre-existing evidence retains its original timestamp.
-
 | Action | Assigned | Evidence event | Evidence state | Completion decision | Administrative state | Residual requirement |
 | --- | --- | --- | --- | --- | --- | --- |
 | A-201 / Q-77 | 09 May 15:52 | 10 May 10:31 | Verified | Complete 10 May 10:38 | Q-77 closed 10:41 | None |
 | A-202 / RX2-441 | 09 May 15:56 | 12 May 16:07 | Verified 16:42 | Complete 12 May 16:42 | CAPA evidence linked | Sponsor return record |
 | A-203 / K-204-146 | 09 May 15:52 | Two calls by 13 May 13:00 | Incomplete | Not complete | Open | Third attempt by 15:00 |
-| A-204 / masking | 09 May 16:02 | Unsigned draft 11 May | Rejected | Revised due 13 May | Open | Signed MA-016 |
+| A-204 / masking | 09 May 16:02 | MA-016/D0 unsigned | Rejected | C-07R/R2 due 13 May | Open | Signed MA-016/R1 |
 | A-205 / Q-86 | 09 May 15:52 | 11 May 10:42 | Verified 10:58 | Complete 11 May 10:58 | Q-86 closed 11:15 | None |
 | ER-204 / receipt | 09 May 12:24 | 09 May 09:41 pre-existing | Verified | Evidence satisfied | CE-204-12 open | Exception closure |
 | ER-205 / chemistry | 09 May 12:24 | 09 May 08:06 pre-existing | Verified | Evidence satisfied | Q-88 closed | None |
 | ER-206 / ePRO | 09 May 12:24 | 09 May 10:12 | Verified | Evidence satisfied | Q-91 closed | None |
 | ER-209 / receipt | 09 May 13:06 | Courier ticket only | Insufficient | Not complete | Q-84 open | Portal receipt |
-| ER-210 / return | 12 May 16:42 | 13 May 10:26 | Under review | Not decided | Open | Verify sealed transfer |
+| ER-210 / SRN-551 | 12 May 16:42 | 13 May 10:26 | Under review | Not decided | Open | Verify sealed transfer |
 | ER-211 / FU-013 | 09 May 13:10 | No mail proof | Absent | Not complete | Open | Certified-letter receipt |
 | EC-01 / effectiveness | 09 May 12:18 | Review not due | Not applicable yet | Not complete | Open | 21-22 May review |
 
 ## Page 46 - Final masking-impact assessment MA-016
 
-MA-016 is the final masking-impact assessment for subject 014-016. Emergency code break occurred, treatment code disclosed, masking impact identified, clinical decision affected, recruitment pause required, and Q-93 closed on this form are unchecked. Blinded-note coaching required and assessment complete are checked. MA-016 concludes no masking impact because the role-interaction phrase disclosed no treatment assignment or code. NR signed MA-016 at 15:18, QA reviewed at 15:36, and LS accepted at 15:44 on 2026-05-13. Console closure remains a later administrative event.
+MA-016/R1 supersedes unsigned draft MA-016/D0. The typed D0 conclusion of masking impact pending with author signature absent is struck; R1 records no masking impact and blinded-note coaching required. Emergency code break occurred, treatment code disclosed, masking impact identified, clinical decision affected, recruitment pause required, and Q-93 closed on this form are unchecked. Blinded-note coaching required and assessment complete are checked. MA-016/R1 concludes no masking impact because the role-interaction phrase disclosed no treatment assignment or code. NR signed R1 at 15:18, QA reviewed at 15:36, and LS accepted at 15:44 on 2026-05-13. Console closure remains a later administrative event.
 
 ## Page 47 - Query, deviation, and exception closure ledger
-
-Evidence-complete time and closure time are intentionally separate. Closing a query does not erase the retained deviation class, missing diary days, or effectiveness obligation. A dash in closure time means the item remains open.
 
 | Record | Entity | Evidence-complete time | Closure authority | Closure time | Final administrative state | Retained open dependency |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -674,7 +668,7 @@ Evidence-complete time and closure time are intentionally separate. Closing a qu
 
 ## Page 48 - Archive-readiness exception register
 
-This register lists archive conditions only. A held subtab may coexist with a closed clinical query, and a releasable assessment may still have a coaching follow-up. No-hold rows are retained to prevent an already closed item from being reopened by inference.
+Controlled archive record ARCH-014/R1 captures the 15 May readiness state and unresolved holds.
 
 | Hold | Object / entity | Condition at 15 May | Owner | Next evidence | Due / review | Archive effect |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -683,7 +677,7 @@ This register lists archive conditions only. A held subtab may coexist with a cl
 | H-03 | FU-013 / 014-013 | Certified-mail proof absent | MK | Postal acceptance receipt | 15 May 17:00 | Follow-up tab held |
 | H-04 | EC-01 / CAPA-014-02 | Effectiveness review not due | LS | 21-22 May effectiveness record | 22 May 17:00 | CAPA finalization held |
 | H-05 | P-02 training | Session scheduled, attendance absent | LS | Signed attendance roster | 20 May 17:00 | Training tab held |
-| H-06 | K-204-153 sponsor return | Sealed transfer verified 13 May | RP | Courier delivery confirmation | 16 May 17:00 | Pharmacy shipment subtab held |
+| H-06 | SRN-551 / K-204-153 | Sealed transfer verified 13 May | RP | Courier delivery confirmation | 16 May 17:00 | Pharmacy shipment subtab held |
 | H-07 | Q-93 coaching | Coaching assigned after closure | NR | Blinded-note coaching acknowledgment | 15 May 16:00 | Masking subtab held |
 | H-08 | TD-HI-204-014 | Returned booklet in vault TR-6 | MK | Destruction or reissue decision | 31 May expiry | Waiver subtab active |
 | H-09 | CE-204-12 | Closed 11 May; receipt retained | CL | None | Complete | No hold |

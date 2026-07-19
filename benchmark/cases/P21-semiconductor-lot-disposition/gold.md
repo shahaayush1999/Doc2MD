@@ -56,7 +56,7 @@ Wafer 03 shows a three-cell C3 cluster at B4, C4, and B5. Wafer 05's S2 coordina
 
 SPC points: R-2241 41.2 nm (Inside), R-2242 42.0 nm (Inside), R-2243 43.8 nm (Inside), R-2244 45.6 nm (Warning), R-2245 47.4 nm (Above UCL), R-2246 46.2 nm (Warning), R-2247 44.1 nm (Recovered). Warning is 45.0 nm and UCL is 47.0 nm.
 
-Chart reconstruction: the horizontal x-axis is run sequence and the vertical y-axis is TiN thickness in nm. The blue solid line is the PVD-03 measured TiN-thickness series. Blue points mean inside or recovered below the warning threshold; amber points mean warning at or above 45.0 nm but below 47.0 nm; a red point means above the 47.0 nm UCL. The amber dashed line is the 45.0 nm warning threshold and the red dashed line is the 47.0 nm UCL. The series rises from R-2241 through a 47.4 nm peak at R-2245, then falls through R-2246 to a recovered 44.1 nm at R-2247.
+Chart reconstruction: the horizontal x-axis is run sequence and the vertical y-axis is TiN thickness in nm. The connected measured-series line represents PVD-03 TiN thickness. Blue points mean inside or recovered below the warning threshold; amber points mean warning at or above 45.0 nm but below 47.0 nm; a red point means above the 47.0 nm UCL. The amber dashed line is the 45.0 nm warning threshold and the red dashed line is the 47.0 nm UCL. The ordered run/value series rises from R-2241 / 41.2 through a peak at R-2245 / 47.4, then falls through R-2246 / 46.2 to R-2247 / 44.1.
 
 | Interlock | Observed | Threshold | State | Disposition |
 | --- | --- | --- | --- | --- |
@@ -68,7 +68,7 @@ Chart reconstruction: the horizontal x-axis is run sequence and the vertical y-a
 
 ## SEM review contact sheet
 
-The page labels only the archive frame and inspected site; the morphology must be recovered from each image. IMG-224 / W07 D5 shows two bright irregular metal flakes, including an adjacent smaller flake. IMG-223 / W05 E2 shows a long diagonal scratch crossing the field. IMG-227 / W12 A6 shows a bright edge-residue band with small bead deposits. IMG-226 / W09 F3 is visually clean apart from low-level background specks.
+The page labels only the archive frame and inspected site; the morphology must be recovered from each image. IMG-224 / W07 D5 shows two bright irregular metal flakes, including an adjacent smaller flake. IMG-223 / W05 E2 shows a long diagonal scratch crossing the field. IMG-227 / W12 A6 shows a bright edge-residue band with small bead deposits. IMG-226 / W09 F3 is visually clean apart from a fine-grained, speckled, or noisy low-level background texture.
 
 ## Defect classification and MRB decisions
 

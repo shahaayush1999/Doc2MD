@@ -7,6 +7,12 @@
     "native-pdf",
     "libreoffice-export",
     "malformed-layout",
+    "cross-office-conversion",
+    "overlapping-text-boxes",
+    "font-substitution",
+    "detached-labels",
+    "scrambled-reading-order",
+    "broken-object-stacking",
     "native-text-recovery",
     "mixed-modality",
     "tables",
@@ -16,34 +22,36 @@
   "regions": [
     {
       "id": "p01.control",
-      "label": "Document control",
+      "label": "Damaged document-control grid",
       "sourceAnchors": [
         {
           "page": 1,
-          "layer": "native_text",
+          "documentPage": 1,
+          "layer": "native_layer_recovery",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
-            "1. Regional cold-storage cutover approval",
-            "Document control"
+            "1. Controlled precedence sheet",
+            "Damaged document-control grid"
           ]
         }
       ],
-      "goldSection": "1. Regional cold-storage cutover approval",
+      "goldSection": "1. Controlled precedence sheet",
       "kind": "table",
-      "modality": "native_text",
+      "modality": "native_layer_recovery",
       "uniqueEvidence": true,
-      "primaryAxis": "precise_recall",
+      "primaryAxis": "native_layer_recovery",
       "secondaryAxes": [
-        "table_reconstruction"
+        "table_reconstruction",
+        "precise_recall"
       ],
-      "textOnlyRecoverable": true,
+      "textOnlyRecoverable": false,
       "budget": 1,
       "leaves": [
         {
           "id": "p01.control.identity",
           "canonicalClaimId": "p01.control.identity",
           "claimType": "scalar",
-          "expectation": "The controlled file is SV-2048 at Revision D.",
+          "expectation": "The controlled file is SV-2048 at Revision E.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -52,19 +60,16 @@
                 "SV-2048"
               ],
               [
-                "Revision"
-              ],
-              [
-                "D"
+                "Revision E"
               ]
             ]
           }
         },
         {
-          "id": "p01.control.dates",
-          "canonicalClaimId": "p01.control.dates",
+          "id": "p01.control.issued",
+          "canonicalClaimId": "p01.control.issued",
           "claimType": "scalar",
-          "expectation": "SV-2048 was prepared 08 Jul 2026 and became effective 10 Jul 2026 at 09:30 MST.",
+          "expectation": "SV-2048 was issued 12 Jul 2026 at 18:40 MST.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -73,13 +78,28 @@
                 "SV-2048"
               ],
               [
-                "08 Jul 2026"
+                "12 Jul 2026"
               ],
               [
-                "10 Jul 2026"
+                "18:40 MST"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p01.control.start",
+          "canonicalClaimId": "p01.control.start",
+          "claimType": "scalar",
+          "expectation": "The controlled cutover start is 14 Jul 2026 at 22:00 MST.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "14 Jul 2026"
               ],
               [
-                "09:30 MST"
+                "22:00 MST"
               ]
             ]
           }
@@ -88,16 +108,16 @@
           "id": "p01.control.scope",
           "canonicalClaimId": "p01.control.scope",
           "claimType": "scalar",
-          "expectation": "The controlled sites are Phoenix and Tucson, coordinated by Avery Kim.",
+          "expectation": "The controlled lots are PX-771 and TZ-219, coordinated by Avery Kim.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "Phoenix"
+                "PX-771"
               ],
               [
-                "Tucson"
+                "TZ-219"
               ],
               [
                 "Avery Kim"
@@ -108,287 +128,238 @@
       ]
     },
     {
-      "id": "p01.request",
-      "label": "Change request and scope",
-      "sourceAnchors": [
-        {
-          "page": 1,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "1. Regional cold-storage cutover approval",
-            "Change request and scope"
-          ]
-        }
-      ],
-      "goldSection": "1. Regional cold-storage cutover approval",
-      "kind": "text",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "precise_recall",
-      "secondaryAxes": [],
-      "textOnlyRecoverable": true,
-      "budget": 1,
-      "leaves": [
-        {
-          "id": "p01.request.sites",
-          "canonicalClaimId": "p01.request.sites",
-          "claimType": "scalar",
-          "expectation": "The transfer covers eligible Phoenix and Tucson inventory.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "inventory"
-              ],
-              [
-                "transfer"
-              ],
-              [
-                "eligible"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p01.request.functions",
-          "canonicalClaimId": "p01.request.functions",
-          "claimType": "scalar",
-          "expectation": "The change covers telemetry migration, physical custody, invoice routing, and later credential closure.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "telemetry"
-              ],
-              [
-                "migration"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p01.request.quarantine",
-          "canonicalClaimId": "p01.request.quarantine",
-          "claimType": "scalar",
-          "expectation": "Quarantined inventory remains under Northstar quality control.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "Quarantined"
-              ],
-              [
-                "inventory"
-              ],
-              [
-                "northstar"
-              ],
-              [
-                "quality"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
       "id": "p01.authority",
-      "label": "Record authority and precedence",
+      "label": "Overlapped authority table and detached headings",
       "sourceAnchors": [
         {
           "page": 1,
-          "layer": "native_text",
+          "documentPage": 1,
+          "layer": "native_layer_recovery",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
-            "1. Regional cold-storage cutover approval",
-            "Record authority and precedence"
+            "1. Controlled precedence sheet",
+            "Overlapped authority table and detached headings"
           ]
         }
       ],
-      "goldSection": "1. Regional cold-storage cutover approval",
+      "goldSection": "1. Controlled precedence sheet",
       "kind": "table",
-      "modality": "native_text",
+      "modality": "native_layer_recovery",
       "uniqueEvidence": true,
       "primaryAxis": "source_precedence",
       "secondaryAxes": [
+        "native_layer_recovery",
         "table_reconstruction",
         "reading_order"
       ],
-      "textOnlyRecoverable": true,
+      "textOnlyRecoverable": false,
       "budget": 3,
       "leaves": [
         {
-          "id": "p01.authority.order",
-          "canonicalClaimId": "p01.authority.order",
-          "claimType": "source_precedence",
-          "expectation": "Source priority is page 5 final authorization, page 4 exception register, page 3 finance validation, page 2 workplan, then reference notes.",
-          "harm": 2,
+          "id": "p01.authority.schema",
+          "canonicalClaimId": "p01.authority.schema",
+          "claimType": "structure",
+          "expectation": "The region preserves the source field schema in order: Priority, Record, Controls, Does not control.",
+          "harm": 1,
           "evidencePolicy": {
             "type": "ordered_tokens",
             "tokens": [
               [
-                "page 5 final authorization"
+                "Priority"
               ],
               [
-                "page 4"
+                "Record"
               ],
               [
-                "page 3"
+                "Controls"
               ],
               [
-                "page 2"
-              ],
-              [
-                "reference"
+                "Does not control"
               ]
             ]
           }
         },
         {
-          "id": "p01.authority.final",
-          "canonicalClaimId": "p01.authority.final",
-          "claimType": "scalar",
-          "expectation": "Page 5 controls GO/HOLD state and release conditions but not individual rate details.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "Page 5"
-              ],
-              [
-                "GO/HOLD"
-              ],
-              [
-                "release conditions"
-              ],
-              [
-                "but not",
-                "not"
-              ],
-              [
-                "rate details"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p01.authority.exceptions",
-          "canonicalClaimId": "p01.authority.exceptions",
-          "claimType": "scalar",
-          "expectation": "Page 4 controls exception scope, owner, and closure evidence but not the commercial ceiling.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "Page 4"
-              ],
-              [
-                "exception scope"
-              ],
-              [
-                "closure evidence"
-              ],
-              [
-                "but not",
-                "not"
-              ],
-              [
-                "commercial ceiling"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p01.authority.finance",
-          "canonicalClaimId": "p01.authority.finance",
-          "claimType": "scalar",
-          "expectation": "Page 3 controls the authorized cost ceiling and invoice route but not operational release.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "Page 3"
-              ],
-              [
-                "cost ceiling"
-              ],
-              [
-                "invoice route"
-              ],
-              [
-                "but not",
-                "not"
-              ],
-              [
-                "Operational release"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p01.authority.workplan",
-          "canonicalClaimId": "p01.authority.workplan",
-          "claimType": "scalar",
-          "expectation": "Page 2 controls task sequence, windows, and task gates but not final authorization.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "Page 2"
-              ],
-              [
-                "Task sequence"
-              ],
-              [
-                "task gates"
-              ],
-              [
-                "but not",
-                "not"
-              ],
-              [
-                "Final authorization"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p01.authority.reference",
-          "canonicalClaimId": "p01.authority.reference",
-          "claimType": "scalar",
-          "expectation": "Email and meeting notes provide context only when cited and cannot approve or close an item.",
+          "id": "p01.authority.row-order",
+          "canonicalClaimId": "p01.authority.row-order",
+          "claimType": "ordered_record",
+          "expectation": "The source row order is recoverable as: Page 5 executed authorization -> Page 4 dependency / exception sheet -> Page 3 approved reconciliation -> Page 2 cutover workplan.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
+            "type": "ordered_tokens",
+            "tokens": [
               [
-                "Email and meeting notes"
+                "Page 5 executed authorization"
               ],
               [
-                "Context only"
+                "Page 4 dependency / exception sheet"
               ],
               [
-                "approval"
+                "Page 3 approved reconciliation"
               ],
               [
-                "closure"
+                "Page 2 cutover workplan"
               ]
             ]
           }
         },
         {
-          "id": "p01.authority.scope",
-          "canonicalClaimId": "p01.authority.scope",
+          "id": "p01.authority.page-5-executed-authorization.controls",
+          "canonicalClaimId": "p01.authority.page-5-executed-authorization.controls",
+          "claimType": "table_binding",
+          "expectation": "For Page 5 executed authorization, Controls is Selective GO/HOLD, exclusions, signed corrections.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Page 5 executed authorization"
+            ],
+            "column": [
+              "Controls"
+            ],
+            "value": [
+              "Selective GO/HOLD, exclusions, signed corrections"
+            ]
+          }
+        },
+        {
+          "id": "p01.authority.page-5-executed-authorization.does-not-control",
+          "canonicalClaimId": "p01.authority.page-5-executed-authorization.does-not-control",
+          "claimType": "table_binding",
+          "expectation": "For Page 5 executed authorization, Does not control is Rates or exception closure.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Page 5 executed authorization"
+            ],
+            "column": [
+              "Does not control"
+            ],
+            "value": [
+              "Rates or exception closure"
+            ]
+          }
+        },
+        {
+          "id": "p01.authority.page-4-dependency-exception-sheet.controls",
+          "canonicalClaimId": "p01.authority.page-4-dependency-exception-sheet.controls",
+          "claimType": "table_binding",
+          "expectation": "For Page 4 dependency / exception sheet, Controls is Directed gates, exception state, accepted evidence.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Page 4 dependency / exception sheet"
+            ],
+            "column": [
+              "Controls"
+            ],
+            "value": [
+              "Directed gates, exception state, accepted evidence"
+            ]
+          }
+        },
+        {
+          "id": "p01.authority.page-4-dependency-exception-sheet.does-not-control",
+          "canonicalClaimId": "p01.authority.page-4-dependency-exception-sheet.does-not-control",
+          "claimType": "table_binding",
+          "expectation": "For Page 4 dependency / exception sheet, Does not control is Commercial ceiling.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Page 4 dependency / exception sheet"
+            ],
+            "column": [
+              "Does not control"
+            ],
+            "value": [
+              "Commercial ceiling"
+            ]
+          }
+        },
+        {
+          "id": "p01.authority.page-3-approved-reconciliation.controls",
+          "canonicalClaimId": "p01.authority.page-3-approved-reconciliation.controls",
+          "claimType": "table_binding",
+          "expectation": "For Page 3 approved reconciliation, Controls is Current rates, ceiling, and invoice route.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Page 3 approved reconciliation"
+            ],
+            "column": [
+              "Controls"
+            ],
+            "value": [
+              "Current rates, ceiling, and invoice route"
+            ]
+          }
+        },
+        {
+          "id": "p01.authority.page-3-approved-reconciliation.does-not-control",
+          "canonicalClaimId": "p01.authority.page-3-approved-reconciliation.does-not-control",
+          "claimType": "table_binding",
+          "expectation": "For Page 3 approved reconciliation, Does not control is Operational release.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Page 3 approved reconciliation"
+            ],
+            "column": [
+              "Does not control"
+            ],
+            "value": [
+              "Operational release"
+            ]
+          }
+        },
+        {
+          "id": "p01.authority.page-2-cutover-workplan.controls",
+          "canonicalClaimId": "p01.authority.page-2-cutover-workplan.controls",
+          "claimType": "table_binding",
+          "expectation": "For Page 2 cutover workplan, Controls is Sequence, windows, handoffs, and task gates.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Page 2 cutover workplan"
+            ],
+            "column": [
+              "Controls"
+            ],
+            "value": [
+              "Sequence, windows, handoffs, and task gates"
+            ]
+          }
+        },
+        {
+          "id": "p01.authority.page-2-cutover-workplan.does-not-control",
+          "canonicalClaimId": "p01.authority.page-2-cutover-workplan.does-not-control",
+          "claimType": "table_binding",
+          "expectation": "For Page 2 cutover workplan, Does not control is Final authorization.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Page 2 cutover workplan"
+            ],
+            "column": [
+              "Does not control"
+            ],
+            "value": [
+              "Final authorization"
+            ]
+          }
+        },
+        {
+          "id": "p01.authority.rule",
+          "canonicalClaimId": "p01.authority.rule",
           "claimType": "scalar",
-          "expectation": "A lower-priority record may supply detail but cannot reverse a higher-priority state; closure applies only to the obligation named in an exception row.",
+          "expectation": "A lower-priority record may add detail but cannot reverse the highest applicable controlled state.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
@@ -397,123 +368,44 @@
                 "lower-priority"
               ],
               [
+                "detail"
+              ],
+              [
                 "cannot reverse"
               ],
               [
-                "higher-priority"
-              ],
-              [
-                "only",
-                "solely"
-              ],
-              [
-                "obligation named"
+                "highest applicable"
               ]
             ]
           }
         }
       ],
       "closedWorld": {
-        "scope": "record_set",
+        "scope": "table_rows",
         "keys": [
-          "Page 5 final authorization",
-          "Page 4 exception register",
-          "Page 3 finance validation",
-          "Page 2 cutover workplan",
-          "Email and meeting notes"
+          "Page 5 executed authorization",
+          "Page 4 dependency / exception sheet",
+          "Page 3 approved reconciliation",
+          "Page 2 cutover workplan"
         ]
       }
     },
     {
-      "id": "p01.workflow",
-      "label": "Review workflow",
-      "sourceAnchors": [
-        {
-          "page": 1,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "1. Regional cold-storage cutover approval",
-            "Review workflow"
-          ]
-        }
-      ],
-      "goldSection": "1. Regional cold-storage cutover approval",
-      "kind": "structure",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "reading_order",
-      "secondaryAxes": [
-        "structure_reconstruction"
-      ],
-      "textOnlyRecoverable": true,
-      "budget": 1,
-      "leaves": [
-        {
-          "id": "p01.workflow.order",
-          "canonicalClaimId": "p01.workflow.order",
-          "claimType": "ordered_record",
-          "expectation": "Review proceeds from cutover lead to finance to functional owners to sponsor and quality.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "ordered_tokens",
-            "tokens": [
-              [
-                "Cutover lead"
-              ],
-              [
-                "Finance"
-              ],
-              [
-                "Functional owners"
-              ],
-              [
-                "Sponsor and quality"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p01.workflow.records",
-          "canonicalClaimId": "p01.workflow.records",
-          "claimType": "ordered_record",
-          "expectation": "The workflow exits through page 2 workplan, page 3 validation, page 4 register, then page 5 final record.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "ordered_tokens",
-            "tokens": [
-              [
-                "Page 2 workplan"
-              ],
-              [
-                "Page 3 validation"
-              ],
-              [
-                "Page 4 register"
-              ],
-              [
-                "Page 5 final record"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
       "id": "p02.workplan",
-      "label": "Clipped native-layer workplan",
+      "label": "Two-tier clipped workplan with continued groups",
       "sourceAnchors": [
         {
           "page": 2,
+          "documentPage": 2,
           "layer": "native_layer_recovery",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
-            "2. Cutover workplan and handoff sequence",
-            "Clipped native-layer workplan"
+            "2. Grouped cutover workplan",
+            "Two-tier clipped workplan with continued groups"
           ]
         }
       ],
-      "goldSection": "2. Cutover workplan and handoff sequence",
+      "goldSection": "2. Grouped cutover workplan",
       "kind": "table",
       "modality": "native_layer_recovery",
       "uniqueEvidence": true,
@@ -530,13 +422,16 @@
           "id": "p02.workplan.schema",
           "canonicalClaimId": "p02.workplan.schema",
           "claimType": "structure",
-          "expectation": "The region preserves the source field schema in order: ID, Site / asset, Activity, Owner, Planned window, Gate / evidence, State.",
+          "expectation": "The region preserves the source field schema in order: ID, Group, Site / asset, Activity, Owner, Window, Gate / evidence, State.",
           "harm": 1,
           "evidencePolicy": {
             "type": "ordered_tokens",
             "tokens": [
               [
                 "ID"
+              ],
+              [
+                "Group"
               ],
               [
                 "Site / asset"
@@ -548,7 +443,7 @@
                 "Owner"
               ],
               [
-                "Planned window"
+                "Window"
               ],
               [
                 "Gate / evidence"
@@ -563,7 +458,7 @@
           "id": "p02.workplan.row-order",
           "canonicalClaimId": "p02.workplan.row-order",
           "claimType": "ordered_record",
-          "expectation": "The source row order is recoverable as: T-01 -> T-02 -> T-03 -> T-04 -> T-05 -> T-06.",
+          "expectation": "The source row order is recoverable as: T-01 -> T-02 -> T-04 -> T-03 -> T-05 -> T-06.",
           "harm": 1,
           "evidencePolicy": {
             "type": "ordered_tokens",
@@ -575,10 +470,10 @@
                 "T-02"
               ],
               [
-                "T-03"
+                "T-04"
               ],
               [
-                "T-04"
+                "T-03"
               ],
               [
                 "T-05"
@@ -593,7 +488,7 @@
           "id": "p02.workplan.t-01.activity",
           "canonicalClaimId": "p02.workplan.t-01.activity",
           "claimType": "table_binding",
-          "expectation": "For T-01, Activity is Reserve the temperature-controlled bay; retain Kestrel access until EX-07 is signed..",
+          "expectation": "For T-01, Activity is Reserve the controlled bay and verify that Kestrel access list AC-44 remains active..",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -604,7 +499,26 @@
               "Activity"
             ],
             "value": [
-              "Reserve the temperature-controlled bay; retain Kestrel access until EX-07 is signed."
+              "Reserve the controlled bay and verify that Kestrel access list AC-44 remains active."
+            ]
+          }
+        },
+        {
+          "id": "p02.workplan.t-01.gate-evidence",
+          "canonicalClaimId": "p02.workplan.t-01.gate-evidence",
+          "claimType": "table_binding",
+          "expectation": "For T-01, Gate / evidence is FC-119 acknowledged; AC-44 posted.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "T-01"
+            ],
+            "column": [
+              "Gate / evidence"
+            ],
+            "value": [
+              "FC-119 acknowledged; AC-44 posted"
             ]
           }
         },
@@ -612,7 +526,7 @@
           "id": "p02.workplan.t-02.activity",
           "canonicalClaimId": "p02.workplan.t-02.activity",
           "claimType": "table_binding",
-          "expectation": "For T-02, Activity is Move telemetry from Kestrel gateway KG-2 to Boreal gateway BG-5; preserve 15-minute data..",
+          "expectation": "For T-02, Activity is Shift live telemetry from KG-2 to BG-5 while maintaining parallel capture..",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -623,7 +537,7 @@
               "Activity"
             ],
             "value": [
-              "Move telemetry from Kestrel gateway KG-2 to Boreal gateway BG-5; preserve 15-minute data."
+              "Shift live telemetry from KG-2 to BG-5 while maintaining parallel capture."
             ]
           }
         },
@@ -631,7 +545,7 @@
           "id": "p02.workplan.t-02.gate-evidence",
           "canonicalClaimId": "p02.workplan.t-02.gate-evidence",
           "claimType": "table_binding",
-          "expectation": "For T-02, Gate / evidence is Parallel-read delta <=0.3 C for 30 minutes.",
+          "expectation": "For T-02, Gate / evidence is TV-19 delta <=0.3 C for 30 continuous min.",
           "harm": 2,
           "evidencePolicy": {
             "type": "table_binding",
@@ -642,7 +556,26 @@
               "Gate / evidence"
             ],
             "value": [
-              "Parallel-read delta <=0.3 C for 30 minutes"
+              "TV-19 delta <=0.3 C for 30 continuous min"
+            ]
+          }
+        },
+        {
+          "id": "p02.workplan.t-02.state",
+          "canonicalClaimId": "p02.workplan.t-02.state",
+          "claimType": "table_binding",
+          "expectation": "For T-02, State is CONDITIONAL.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "T-02"
+            ],
+            "column": [
+              "State"
+            ],
+            "value": [
+              "CONDITIONAL"
             ]
           }
         },
@@ -650,7 +583,7 @@
           "id": "p02.workplan.t-04.activity",
           "canonicalClaimId": "p02.workplan.t-04.activity",
           "claimType": "table_binding",
-          "expectation": "For T-04, Activity is Transfer 48 pallets only after the T-02 telemetry gate passes..",
+          "expectation": "For T-04, Activity is Transfer 48 eligible pallets after T-02 and condition C-1 release the lot..",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -661,7 +594,26 @@
               "Activity"
             ],
             "value": [
-              "Transfer 48 pallets only after the T-02 telemetry gate passes."
+              "Transfer 48 eligible pallets after T-02 and condition C-1 release the lot."
+            ]
+          }
+        },
+        {
+          "id": "p02.workplan.t-04.gate-evidence",
+          "canonicalClaimId": "p02.workplan.t-04.gate-evidence",
+          "claimType": "table_binding",
+          "expectation": "For T-04, Gate / evidence is SC-77: 48 moved; 0 orphan pallets.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "T-04"
+            ],
+            "column": [
+              "Gate / evidence"
+            ],
+            "value": [
+              "SC-77: 48 moved; 0 orphan pallets"
             ]
           }
         },
@@ -669,7 +621,7 @@
           "id": "p02.workplan.t-04.state",
           "canonicalClaimId": "p02.workplan.t-04.state",
           "claimType": "table_binding",
-          "expectation": "For T-04, State is BLOCKED BY T-02.",
+          "expectation": "For T-04, State is BLOCKED: T-02.",
           "harm": 2,
           "evidencePolicy": {
             "type": "table_binding",
@@ -680,7 +632,26 @@
               "State"
             ],
             "value": [
-              "BLOCKED BY T-02"
+              "BLOCKED: T-02"
+            ]
+          }
+        },
+        {
+          "id": "p02.workplan.t-03.gate-evidence",
+          "canonicalClaimId": "p02.workplan.t-03.gate-evidence",
+          "claimType": "table_binding",
+          "expectation": "For T-03, Gate / evidence is IC-882 signed by Northstar and carrier.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "T-03"
+            ],
+            "column": [
+              "Gate / evidence"
+            ],
+            "value": [
+              "IC-882 signed by Northstar and carrier"
             ]
           }
         },
@@ -688,7 +659,7 @@
           "id": "p02.workplan.t-05.activity",
           "canonicalClaimId": "p02.workplan.t-05.activity",
           "claimType": "table_binding",
-          "expectation": "For T-05, Activity is Transfer 26 pallets and exclude six quarantined cases held under QA-61..",
+          "expectation": "For T-05, Activity is Transfer 26 eligible pallets; keep six QA-61 cases segregated..",
           "harm": 2,
           "evidencePolicy": {
             "type": "table_binding",
@@ -699,7 +670,7 @@
               "Activity"
             ],
             "value": [
-              "Transfer 26 pallets and exclude six quarantined cases held under QA-61."
+              "Transfer 26 eligible pallets; keep six QA-61 cases segregated."
             ]
           }
         },
@@ -707,7 +678,7 @@
           "id": "p02.workplan.t-05.gate-evidence",
           "canonicalClaimId": "p02.workplan.t-05.gate-evidence",
           "claimType": "table_binding",
-          "expectation": "For T-05, Gate / evidence is QA release QR-203 for eligible stock.",
+          "expectation": "For T-05, Gate / evidence is QR-203 or segregated-custody receipt.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -718,7 +689,26 @@
               "Gate / evidence"
             ],
             "value": [
-              "QA release QR-203 for eligible stock"
+              "QR-203 or segregated-custody receipt"
+            ]
+          }
+        },
+        {
+          "id": "p02.workplan.t-05.state",
+          "canonicalClaimId": "p02.workplan.t-05.state",
+          "claimType": "table_binding",
+          "expectation": "For T-05, State is READY: EXCLUDE 6.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "T-05"
+            ],
+            "column": [
+              "State"
+            ],
+            "value": [
+              "READY: EXCLUDE 6"
             ]
           }
         },
@@ -726,7 +716,7 @@
           "id": "p02.workplan.t-06.activity",
           "canonicalClaimId": "p02.workplan.t-06.activity",
           "claimType": "table_binding",
-          "expectation": "For T-06, Activity is Close Kestrel credentials after inventory reconciliation and legal waiver confirmation..",
+          "expectation": "For T-06, Activity is Reconcile both lots, then close Kestrel credentials only after the waiver..",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -737,7 +727,7 @@
               "Activity"
             ],
             "value": [
-              "Close Kestrel credentials after inventory reconciliation and legal waiver confirmation."
+              "Reconcile both lots, then close Kestrel credentials only after the waiver."
             ]
           }
         },
@@ -745,7 +735,7 @@
           "id": "p02.workplan.t-06.gate-evidence",
           "canonicalClaimId": "p02.workplan.t-06.gate-evidence",
           "claimType": "table_binding",
-          "expectation": "For T-06, Gate / evidence is REC-2048 has zero unresolved items and EX-07 is signed.",
+          "expectation": "For T-06, Gate / evidence is REC-2048 zero unresolved + EX-07 signed.",
           "harm": 2,
           "evidencePolicy": {
             "type": "table_binding",
@@ -756,7 +746,7 @@
               "Gate / evidence"
             ],
             "value": [
-              "REC-2048 has zero unresolved items and EX-07 is signed"
+              "REC-2048 zero unresolved + EX-07 signed"
             ]
           }
         },
@@ -764,7 +754,7 @@
           "id": "p02.workplan.t-06.state",
           "canonicalClaimId": "p02.workplan.t-06.state",
           "claimType": "table_binding",
-          "expectation": "For T-06, State is PENDING.",
+          "expectation": "For T-06, State is HOLD.",
           "harm": 2,
           "evidencePolicy": {
             "type": "table_binding",
@@ -775,7 +765,7 @@
               "State"
             ],
             "value": [
-              "PENDING"
+              "HOLD"
             ]
           }
         }
@@ -785,301 +775,39 @@
         "keys": [
           "T-01",
           "T-02",
-          "T-03",
           "T-04",
+          "T-03",
           "T-05",
           "T-06"
         ]
       }
     },
     {
-      "id": "p02.sidebar",
-      "label": "Floating approver sidebar",
+      "id": "p02.handoff",
+      "label": "Clipped handoff matrix",
       "sourceAnchors": [
         {
           "page": 2,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "2. Cutover workplan and handoff sequence",
-            "Floating approver sidebar"
-          ]
-        }
-      ],
-      "goldSection": "2. Cutover workplan and handoff sequence",
-      "kind": "text",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "precise_recall",
-      "secondaryAxes": [
-        "source_precedence"
-      ],
-      "textOnlyRecoverable": true,
-      "budget": 1,
-      "leaves": [
-        {
-          "id": "p02.sidebar.access",
-          "canonicalClaimId": "p02.sidebar.access",
-          "claimType": "scalar",
-          "expectation": "Avery Kim's 08 Jul sidebar says to keep Kestrel Dock 4 access active until counsel signs EX-07.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "EX-07",
-                "EX 07"
-              ],
-              [
-                "08",
-                "8"
-              ],
-              [
-                "4"
-              ],
-              [
-                "active"
-              ],
-              [
-                "sidebar"
-              ],
-              [
-                "kestrel"
-              ],
-              [
-                "counsel"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p02.sidebar.advisory",
-          "canonicalClaimId": "p02.sidebar.advisory",
-          "claimType": "scalar",
-          "expectation": "The sidebar is advisory and says page 5 controls release.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "5"
-              ],
-              [
-                "advisory"
-              ],
-              [
-                "controls"
-              ],
-              [
-                "sidebar"
-              ],
-              [
-                "release"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "p02.dependencies",
-      "label": "Cross-record dependency interpretation",
-      "sourceAnchors": [
-        {
-          "page": 2,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "2. Cutover workplan and handoff sequence",
-            "Cross-record dependency interpretation"
-          ]
-        }
-      ],
-      "goldSection": "2. Cutover workplan and handoff sequence",
-      "kind": "text",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "source_precedence",
-      "secondaryAxes": [
-        "cross_page_join"
-      ],
-      "textOnlyRecoverable": true,
-      "budget": 3,
-      "leaves": [
-        {
-          "id": "p02.dependencies.t02",
-          "canonicalClaimId": "p02.dependencies.t02",
-          "claimType": "scalar",
-          "expectation": "T-02 gates the T-04 transfer of PX-771.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PX-771",
-                "PX 771"
-              ],
-              [
-                "02",
-                "2"
-              ],
-              [
-                "04",
-                "4"
-              ],
-              [
-                "transfer"
-              ],
-              [
-                "gates"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p02.dependencies.ex07",
-          "canonicalClaimId": "p02.dependencies.ex07",
-          "claimType": "scalar",
-          "expectation": "EX-07 blocks T-06 credential closure but does not block physical transfer.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "EX-07",
-                "EX 07"
-              ],
-              [
-                "06",
-                "6"
-              ],
-              [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "credential"
-              ],
-              [
-                "physical"
-              ],
-              [
-                "transfer"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p02.dependencies.qa61",
-          "canonicalClaimId": "p02.dependencies.qa61",
-          "claimType": "scalar",
-          "expectation": "T-05 may move only eligible Tucson stock while six QA-61 cases stay segregated.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "QA-61",
-                "QA 61"
-              ],
-              [
-                "05",
-                "5"
-              ],
-              [
-                "only",
-                "solely",
-                "exclusively"
-              ],
-              [
-                "segregated"
-              ],
-              [
-                "eligible"
-              ],
-              [
-                "tucson"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "p02.reading-order",
-      "label": "Recovered page-two main-flow order",
-      "sourceAnchors": [
-        {
-          "page": 2,
+          "documentPage": 2,
           "layer": "native_layer_recovery",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
-            "2. Cutover workplan and handoff sequence",
-            "Recovered page-two main-flow order"
+            "2. Grouped cutover workplan",
+            "Clipped handoff matrix"
           ]
         }
       ],
-      "goldSection": "2. Cutover workplan and handoff sequence",
-      "kind": "structure",
-      "modality": "native_layer_recovery",
-      "uniqueEvidence": true,
-      "primaryAxis": "reading_order",
-      "secondaryAxes": [
-        "native_layer_recovery",
-        "structure_reconstruction"
-      ],
-      "textOnlyRecoverable": false,
-      "budget": 1,
-      "leaves": [
-        {
-          "id": "p02.reading-order.sections",
-          "canonicalClaimId": "p02.reading-order.sections",
-          "claimType": "ordered_record",
-          "expectation": "Dependency interpretation precedes the handoff matrix, which precedes the rollback trigger.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "ordered_tokens",
-            "tokens": [
-              [
-                "T-02 gates"
-              ],
-              [
-                "Handoff matrix"
-              ],
-              [
-                "RB-12"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "p02.handoff",
-      "label": "Handoff matrix",
-      "sourceAnchors": [
-        {
-          "page": 2,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "2. Cutover workplan and handoff sequence",
-            "Handoff matrix"
-          ]
-        }
-      ],
-      "goldSection": "2. Cutover workplan and handoff sequence",
+      "goldSection": "2. Grouped cutover workplan",
       "kind": "table",
-      "modality": "native_text",
+      "modality": "native_layer_recovery",
       "uniqueEvidence": true,
       "primaryAxis": "table_reconstruction",
       "secondaryAxes": [
+        "native_layer_recovery",
         "precise_recall"
       ],
-      "textOnlyRecoverable": true,
-      "budget": 1,
+      "textOnlyRecoverable": false,
+      "budget": 2,
       "leaves": [
         {
           "id": "p02.handoff.schema",
@@ -1109,7 +837,7 @@
           "id": "p02.handoff.row-order",
           "canonicalClaimId": "p02.handoff.row-order",
           "claimType": "ordered_record",
-          "expectation": "The source row order is recoverable as: T-02 passes -> T-04 completes -> Any temperature breach -> Rollback invoked.",
+          "expectation": "The source row order is recoverable as: T-02 passes -> T-04 completes -> RB-12 invoked.",
           "harm": 1,
           "evidencePolicy": {
             "type": "ordered_tokens",
@@ -1121,10 +849,7 @@
                 "T-04 completes"
               ],
               [
-                "Any temperature breach"
-              ],
-              [
-                "Rollback invoked"
+                "RB-12 invoked"
               ]
             ]
           }
@@ -1133,7 +858,7 @@
           "id": "p02.handoff.t-02-passes.required-content",
           "canonicalClaimId": "p02.handoff.t-02-passes.required-content",
           "claimType": "table_binding",
-          "expectation": "For T-02 passes, Required content is P-14 delta and validation end time.",
+          "expectation": "For T-02 passes, Required content is P-14 final delta and validation end time.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -1144,7 +869,7 @@
               "Required content"
             ],
             "value": [
-              "P-14 delta and validation end time"
+              "P-14 final delta and validation end time"
             ]
           }
         },
@@ -1152,7 +877,7 @@
           "id": "p02.handoff.t-04-completes.required-content",
           "canonicalClaimId": "p02.handoff.t-04-completes.required-content",
           "claimType": "table_binding",
-          "expectation": "For T-04 completes, Required content is PX-771 pallet count and orphan count.",
+          "expectation": "For T-04 completes, Required content is PX-771 moved count and orphan count.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -1163,39 +888,20 @@
               "Required content"
             ],
             "value": [
-              "PX-771 pallet count and orphan count"
+              "PX-771 moved count and orphan count"
             ]
           }
         },
         {
-          "id": "p02.handoff.any-temperature-breach.required-content",
-          "canonicalClaimId": "p02.handoff.any-temperature-breach.required-content",
+          "id": "p02.handoff.rb-12-invoked.required-content",
+          "canonicalClaimId": "p02.handoff.rb-12-invoked.required-content",
           "claimType": "table_binding",
-          "expectation": "For Any temperature breach, Required content is Sensor, duration, peak delta, and lot.",
+          "expectation": "For RB-12 invoked, Required content is Last completed task and custody location.",
           "harm": 2,
           "evidencePolicy": {
             "type": "table_binding",
             "row": [
-              "Any temperature breach"
-            ],
-            "column": [
-              "Required content"
-            ],
-            "value": [
-              "Sensor, duration, peak delta, and lot"
-            ]
-          }
-        },
-        {
-          "id": "p02.handoff.rollback-invoked.required-content",
-          "canonicalClaimId": "p02.handoff.rollback-invoked.required-content",
-          "claimType": "table_binding",
-          "expectation": "For Rollback invoked, Required content is Last completed task and custody location.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "Rollback invoked"
+              "RB-12 invoked"
             ],
             "column": [
               "Required content"
@@ -1211,41 +917,42 @@
         "keys": [
           "T-02 passes",
           "T-04 completes",
-          "Any temperature breach",
-          "Rollback invoked"
+          "RB-12 invoked"
         ]
       }
     },
     {
       "id": "p02.rollback",
-      "label": "Rollback trigger",
+      "label": "Rollback action",
       "sourceAnchors": [
         {
           "page": 2,
-          "layer": "native_text",
+          "documentPage": 2,
+          "layer": "native_layer_recovery",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
-            "2. Cutover workplan and handoff sequence",
-            "Rollback trigger"
+            "2. Grouped cutover workplan",
+            "Rollback action"
           ]
         }
       ],
-      "goldSection": "2. Cutover workplan and handoff sequence",
+      "goldSection": "2. Grouped cutover workplan",
       "kind": "text",
-      "modality": "native_text",
+      "modality": "native_layer_recovery",
       "uniqueEvidence": true,
-      "primaryAxis": "precise_recall",
+      "primaryAxis": "native_layer_recovery",
       "secondaryAxes": [
+        "precise_recall",
         "long_context_coherence"
       ],
-      "textOnlyRecoverable": true,
+      "textOnlyRecoverable": false,
       "budget": 2,
       "leaves": [
         {
-          "id": "p02.rollback.threshold",
-          "canonicalClaimId": "p02.rollback.threshold",
+          "id": "p02.rollback.stop",
+          "canonicalClaimId": "p02.rollback.stop",
           "claimType": "scalar",
-          "expectation": "RB-12 is invoked for a temperature deviation above 1.0 C lasting 10 continuous minutes.",
+          "expectation": "Invoking RB-12 stops the active transfer.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
@@ -1255,66 +962,32 @@
                 "RB 12"
               ],
               [
-                "1.0",
-                "1"
+                "active"
               ],
               [
-                "10"
-              ],
-              [
-                "C"
-              ],
-              [
-                "above",
-                "over",
-                "more than",
-                "greater than",
-                "exceeds",
-                ">"
-              ],
-              [
-                "temperature"
-              ],
-              [
-                "continuous"
-              ],
-              [
-                "deviation"
+                "transfer"
               ]
             ]
           }
         },
         {
-          "id": "p02.rollback.actions",
-          "canonicalClaimId": "p02.rollback.actions",
+          "id": "p02.rollback.custody",
+          "canonicalClaimId": "p02.rollback.custody",
           "claimType": "scalar",
-          "expectation": "Rollback stops the transfer and preserves custody at the last confirmed location.",
+          "expectation": "RB-12 preserves custody at the last confirmed location.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
                 "RB-12",
-                "rollback"
+                "RB 12"
               ],
               [
-                "stop",
-                "halt"
+                "confirmed"
               ],
               [
-                "transfer"
-              ],
-              [
-                "preserve",
-                "retain",
-                "maintain"
-              ],
-              [
-                "custody"
-              ],
-              [
-                "last confirmed location",
-                "confirmed location"
+                "location"
               ]
             ]
           }
@@ -1323,20 +996,21 @@
           "id": "p02.rollback.report",
           "canonicalClaimId": "p02.rollback.report",
           "claimType": "scalar",
-          "expectation": "The last completed task must be reported on bridge BR-2048.",
+          "expectation": "RB-12 requires the last completed task to be reported on BR-2048.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
+              [
+                "RB-12",
+                "RB 12"
+              ],
               [
                 "BR-2048",
                 "BR 2048"
               ],
               [
                 "completed"
-              ],
-              [
-                "bridge"
               ]
             ]
           }
@@ -1344,35 +1018,38 @@
       ]
     },
     {
-      "id": "p03.cost",
-      "label": "Authorized cost build",
+      "id": "p03.reconciliation",
+      "label": "Overlapped submitted-to-current reconciliation",
       "sourceAnchors": [
         {
           "page": 3,
-          "layer": "native_text",
+          "documentPage": 3,
+          "layer": "native_layer_recovery",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
-            "3. Commercial validation and invoice routing",
-            "Authorized cost build"
+            "3. Submitted-to-approved commercial reconciliation",
+            "Overlapped submitted-to-current reconciliation"
           ]
         }
       ],
-      "goldSection": "3. Commercial validation and invoice routing",
+      "goldSection": "3. Submitted-to-approved commercial reconciliation",
       "kind": "table",
-      "modality": "native_text",
+      "modality": "native_layer_recovery",
       "uniqueEvidence": true,
-      "primaryAxis": "table_reconstruction",
+      "primaryAxis": "native_layer_recovery",
       "secondaryAxes": [
+        "table_reconstruction",
+        "form_state",
         "precise_recall"
       ],
-      "textOnlyRecoverable": true,
-      "budget": 2,
+      "textOnlyRecoverable": false,
+      "budget": 4,
       "leaves": [
         {
-          "id": "p03.cost.schema",
-          "canonicalClaimId": "p03.cost.schema",
+          "id": "p03.reconciliation.schema",
+          "canonicalClaimId": "p03.reconciliation.schema",
           "claimType": "structure",
-          "expectation": "The region preserves the source field schema in order: Line, Basis, Amount, Approval condition.",
+          "expectation": "The region preserves the source field schema in order: Line, Submitted / superseded, Approved / current, Approval note.",
           "harm": 1,
           "evidencePolicy": {
             "type": "ordered_tokens",
@@ -1381,22 +1058,22 @@
                 "Line"
               ],
               [
-                "Basis"
+                "Submitted / superseded"
               ],
               [
-                "Amount"
+                "Approved / current"
               ],
               [
-                "Approval condition"
+                "Approval note"
               ]
             ]
           }
         },
         {
-          "id": "p03.cost.row-order",
-          "canonicalClaimId": "p03.cost.row-order",
+          "id": "p03.reconciliation.row-order",
+          "canonicalClaimId": "p03.reconciliation.row-order",
           "claimType": "ordered_record",
-          "expectation": "The source row order is recoverable as: Boreal implementation -> Kestrel overlap -> Sensor validation -> Contingency.",
+          "expectation": "The source row order is recoverable as: Boreal implementation -> Kestrel overlap -> Sensor validation -> Contingency -> Request / ceiling.",
           "harm": 1,
           "evidencePolicy": {
             "type": "ordered_tokens",
@@ -1412,15 +1089,18 @@
               ],
               [
                 "Contingency"
+              ],
+              [
+                "Request / ceiling"
               ]
             ]
           }
         },
         {
-          "id": "p03.cost.boreal-implementation.amount",
-          "canonicalClaimId": "p03.cost.boreal-implementation.amount",
+          "id": "p03.reconciliation.boreal-implementation.submitted-superseded",
+          "canonicalClaimId": "p03.reconciliation.boreal-implementation.submitted-superseded",
           "claimType": "table_binding",
-          "expectation": "For Boreal implementation, Amount is $18,600.",
+          "expectation": "For Boreal implementation, Submitted / superseded is Q-884 rev B / $19,200.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -1428,19 +1108,39 @@
               "Boreal implementation"
             ],
             "column": [
-              "Amount"
+              "Submitted / superseded"
             ],
             "value": [
-              "$18,600",
-              "$18600"
+              "Q-884 rev B / $19,200",
+              "Q-884 rev B / $19200"
             ]
           }
         },
         {
-          "id": "p03.cost.kestrel-overlap.amount",
-          "canonicalClaimId": "p03.cost.kestrel-overlap.amount",
+          "id": "p03.reconciliation.boreal-implementation.approved-current",
+          "canonicalClaimId": "p03.reconciliation.boreal-implementation.approved-current",
           "claimType": "table_binding",
-          "expectation": "For Kestrel overlap, Amount is $4,320.",
+          "expectation": "For Boreal implementation, Approved / current is Q-884 rev C / $18,600.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Boreal implementation"
+            ],
+            "column": [
+              "Approved / current"
+            ],
+            "value": [
+              "Q-884 rev C / $18,600",
+              "Q-884 rev C / $18600"
+            ]
+          }
+        },
+        {
+          "id": "p03.reconciliation.kestrel-overlap.submitted-superseded",
+          "canonicalClaimId": "p03.reconciliation.kestrel-overlap.submitted-superseded",
+          "claimType": "table_binding",
+          "expectation": "For Kestrel overlap, Submitted / superseded is 3 nights / $6,480.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -1448,19 +1148,39 @@
               "Kestrel overlap"
             ],
             "column": [
-              "Amount"
+              "Submitted / superseded"
             ],
             "value": [
-              "$4,320",
-              "$4320"
+              "3 nights / $6,480",
+              "3 nights / $6480"
             ]
           }
         },
         {
-          "id": "p03.cost.kestrel-overlap.approval-condition",
-          "canonicalClaimId": "p03.cost.kestrel-overlap.approval-condition",
+          "id": "p03.reconciliation.kestrel-overlap.approved-current",
+          "canonicalClaimId": "p03.reconciliation.kestrel-overlap.approved-current",
           "claimType": "table_binding",
-          "expectation": "For Kestrel overlap, Approval condition is Maximum two nights.",
+          "expectation": "For Kestrel overlap, Approved / current is Maximum 2 nights / $4,320.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Kestrel overlap"
+            ],
+            "column": [
+              "Approved / current"
+            ],
+            "value": [
+              "Maximum 2 nights / $4,320",
+              "Maximum 2 nights / $4320"
+            ]
+          }
+        },
+        {
+          "id": "p03.reconciliation.kestrel-overlap.approval-note",
+          "canonicalClaimId": "p03.reconciliation.kestrel-overlap.approval-note",
+          "claimType": "table_binding",
+          "expectation": "For Kestrel overlap, Approval note is Only while EX-07 remains open.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -1468,18 +1188,18 @@
               "Kestrel overlap"
             ],
             "column": [
-              "Approval condition"
+              "Approval note"
             ],
             "value": [
-              "Maximum two nights"
+              "Only while EX-07 remains open"
             ]
           }
         },
         {
-          "id": "p03.cost.sensor-validation.amount",
-          "canonicalClaimId": "p03.cost.sensor-validation.amount",
+          "id": "p03.reconciliation.sensor-validation.approved-current",
+          "canonicalClaimId": "p03.reconciliation.sensor-validation.approved-current",
           "claimType": "table_binding",
-          "expectation": "For Sensor validation, Amount is $2,150.",
+          "expectation": "For Sensor validation, Approved / current is TV-19 / $2,150.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -1487,19 +1207,19 @@
               "Sensor validation"
             ],
             "column": [
-              "Amount"
+              "Approved / current"
             ],
             "value": [
-              "$2,150",
-              "$2150"
+              "TV-19 / $2,150",
+              "TV-19 / $2150"
             ]
           }
         },
         {
-          "id": "p03.cost.contingency.amount",
-          "canonicalClaimId": "p03.cost.contingency.amount",
+          "id": "p03.reconciliation.contingency.submitted-superseded",
+          "canonicalClaimId": "p03.reconciliation.contingency.submitted-superseded",
           "claimType": "table_binding",
-          "expectation": "For Contingency, Amount is $3,000.",
+          "expectation": "For Contingency, Submitted / superseded is $4,500.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -1507,7 +1227,27 @@
               "Contingency"
             ],
             "column": [
-              "Amount"
+              "Submitted / superseded"
+            ],
+            "value": [
+              "$4,500",
+              "$4500"
+            ]
+          }
+        },
+        {
+          "id": "p03.reconciliation.contingency.approved-current",
+          "canonicalClaimId": "p03.reconciliation.contingency.approved-current",
+          "claimType": "table_binding",
+          "expectation": "For Contingency, Approved / current is $3,000.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Contingency"
+            ],
+            "column": [
+              "Approved / current"
             ],
             "value": [
               "$3,000",
@@ -1516,22 +1256,139 @@
           }
         },
         {
-          "id": "p03.cost.contingency.approval-condition",
-          "canonicalClaimId": "p03.cost.contingency.approval-condition",
+          "id": "p03.reconciliation.contingency.approval-note",
+          "canonicalClaimId": "p03.reconciliation.contingency.approval-note",
           "claimType": "table_binding",
-          "expectation": "For Contingency, Approval condition is Available only if EX-07 extends.",
-          "harm": 2,
+          "expectation": "For Contingency, Approval note is Only if EX-07 extends overlap.",
+          "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
             "row": [
               "Contingency"
             ],
             "column": [
-              "Approval condition"
+              "Approval note"
             ],
             "value": [
-              "Available only if EX-07 extends"
+              "Only if EX-07 extends overlap"
             ]
+          }
+        },
+        {
+          "id": "p03.reconciliation.request-ceiling.submitted-superseded",
+          "canonicalClaimId": "p03.reconciliation.request-ceiling.submitted-superseded",
+          "claimType": "table_binding",
+          "expectation": "For Request / ceiling, Submitted / superseded is Submitted total / $32,330.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Request / ceiling"
+            ],
+            "column": [
+              "Submitted / superseded"
+            ],
+            "value": [
+              "Submitted total / $32,330",
+              "Submitted total / $32330"
+            ]
+          }
+        },
+        {
+          "id": "p03.reconciliation.request-ceiling.approved-current",
+          "canonicalClaimId": "p03.reconciliation.request-ceiling.approved-current",
+          "claimType": "table_binding",
+          "expectation": "For Request / ceiling, Approved / current is NTE ceiling / $28,070.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Request / ceiling"
+            ],
+            "column": [
+              "Approved / current"
+            ],
+            "value": [
+              "NTE ceiling / $28,070",
+              "NTE ceiling / $28070"
+            ]
+          }
+        },
+        {
+          "id": "p03.reconciliation.request-ceiling.approval-note",
+          "canonicalClaimId": "p03.reconciliation.request-ceiling.approval-note",
+          "claimType": "table_binding",
+          "expectation": "For Request / ceiling, Approval note is Reapproval above ceiling.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Request / ceiling"
+            ],
+            "column": [
+              "Approval note"
+            ],
+            "value": [
+              "Reapproval above ceiling"
+            ]
+          }
+        },
+        {
+          "id": "p03.reconciliation.boreal-old",
+          "canonicalClaimId": "p03.reconciliation.boreal-old",
+          "claimType": "form_state",
+          "expectation": "Q-884 rev B / $19,200 is crossed out.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Q-884 rev B / $19,200"
+            ],
+            "state": "crossed"
+          }
+        },
+        {
+          "id": "p03.reconciliation.overlap-old",
+          "canonicalClaimId": "p03.reconciliation.overlap-old",
+          "claimType": "form_state",
+          "expectation": "3 nights / $6,480 is crossed out.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "3 nights / $6,480"
+            ],
+            "state": "crossed"
+          }
+        },
+        {
+          "id": "p03.reconciliation.contingency-old",
+          "canonicalClaimId": "p03.reconciliation.contingency-old",
+          "claimType": "form_state",
+          "expectation": "$4,500 contingency is crossed out.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "$4,500 contingency",
+              "$4,500"
+            ],
+            "state": "crossed"
+          }
+        },
+        {
+          "id": "p03.reconciliation.total-old",
+          "canonicalClaimId": "p03.reconciliation.total-old",
+          "claimType": "form_state",
+          "expectation": "Submitted total / $32,330 is crossed out.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Submitted total / $32,330",
+              "$32,330"
+            ],
+            "state": "crossed"
           }
         }
       ],
@@ -1541,190 +1398,37 @@
           "Boreal implementation",
           "Kestrel overlap",
           "Sensor validation",
-          "Contingency"
-        ]
-      }
-    },
-    {
-      "id": "p03.total",
-      "label": "Cost controls",
-      "sourceAnchors": [
-        {
-          "page": 3,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "3. Commercial validation and invoice routing",
-            "Cost controls"
-          ]
-        }
-      ],
-      "goldSection": "3. Commercial validation and invoice routing",
-      "kind": "table",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "precise_recall",
-      "secondaryAxes": [
-        "table_reconstruction"
-      ],
-      "textOnlyRecoverable": true,
-      "budget": 2,
-      "leaves": [
-        {
-          "id": "p03.total.schema",
-          "canonicalClaimId": "p03.total.schema",
-          "claimType": "structure",
-          "expectation": "The region preserves the source field schema in order: Control, Value, Interpretation.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "ordered_tokens",
-            "tokens": [
-              [
-                "Control"
-              ],
-              [
-                "Value"
-              ],
-              [
-                "Interpretation"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.total.row-order",
-          "canonicalClaimId": "p03.total.row-order",
-          "claimType": "ordered_record",
-          "expectation": "The source row order is recoverable as: Base committed cost -> Conditional contingency -> Not-to-exceed ceiling.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "ordered_tokens",
-            "tokens": [
-              [
-                "Base committed cost"
-              ],
-              [
-                "Conditional contingency"
-              ],
-              [
-                "Not-to-exceed ceiling"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.total.base-committed-cost.value",
-          "canonicalClaimId": "p03.total.base-committed-cost.value",
-          "claimType": "table_binding",
-          "expectation": "For Base committed cost, Value is $25,070.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "Base committed cost"
-            ],
-            "column": [
-              "Value"
-            ],
-            "value": [
-              "$25,070",
-              "$25070"
-            ]
-          }
-        },
-        {
-          "id": "p03.total.conditional-contingency.value",
-          "canonicalClaimId": "p03.total.conditional-contingency.value",
-          "claimType": "table_binding",
-          "expectation": "For Conditional contingency, Value is $3,000.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "Conditional contingency"
-            ],
-            "column": [
-              "Value"
-            ],
-            "value": [
-              "$3,000",
-              "$3000"
-            ]
-          }
-        },
-        {
-          "id": "p03.total.conditional-contingency.interpretation",
-          "canonicalClaimId": "p03.total.conditional-contingency.interpretation",
-          "claimType": "table_binding",
-          "expectation": "For Conditional contingency, Interpretation is Usable only while EX-07 extends the overlap.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "Conditional contingency"
-            ],
-            "column": [
-              "Interpretation"
-            ],
-            "value": [
-              "Usable only while EX-07 extends the overlap"
-            ]
-          }
-        },
-        {
-          "id": "p03.total.not-to-exceed-ceiling.value",
-          "canonicalClaimId": "p03.total.not-to-exceed-ceiling.value",
-          "claimType": "table_binding",
-          "expectation": "For Not-to-exceed ceiling, Value is $28,070.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "Not-to-exceed ceiling"
-            ],
-            "column": [
-              "Value"
-            ],
-            "value": [
-              "$28,070",
-              "$28070"
-            ]
-          }
-        }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "Base committed cost",
-          "Conditional contingency",
-          "Not-to-exceed ceiling"
+          "Contingency",
+          "Request / ceiling"
         ]
       }
     },
     {
       "id": "p03.invoice",
-      "label": "Invoice route",
+      "label": "Displaced invoice-route table",
       "sourceAnchors": [
         {
           "page": 3,
-          "layer": "native_text",
+          "documentPage": 3,
+          "layer": "native_layer_recovery",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
-            "3. Commercial validation and invoice routing",
-            "Invoice route"
+            "3. Submitted-to-approved commercial reconciliation",
+            "Displaced invoice-route table"
           ]
         }
       ],
-      "goldSection": "3. Commercial validation and invoice routing",
+      "goldSection": "3. Submitted-to-approved commercial reconciliation",
       "kind": "table",
-      "modality": "native_text",
+      "modality": "native_layer_recovery",
       "uniqueEvidence": true,
       "primaryAxis": "table_reconstruction",
       "secondaryAxes": [
+        "native_layer_recovery",
         "precise_recall"
       ],
-      "textOnlyRecoverable": true,
-      "budget": 1,
+      "textOnlyRecoverable": false,
+      "budget": 2,
       "leaves": [
         {
           "id": "p03.invoice.schema",
@@ -1832,6 +1536,25 @@
           }
         },
         {
+          "id": "p03.invoice.kestrel-logistics.route",
+          "canonicalClaimId": "p03.invoice.kestrel-logistics.route",
+          "claimType": "table_binding",
+          "expectation": "For Kestrel Logistics, Route is AP-West / overlap.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "Kestrel Logistics"
+            ],
+            "column": [
+              "Route"
+            ],
+            "value": [
+              "AP-West / overlap"
+            ]
+          }
+        },
+        {
           "id": "p03.invoice.thermovision.po",
           "canonicalClaimId": "p03.invoice.thermovision.po",
           "claimType": "table_binding",
@@ -1847,6 +1570,25 @@
             ],
             "value": [
               "43991-2"
+            ]
+          }
+        },
+        {
+          "id": "p03.invoice.thermovision.cost-center",
+          "canonicalClaimId": "p03.invoice.thermovision.cost-center",
+          "claimType": "table_binding",
+          "expectation": "For ThermoVision, Cost center is CC-7314.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "ThermoVision"
+            ],
+            "column": [
+              "Cost center"
+            ],
+            "value": [
+              "CC-7314"
             ]
           }
         },
@@ -1880,119 +1622,21 @@
       }
     },
     {
-      "id": "p03.scope",
-      "label": "Finance scope",
-      "sourceAnchors": [
-        {
-          "page": 3,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "3. Commercial validation and invoice routing",
-            "Finance scope"
-          ]
-        }
-      ],
-      "goldSection": "3. Commercial validation and invoice routing",
-      "kind": "text",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "source_precedence",
-      "secondaryAxes": [
-        "precise_recall"
-      ],
-      "textOnlyRecoverable": true,
-      "budget": 2,
-      "leaves": [
-        {
-          "id": "p03.scope.validation",
-          "canonicalClaimId": "p03.scope.validation",
-          "claimType": "scalar",
-          "expectation": "Finance validates the cost ceiling and invoice route.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "validates"
-              ],
-              [
-                "finance"
-              ],
-              [
-                "ceiling"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.scope.no-release",
-          "canonicalClaimId": "p03.scope.no-release",
-          "claimType": "scalar",
-          "expectation": "Finance does not close exceptions, satisfy task gates, or authorize physical release.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "authorize"
-              ],
-              [
-                "physical"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.scope.contingency",
-          "canonicalClaimId": "p03.scope.contingency",
-          "claimType": "scalar",
-          "expectation": "Unused contingency is not committed spend.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "contingency"
-              ],
-              [
-                "committed"
-              ],
-              [
-                "unused"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
       "id": "p03.stamp",
-      "label": "Raster finance validation stamp",
+      "label": "Displaced raster finance stamp",
       "sourceAnchors": [
         {
           "page": 3,
+          "documentPage": 3,
           "layer": "raster",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
-            "3. Commercial validation and invoice routing",
-            "Raster finance validation stamp"
+            "3. Submitted-to-approved commercial reconciliation",
+            "Displaced raster finance stamp"
           ]
         }
       ],
-      "goldSection": "3. Commercial validation and invoice routing",
+      "goldSection": "3. Submitted-to-approved commercial reconciliation",
       "kind": "image",
       "modality": "raster",
       "uniqueEvidence": true,
@@ -2005,10 +1649,10 @@
       "budget": 2,
       "leaves": [
         {
-          "id": "p03.stamp.signer-time",
-          "canonicalClaimId": "p03.stamp.signer-time",
+          "id": "p03.stamp.signer",
+          "canonicalClaimId": "p03.stamp.signer",
           "claimType": "visual_description",
-          "expectation": "The finance-validation stamp records Jonah Mercer on 09 Jul 2026 at 16:42 MST.",
+          "expectation": "The validation stamp records Jonah Mercer on 09 Jul 2026 at 16:42 MST.",
           "harm": 1,
           "evidencePolicy": {
             "type": "qualitative",
@@ -2029,31 +1673,34 @@
           "id": "p03.stamp.control",
           "canonicalClaimId": "p03.stamp.control",
           "claimType": "visual_description",
-          "expectation": "The finance-validation stamp names control VC-2048.",
+          "expectation": "The validation stamp identifies approved reconciliation control RC-2048-E.",
           "harm": 1,
           "evidencePolicy": {
             "type": "qualitative",
             "requiredTerms": [
               [
-                "VC-2048"
+                "approved reconciliation"
+              ],
+              [
+                "RC-2048-E"
               ]
             ]
           }
         },
         {
-          "id": "p03.stamp.scope",
-          "canonicalClaimId": "p03.stamp.scope",
+          "id": "p03.stamp.boundary",
+          "canonicalClaimId": "p03.stamp.boundary",
           "claimType": "visual_description",
-          "expectation": "The finance-validation stamp says cost validation is not operational release.",
+          "expectation": "The validation stamp says cost validation is not operational release.",
           "harm": 2,
           "evidencePolicy": {
             "type": "qualitative",
             "requiredTerms": [
               [
-                "COST VALIDATION"
+                "cost validation"
               ],
               [
-                "NOT OPERATIONAL RELEASE"
+                "not operational release"
               ]
             ]
           }
@@ -2061,29 +1708,459 @@
       ]
     },
     {
-      "id": "p04.exceptions",
-      "label": "Landscape exception register",
+      "id": "p04.graph-operational",
+      "label": "Directed operational paths under broken object stacking",
       "sourceAnchors": [
         {
           "page": 4,
-          "layer": "native_text",
+          "documentPage": 4,
+          "layer": "native_layer_recovery",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
-            "4. Exception and closure-evidence register",
-            "Landscape exception register"
+            "4. Dependency graph and exception register",
+            "Orphaned logical-page title"
+          ]
+        },
+        {
+          "page": 5,
+          "documentPage": 4,
+          "layer": "raster",
+          "sectionPath": [
+            "Northstar Cold Chain Supplier Cutover Authorization",
+            "4. Dependency graph and exception register",
+            "Displaced directed graph objects"
+          ]
+        },
+        {
+          "page": 5,
+          "documentPage": 4,
+          "layer": "native_layer_recovery",
+          "sectionPath": [
+            "Northstar Cold Chain Supplier Cutover Authorization",
+            "4. Dependency graph and exception register",
+            "Detached native connector-label fragments A"
+          ]
+        },
+        {
+          "page": 6,
+          "documentPage": 4,
+          "layer": "native_layer_recovery",
+          "sectionPath": [
+            "Northstar Cold Chain Supplier Cutover Authorization",
+            "4. Dependency graph and exception register",
+            "Detached native connector-label fragments B"
           ]
         }
       ],
-      "goldSection": "4. Exception and closure-evidence register",
-      "kind": "table",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "source_precedence",
+      "goldSection": "4. Dependency graph and exception register",
+      "kind": "diagram",
+      "modality": "mixed",
+      "uniqueEvidence": false,
+      "primaryAxis": "mixed_modality_fusion",
       "secondaryAxes": [
-        "table_reconstruction",
+        "image_description",
+        "structure_reconstruction",
         "precise_recall"
       ],
-      "textOnlyRecoverable": true,
+      "textOnlyRecoverable": false,
+      "budget": 4,
+      "leaves": [
+        {
+          "id": "p04.graph.edge-01",
+          "canonicalClaimId": "p04.graph.edge-01",
+          "claimType": "directed_edge",
+          "expectation": "A directed bay ready edge runs from T-01 to T-02.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "T-01"
+            ],
+            "destination": [
+              "T-02"
+            ],
+            "relation": [
+              "bay ready"
+            ],
+            "identifier": [
+              "E01"
+            ]
+          }
+        },
+        {
+          "id": "p04.graph.edge-02",
+          "canonicalClaimId": "p04.graph.edge-02",
+          "claimType": "directed_edge",
+          "expectation": "A directed delta proof edge runs from T-02 to C-1.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "T-02"
+            ],
+            "destination": [
+              "C-1"
+            ],
+            "relation": [
+              "delta proof"
+            ],
+            "identifier": [
+              "E02"
+            ]
+          }
+        },
+        {
+          "id": "p04.graph.edge-03",
+          "canonicalClaimId": "p04.graph.edge-03",
+          "claimType": "directed_edge",
+          "expectation": "A directed releases edge runs from C-1 to T-04.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "C-1"
+            ],
+            "destination": [
+              "T-04"
+            ],
+            "relation": [
+              "releases"
+            ],
+            "identifier": [
+              "E03"
+            ]
+          }
+        },
+        {
+          "id": "p04.graph.edge-04",
+          "canonicalClaimId": "p04.graph.edge-04",
+          "claimType": "directed_edge",
+          "expectation": "A directed gates edge runs from T-02 to T-04.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "T-02"
+            ],
+            "destination": [
+              "T-04"
+            ],
+            "relation": [
+              "gates"
+            ],
+            "identifier": [
+              "E04"
+            ]
+          }
+        },
+        {
+          "id": "p04.graph.edge-05",
+          "canonicalClaimId": "p04.graph.edge-05",
+          "claimType": "directed_edge",
+          "expectation": "A directed custody edge runs from T-03 to T-05.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "T-03"
+            ],
+            "destination": [
+              "T-05"
+            ],
+            "relation": [
+              "custody"
+            ],
+            "identifier": [
+              "E05"
+            ]
+          }
+        },
+        {
+          "id": "p04.graph.edge-06",
+          "canonicalClaimId": "p04.graph.edge-06",
+          "claimType": "directed_edge",
+          "expectation": "A directed exclude 6 edge runs from E-08 to T-05.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "E-08"
+            ],
+            "destination": [
+              "T-05"
+            ],
+            "relation": [
+              "exclude 6"
+            ],
+            "identifier": [
+              "E06"
+            ]
+          }
+        },
+        {
+          "id": "p04.graph.edge-07",
+          "canonicalClaimId": "p04.graph.edge-07",
+          "claimType": "directed_edge",
+          "expectation": "A directed eligible only edge runs from C-2 to T-05.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "C-2"
+            ],
+            "destination": [
+              "T-05"
+            ],
+            "relation": [
+              "eligible only"
+            ],
+            "identifier": [
+              "E07"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p04.graph-control",
+      "label": "Directed closeout and rollback paths under broken object stacking",
+      "sourceAnchors": [
+        {
+          "page": 4,
+          "documentPage": 4,
+          "layer": "native_layer_recovery",
+          "sectionPath": [
+            "Northstar Cold Chain Supplier Cutover Authorization",
+            "4. Dependency graph and exception register",
+            "Orphaned logical-page title"
+          ]
+        },
+        {
+          "page": 5,
+          "documentPage": 4,
+          "layer": "raster",
+          "sectionPath": [
+            "Northstar Cold Chain Supplier Cutover Authorization",
+            "4. Dependency graph and exception register",
+            "Displaced directed graph objects"
+          ]
+        },
+        {
+          "page": 5,
+          "documentPage": 4,
+          "layer": "native_layer_recovery",
+          "sectionPath": [
+            "Northstar Cold Chain Supplier Cutover Authorization",
+            "4. Dependency graph and exception register",
+            "Detached native connector-label fragments A"
+          ]
+        },
+        {
+          "page": 6,
+          "documentPage": 4,
+          "layer": "native_layer_recovery",
+          "sectionPath": [
+            "Northstar Cold Chain Supplier Cutover Authorization",
+            "4. Dependency graph and exception register",
+            "Detached native connector-label fragments B"
+          ]
+        }
+      ],
+      "goldSection": "4. Dependency graph and exception register",
+      "kind": "diagram",
+      "modality": "mixed",
+      "uniqueEvidence": false,
+      "primaryAxis": "mixed_modality_fusion",
+      "secondaryAxes": [
+        "image_description",
+        "structure_reconstruction",
+        "precise_recall"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 4,
+      "leaves": [
+        {
+          "id": "p04.graph.edge-08",
+          "canonicalClaimId": "p04.graph.edge-08",
+          "claimType": "directed_edge",
+          "expectation": "A directed reconcile PX edge runs from T-04 to T-06.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "T-04"
+            ],
+            "destination": [
+              "T-06"
+            ],
+            "relation": [
+              "reconcile PX"
+            ],
+            "identifier": [
+              "E08"
+            ]
+          }
+        },
+        {
+          "id": "p04.graph.edge-09",
+          "canonicalClaimId": "p04.graph.edge-09",
+          "claimType": "directed_edge",
+          "expectation": "A directed reconcile TZ edge runs from T-05 to T-06.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "T-05"
+            ],
+            "destination": [
+              "T-06"
+            ],
+            "relation": [
+              "reconcile TZ"
+            ],
+            "identifier": [
+              "E09"
+            ]
+          }
+        },
+        {
+          "id": "p04.graph.edge-10",
+          "canonicalClaimId": "p04.graph.edge-10",
+          "claimType": "directed_edge",
+          "expectation": "A directed waiver edge runs from EX-07 to T-06.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "EX-07"
+            ],
+            "destination": [
+              "T-06"
+            ],
+            "relation": [
+              "waiver"
+            ],
+            "identifier": [
+              "E10"
+            ]
+          }
+        },
+        {
+          "id": "p04.graph.edge-11",
+          "canonicalClaimId": "p04.graph.edge-11",
+          "claimType": "directed_edge",
+          "expectation": "A directed close access edge runs from C-3 to T-06.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "C-3"
+            ],
+            "destination": [
+              "T-06"
+            ],
+            "relation": [
+              "close access"
+            ],
+            "identifier": [
+              "E11"
+            ]
+          }
+        },
+        {
+          "id": "p04.graph.edge-12",
+          "canonicalClaimId": "p04.graph.edge-12",
+          "claimType": "directed_edge",
+          "expectation": "A directed breach edge runs from C-4 to RB-12.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "C-4"
+            ],
+            "destination": [
+              "RB-12"
+            ],
+            "relation": [
+              "breach"
+            ],
+            "identifier": [
+              "E12"
+            ]
+          }
+        },
+        {
+          "id": "p04.graph.edge-13",
+          "canonicalClaimId": "p04.graph.edge-13",
+          "claimType": "directed_edge",
+          "expectation": "A directed halts edge runs from RB-12 to T-04.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "RB-12"
+            ],
+            "destination": [
+              "T-04"
+            ],
+            "relation": [
+              "halts"
+            ],
+            "identifier": [
+              "E13"
+            ]
+          }
+        },
+        {
+          "id": "p04.graph.edge-14",
+          "canonicalClaimId": "p04.graph.edge-14",
+          "claimType": "directed_edge",
+          "expectation": "A directed halts edge runs from RB-12 to T-05.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "RB-12"
+            ],
+            "destination": [
+              "T-05"
+            ],
+            "relation": [
+              "halts"
+            ],
+            "identifier": [
+              "E14"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p04.exceptions",
+      "label": "Clipped exception register under detached headings",
+      "sourceAnchors": [
+        {
+          "page": 6,
+          "documentPage": 4,
+          "layer": "native_layer_recovery",
+          "sectionPath": [
+            "Northstar Cold Chain Supplier Cutover Authorization",
+            "4. Dependency graph and exception register",
+            "Clipped exception register under detached headings"
+          ]
+        }
+      ],
+      "goldSection": "4. Dependency graph and exception register",
+      "kind": "table",
+      "modality": "native_layer_recovery",
+      "uniqueEvidence": true,
+      "primaryAxis": "native_layer_recovery",
+      "secondaryAxes": [
+        "table_reconstruction",
+        "source_precedence",
+        "precise_recall"
+      ],
+      "textOnlyRecoverable": false,
       "budget": 4,
       "leaves": [
         {
@@ -2123,7 +2200,7 @@
           "id": "p04.exceptions.row-order",
           "canonicalClaimId": "p04.exceptions.row-order",
           "claimType": "ordered_record",
-          "expectation": "The source row order is recoverable as: E-05 -> EX-07 -> E-08 -> E-09 -> E-11 -> E-12.",
+          "expectation": "The source row order is recoverable as: E-05 -> EX-07 -> E-08 -> E-09 -> E-11 -> E-14.",
           "harm": 1,
           "evidencePolicy": {
             "type": "ordered_tokens",
@@ -2144,8 +2221,27 @@
                 "E-11"
               ],
               [
-                "E-12"
+                "E-14"
               ]
+            ]
+          }
+        },
+        {
+          "id": "p04.exceptions.e-05.accepted-closure-evidence",
+          "canonicalClaimId": "p04.exceptions.e-05.accepted-closure-evidence",
+          "claimType": "table_binding",
+          "expectation": "For E-05, Accepted closure evidence is Signed TV-19 trace with 30-minute comparison.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-05"
+            ],
+            "column": [
+              "Accepted closure evidence"
+            ],
+            "value": [
+              "Signed TV-19 trace with 30-minute comparison"
             ]
           }
         },
@@ -2305,7 +2401,7 @@
           "id": "p04.exceptions.e-11.current-finding",
           "canonicalClaimId": "p04.exceptions.e-11.current-finding",
           "claimType": "table_binding",
-          "expectation": "For E-11, Current finding is Carrier arrival is forecast at 01:10, ten minutes after the planned count window..",
+          "expectation": "For E-11, Current finding is Carrier arrival is forecast at 22:55, ten minutes after the planned count window..",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -2316,7 +2412,7 @@
               "Current finding"
             ],
             "value": [
-              "Carrier arrival is forecast at 01:10, ten minutes after the planned count window."
+              "Carrier arrival is forecast at 22:55, ten minutes after the planned count window."
             ]
           }
         },
@@ -2340,21 +2436,40 @@
           }
         },
         {
-          "id": "p04.exceptions.e-12.state",
-          "canonicalClaimId": "p04.exceptions.e-12.state",
+          "id": "p04.exceptions.e-14.current-finding",
+          "canonicalClaimId": "p04.exceptions.e-14.current-finding",
           "claimType": "table_binding",
-          "expectation": "For E-12, State is CLOSED.",
+          "expectation": "For E-14, Current finding is Scanner SC-77B is the approved fallback if SC-77 loses sync..",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
             "row": [
-              "E-12"
+              "E-14"
+            ],
+            "column": [
+              "Current finding"
+            ],
+            "value": [
+              "Scanner SC-77B is the approved fallback if SC-77 loses sync."
+            ]
+          }
+        },
+        {
+          "id": "p04.exceptions.e-14.state",
+          "canonicalClaimId": "p04.exceptions.e-14.state",
+          "claimType": "table_binding",
+          "expectation": "For E-14, State is MONITOR.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E-14"
             ],
             "column": [
               "State"
             ],
             "value": [
-              "CLOSED"
+              "MONITOR"
             ]
           }
         }
@@ -2367,332 +2482,395 @@
           "E-08",
           "E-09",
           "E-11",
-          "E-12"
+          "E-14"
         ]
       }
     },
     {
-      "id": "p04.notes",
-      "label": "Register state semantics",
+      "id": "p05.decision",
+      "label": "Executed selective decision states",
       "sourceAnchors": [
         {
-          "page": 4,
-          "layer": "native_text",
+          "page": 7,
+          "documentPage": 5,
+          "layer": "raster",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
-            "4. Exception and closure-evidence register",
-            "Register state semantics"
+            "5. Executed selective authorization",
+            "Executed selective decision states"
           ]
         }
       ],
-      "goldSection": "4. Exception and closure-evidence register",
-      "kind": "table",
-      "modality": "native_text",
+      "goldSection": "5. Executed selective authorization",
+      "kind": "form",
+      "modality": "raster",
       "uniqueEvidence": true,
       "primaryAxis": "source_precedence",
       "secondaryAxes": [
-        "table_reconstruction"
+        "form_state",
+        "image_description"
       ],
-      "textOnlyRecoverable": true,
-      "budget": 1,
+      "textOnlyRecoverable": false,
+      "budget": 3,
       "leaves": [
         {
-          "id": "p04.notes.closed",
-          "canonicalClaimId": "p04.notes.closed",
-          "claimType": "scalar",
-          "expectation": "CLOSED means listed evidence was accepted for that row and has no effect on unrelated exceptions.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "CLOSED"
-              ],
-              [
-                "accepted"
-              ],
-              [
-                "No effect"
-              ],
-              [
-                "unrelated exceptions"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p04.notes.exclude",
-          "canonicalClaimId": "p04.notes.exclude",
-          "claimType": "scalar",
-          "expectation": "OPEN - EXCLUDE keeps affected inventory out while eligible inventory may proceed.",
+          "id": "p05.decision.cutover-go",
+          "canonicalClaimId": "p05.decision.cutover-go",
+          "claimType": "form_state",
+          "expectation": "Physical cutover - GO is checked.",
           "harm": 2,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "OPEN - EXCLUDE"
-              ],
-              [
-                "Affected inventory"
-              ],
-              [
-                "Eligible inventory may proceed"
-              ]
-            ]
+            "type": "form_state",
+            "label": [
+              "Physical cutover - GO",
+              "Physical cutover GO"
+            ],
+            "state": "checked"
           }
         },
         {
-          "id": "p04.notes.watch",
-          "canonicalClaimId": "p04.notes.watch",
-          "claimType": "scalar",
-          "expectation": "WATCH requires monitoring the evidence channel and continues unless a final condition fails.",
+          "id": "p05.decision.cutover-hold",
+          "canonicalClaimId": "p05.decision.cutover-hold",
+          "claimType": "form_state",
+          "expectation": "Physical cutover - HOLD is unchecked.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "WATCH"
-              ],
-              [
-                "evidence channel"
-              ],
-              [
-                "Continue"
-              ],
-              [
-                "final condition fails"
-              ]
-            ]
-          }
-        }
-      ],
-      "closedWorld": {
-        "scope": "record_set",
-        "keys": [
-          "CLOSED",
-          "OPEN - EXCLUDE",
-          "WATCH"
-        ]
-      }
-    },
-    {
-      "id": "p04.scope",
-      "label": "Exception scope and authority note",
-      "sourceAnchors": [
-        {
-          "page": 4,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "4. Exception and closure-evidence register",
-            "Exception scope and authority note"
-          ]
-        }
-      ],
-      "goldSection": "4. Exception and closure-evidence register",
-      "kind": "text",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "source_precedence",
-      "secondaryAxes": [
-        "cross_page_join"
-      ],
-      "textOnlyRecoverable": true,
-      "budget": 2,
-      "leaves": [
-        {
-          "id": "p04.scope.closed",
-          "canonicalClaimId": "p04.scope.closed",
-          "claimType": "scalar",
-          "expectation": "A closed row has no effect on unrelated exceptions.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "closed",
-                "resolved",
-                "completed"
-              ],
-              [
-                "no",
-                "not",
-                "none",
-                "without",
-                "absent"
-              ],
-              [
-                "exceptions"
-              ],
-              [
-                "unrelated"
-              ],
-              [
-                "effect"
-              ]
-            ]
+            "type": "form_state",
+            "label": [
+              "Physical cutover - HOLD",
+              "Physical cutover HOLD"
+            ],
+            "state": "unchecked"
           }
         },
         {
-          "id": "p04.scope.email",
-          "canonicalClaimId": "p04.scope.email",
-          "claimType": "scalar",
-          "expectation": "Email acknowledgment is context unless the relevant row cites it as accepted evidence.",
+          "id": "p05.decision.credentials-release",
+          "canonicalClaimId": "p05.decision.credentials-release",
+          "claimType": "form_state",
+          "expectation": "Kestrel credential decommission - RELEASE is unchecked.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "accepted",
-                "accept"
-              ],
-              [
-                "acknowledgment"
-              ],
-              [
-                "relevant"
-              ],
-              [
-                "evidence"
-              ]
-            ]
+            "type": "form_state",
+            "label": [
+              "Kestrel credential decommission - RELEASE",
+              "credential decommission RELEASE"
+            ],
+            "state": "unchecked"
           }
         },
         {
-          "id": "p04.scope.sources",
-          "canonicalClaimId": "p04.scope.sources",
-          "claimType": "scalar",
-          "expectation": "Page 5 controls GO/HOLD state while page 3 finance validation controls cost only.",
+          "id": "p05.decision.credentials-hold",
+          "canonicalClaimId": "p05.decision.credentials-hold",
+          "claimType": "form_state",
+          "expectation": "Kestrel credential decommission - HOLD until C-3 is checked.",
           "harm": 2,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "page 5",
-                "5"
-              ],
-              [
-                "GO/HOLD",
-                "GO / HOLD"
-              ],
-              [
-                "page 3",
-                "3"
-              ],
-              [
-                "finance"
-              ],
-              [
-                "validation"
-              ],
-              [
-                "cost"
-              ],
-              [
-                "only",
-                "solely"
-              ]
-            ]
+            "type": "form_state",
+            "label": [
+              "Kestrel credential decommission - HOLD until C-3"
+            ],
+            "state": "checked"
           }
         }
       ]
     },
     {
-      "id": "p05.decision",
-      "label": "Final selective authorization",
+      "id": "p05.inventory",
+      "label": "Executed inventory selection",
       "sourceAnchors": [
         {
-          "page": 5,
-          "layer": "native_text",
+          "page": 7,
+          "documentPage": 5,
+          "layer": "raster",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
-            "5. Final implementation authorization",
-            "Final selective authorization"
+            "5. Executed selective authorization",
+            "Executed inventory selection"
           ]
         }
       ],
-      "goldSection": "5. Final implementation authorization",
-      "kind": "text",
-      "modality": "native_text",
+      "goldSection": "5. Executed selective authorization",
+      "kind": "form",
+      "modality": "raster",
       "uniqueEvidence": true,
-      "primaryAxis": "source_precedence",
+      "primaryAxis": "image_description",
       "secondaryAxes": [
-        "precise_recall",
-        "summarization_coverage"
+        "form_state",
+        "source_precedence"
       ],
-      "textOnlyRecoverable": true,
-      "budget": 4,
+      "textOnlyRecoverable": false,
+      "budget": 2,
       "leaves": [
         {
-          "id": "p05.decision.go",
-          "canonicalClaimId": "p05.decision.go",
-          "claimType": "scalar",
-          "expectation": "Physical cutover is GO beginning 14 Jul 2026 at 22:00 MST for eligible inventory only.",
+          "id": "p05.inventory.phx",
+          "canonicalClaimId": "p05.inventory.phx",
+          "claimType": "form_state",
+          "expectation": "Phoenix PX-771 - 48 eligible pallets is checked.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Phoenix PX-771 - 48 eligible pallets"
+            ],
+            "state": "checked"
+          }
+        },
+        {
+          "id": "p05.inventory.tus",
+          "canonicalClaimId": "p05.inventory.tus",
+          "claimType": "form_state",
+          "expectation": "Tucson TZ-219 - 26 eligible pallets is checked.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Tucson TZ-219 - 26 eligible pallets"
+            ],
+            "state": "checked"
+          }
+        },
+        {
+          "id": "p05.inventory.qa61",
+          "canonicalClaimId": "p05.inventory.qa61",
+          "claimType": "form_state",
+          "expectation": "QA-61 quarantine - six cases is unchecked and excluded.",
           "harm": 2,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
+            "type": "form_state",
+            "label": [
+              "QA-61 quarantine - six cases"
+            ],
+            "state": "unchecked"
+          }
+        }
+      ]
+    },
+    {
+      "id": "p05.gates",
+      "label": "Executed required-gate states",
+      "sourceAnchors": [
+        {
+          "page": 7,
+          "documentPage": 5,
+          "layer": "raster",
+          "sectionPath": [
+            "Northstar Cold Chain Supplier Cutover Authorization",
+            "5. Executed selective authorization",
+            "Executed required-gate states"
+          ]
+        }
+      ],
+      "goldSection": "5. Executed selective authorization",
+      "kind": "form",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "image_description",
+      "secondaryAxes": [
+        "form_state",
+        "precise_recall"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 3,
+      "leaves": [
+        {
+          "id": "p05.gates.c1",
+          "canonicalClaimId": "p05.gates.c1",
+          "claimType": "form_state",
+          "expectation": "C-1 TV-19 delta <=0.3 C for 30 continuous min before T-04 is checked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "C-1 TV-19 delta <=0.3 C for 30 continuous min before T-04"
+            ],
+            "state": "checked"
+          }
+        },
+        {
+          "id": "p05.gates.c2",
+          "canonicalClaimId": "p05.gates.c2",
+          "claimType": "form_state",
+          "expectation": "C-2 QA-61 cases remain segregated before T-05 is checked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "C-2 QA-61 cases remain segregated before T-05"
+            ],
+            "state": "checked"
+          }
+        },
+        {
+          "id": "p05.gates.c3",
+          "canonicalClaimId": "p05.gates.c3",
+          "claimType": "form_state",
+          "expectation": "C-3 EX-07 signed plus REC-2048 zero unresolved before T-06 is checked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "C-3 EX-07 signed + REC-2048 zero unresolved before T-06"
+            ],
+            "state": "checked"
+          }
+        },
+        {
+          "id": "p05.gates.c4",
+          "canonicalClaimId": "p05.gates.c4",
+          "claimType": "form_state",
+          "expectation": "C-4 invoke RB-12 at the selected continuous deviation is checked.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "C-4 Invoke RB-12 at selected continuous deviation"
+            ],
+            "state": "checked"
+          }
+        }
+      ]
+    },
+    {
+      "id": "p05.threshold",
+      "label": "Selected rollback threshold",
+      "sourceAnchors": [
+        {
+          "page": 7,
+          "documentPage": 5,
+          "layer": "raster",
+          "sectionPath": [
+            "Northstar Cold Chain Supplier Cutover Authorization",
+            "5. Executed selective authorization",
+            "Selected rollback threshold"
+          ]
+        }
+      ],
+      "goldSection": "5. Executed selective authorization",
+      "kind": "form",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "image_description",
+      "secondaryAxes": [
+        "form_state",
+        "precise_recall"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "p05.threshold.low",
+          "canonicalClaimId": "p05.threshold.low",
+          "claimType": "form_state",
+          "expectation": ">0.5 C / 5 min is unchecked.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              ">0.5 C / 5 min"
+            ],
+            "state": "unchecked"
+          }
+        },
+        {
+          "id": "p05.threshold.current",
+          "canonicalClaimId": "p05.threshold.current",
+          "claimType": "form_state",
+          "expectation": ">1.0 C / 10 continuous min is checked.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              ">1.0 C / 10 continuous min"
+            ],
+            "state": "checked"
+          }
+        },
+        {
+          "id": "p05.threshold.high",
+          "canonicalClaimId": "p05.threshold.high",
+          "claimType": "form_state",
+          "expectation": ">1.5 C / 15 min is unchecked.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              ">1.5 C / 15 min"
+            ],
+            "state": "unchecked"
+          }
+        }
+      ]
+    },
+    {
+      "id": "p05.correction",
+      "label": "Handwritten start-time correction",
+      "sourceAnchors": [
+        {
+          "page": 7,
+          "documentPage": 5,
+          "layer": "raster",
+          "sectionPath": [
+            "Northstar Cold Chain Supplier Cutover Authorization",
+            "5. Executed selective authorization",
+            "Handwritten start-time correction"
+          ]
+        }
+      ],
+      "goldSection": "5. Executed selective authorization",
+      "kind": "form",
+      "modality": "raster",
+      "uniqueEvidence": true,
+      "primaryAxis": "image_description",
+      "secondaryAxes": [
+        "form_state",
+        "precise_recall"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 1,
+      "leaves": [
+        {
+          "id": "p05.correction.old",
+          "canonicalClaimId": "p05.correction.old",
+          "claimType": "form_state",
+          "expectation": "Cutover start 14 Jul 2026 21:30 MST is crossed out.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "form_state",
+            "label": [
+              "Cutover start 14 Jul 2026 21:30 MST",
+              "14 Jul 2026 21:30 MST"
+            ],
+            "state": "crossed"
+          }
+        },
+        {
+          "id": "p05.correction.current",
+          "canonicalClaimId": "p05.correction.current",
+          "claimType": "visual_description",
+          "expectation": "Avery Kim corrected the cutover start to 14 Jul 2026 at 22:00 MST and initialed AK on 10 Jul at 09:18.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "qualitative",
+            "requiredTerms": [
+              [
+                "corrected"
+              ],
               [
                 "14 Jul 2026",
-                "2026-07-14",
-                "14 July 2026",
-                "Jul 14 2026",
-                "July 14 2026",
-                "14 Jul",
-                "14 July",
-                "Jul 14",
-                "July 14"
+                "14 JUL 2026"
               ],
               [
                 "22:00 MST"
               ],
               [
-                "GO"
+                "AK"
               ],
               [
-                "only",
-                "solely",
-                "exclusively"
+                "10 Jul",
+                "10 JUL"
               ],
               [
-                "inventory"
-              ],
-              [
-                "physical"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p05.decision.hold",
-          "canonicalClaimId": "p05.decision.hold",
-          "claimType": "scalar",
-          "expectation": "Kestrel credential decommission remains HOLD until condition C-3 is satisfied.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "HOLD"
-              ],
-              [
-                "C-3",
-                "C3"
-              ],
-              [
-                "decommission",
-                "decommissioning",
-                "close",
-                "closure"
-              ],
-              [
-                "credential",
-                "access"
-              ],
-              [
-                "until",
-                "when",
-                "after"
+                "09:18"
               ]
             ]
           }
@@ -2700,771 +2878,133 @@
       ]
     },
     {
-      "id": "p05.conditions",
-      "label": "Release conditions",
+      "id": "p05.signatures",
+      "label": "Executed signatures and effective time",
       "sourceAnchors": [
         {
-          "page": 5,
-          "layer": "native_text",
+          "page": 7,
+          "documentPage": 5,
+          "layer": "raster",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
-            "5. Final implementation authorization",
-            "Release conditions"
+            "5. Executed selective authorization",
+            "Executed signatures and effective time"
           ]
         }
       ],
-      "goldSection": "5. Final implementation authorization",
-      "kind": "table",
-      "modality": "native_text",
+      "goldSection": "5. Executed selective authorization",
+      "kind": "form",
+      "modality": "raster",
       "uniqueEvidence": true,
-      "primaryAxis": "table_reconstruction",
+      "primaryAxis": "image_description",
       "secondaryAxes": [
-        "source_precedence",
-        "precise_recall"
-      ],
-      "textOnlyRecoverable": true,
-      "budget": 4,
-      "leaves": [
-        {
-          "id": "p05.conditions.schema",
-          "canonicalClaimId": "p05.conditions.schema",
-          "claimType": "structure",
-          "expectation": "The region preserves the source field schema in order: Condition, Required state before action, Action governed, Failure response.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "ordered_tokens",
-            "tokens": [
-              [
-                "Condition"
-              ],
-              [
-                "Required state before action"
-              ],
-              [
-                "Action governed"
-              ],
-              [
-                "Failure response"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p05.conditions.row-order",
-          "canonicalClaimId": "p05.conditions.row-order",
-          "claimType": "ordered_record",
-          "expectation": "The source row order is recoverable as: C-1 -> C-2 -> C-3 -> C-4.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "ordered_tokens",
-            "tokens": [
-              [
-                "C-1"
-              ],
-              [
-                "C-2"
-              ],
-              [
-                "C-3"
-              ],
-              [
-                "C-4"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p05.conditions.c-1.required-state-before-action",
-          "canonicalClaimId": "p05.conditions.c-1.required-state-before-action",
-          "claimType": "table_binding",
-          "expectation": "For C-1, Required state before action is P-14 parallel-read delta <=0.3 C for 30 minutes.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "C-1"
-            ],
-            "column": [
-              "Required state before action"
-            ],
-            "value": [
-              "P-14 parallel-read delta <=0.3 C for 30 minutes"
-            ]
-          }
-        },
-        {
-          "id": "p05.conditions.c-1.action-governed",
-          "canonicalClaimId": "p05.conditions.c-1.action-governed",
-          "claimType": "table_binding",
-          "expectation": "For C-1, Action governed is Start T-04.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "C-1"
-            ],
-            "column": [
-              "Action governed"
-            ],
-            "value": [
-              "Start T-04"
-            ]
-          }
-        },
-        {
-          "id": "p05.conditions.c-1.failure-response",
-          "canonicalClaimId": "p05.conditions.c-1.failure-response",
-          "claimType": "table_binding",
-          "expectation": "For C-1, Failure response is Hold PX-771 at Phoenix.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "C-1"
-            ],
-            "column": [
-              "Failure response"
-            ],
-            "value": [
-              "Hold PX-771 at Phoenix"
-            ]
-          }
-        },
-        {
-          "id": "p05.conditions.c-2.required-state-before-action",
-          "canonicalClaimId": "p05.conditions.c-2.required-state-before-action",
-          "claimType": "table_binding",
-          "expectation": "For C-2, Required state before action is Six QA-61 cases remain segregated unless QR-203 releases them.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "C-2"
-            ],
-            "column": [
-              "Required state before action"
-            ],
-            "value": [
-              "Six QA-61 cases remain segregated unless QR-203 releases them"
-            ]
-          }
-        },
-        {
-          "id": "p05.conditions.c-2.action-governed",
-          "canonicalClaimId": "p05.conditions.c-2.action-governed",
-          "claimType": "table_binding",
-          "expectation": "For C-2, Action governed is Start T-05.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "C-2"
-            ],
-            "column": [
-              "Action governed"
-            ],
-            "value": [
-              "Start T-05"
-            ]
-          }
-        },
-        {
-          "id": "p05.conditions.c-2.failure-response",
-          "canonicalClaimId": "p05.conditions.c-2.failure-response",
-          "claimType": "table_binding",
-          "expectation": "For C-2, Failure response is Move eligible stock only.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "C-2"
-            ],
-            "column": [
-              "Failure response"
-            ],
-            "value": [
-              "Move eligible stock only"
-            ]
-          }
-        },
-        {
-          "id": "p05.conditions.c-3.required-state-before-action",
-          "canonicalClaimId": "p05.conditions.c-3.required-state-before-action",
-          "claimType": "table_binding",
-          "expectation": "For C-3, Required state before action is EX-07 signed and REC-2048 has zero unresolved items.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "C-3"
-            ],
-            "column": [
-              "Required state before action"
-            ],
-            "value": [
-              "EX-07 signed and REC-2048 has zero unresolved items"
-            ]
-          }
-        },
-        {
-          "id": "p05.conditions.c-3.action-governed",
-          "canonicalClaimId": "p05.conditions.c-3.action-governed",
-          "claimType": "table_binding",
-          "expectation": "For C-3, Action governed is Close Kestrel credentials.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "C-3"
-            ],
-            "column": [
-              "Action governed"
-            ],
-            "value": [
-              "Close Kestrel credentials"
-            ]
-          }
-        },
-        {
-          "id": "p05.conditions.c-3.failure-response",
-          "canonicalClaimId": "p05.conditions.c-3.failure-response",
-          "claimType": "table_binding",
-          "expectation": "For C-3, Failure response is Retain access and escalate.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "C-3"
-            ],
-            "column": [
-              "Failure response"
-            ],
-            "value": [
-              "Retain access and escalate"
-            ]
-          }
-        },
-        {
-          "id": "p05.conditions.c-4.required-state-before-action",
-          "canonicalClaimId": "p05.conditions.c-4.required-state-before-action",
-          "claimType": "table_binding",
-          "expectation": "For C-4, Required state before action is No temperature deviation >1.0 C for 10 continuous minutes.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "C-4"
-            ],
-            "column": [
-              "Required state before action"
-            ],
-            "value": [
-              "No temperature deviation >1.0 C for 10 continuous minutes"
-            ]
-          }
-        },
-        {
-          "id": "p05.conditions.c-4.action-governed",
-          "canonicalClaimId": "p05.conditions.c-4.action-governed",
-          "claimType": "table_binding",
-          "expectation": "For C-4, Action governed is Continue physical transfer.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "C-4"
-            ],
-            "column": [
-              "Action governed"
-            ],
-            "value": [
-              "Continue physical transfer"
-            ]
-          }
-        },
-        {
-          "id": "p05.conditions.c-4.failure-response",
-          "canonicalClaimId": "p05.conditions.c-4.failure-response",
-          "claimType": "table_binding",
-          "expectation": "For C-4, Failure response is Invoke rollback RB-12.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "C-4"
-            ],
-            "column": [
-              "Failure response"
-            ],
-            "value": [
-              "Invoke rollback RB-12"
-            ]
-          }
-        }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "C-1",
-          "C-2",
-          "C-3",
-          "C-4"
-        ]
-      }
-    },
-    {
-      "id": "p05.interpretation",
-      "label": "Authorization interpretation",
-      "sourceAnchors": [
-        {
-          "page": 5,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "5. Final implementation authorization",
-            "Authorization interpretation"
-          ]
-        }
-      ],
-      "goldSection": "5. Final implementation authorization",
-      "kind": "text",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "source_precedence",
-      "secondaryAxes": [
-        "summarization_coverage"
-      ],
-      "textOnlyRecoverable": true,
-      "budget": 2,
-      "leaves": [
-        {
-          "id": "p05.interpretation.ex07",
-          "canonicalClaimId": "p05.interpretation.ex07",
-          "claimType": "scalar",
-          "expectation": "The GO decision does not close EX-07.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "GO"
-              ],
-              [
-                "EX-07",
-                "EX 07"
-              ],
-              [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "decision"
-              ],
-              [
-                "close"
-              ],
-              [
-                "does"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p05.interpretation.qa61",
-          "canonicalClaimId": "p05.interpretation.qa61",
-          "claimType": "scalar",
-          "expectation": "The GO decision does not release the six QA-61 cases.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "GO"
-              ],
-              [
-                "QA-61",
-                "QA 61"
-              ],
-              [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "decision"
-              ],
-              [
-                "release"
-              ],
-              [
-                "cases"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p05.interpretation.gates",
-          "canonicalClaimId": "p05.interpretation.gates",
-          "claimType": "scalar",
-          "expectation": "The GO decision does not waive telemetry or rollback gates.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "GO"
-              ],
-              [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "telemetry"
-              ],
-              [
-                "decision"
-              ],
-              [
-                "rollback"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p05.interpretation.sources",
-          "canonicalClaimId": "p05.interpretation.sources",
-          "claimType": "scalar",
-          "expectation": "Page 4 remains the source for exception ownership and closure evidence.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "4"
-              ],
-              [
-                "exception"
-              ],
-              [
-                "ownership"
-              ],
-              [
-                "evidence"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "p05.signoff",
-      "label": "Recorded approvals",
-      "sourceAnchors": [
-        {
-          "page": 5,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "5. Final implementation authorization",
-            "Recorded approvals"
-          ]
-        }
-      ],
-      "goldSection": "5. Final implementation authorization",
-      "kind": "table",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "precise_recall",
-      "secondaryAxes": [
-        "table_reconstruction",
+        "precise_recall",
         "source_precedence"
       ],
-      "textOnlyRecoverable": true,
+      "textOnlyRecoverable": false,
       "budget": 2,
       "leaves": [
         {
-          "id": "p05.signoff.schema",
-          "canonicalClaimId": "p05.signoff.schema",
-          "claimType": "structure",
-          "expectation": "The region preserves the source field schema in order: Role, Name, Decision, Recorded.",
+          "id": "p05.signatures.sponsor",
+          "canonicalClaimId": "p05.signatures.sponsor",
+          "claimType": "visual_description",
+          "expectation": "Mara Velez approved as executive sponsor on 10 Jul 2026 at 09:12 MST.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "ordered_tokens",
-            "tokens": [
+            "type": "qualitative",
+            "requiredTerms": [
               [
-                "Role"
+                "Mara Velez"
               ],
               [
-                "Name"
+                "executive sponsor"
               ],
               [
-                "Decision"
+                "approved"
               ],
               [
-                "Recorded"
+                "10 Jul 2026"
+              ],
+              [
+                "09:12 MST"
               ]
             ]
           }
         },
         {
-          "id": "p05.signoff.row-order",
-          "canonicalClaimId": "p05.signoff.row-order",
-          "claimType": "ordered_record",
-          "expectation": "The source row order is recoverable as: Executive sponsor -> Cutover lead -> Quality -> Legal exception owner.",
+          "id": "p05.signatures.lead",
+          "canonicalClaimId": "p05.signatures.lead",
+          "claimType": "visual_description",
+          "expectation": "Avery Kim accepted as cutover lead on 10 Jul 2026 at 09:18 MST.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "ordered_tokens",
-            "tokens": [
+            "type": "qualitative",
+            "requiredTerms": [
               [
-                "Executive sponsor"
+                "Avery Kim"
               ],
               [
-                "Cutover lead"
+                "cutover lead"
               ],
               [
-                "Quality"
+                "accepted"
               ],
               [
-                "Legal exception owner"
+                "10 Jul 2026"
+              ],
+              [
+                "09:18 MST"
               ]
             ]
           }
         },
         {
-          "id": "p05.signoff.executive-sponsor.decision",
-          "canonicalClaimId": "p05.signoff.executive-sponsor.decision",
-          "claimType": "table_binding",
-          "expectation": "For Executive sponsor, Decision is Approved.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "Executive sponsor"
-            ],
-            "column": [
-              "Decision"
-            ],
-            "value": [
-              "Approved"
-            ]
-          }
-        },
-        {
-          "id": "p05.signoff.executive-sponsor.recorded",
-          "canonicalClaimId": "p05.signoff.executive-sponsor.recorded",
-          "claimType": "table_binding",
-          "expectation": "For Executive sponsor, Recorded is 10 Jul 2026 09:12 MST.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "Executive sponsor"
-            ],
-            "column": [
-              "Recorded"
-            ],
-            "value": [
-              "10 Jul 2026 09:12 MST"
-            ]
-          }
-        },
-        {
-          "id": "p05.signoff.cutover-lead.decision",
-          "canonicalClaimId": "p05.signoff.cutover-lead.decision",
-          "claimType": "table_binding",
-          "expectation": "For Cutover lead, Decision is Accepted.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "Cutover lead"
-            ],
-            "column": [
-              "Decision"
-            ],
-            "value": [
-              "Accepted"
-            ]
-          }
-        },
-        {
-          "id": "p05.signoff.quality.decision",
-          "canonicalClaimId": "p05.signoff.quality.decision",
-          "claimType": "table_binding",
-          "expectation": "For Quality, Decision is Approved with QA-61 exclusion.",
+          "id": "p05.signatures.quality",
+          "canonicalClaimId": "p05.signatures.quality",
+          "claimType": "visual_description",
+          "expectation": "Dara Nwosu approved as quality on 10 Jul 2026 at 09:26 MST with QA-61 excluded.",
           "harm": 2,
           "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "Quality"
-            ],
-            "column": [
-              "Decision"
-            ],
-            "value": [
-              "Approved with QA-61 exclusion"
-            ]
-          }
-        },
-        {
-          "id": "p05.signoff.quality.recorded",
-          "canonicalClaimId": "p05.signoff.quality.recorded",
-          "claimType": "table_binding",
-          "expectation": "For Quality, Recorded is 10 Jul 2026 09:26 MST.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "Quality"
-            ],
-            "column": [
-              "Recorded"
-            ],
-            "value": [
-              "10 Jul 2026 09:26 MST"
-            ]
-          }
-        },
-        {
-          "id": "p05.signoff.legal-exception-owner.decision",
-          "canonicalClaimId": "p05.signoff.legal-exception-owner.decision",
-          "claimType": "table_binding",
-          "expectation": "For Legal exception owner, Decision is EX-07 remains open; not a release signature.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "Legal exception owner"
-            ],
-            "column": [
-              "Decision"
-            ],
-            "value": [
-              "EX-07 remains open; not a release signature"
-            ]
-          }
-        }
-      ],
-      "closedWorld": {
-        "scope": "table_rows",
-        "keys": [
-          "Executive sponsor",
-          "Cutover lead",
-          "Quality",
-          "Legal exception owner"
-        ]
-      }
-    },
-    {
-      "id": "p05.control",
-      "label": "Final document control",
-      "sourceAnchors": [
-        {
-          "page": 5,
-          "layer": "native_text",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "5. Final implementation authorization",
-            "Final document control"
-          ]
-        }
-      ],
-      "goldSection": "5. Final implementation authorization",
-      "kind": "text",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "precise_recall",
-      "secondaryAxes": [
-        "long_context_coherence"
-      ],
-      "textOnlyRecoverable": true,
-      "budget": 1,
-      "leaves": [
-        {
-          "id": "p05.control.revision",
-          "canonicalClaimId": "p05.control.revision",
-          "claimType": "scalar",
-          "expectation": "Revision D supersedes Draft C.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
+            "type": "qualitative",
+            "requiredTerms": [
               [
-                "Draft"
+                "Dara Nwosu"
               ],
               [
-                "supersedes"
+                "quality"
               ],
               [
-                "revision"
+                "approved"
+              ],
+              [
+                "10 Jul 2026"
+              ],
+              [
+                "09:26 MST"
+              ],
+              [
+                "QA-61 excluded"
               ]
             ]
           }
         },
         {
-          "id": "p05.control.effective",
-          "canonicalClaimId": "p05.control.effective",
-          "claimType": "scalar",
-          "expectation": "The authorization became effective at 10 Jul 2026 09:30 MST.",
+          "id": "p05.signatures.effective",
+          "canonicalClaimId": "p05.signatures.effective",
+          "claimType": "visual_description",
+          "expectation": "The effective record time is 10 Jul 2026 at 09:30 MST.",
           "harm": 1,
           "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
+            "type": "qualitative",
+            "requiredTerms": [
               [
-                "10 Jul 2026",
-                "2026-07-10",
-                "10 July 2026",
-                "Jul 10 2026",
-                "July 10 2026",
-                "10 Jul",
-                "10 July",
-                "Jul 10",
-                "July 10"
+                "effective record"
               ],
               [
-                "09:30 MST",
-                "9:30 MST"
+                "10 Jul 2026"
               ],
               [
-                "authorization"
-              ],
-              [
-                "effective"
-              ],
-              [
-                "became"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p05.control.event",
-          "canonicalClaimId": "p05.control.event",
-          "claimType": "scalar",
-          "expectation": "The next control event is the first failed condition, completed rollback, or closure of C-3.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "3"
-              ],
-              [
-                "failed"
-              ],
-              [
-                "condition"
-              ],
-              [
-                "completed"
-              ],
-              [
-                "rollback"
+                "09:30 MST"
               ]
             ]
           }

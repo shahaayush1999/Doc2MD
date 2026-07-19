@@ -989,8 +989,8 @@
       ]
     },
     {
-      "id": "p03.curves",
-      "label": "Calibration curve points",
+      "id": "p03.calibration-panels",
+      "label": "Six-panel calibration curves and point bindings",
       "sourceAnchors": [
         {
           "page": 3,
@@ -1010,540 +1010,29 @@
         "mixed_modality_fusion"
       ],
       "textOnlyRecoverable": false,
-      "budget": 2,
-      "leaves": [
-        {
-          "id": "p03.curve.pfoa.01",
-          "canonicalClaimId": "p03.curve.pfoa.01",
-          "claimType": "scalar",
-          "expectation": "PFOA has response ratio 0.021 at concentration 0.25.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PFOA"
-              ],
-              [
-                "0.25"
-              ],
-              [
-                "0.021"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.pfoa.02",
-          "canonicalClaimId": "p03.curve.pfoa.02",
-          "claimType": "scalar",
-          "expectation": "PFOA has response ratio 0.077 at concentration 1.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PFOA"
-              ],
-              [
-                "1"
-              ],
-              [
-                "0.077"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.pfoa.03",
-          "canonicalClaimId": "p03.curve.pfoa.03",
-          "claimType": "scalar",
-          "expectation": "PFOA has response ratio 0.406 at concentration 5.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PFOA"
-              ],
-              [
-                "5"
-              ],
-              [
-                "0.406"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.pfoa.04",
-          "canonicalClaimId": "p03.curve.pfoa.04",
-          "claimType": "scalar",
-          "expectation": "PFOA has response ratio 1.393 at concentration 20.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PFOA"
-              ],
-              [
-                "20"
-              ],
-              [
-                "1.393"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.pfoa.05",
-          "canonicalClaimId": "p03.curve.pfoa.05",
-          "claimType": "scalar",
-          "expectation": "PFOA has response ratio 5.986 at concentration 80.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PFOA"
-              ],
-              [
-                "80"
-              ],
-              [
-                "5.986"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.pfos.01",
-          "canonicalClaimId": "p03.curve.pfos.01",
-          "claimType": "scalar",
-          "expectation": "PFOS has response ratio 0.042 at concentration 0.5.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PFOS"
-              ],
-              [
-                "0.5"
-              ],
-              [
-                "0.042"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.pfos.02",
-          "canonicalClaimId": "p03.curve.pfos.02",
-          "claimType": "scalar",
-          "expectation": "PFOS has response ratio 0.184 at concentration 2.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PFOS"
-              ],
-              [
-                "2"
-              ],
-              [
-                "0.184"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.pfos.03",
-          "canonicalClaimId": "p03.curve.pfos.03",
-          "claimType": "scalar",
-          "expectation": "PFOS has response ratio 0.958 at concentration 10.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PFOS"
-              ],
-              [
-                "10"
-              ],
-              [
-                "0.958"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.pfos.04",
-          "canonicalClaimId": "p03.curve.pfos.04",
-          "claimType": "scalar",
-          "expectation": "PFOS has response ratio 4.753 at concentration 50.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PFOS"
-              ],
-              [
-                "50"
-              ],
-              [
-                "4.753"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.pfos.05",
-          "canonicalClaimId": "p03.curve.pfos.05",
-          "claimType": "scalar",
-          "expectation": "PFOS has response ratio 8.177 at concentration 100.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PFOS"
-              ],
-              [
-                "100"
-              ],
-              [
-                "8.177"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.hfpo-da.01",
-          "canonicalClaimId": "p03.curve.hfpo-da.01",
-          "claimType": "scalar",
-          "expectation": "HFPO-DA has response ratio 0.044 at concentration 0.5.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "HFPO-DA"
-              ],
-              [
-                "0.5"
-              ],
-              [
-                "0.044"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.hfpo-da.02",
-          "canonicalClaimId": "p03.curve.hfpo-da.02",
-          "claimType": "scalar",
-          "expectation": "HFPO-DA has response ratio 0.175 at concentration 2.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "HFPO-DA"
-              ],
-              [
-                "2"
-              ],
-              [
-                "0.175"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.hfpo-da.03",
-          "canonicalClaimId": "p03.curve.hfpo-da.03",
-          "claimType": "scalar",
-          "expectation": "HFPO-DA has response ratio 0.790 at concentration 10.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "HFPO-DA"
-              ],
-              [
-                "10"
-              ],
-              [
-                "0.790"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.hfpo-da.04",
-          "canonicalClaimId": "p03.curve.hfpo-da.04",
-          "claimType": "scalar",
-          "expectation": "HFPO-DA has response ratio 4.400 at concentration 50.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "HFPO-DA"
-              ],
-              [
-                "50"
-              ],
-              [
-                "4.400"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.curve.hfpo-da.05",
-          "canonicalClaimId": "p03.curve.hfpo-da.05",
-          "claimType": "scalar",
-          "expectation": "HFPO-DA has response ratio 6.632 at concentration 80.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "HFPO-DA"
-              ],
-              [
-                "80"
-              ],
-              [
-                "6.632"
-              ],
-              [
-                "response ratio",
-                "ratio"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "p03.chart-contract",
-      "label": "Calibration chart axes, legend, and trend",
-      "sourceAnchors": [
-        {
-          "page": 3,
-          "layer": "mixed",
-          "sectionPath": [
-            "PFAS Method Validation and Batch Release Packet",
-            "Calibration curves and residual disposition"
-          ]
-        }
-      ],
-      "goldSection": "Page 3 - Calibration curves and residual disposition",
-      "kind": "chart",
-      "modality": "mixed",
-      "uniqueEvidence": true,
-      "primaryAxis": "chart_diagram_spatial",
-      "secondaryAxes": [
-        "mixed_modality_fusion"
-      ],
-      "textOnlyRecoverable": false,
-      "budget": 2,
+      "budget": 3,
       "leaves": [
         {
           "id": "p03.chart.axes",
           "canonicalClaimId": "p03.chart.axes",
           "claimType": "structure",
-          "expectation": "The chart uses log concentration in ng/L on the horizontal x-axis and response ratio on the vertical y-axis.",
+          "expectation": "Figure 03 uses log concentration in ng/L on the horizontal axis and response ratio on the vertical axis.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "horizontal x-axis",
-                "x-axis",
-                "horizontal axis"
-              ],
-              [
-                "log concentration"
+                "03",
+                "3"
               ],
               [
                 "ng/L"
               ],
               [
-                "vertical y-axis",
-                "y-axis",
-                "vertical axis"
-              ],
-              [
-                "response ratio"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.chart.legend.pfoa",
-          "canonicalClaimId": "p03.chart.legend.pfoa",
-          "claimType": "scalar",
-          "expectation": "The legend maps the blue line and points to the PFOA calibration series.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "legend"
-              ],
-              [
-                "blue"
-              ],
-              [
-                "line"
-              ],
-              [
-                "points"
-              ],
-              [
-                "PFOA"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.chart.legend.pfos",
-          "canonicalClaimId": "p03.chart.legend.pfos",
-          "claimType": "scalar",
-          "expectation": "The legend maps the green line and points to the PFOS calibration series.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "legend"
-              ],
-              [
-                "green"
-              ],
-              [
-                "line"
-              ],
-              [
-                "points"
-              ],
-              [
-                "PFOS"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.chart.legend.hfpo",
-          "canonicalClaimId": "p03.chart.legend.hfpo",
-          "claimType": "scalar",
-          "expectation": "The legend maps the amber line and points to the HFPO-DA calibration series.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "legend"
-              ],
-              [
-                "amber"
-              ],
-              [
-                "line"
-              ],
-              [
-                "points"
-              ],
-              [
-                "HFPO-DA"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.chart.encoding",
-          "canonicalClaimId": "p03.chart.encoding",
-          "claimType": "scalar",
-          "expectation": "Each panel uses weighted 1/x^2 calibration and labels every point with both concentration and response.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "weighted 1/x^2",
-                "1/x^2"
-              ],
-              [
-                "point",
-                "points"
-              ],
-              [
                 "concentration"
+              ],
+              [
+                "horizontal"
               ],
               [
                 "response"
@@ -1552,139 +1041,36 @@
           }
         },
         {
-          "id": "p03.chart.trend.pfoa",
-          "canonicalClaimId": "p03.chart.trend.pfoa",
-          "claimType": "scalar",
-          "expectation": "The PFOA series rises monotonically from response ratio 0.021 at its lowest standard to 5.986 at its highest standard.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PFOA"
-              ],
-              [
-                "rises monotonically",
-                "monotonic increase",
-                "increases",
-                "positive slope"
-              ],
-              [
-                "0.021"
-              ],
-              [
-                "5.986"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.chart.trend.pfos",
-          "canonicalClaimId": "p03.chart.trend.pfos",
-          "claimType": "scalar",
-          "expectation": "The PFOS series rises monotonically from response ratio 0.042 at its lowest standard to 8.177 at its highest standard.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "PFOS"
-              ],
-              [
-                "rises monotonically",
-                "monotonic increase",
-                "increases",
-                "positive slope"
-              ],
-              [
-                "0.042"
-              ],
-              [
-                "8.177"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.chart.trend.hfpo",
-          "canonicalClaimId": "p03.chart.trend.hfpo",
-          "claimType": "scalar",
-          "expectation": "The HFPO-DA series rises monotonically from response ratio 0.044 at its lowest standard to 6.632 at its highest standard.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "HFPO-DA"
-              ],
-              [
-                "rises monotonically",
-                "monotonic increase",
-                "increases",
-                "positive slope"
-              ],
-              [
-                "0.044"
-              ],
-              [
-                "6.632"
-              ]
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "p03.residuals",
-      "label": "Residual disposition",
-      "sourceAnchors": [
-        {
-          "page": 3,
-          "layer": "native_text",
-          "sectionPath": [
-            "PFAS Method Validation and Batch Release Packet",
-            "Calibration curves and residual disposition"
-          ]
-        }
-      ],
-      "goldSection": "Page 3 - Calibration curves and residual disposition",
-      "kind": "table",
-      "modality": "native_text",
-      "uniqueEvidence": true,
-      "primaryAxis": "table_reconstruction",
-      "secondaryAxes": [],
-      "textOnlyRecoverable": true,
-      "budget": 1,
-      "leaves": [
-        {
-          "id": "p03.residuals.schema",
-          "canonicalClaimId": "p03.residuals.schema",
+          "id": "p03.chart.encoding",
+          "canonicalClaimId": "p03.chart.encoding",
           "claimType": "structure",
-          "expectation": "The field schema is preserved in order: Analyte, Weighted R2, Max abs back-calc residual, Disposition.",
-          "harm": 1,
+          "expectation": "Filled circles are included standards, an open diamond is an excluded standard, and inset bars encode back-calculated residual percent.",
+          "harm": 2,
           "evidencePolicy": {
-            "type": "ordered_tokens",
-            "tokens": [
+            "type": "lexical",
+            "allOf": [
               [
-                "Analyte"
+                "open",
+                "unresolved",
+                "outstanding"
               ],
               [
-                "Weighted R2"
+                "back-calculated"
               ],
               [
-                "Max abs back-calc residual"
+                "standards"
               ],
               [
-                "Disposition"
+                "included"
               ]
             ]
           }
         },
         {
-          "id": "p03.residuals.row-order",
-          "canonicalClaimId": "p03.residuals.row-order",
+          "id": "p03.chart.panel-order",
+          "canonicalClaimId": "p03.chart.panel-order",
           "claimType": "ordered_record",
-          "expectation": "The row order is preserved as: PFOA -> PFOS -> HFPO-DA.",
+          "expectation": "The panel order is PFOA -> PFNA -> PFOS -> PFHxS -> 6:2 FTS -> HFPO-DA.",
           "harm": 1,
           "evidencePolicy": {
             "type": "ordered_tokens",
@@ -1693,7 +1079,16 @@
                 "PFOA"
               ],
               [
+                "PFNA"
+              ],
+              [
                 "PFOS"
+              ],
+              [
+                "PFHxS"
+              ],
+              [
+                "6:2 FTS"
               ],
               [
                 "HFPO-DA"
@@ -1702,111 +1097,23 @@
           }
         },
         {
-          "id": "p03.residual.pfos",
-          "canonicalClaimId": "p03.residual.pfos",
+          "id": "p03.chart.rule",
+          "canonicalClaimId": "p03.chart.rule",
           "claimType": "scalar",
-          "expectation": "PFOS weighted R2 is 0.9978 and its 14.6% maximum residual occurs at 100 ng/L; the upper point is retained.",
+          "expectation": "The review uses weighted 1/x^2, requires R2 >= 0.995, requires included standards within +/-15%, and permits the lowest included standard within +/-20%.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "PFOS"
+                "1"
               ],
               [
-                "0.9978"
+                "2"
               ],
               [
-                "14.6"
-              ],
-              [
-                "100"
-              ],
-              [
-                "%"
-              ],
-              [
-                "ng/L"
-              ],
-              [
-                "maximum",
-                "max"
-              ],
-              [
-                "upper"
-              ],
-              [
-                "weighted"
-              ],
-              [
-                "residual"
-              ],
-              [
-                "retained"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.residual.hfpo",
-          "canonicalClaimId": "p03.residual.hfpo",
-          "claimType": "scalar",
-          "expectation": "HFPO-DA weighted R2 is 0.9989 with a 9.7% residual at 0.50 ng/L and no curvature flag.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "HFPO-DA",
-                "HFPO DA"
-              ],
-              [
-                "0.9989"
-              ],
-              [
-                "9.7"
-              ],
-              [
-                "0.50",
-                "0.5"
-              ],
-              [
-                "%"
-              ],
-              [
-                "ng/L"
-              ],
-              [
-                "no",
-                "not",
-                "none",
-                "without",
-                "absent"
-              ],
-              [
-                "curvature"
-              ],
-              [
-                "weighted"
-              ],
-              [
-                "residual"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p03.residual.criteria",
-          "canonicalClaimId": "p03.residual.criteria",
-          "claimType": "scalar",
-          "expectation": "Weighted R2 must be >=0.995; standards must be within +/-15%, except the lowest level may be within +/-20%.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                ">=0.995",
                 ">= 0.995",
+                ">=0.995",
                 "\u22650.995",
                 "\u2265 0.995"
               ],
@@ -1831,6 +1138,1100 @@
               ],
               [
                 "weighted"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.fit.pfoa",
+          "canonicalClaimId": "p03.fit.pfoa",
+          "claimType": "scalar",
+          "expectation": "PFOA uses y = 0.0748x + 0.0021 with R2 0.9986 over 0.25-80 ng/L.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFOA"
+              ],
+              [
+                "0.0748x"
+              ],
+              [
+                "+ 0.0021",
+                "+0.0021"
+              ],
+              [
+                "0.9986"
+              ],
+              [
+                "0.25"
+              ],
+              [
+                "80"
+              ],
+              [
+                "ng/L"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.pfoa.low",
+          "canonicalClaimId": "p03.curve.pfoa.low",
+          "claimType": "scalar",
+          "expectation": "PFOA binds its low standard 0.25 ng/L to response ratio 0.021.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFOA"
+              ],
+              [
+                "0.25"
+              ],
+              [
+                "0.021"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.pfoa.mid",
+          "canonicalClaimId": "p03.curve.pfoa.mid",
+          "claimType": "scalar",
+          "expectation": "PFOA binds its middle standard 5 ng/L to response ratio 0.406.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFOA"
+              ],
+              [
+                "5"
+              ],
+              [
+                "0.406"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.pfoa.high",
+          "canonicalClaimId": "p03.curve.pfoa.high",
+          "claimType": "scalar",
+          "expectation": "PFOA binds its high standard 80 ng/L to response ratio 5.986.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFOA"
+              ],
+              [
+                "80"
+              ],
+              [
+                "5.986"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.fit.pfna",
+          "canonicalClaimId": "p03.fit.pfna",
+          "claimType": "scalar",
+          "expectation": "PFNA uses y = 0.0702x + 0.0008 with R2 0.9964 over 0.25-80 ng/L.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFNA"
+              ],
+              [
+                "0.0702x"
+              ],
+              [
+                "+ 0.0008",
+                "+0.0008"
+              ],
+              [
+                "0.9964"
+              ],
+              [
+                "0.25"
+              ],
+              [
+                "80"
+              ],
+              [
+                "ng/L"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.pfna.low",
+          "canonicalClaimId": "p03.curve.pfna.low",
+          "claimType": "scalar",
+          "expectation": "PFNA binds its low standard 0.25 ng/L to response ratio 0.018.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFNA"
+              ],
+              [
+                "0.25"
+              ],
+              [
+                "0.018"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.pfna.mid",
+          "canonicalClaimId": "p03.curve.pfna.mid",
+          "claimType": "scalar",
+          "expectation": "PFNA binds its middle standard 5 ng/L to response ratio 0.352.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFNA"
+              ],
+              [
+                "5"
+              ],
+              [
+                "0.352"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.pfna.high",
+          "canonicalClaimId": "p03.curve.pfna.high",
+          "claimType": "scalar",
+          "expectation": "PFNA binds its high standard 80 ng/L to response ratio 5.621.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFNA"
+              ],
+              [
+                "80"
+              ],
+              [
+                "5.621"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.fit.pfos",
+          "canonicalClaimId": "p03.fit.pfos",
+          "claimType": "scalar",
+          "expectation": "PFOS uses y = 0.0831x + 0.0184 with R2 0.9978 over 0.50-100 ng/L.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFOS"
+              ],
+              [
+                "0.0831x"
+              ],
+              [
+                "+ 0.0184",
+                "+0.0184"
+              ],
+              [
+                "0.9978"
+              ],
+              [
+                "0.50",
+                "0.5"
+              ],
+              [
+                "100"
+              ],
+              [
+                "ng/L"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.pfos.low",
+          "canonicalClaimId": "p03.curve.pfos.low",
+          "claimType": "scalar",
+          "expectation": "PFOS binds its low standard 0.5 ng/L to response ratio 0.042.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFOS"
+              ],
+              [
+                "0.5"
+              ],
+              [
+                "0.042"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.pfos.mid",
+          "canonicalClaimId": "p03.curve.pfos.mid",
+          "claimType": "scalar",
+          "expectation": "PFOS binds its middle standard 10 ng/L to response ratio 0.958.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFOS"
+              ],
+              [
+                "10"
+              ],
+              [
+                "0.958"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.pfos.high",
+          "canonicalClaimId": "p03.curve.pfos.high",
+          "claimType": "scalar",
+          "expectation": "PFOS binds its high standard 100 ng/L to response ratio 8.177.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFOS"
+              ],
+              [
+                "100"
+              ],
+              [
+                "8.177"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.fit.pfhxs",
+          "canonicalClaimId": "p03.fit.pfhxs",
+          "claimType": "scalar",
+          "expectation": "PFHxS uses y = 0.0817x + 0.0019 with R2 0.9991 over 0.50-100 ng/L.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "0.0817x"
+              ],
+              [
+                "+ 0.0019",
+                "+0.0019"
+              ],
+              [
+                "0.9991"
+              ],
+              [
+                "0.50",
+                "0.5"
+              ],
+              [
+                "100"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "pfhxs"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.pfhxs.low",
+          "canonicalClaimId": "p03.curve.pfhxs.low",
+          "claimType": "scalar",
+          "expectation": "PFHxS binds its low standard 0.5 ng/L to response ratio 0.038.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "0.5"
+              ],
+              [
+                "0.038"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ],
+              [
+                "pfhxs"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.pfhxs.mid",
+          "canonicalClaimId": "p03.curve.pfhxs.mid",
+          "claimType": "scalar",
+          "expectation": "PFHxS binds its middle standard 10 ng/L to response ratio 0.821.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "10"
+              ],
+              [
+                "0.821"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.pfhxs.high",
+          "canonicalClaimId": "p03.curve.pfhxs.high",
+          "claimType": "scalar",
+          "expectation": "PFHxS binds its high standard 100 ng/L to response ratio 8.169.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "100"
+              ],
+              [
+                "8.169"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ],
+              [
+                "pfhxs"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.fit.62-fts",
+          "canonicalClaimId": "p03.fit.62-fts",
+          "claimType": "scalar",
+          "expectation": "6:2 FTS uses y = 0.0544x + 0.0007 with R2 0.9981 after L2 exclusion over 1.00-100 ng/L.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "FTS"
+              ],
+              [
+                "0.0544x"
+              ],
+              [
+                "6"
+              ],
+              [
+                "2"
+              ],
+              [
+                "+ 0.0007",
+                "+0.0007"
+              ],
+              [
+                "0.9981"
+              ],
+              [
+                "1.00",
+                "1"
+              ],
+              [
+                "100"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "after",
+                "following",
+                "later than"
+              ],
+              [
+                "exclusion"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.62-fts.low",
+          "canonicalClaimId": "p03.curve.62-fts.low",
+          "claimType": "scalar",
+          "expectation": "6:2 FTS binds its low standard 1 ng/L to response ratio 0.052.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "FTS"
+              ],
+              [
+                "6"
+              ],
+              [
+                "2"
+              ],
+              [
+                "1"
+              ],
+              [
+                "0.052"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.62-fts.mid",
+          "canonicalClaimId": "p03.curve.62-fts.mid",
+          "claimType": "scalar",
+          "expectation": "6:2 FTS binds its middle standard 10 ng/L to response ratio 0.548.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "FTS"
+              ],
+              [
+                "6"
+              ],
+              [
+                "2"
+              ],
+              [
+                "10"
+              ],
+              [
+                "0.548"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.62-fts.high",
+          "canonicalClaimId": "p03.curve.62-fts.high",
+          "claimType": "scalar",
+          "expectation": "6:2 FTS binds its high standard 100 ng/L to response ratio 5.433.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "FTS"
+              ],
+              [
+                "6"
+              ],
+              [
+                "2"
+              ],
+              [
+                "100"
+              ],
+              [
+                "5.433"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.fit.hfpo-da",
+          "canonicalClaimId": "p03.fit.hfpo-da",
+          "claimType": "scalar",
+          "expectation": "HFPO-DA uses y = 0.0830x + 0.0041 with R2 0.9989 over 0.50-80 ng/L.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "HFPO-DA",
+                "HFPO DA"
+              ],
+              [
+                "0.0830x"
+              ],
+              [
+                "+ 0.0041",
+                "+0.0041"
+              ],
+              [
+                "0.9989"
+              ],
+              [
+                "0.50",
+                "0.5"
+              ],
+              [
+                "80"
+              ],
+              [
+                "ng/L"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.hfpo-da.low",
+          "canonicalClaimId": "p03.curve.hfpo-da.low",
+          "claimType": "scalar",
+          "expectation": "HFPO-DA binds its low standard 0.5 ng/L to response ratio 0.044.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "HFPO-DA",
+                "HFPO DA"
+              ],
+              [
+                "0.5"
+              ],
+              [
+                "0.044"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.hfpo-da.mid",
+          "canonicalClaimId": "p03.curve.hfpo-da.mid",
+          "claimType": "scalar",
+          "expectation": "HFPO-DA binds its middle standard 10 ng/L to response ratio 0.790.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "HFPO-DA",
+                "HFPO DA"
+              ],
+              [
+                "10"
+              ],
+              [
+                "0.790",
+                "0.79"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.curve.hfpo-da.high",
+          "canonicalClaimId": "p03.curve.hfpo-da.high",
+          "claimType": "scalar",
+          "expectation": "HFPO-DA binds its high standard 80 ng/L to response ratio 6.632.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "HFPO-DA",
+                "HFPO DA"
+              ],
+              [
+                "80"
+              ],
+              [
+                "6.632"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "standard"
+              ],
+              [
+                "response"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p03.residual-review",
+      "label": "Per-analyte residual and excluded-standard state",
+      "sourceAnchors": [
+        {
+          "page": 3,
+          "layer": "mixed",
+          "sectionPath": [
+            "PFAS Method Validation and Batch Release Packet",
+            "Calibration curves and residual disposition"
+          ]
+        }
+      ],
+      "goldSection": "Page 3 - Calibration curves and residual disposition",
+      "kind": "chart",
+      "modality": "mixed",
+      "uniqueEvidence": true,
+      "primaryAxis": "chart_diagram_spatial",
+      "secondaryAxes": [
+        "source_precedence",
+        "mixed_modality_fusion"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "p03.residual.pfoa",
+          "canonicalClaimId": "p03.residual.pfoa",
+          "claimType": "scalar",
+          "expectation": "For PFOA, Max residual +11.8% at 0.25 ng/L (L1); L1 retained - within the +/-20% lowest-level allowance.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFOA"
+              ],
+              [
+                "+11.8",
+                "+ 11.8"
+              ],
+              [
+                "0.25"
+              ],
+              [
+                "-20",
+                "- 20"
+              ],
+              [
+                "%"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "within",
+                "+/-",
+                "\u00b1"
+              ],
+              [
+                "lowest-level"
+              ],
+              [
+                "allowance"
+              ],
+              [
+                "residual"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.residual.pfna",
+          "canonicalClaimId": "p03.residual.pfna",
+          "claimType": "scalar",
+          "expectation": "For PFNA, Max residual -18.7% at 0.25 ng/L (L1); L1 retained - within the +/-20% lowest-level allowance.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFNA"
+              ],
+              [
+                "-18.7",
+                "- 18.7"
+              ],
+              [
+                "0.25"
+              ],
+              [
+                "-20",
+                "- 20"
+              ],
+              [
+                "%"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "within",
+                "+/-",
+                "\u00b1"
+              ],
+              [
+                "lowest-level"
+              ],
+              [
+                "allowance"
+              ],
+              [
+                "residual"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.residual.pfos",
+          "canonicalClaimId": "p03.residual.pfos",
+          "claimType": "scalar",
+          "expectation": "For PFOS, Max residual +14.6% at 100 ng/L (L7); Upper point retained - within the +/-15% criterion.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "PFOS"
+              ],
+              [
+                "+14.6",
+                "+ 14.6"
+              ],
+              [
+                "100"
+              ],
+              [
+                "-15",
+                "- 15"
+              ],
+              [
+                "%"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "Upper"
+              ],
+              [
+                "within",
+                "+/-",
+                "\u00b1"
+              ],
+              [
+                "criterion"
+              ],
+              [
+                "residual"
+              ],
+              [
+                "retained"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.residual.pfhxs",
+          "canonicalClaimId": "p03.residual.pfhxs",
+          "claimType": "scalar",
+          "expectation": "For PFHxS, Max residual -8.4% at 50 ng/L (L6); All seven levels retained - no residual flag.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "-8.4",
+                "- 8.4"
+              ],
+              [
+                "50"
+              ],
+              [
+                "%"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "no",
+                "not",
+                "none",
+                "without",
+                "absent"
+              ],
+              [
+                "residual"
+              ],
+              [
+                "retained"
+              ],
+              [
+                "levels"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.residual.62-fts",
+          "canonicalClaimId": "p03.residual.62-fts",
+          "claimType": "scalar",
+          "expectation": "For 6:2 FTS, L2 residual +23.6% at 2.0 ng/L; vial bubble CAL-EX-06; L2 excluded; six-level refit accepted under signed exception.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "FTS"
+              ],
+              [
+                "CAL-EX-06",
+                "CAL EX-06",
+                "CAL-EX 06",
+                "CAL EX 06"
+              ],
+              [
+                "6"
+              ],
+              [
+                "2"
+              ],
+              [
+                "+23.6",
+                "+ 23.6"
+              ],
+              [
+                "2.0",
+                "2"
+              ],
+              [
+                "%"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "accepted",
+                "accept"
+              ],
+              [
+                "signed"
+              ],
+              [
+                "six-level"
+              ],
+              [
+                "exception"
+              ],
+              [
+                "residual"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p03.residual.hfpo-da",
+          "canonicalClaimId": "p03.residual.hfpo-da",
+          "claimType": "scalar",
+          "expectation": "For HFPO-DA, Max residual +9.7% at 0.50 ng/L (L1); All seven levels retained - no curvature flag.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "HFPO-DA",
+                "HFPO DA"
+              ],
+              [
+                "+9.7",
+                "+ 9.7"
+              ],
+              [
+                "0.50",
+                "0.5"
+              ],
+              [
+                "%"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "no",
+                "not",
+                "none",
+                "without",
+                "absent"
+              ],
+              [
+                "curvature"
+              ],
+              [
+                "residual"
+              ],
+              [
+                "retained"
               ]
             ]
           }
@@ -3045,108 +3446,6 @@
           }
         },
         {
-          "id": "p07.sequence.18",
-          "canonicalClaimId": "p07.sequence.18",
-          "claimType": "scalar",
-          "expectation": "Sequence 18 is DW-240409-04 at 11:51 with 38% IS recovery and state HOLD MX-24-041.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "11:51"
-              ],
-              [
-                "DW-240409-04",
-                "DW 240409-04",
-                "DW-240409 04",
-                "DW 240409 04"
-              ],
-              [
-                "IS"
-              ],
-              [
-                "HOLD"
-              ],
-              [
-                "MX-24-041",
-                "MX 24-041",
-                "MX-24 041",
-                "MX 24 041"
-              ],
-              [
-                "18"
-              ],
-              [
-                "38"
-              ],
-              [
-                "%"
-              ],
-              [
-                "HOLD",
-                "held",
-                "on hold",
-                "not released",
-                "blocked"
-              ],
-              [
-                "sequence"
-              ],
-              [
-                "recovery"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p07.sequence.19",
-          "canonicalClaimId": "p07.sequence.19",
-          "claimType": "scalar",
-          "expectation": "Sequence 19 is DW-240409-04-RI at 12:18 with 91% IS recovery and Accepted state.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "12:18"
-              ],
-              [
-                "DW-240409-04-RI",
-                "DW 240409-04-RI",
-                "DW-240409 04-RI",
-                "DW 240409 04-RI",
-                "DW-240409-04 RI",
-                "DW 240409-04 RI",
-                "DW-240409 04 RI",
-                "DW 240409 04 RI"
-              ],
-              [
-                "IS"
-              ],
-              [
-                "19"
-              ],
-              [
-                "91"
-              ],
-              [
-                "%"
-              ],
-              [
-                "Accepted",
-                "accept"
-              ],
-              [
-                "sequence"
-              ],
-              [
-                "recovery"
-              ]
-            ]
-          }
-        },
-        {
           "id": "p07.sequence.21",
           "canonicalClaimId": "p07.sequence.21",
           "claimType": "scalar",
@@ -3385,7 +3684,7 @@
     },
     {
       "id": "p08.chromatograms",
-      "label": "Instrument chromatogram and integration plate",
+      "label": "Eight-panel chromatogram and integration contact sheet",
       "sourceAnchors": [
         {
           "page": 8,
@@ -3402,16 +3701,18 @@
       "uniqueEvidence": true,
       "primaryAxis": "image_description",
       "secondaryAxes": [
+        "source_precedence",
+        "mixed_modality_fusion",
         "low_quality_scan"
       ],
       "textOnlyRecoverable": false,
-      "budget": 2,
+      "budget": 4,
       "leaves": [
         {
           "id": "p08.chrom.a.binding",
           "canonicalClaimId": "p08.chrom.a.binding",
           "claimType": "scalar",
-          "expectation": "Panel A is the LRB-240410-01 PFOS quantifier trace.",
+          "expectation": "Panel A is LRB-240410-01 / PFOS Q1.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -3426,32 +3727,41 @@
                 "PFOS"
               ],
               [
-                "quantifier"
-              ],
-              [
                 "panel"
-              ],
-              [
-                "trace"
               ]
             ]
           }
         },
         {
-          "id": "p08.chrom.a.evidence",
-          "canonicalClaimId": "p08.chrom.a.evidence",
+          "id": "p08.chrom.a.rt",
+          "canonicalClaimId": "p08.chrom.a.rt",
           "claimType": "scalar",
-          "expectation": "Panel A marks 5.64 min, a 38-44 cps noise window, no integrated peak, and file 240410_10.wiff.",
-          "harm": 2,
+          "expectation": "Panel A marks retention time 5.64 min.",
+          "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "240410_10.wiff"
-              ],
-              [
                 "5.64"
               ],
+              [
+                "min"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.a.measure-a",
+          "canonicalClaimId": "p08.chrom.a.measure-a",
+          "claimType": "scalar",
+          "expectation": "For Panel A, noise is 38-44 cps.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
               [
                 "38"
               ],
@@ -3459,7 +3769,25 @@
                 "44"
               ],
               [
-                "min"
+                "panel"
+              ],
+              [
+                "noise"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.a.measure-b",
+          "canonicalClaimId": "p08.chrom.a.measure-b",
+          "claimType": "scalar",
+          "expectation": "For Panel A, there is no integration and the file is 240410_10.wiff.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "240410_10.wiff"
               ],
               [
                 "no",
@@ -3469,10 +3797,48 @@
                 "absent"
               ],
               [
-                "integrated"
+                "integration"
               ],
               [
-                "window"
+                "panel"
+              ],
+              [
+                "file"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.a.state",
+          "canonicalClaimId": "p08.chrom.a.state",
+          "claimType": "scalar",
+          "expectation": "Panel A is marked NO PEAK / BLANK ACCEPTED.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "NO"
+              ],
+              [
+                "PEAK"
+              ],
+              [
+                "BLANK"
+              ],
+              [
+                "ACCEPTED"
+              ],
+              [
+                "NO",
+                "not",
+                "none",
+                "without",
+                "absent"
+              ],
+              [
+                "ACCEPTED",
+                "accept"
               ],
               [
                 "panel"
@@ -3484,7 +3850,7 @@
           "id": "p08.chrom.b.binding",
           "canonicalClaimId": "p08.chrom.b.binding",
           "claimType": "scalar",
-          "expectation": "Panel B is the DW-240408-03 PFOA quantifier trace.",
+          "expectation": "Panel B is DW-240408-03 / PFOA Q1.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -3499,47 +3865,116 @@
                 "PFOA"
               ],
               [
-                "quantifier"
-              ],
-              [
                 "panel"
-              ],
-              [
-                "trace"
               ]
             ]
           }
         },
         {
-          "id": "p08.chrom.b.evidence",
-          "canonicalClaimId": "p08.chrom.b.evidence",
+          "id": "p08.chrom.b.rt",
+          "canonicalClaimId": "p08.chrom.b.rt",
           "claimType": "scalar",
-          "expectation": "Panel B shows 4.41 min, area 25,621, quant/qual ratio 0.31, and file 240410_14.wiff.",
-          "harm": 2,
+          "expectation": "Panel B marks retention time 4.41 min.",
+          "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "240410_14.wiff"
-              ],
-              [
                 "4.41"
-              ],
-              [
-                "25,621",
-                "25621"
-              ],
-              [
-                "0.31"
               ],
               [
                 "min"
               ],
               [
                 "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.b.measure-a",
+          "canonicalClaimId": "p08.chrom.b.measure-a",
+          "claimType": "scalar",
+          "expectation": "For Panel B, area is 25,621.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "25,621",
+                "25621"
               ],
               [
-                "quant"
+                "panel"
+              ],
+              [
+                "area"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.b.measure-b",
+          "canonicalClaimId": "p08.chrom.b.measure-b",
+          "claimType": "scalar",
+          "expectation": "For Panel B, Q1/Q2 ratio is 0.31 and the file is 240410_14.wiff.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Q1/Q2",
+                "Q1 / Q2"
+              ],
+              [
+                "240410_14.wiff"
+              ],
+              [
+                "0.31"
+              ],
+              [
+                "panel"
+              ],
+              [
+                "ratio"
+              ],
+              [
+                "file"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.b.state",
+          "canonicalClaimId": "p08.chrom.b.state",
+          "claimType": "scalar",
+          "expectation": "Panel B is marked ACCEPTED / FINAL BATCH RESULT.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "ACCEPTED"
+              ],
+              [
+                "FINAL"
+              ],
+              [
+                "BATCH"
+              ],
+              [
+                "RESULT"
+              ],
+              [
+                "ACCEPTED",
+                "accept"
+              ],
+              [
+                "FINAL",
+                "finalized"
+              ],
+              [
+                "panel"
               ]
             ]
           }
@@ -3548,7 +3983,7 @@
           "id": "p08.chrom.c.binding",
           "canonicalClaimId": "p08.chrom.c.binding",
           "claimType": "scalar",
-          "expectation": "Panel C is the DW-240409-04 13C8-PFOA original trace linked to sequence 18 and IR-18A.",
+          "expectation": "Panel C is DW-240409-04 / 13C8-PFOA IS.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -3564,53 +3999,130 @@
                 "13C8 PFOA"
               ],
               [
-                "IR-18A",
-                "IR 18A"
+                "IS"
               ],
               [
-                "18"
-              ],
-              [
-                "A"
-              ],
-              [
-                "original"
-              ],
-              [
-                "sequence"
+                "panel"
               ]
             ]
           }
         },
         {
-          "id": "p08.chrom.c.recovery",
-          "canonicalClaimId": "p08.chrom.c.recovery",
+          "id": "p08.chrom.c.rt",
+          "canonicalClaimId": "p08.chrom.c.rt",
           "claimType": "scalar",
-          "expectation": "Panel C shows original internal-standard recovery of 38% at 4.39 min.",
-          "harm": 2,
+          "expectation": "Panel C marks retention time 4.39 min.",
+          "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "38"
-              ],
-              [
                 "4.39"
-              ],
-              [
-                "%"
               ],
               [
                 "min"
               ],
               [
-                "internal-standard"
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.c.measure-a",
+          "canonicalClaimId": "p08.chrom.c.measure-a",
+          "claimType": "scalar",
+          "expectation": "For Panel C, IS recovery is 38%.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "IS"
               ],
               [
-                "original"
+                "38"
+              ],
+              [
+                "%"
               ],
               [
                 "recovery"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.c.measure-b",
+          "canonicalClaimId": "p08.chrom.c.measure-b",
+          "claimType": "scalar",
+          "expectation": "For Panel C, IR-18A is linked to file 240410_18.wiff.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "IR-18A",
+                "IR 18A"
+              ],
+              [
+                "240410_18.wiff"
+              ],
+              [
+                "A"
+              ],
+              [
+                "linked"
+              ],
+              [
+                "panel"
+              ],
+              [
+                "file"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.c.state",
+          "canonicalClaimId": "p08.chrom.c.state",
+          "claimType": "scalar",
+          "expectation": "Panel C is marked SEQ 18 HOLD / ORIGINAL REJECTED.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "SEQ"
+              ],
+              [
+                "HOLD"
+              ],
+              [
+                "ORIGINAL"
+              ],
+              [
+                "REJECTED"
+              ],
+              [
+                "18"
+              ],
+              [
+                "HOLD",
+                "held",
+                "on hold",
+                "not released",
+                "blocked"
+              ],
+              [
+                "REJECTED",
+                "reject"
+              ],
+              [
+                "panel"
               ]
             ]
           }
@@ -3619,7 +4131,152 @@
           "id": "p08.chrom.d.binding",
           "canonicalClaimId": "p08.chrom.d.binding",
           "claimType": "scalar",
-          "expectation": "Panel D is the DW-240409-04 13C8-PFOA reinjection trace linked to sequence 19 and IR-19B.",
+          "expectation": "Panel D is DW-240409-04-RI / 13C8-PFOA IS.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "DW-240409-04-RI",
+                "DW 240409-04-RI",
+                "DW-240409 04-RI",
+                "DW 240409 04-RI",
+                "DW-240409-04 RI",
+                "DW 240409-04 RI",
+                "DW-240409 04 RI",
+                "DW 240409 04 RI"
+              ],
+              [
+                "13C8-PFOA",
+                "13C8 PFOA"
+              ],
+              [
+                "IS"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.d.rt",
+          "canonicalClaimId": "p08.chrom.d.rt",
+          "claimType": "scalar",
+          "expectation": "Panel D marks retention time 4.40 min.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "4.40",
+                "4.4"
+              ],
+              [
+                "min"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.d.measure-a",
+          "canonicalClaimId": "p08.chrom.d.measure-a",
+          "claimType": "scalar",
+          "expectation": "For Panel D, IS recovery is 91%.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "IS"
+              ],
+              [
+                "91"
+              ],
+              [
+                "%"
+              ],
+              [
+                "recovery"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.d.measure-b",
+          "canonicalClaimId": "p08.chrom.d.measure-b",
+          "claimType": "scalar",
+          "expectation": "For Panel D, IR-19B is linked to file 240410_19.wiff.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "IR-19B",
+                "IR 19B"
+              ],
+              [
+                "240410_19.wiff"
+              ],
+              [
+                "linked"
+              ],
+              [
+                "panel"
+              ],
+              [
+                "file"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.d.state",
+          "canonicalClaimId": "p08.chrom.d.state",
+          "claimType": "scalar",
+          "expectation": "Panel D is marked SEQ 19 ACCEPTED / CONTROLLING.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "SEQ"
+              ],
+              [
+                "ACCEPTED"
+              ],
+              [
+                "CONTROLLING"
+              ],
+              [
+                "19"
+              ],
+              [
+                "ACCEPTED",
+                "accept"
+              ],
+              [
+                "CONTROLLING",
+                "current",
+                "controls"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.e.binding",
+          "canonicalClaimId": "p08.chrom.e.binding",
+          "claimType": "scalar",
+          "expectation": "Panel E is DW-240409-04 / PFOA Q1.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
@@ -3631,55 +4288,515 @@
                 "DW 240409 04"
               ],
               [
-                "13C8-PFOA",
-                "13C8 PFOA"
+                "PFOA"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.e.rt",
+          "canonicalClaimId": "p08.chrom.e.rt",
+          "claimType": "scalar",
+          "expectation": "Panel E marks retention time 4.42 min.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "4.42"
+              ],
+              [
+                "min"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.e.measure-a",
+          "canonicalClaimId": "p08.chrom.e.measure-a",
+          "claimType": "scalar",
+          "expectation": "For Panel E, area is 11,180.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "11,180",
+                "11180"
+              ],
+              [
+                "panel"
+              ],
+              [
+                "area"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.e.measure-b",
+          "canonicalClaimId": "p08.chrom.e.measure-b",
+          "claimType": "scalar",
+          "expectation": "For Panel E, Q1/Q2 ratio is 0.27 and IR-18A is linked.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Q1/Q2",
+                "Q1 / Q2"
+              ],
+              [
+                "IR-18A",
+                "IR 18A"
+              ],
+              [
+                "0.27"
+              ],
+              [
+                "A"
+              ],
+              [
+                "linked"
+              ],
+              [
+                "panel"
+              ],
+              [
+                "ratio"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.e.state",
+          "canonicalClaimId": "p08.chrom.e.state",
+          "claimType": "scalar",
+          "expectation": "Panel E is marked SEQ 18 NOT REPORTABLE.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "SEQ"
+              ],
+              [
+                "NOT"
+              ],
+              [
+                "REPORTABLE"
+              ],
+              [
+                "18"
+              ],
+              [
+                "NOT",
+                "no",
+                "without",
+                "absent"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.f.binding",
+          "canonicalClaimId": "p08.chrom.f.binding",
+          "claimType": "scalar",
+          "expectation": "Panel F is DW-240409-04-RI / PFOA Q1.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "DW-240409-04-RI",
+                "DW 240409-04-RI",
+                "DW-240409 04-RI",
+                "DW 240409 04-RI",
+                "DW-240409-04 RI",
+                "DW 240409-04 RI",
+                "DW-240409 04 RI",
+                "DW 240409 04 RI"
+              ],
+              [
+                "PFOA"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.f.rt",
+          "canonicalClaimId": "p08.chrom.f.rt",
+          "claimType": "scalar",
+          "expectation": "Panel F marks retention time 4.41 min.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "4.41"
+              ],
+              [
+                "min"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.f.measure-a",
+          "canonicalClaimId": "p08.chrom.f.measure-a",
+          "claimType": "scalar",
+          "expectation": "For Panel F, area is 8,420.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "8,420",
+                "8420"
+              ],
+              [
+                "panel"
+              ],
+              [
+                "area"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.f.measure-b",
+          "canonicalClaimId": "p08.chrom.f.measure-b",
+          "claimType": "scalar",
+          "expectation": "For Panel F, Q1/Q2 ratio is 0.30 and IR-19B is linked.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Q1/Q2",
+                "Q1 / Q2"
               ],
               [
                 "IR-19B",
                 "IR 19B"
               ],
               [
-                "19"
+                "0.30",
+                "0.3"
               ],
               [
-                "reinjection"
+                "linked"
               ],
               [
-                "sequence"
+                "panel"
+              ],
+              [
+                "ratio"
               ]
             ]
           }
         },
         {
-          "id": "p08.chrom.d.recovery",
-          "canonicalClaimId": "p08.chrom.d.recovery",
+          "id": "p08.chrom.f.state",
+          "canonicalClaimId": "p08.chrom.f.state",
           "claimType": "scalar",
-          "expectation": "Panel D shows reinjection internal-standard recovery of 91% at 4.40 min.",
+          "expectation": "Panel F is marked SEQ 19 ACCEPTED / 1.06 ng/L J.",
           "harm": 2,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "91"
+                "SEQ"
               ],
               [
-                "4.40",
-                "4.4"
+                "ACCEPTED"
               ],
               [
-                "%"
+                "19"
+              ],
+              [
+                "1.06"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "ACCEPTED",
+                "accept"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.g.binding",
+          "canonicalClaimId": "p08.chrom.g.binding",
+          "claimType": "scalar",
+          "expectation": "Panel G is CCV-10-CLOSE / PFOA Q1.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "CCV-10-CLOSE",
+                "CCV 10-CLOSE",
+                "CCV-10 CLOSE",
+                "CCV 10 CLOSE"
+              ],
+              [
+                "PFOA"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.g.rt",
+          "canonicalClaimId": "p08.chrom.g.rt",
+          "claimType": "scalar",
+          "expectation": "Panel G marks retention time 4.41 min.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "4.41"
               ],
               [
                 "min"
               ],
               [
-                "internal-standard"
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.g.measure-a",
+          "canonicalClaimId": "p08.chrom.g.measure-a",
+          "claimType": "scalar",
+          "expectation": "For Panel G, back-calculated concentration is 10.31 ng/L.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "10.31"
               ],
               [
-                "reinjection"
+                "ng/L"
               ],
               [
-                "recovery"
+                "back-calculated"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.g.measure-b",
+          "canonicalClaimId": "p08.chrom.g.measure-b",
+          "claimType": "scalar",
+          "expectation": "For Panel G, area is 80,755 and the file is 240410_21.wiff.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "240410_21.wiff"
+              ],
+              [
+                "80,755",
+                "80755"
+              ],
+              [
+                "panel"
+              ],
+              [
+                "area"
+              ],
+              [
+                "file"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.g.state",
+          "canonicalClaimId": "p08.chrom.g.state",
+          "claimType": "scalar",
+          "expectation": "Panel G is marked ACCEPTED / 103.1% RECOVERY.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "ACCEPTED"
+              ],
+              [
+                "RECOVERY"
+              ],
+              [
+                "103.1"
+              ],
+              [
+                "%"
+              ],
+              [
+                "ACCEPTED",
+                "accept"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.h.binding",
+          "canonicalClaimId": "p08.chrom.h.binding",
+          "claimType": "scalar",
+          "expectation": "Panel H is DW-240409-05 / 6:2 FTS Q2.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "DW-240409-05",
+                "DW 240409-05",
+                "DW-240409 05",
+                "DW 240409 05"
+              ],
+              [
+                "FTS"
+              ],
+              [
+                "6"
+              ],
+              [
+                "2"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.h.rt",
+          "canonicalClaimId": "p08.chrom.h.rt",
+          "claimType": "scalar",
+          "expectation": "Panel H marks retention time 5.18 min.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "5.18"
+              ],
+              [
+                "min"
+              ],
+              [
+                "panel"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.h.measure-a",
+          "canonicalClaimId": "p08.chrom.h.measure-a",
+          "claimType": "scalar",
+          "expectation": "For Panel H, area is 13,290.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "13,290",
+                "13290"
+              ],
+              [
+                "panel"
+              ],
+              [
+                "area"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.h.measure-b",
+          "canonicalClaimId": "p08.chrom.h.measure-b",
+          "claimType": "scalar",
+          "expectation": "For Panel H, Q1/Q2 ratio is 0.22 and the file is 240410_20.wiff.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "Q1/Q2",
+                "Q1 / Q2"
+              ],
+              [
+                "240410_20.wiff"
+              ],
+              [
+                "0.22"
+              ],
+              [
+                "panel"
+              ],
+              [
+                "ratio"
+              ],
+              [
+                "file"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.chrom.h.state",
+          "canonicalClaimId": "p08.chrom.h.state",
+          "claimType": "scalar",
+          "expectation": "Panel H is marked REVIEWED / QUALIFIER CONFIRMED.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "REVIEWED"
+              ],
+              [
+                "QUALIFIER"
+              ],
+              [
+                "CONFIRMED"
+              ],
+              [
+                "panel"
               ]
             ]
           }
@@ -3688,7 +4805,7 @@
     },
     {
       "id": "p08.routing",
-      "label": "Panel routing register",
+      "label": "Native panel-to-injection index",
       "sourceAnchors": [
         {
           "page": 8,
@@ -3709,10 +4826,108 @@
       "budget": 1,
       "leaves": [
         {
-          "id": "p08.routing.c",
-          "canonicalClaimId": "p08.routing.c",
+          "id": "p08.routing.schema",
+          "canonicalClaimId": "p08.routing.schema",
+          "claimType": "structure",
+          "expectation": "The field schema is preserved in order: Panel, Injection, Trace channel, Review role.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "Panel"
+              ],
+              [
+                "Injection"
+              ],
+              [
+                "Trace channel"
+              ],
+              [
+                "Review role"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.row-order",
+          "canonicalClaimId": "p08.routing.row-order",
+          "claimType": "ordered_record",
+          "expectation": "The row order is preserved as: A -> B -> C -> D -> E -> F -> G -> H.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "ordered_tokens",
+            "tokens": [
+              [
+                "A"
+              ],
+              [
+                "B"
+              ],
+              [
+                "C"
+              ],
+              [
+                "D"
+              ],
+              [
+                "E"
+              ],
+              [
+                "F"
+              ],
+              [
+                "G"
+              ],
+              [
+                "H"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.a.injection",
+          "canonicalClaimId": "p08.routing.a.injection",
           "claimType": "table_binding",
-          "expectation": "For Panel C, Use limitation is accepted result.",
+          "expectation": "For Panel A, Injection is Seq 10.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "A"
+            ],
+            "column": [
+              "Injection"
+            ],
+            "value": [
+              "Seq 10"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.b.injection",
+          "canonicalClaimId": "p08.routing.b.injection",
+          "claimType": "table_binding",
+          "expectation": "For Panel B, Injection is Seq 14.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "B"
+            ],
+            "column": [
+              "Injection"
+            ],
+            "value": [
+              "Seq 14"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.c.injection",
+          "canonicalClaimId": "p08.routing.c.injection",
+          "claimType": "table_binding",
+          "expectation": "For Panel C, Injection is Seq 18.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -3720,18 +4935,113 @@
               "C"
             ],
             "column": [
-              "Use limitation"
+              "Injection"
             ],
             "value": [
-              "accepted result"
+              "Seq 18"
             ]
           }
         },
         {
-          "id": "p08.routing.c.purpose",
-          "canonicalClaimId": "p08.routing.c.purpose",
+          "id": "p08.routing.d.injection",
+          "canonicalClaimId": "p08.routing.d.injection",
           "claimType": "table_binding",
-          "expectation": "For Panel C, Review purpose is Original internal standard.",
+          "expectation": "For Panel D, Injection is Seq 19.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "D"
+            ],
+            "column": [
+              "Injection"
+            ],
+            "value": [
+              "Seq 19"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.e.injection",
+          "canonicalClaimId": "p08.routing.e.injection",
+          "claimType": "table_binding",
+          "expectation": "For Panel E, Injection is Seq 18.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "E"
+            ],
+            "column": [
+              "Injection"
+            ],
+            "value": [
+              "Seq 18"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.f.injection",
+          "canonicalClaimId": "p08.routing.f.injection",
+          "claimType": "table_binding",
+          "expectation": "For Panel F, Injection is Seq 19.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "F"
+            ],
+            "column": [
+              "Injection"
+            ],
+            "value": [
+              "Seq 19"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.g.injection",
+          "canonicalClaimId": "p08.routing.g.injection",
+          "claimType": "table_binding",
+          "expectation": "For Panel G, Injection is Seq 21.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "G"
+            ],
+            "column": [
+              "Injection"
+            ],
+            "value": [
+              "Seq 21"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.h.injection",
+          "canonicalClaimId": "p08.routing.h.injection",
+          "claimType": "table_binding",
+          "expectation": "For Panel H, Injection is Seq 20.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "H"
+            ],
+            "column": [
+              "Injection"
+            ],
+            "value": [
+              "Seq 20"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.c.channel",
+          "canonicalClaimId": "p08.routing.c.channel",
+          "claimType": "table_binding",
+          "expectation": "For Panel C, Trace channel is 13C8-PFOA IS.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -3739,37 +5049,18 @@
               "C"
             ],
             "column": [
-              "Review purpose"
+              "Trace channel"
             ],
             "value": [
-              "Original internal standard"
+              "13C8-PFOA IS"
             ]
           }
         },
         {
-          "id": "p08.routing.c.record",
-          "canonicalClaimId": "p08.routing.c.record",
+          "id": "p08.routing.d.channel",
+          "canonicalClaimId": "p08.routing.d.channel",
           "claimType": "table_binding",
-          "expectation": "For Panel C, Related record is IR-18A.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "table_binding",
-            "row": [
-              "C"
-            ],
-            "column": [
-              "Related record"
-            ],
-            "value": [
-              "IR-18A"
-            ]
-          }
-        },
-        {
-          "id": "p08.routing.d",
-          "canonicalClaimId": "p08.routing.d",
-          "claimType": "table_binding",
-          "expectation": "For Panel D, Use limitation is correction scope.",
+          "expectation": "For Panel D, Trace channel is 13C8-PFOA IS.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
@@ -3777,48 +5068,86 @@
               "D"
             ],
             "column": [
-              "Use limitation"
+              "Trace channel"
             ],
             "value": [
-              "correction scope"
+              "13C8-PFOA IS"
             ]
           }
         },
         {
-          "id": "p08.routing.d.purpose",
-          "canonicalClaimId": "p08.routing.d.purpose",
+          "id": "p08.routing.e.channel",
+          "canonicalClaimId": "p08.routing.e.channel",
           "claimType": "table_binding",
-          "expectation": "For Panel D, Review purpose is Reinjection internal standard.",
+          "expectation": "For Panel E, Trace channel is PFOA Q1.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
             "row": [
-              "D"
+              "E"
             ],
             "column": [
-              "Review purpose"
+              "Trace channel"
             ],
             "value": [
-              "Reinjection internal standard"
+              "PFOA Q1"
             ]
           }
         },
         {
-          "id": "p08.routing.d.record",
-          "canonicalClaimId": "p08.routing.d.record",
+          "id": "p08.routing.f.channel",
+          "canonicalClaimId": "p08.routing.f.channel",
           "claimType": "table_binding",
-          "expectation": "For Panel D, Related record is IR-19B.",
+          "expectation": "For Panel F, Trace channel is PFOA Q1.",
           "harm": 1,
           "evidencePolicy": {
             "type": "table_binding",
             "row": [
-              "D"
+              "F"
             ],
             "column": [
-              "Related record"
+              "Trace channel"
             ],
             "value": [
-              "IR-19B"
+              "PFOA Q1"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.g.channel",
+          "canonicalClaimId": "p08.routing.g.channel",
+          "claimType": "table_binding",
+          "expectation": "For Panel G, Trace channel is PFOA Q1.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "G"
+            ],
+            "column": [
+              "Trace channel"
+            ],
+            "value": [
+              "PFOA Q1"
+            ]
+          }
+        },
+        {
+          "id": "p08.routing.h.channel",
+          "canonicalClaimId": "p08.routing.h.channel",
+          "claimType": "table_binding",
+          "expectation": "For Panel H, Trace channel is 6:2 FTS Q2.",
+          "harm": 1,
+          "evidencePolicy": {
+            "type": "table_binding",
+            "row": [
+              "H"
+            ],
+            "column": [
+              "Trace channel"
+            ],
+            "value": [
+              "6:2 FTS Q2"
             ]
           }
         },
@@ -3826,16 +5155,13 @@
           "id": "p08.routing.boundary",
           "canonicalClaimId": "p08.routing.boundary",
           "claimType": "scalar",
-          "expectation": "Exact RT, area, ratio, and IS-recovery values come from the instrument annotations; the routing register supplies panel identity only.",
+          "expectation": "The native index supplies injection and channel identity only; visual annotations control trace measurements and review state.",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",
             "allOf": [
               [
-                "RT"
-              ],
-              [
-                "IS"
+                "native"
               ],
               [
                 "only",
@@ -3843,10 +5169,10 @@
                 "exclusively"
               ],
               [
-                "annotations"
+                "measurements"
               ],
               [
-                "instrument"
+                "injection"
               ]
             ]
           }
@@ -5069,76 +6395,6 @@
           }
         },
         {
-          "id": "p11.correction.precedence",
-          "canonicalClaimId": "p11.correction.precedence",
-          "claimType": "scalar",
-          "expectation": "CR-24-044 supersedes sequence 18/IR-18A fields and makes accepted sequence 19/IR-19B controlling.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "CR-24-044",
-                "CR 24-044",
-                "CR-24 044",
-                "CR 24 044"
-              ],
-              [
-                "18/IR-18A",
-                "18 / IR-18A",
-                "18/IR 18A"
-              ],
-              [
-                "19/IR-19B",
-                "19 / IR-19B",
-                "19/IR 19B"
-              ],
-              [
-                "A"
-              ],
-              [
-                "accepted",
-                "accept"
-              ],
-              [
-                "controlling",
-                "current",
-                "controls"
-              ],
-              [
-                "supersedes"
-              ],
-              [
-                "sequence"
-              ],
-              [
-                "fields"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p11.correction.pfoa",
-          "canonicalClaimId": "p11.correction.pfoa",
-          "claimType": "directed_edge",
-          "expectation": "DW-240409-04 PFOA changes from 1.84 ng/L J to 1.06 ng/L J.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "directed_edge",
-            "source": [
-              "1.84 ng/L J"
-            ],
-            "destination": [
-              "1.06 ng/L J"
-            ],
-            "relation": [
-              "DW-240409-04 PFOA changes",
-              "DW-240409-04 PFOA is corrected",
-              "DW-240409-04 PFOA corrected"
-            ]
-          }
-        },
-        {
           "id": "p11.correction.pfos",
           "canonicalClaimId": "p11.correction.pfos",
           "claimType": "scalar",
@@ -5214,30 +6470,6 @@
               ],
               [
                 "criterion"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p11.correction.audit",
-          "canonicalClaimId": "p11.correction.audit",
-          "claimType": "scalar",
-          "expectation": "The correction must not overwrite the audit trail.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "correction"
-              ],
-              [
-                "audit"
               ]
             ]
           }
@@ -5568,49 +6800,6 @@
           }
         },
         {
-          "id": "p12.result.r06",
-          "canonicalClaimId": "p12.result.r06",
-          "claimType": "scalar",
-          "expectation": "R-06 releases DW-240409-04 PFOA at 1.06 ng/L J with U95 0.25 ng/L under CR-24-044.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "DW-240409-04",
-                "DW 240409-04",
-                "DW-240409 04",
-                "DW 240409 04"
-              ],
-              [
-                "PFOA"
-              ],
-              [
-                "CR-24-044",
-                "CR 24-044",
-                "CR-24 044",
-                "CR 24 044"
-              ],
-              [
-                "06",
-                "6"
-              ],
-              [
-                "1.06"
-              ],
-              [
-                "0.25"
-              ],
-              [
-                "ng/L"
-              ],
-              [
-                "under"
-              ]
-            ]
-          }
-        },
-        {
           "id": "p12.result.r07",
           "canonicalClaimId": "p12.result.r07",
           "claimType": "scalar",
@@ -5646,9 +6835,6 @@
               ],
               [
                 "ng/L"
-              ],
-              [
-                "under"
               ]
             ]
           }
@@ -5734,7 +6920,7 @@
         "summarization_coverage"
       ],
       "textOnlyRecoverable": true,
-      "budget": 2,
+      "budget": 1,
       "leaves": [
         {
           "id": "p12.det.calibration",
@@ -5796,48 +6982,6 @@
           }
         },
         {
-          "id": "p12.det.d4",
-          "canonicalClaimId": "p12.det.d4",
-          "claimType": "scalar",
-          "expectation": "DW-240409-04 is accepted as corrected from sequence 19/IR-19B under CR-24-044.",
-          "harm": 2,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "DW-240409-04",
-                "DW 240409-04",
-                "DW-240409 04",
-                "DW 240409 04"
-              ],
-              [
-                "19/IR-19B",
-                "19 / IR-19B",
-                "19/IR 19B"
-              ],
-              [
-                "CR-24-044",
-                "CR 24-044",
-                "CR-24 044",
-                "CR 24 044"
-              ],
-              [
-                "accepted",
-                "accept"
-              ],
-              [
-                "corrected"
-              ],
-              [
-                "sequence"
-              ],
-              [
-                "under"
-              ]
-            ]
-          }
-        },
-        {
           "id": "p12.det.release",
           "canonicalClaimId": "p12.det.release",
           "claimType": "scalar",
@@ -5857,37 +7001,6 @@
               ],
               [
                 "exactly"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p12.det.audit",
-          "canonicalClaimId": "p12.det.audit",
-          "claimType": "scalar",
-          "expectation": "Release does not erase provisional exports, rejected integrations, or maintenance records.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "lexical",
-            "allOf": [
-              [
-                "not",
-                "no",
-                "without",
-                "absent"
-              ],
-              [
-                "rejected",
-                "reject"
-              ],
-              [
-                "integrations"
-              ],
-              [
-                "provisional"
-              ],
-              [
-                "maintenance"
               ]
             ]
           }
@@ -5930,6 +7043,309 @@
               ],
               [
                 "patel"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "join.dw24040904-release",
+      "label": "DW-240409-04 rejected-integration-to-release lifecycle",
+      "sourceAnchors": [
+        {
+          "page": 7,
+          "layer": "raster",
+          "sectionPath": [
+            "PFAS Method Validation and Batch Release Packet",
+            "LC-MS/MS sequence and technical review"
+          ]
+        },
+        {
+          "page": 8,
+          "layer": "mixed",
+          "sectionPath": [
+            "PFAS Method Validation and Batch Release Packet",
+            "Raw integration and chromatogram review"
+          ]
+        },
+        {
+          "page": 11,
+          "layer": "mixed",
+          "sectionPath": [
+            "PFAS Method Validation and Batch Release Packet",
+            "LIMS export and signed QA correction"
+          ]
+        },
+        {
+          "page": 12,
+          "layer": "native_text",
+          "sectionPath": [
+            "PFAS Method Validation and Batch Release Packet",
+            "Final signed validation and batch determination"
+          ]
+        }
+      ],
+      "goldSection": "Page 12 - Final signed validation and batch determination",
+      "kind": "mixed",
+      "modality": "mixed",
+      "uniqueEvidence": true,
+      "primaryAxis": "source_precedence",
+      "secondaryAxes": [
+        "long_context_coherence",
+        "mixed_modality_fusion",
+        "cross_page_join"
+      ],
+      "textOnlyRecoverable": false,
+      "budget": 2,
+      "leaves": [
+        {
+          "id": "join.dw24040904.original",
+          "canonicalClaimId": "join.dw24040904.original",
+          "claimType": "scalar",
+          "expectation": "DW-240409-04 sequence 18 is held at 38% IS recovery with original integration IR-18A rejected and its PFOA Q1 trace not reportable.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "DW-240409-04",
+                "DW 240409-04",
+                "DW-240409 04",
+                "DW 240409 04"
+              ],
+              [
+                "IS"
+              ],
+              [
+                "IR-18A",
+                "IR 18A"
+              ],
+              [
+                "PFOA"
+              ],
+              [
+                "18"
+              ],
+              [
+                "38"
+              ],
+              [
+                "%"
+              ],
+              [
+                "A"
+              ],
+              [
+                "held",
+                "hold",
+                "on hold",
+                "not released",
+                "blocked"
+              ],
+              [
+                "rejected",
+                "reject"
+              ],
+              [
+                "not",
+                "no",
+                "without",
+                "absent"
+              ],
+              [
+                "integration"
+              ],
+              [
+                "reportable"
+              ],
+              [
+                "sequence"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.dw24040904.reinjection",
+          "canonicalClaimId": "join.dw24040904.reinjection",
+          "claimType": "scalar",
+          "expectation": "DW-240409-04-RI sequence 19 is accepted at 91% IS recovery with reinjection IR-19B controlling.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "DW-240409-04-RI",
+                "DW 240409-04-RI",
+                "DW-240409 04-RI",
+                "DW 240409 04-RI",
+                "DW-240409-04 RI",
+                "DW 240409-04 RI",
+                "DW-240409 04 RI",
+                "DW 240409 04 RI"
+              ],
+              [
+                "IS"
+              ],
+              [
+                "IR-19B",
+                "IR 19B"
+              ],
+              [
+                "19"
+              ],
+              [
+                "91"
+              ],
+              [
+                "%"
+              ],
+              [
+                "accepted",
+                "accept"
+              ],
+              [
+                "controlling",
+                "current",
+                "controls"
+              ],
+              [
+                "reinjection"
+              ],
+              [
+                "sequence"
+              ],
+              [
+                "recovery"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.dw24040904.correction",
+          "canonicalClaimId": "join.dw24040904.correction",
+          "claimType": "directed_edge",
+          "expectation": "Signed CR-24-044 changes DW-240409-04 PFOA from provisional 1.84 ng/L J to 1.06 ng/L J.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "directed_edge",
+            "source": [
+              "provisional 1.84 ng/L J",
+              "1.84 ng/L J"
+            ],
+            "destination": [
+              "1.06 ng/L J"
+            ],
+            "relation": [
+              "Signed CR-24-044 changes DW-240409-04 PFOA",
+              "Signed CR-24-044 corrects DW-240409-04 PFOA"
+            ]
+          }
+        },
+        {
+          "id": "join.dw24040904.release",
+          "canonicalClaimId": "join.dw24040904.release",
+          "claimType": "scalar",
+          "expectation": "Released result R-06 is DW-240409-04 PFOA at 1.06 ng/L J with U95 0.25 ng/L under CR-24-044.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "DW-240409-04",
+                "DW 240409-04",
+                "DW-240409 04",
+                "DW 240409 04"
+              ],
+              [
+                "PFOA"
+              ],
+              [
+                "CR-24-044",
+                "CR 24-044",
+                "CR-24 044",
+                "CR 24 044"
+              ],
+              [
+                "06",
+                "6"
+              ],
+              [
+                "1.06"
+              ],
+              [
+                "0.25"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "Released"
+              ],
+              [
+                "result"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.dw24040904.pfos",
+          "canonicalClaimId": "join.dw24040904.pfos",
+          "claimType": "scalar",
+          "expectation": "Across the correction and release, DW-240409-04 PFOS remains <0.50 ng/L U.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "DW-240409-04",
+                "DW 240409-04",
+                "DW-240409 04",
+                "DW 240409 04"
+              ],
+              [
+                "PFOS"
+              ],
+              [
+                "<0.50",
+                "<0.5",
+                "< 0.50",
+                "< 0.5"
+              ],
+              [
+                "ng/L"
+              ],
+              [
+                "release"
+              ]
+            ]
+          }
+        },
+        {
+          "id": "join.dw24040904.audit",
+          "canonicalClaimId": "join.dw24040904.audit",
+          "claimType": "scalar",
+          "expectation": "The accepted reinjection controls release without erasing the provisional export or rejected original integration.",
+          "harm": 2,
+          "evidencePolicy": {
+            "type": "lexical",
+            "allOf": [
+              [
+                "accepted",
+                "accept"
+              ],
+              [
+                "rejected",
+                "reject"
+              ],
+              [
+                "reinjection"
+              ],
+              [
+                "provisional"
+              ],
+              [
+                "integration"
               ]
             ]
           }

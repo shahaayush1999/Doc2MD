@@ -669,7 +669,7 @@
       "goldSection": "A2.14-B - Archived floor plan",
       "kind": "diagram",
       "modality": "raster",
-      "uniqueEvidence": true,
+      "uniqueEvidence": false,
       "primaryAxis": "chart_diagram_spatial",
       "secondaryAxes": [
         "low_quality_scan"
@@ -874,7 +874,7 @@
       "goldSection": "A2.14-B - Archived floor plan",
       "kind": "diagram",
       "modality": "raster",
-      "uniqueEvidence": true,
+      "uniqueEvidence": false,
       "primaryAxis": "chart_diagram_spatial",
       "secondaryAxes": [
         "low_quality_scan"
@@ -953,30 +953,6 @@
           }
         },
         {
-          "id": "p02.door.reader",
-          "canonicalClaimId": "p02.door.reader",
-          "claimType": "visual_description",
-          "expectation": "No card-reader symbol appears beside the Revision B opening.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "qualitative",
-            "requiredTerms": [
-              [
-                "no",
-                "absent"
-              ],
-              [
-                "card reader",
-                "reader"
-              ],
-              [
-                "Revision B",
-                "Rev B"
-              ]
-            ]
-          }
-        },
-        {
           "id": "p02.door.callout",
           "canonicalClaimId": "p02.door.callout",
           "claimType": "visual_description",
@@ -1018,7 +994,7 @@
       "goldSection": "A2.14-B - Archived floor plan",
       "kind": "diagram",
       "modality": "raster",
-      "uniqueEvidence": true,
+      "uniqueEvidence": false,
       "primaryAxis": "chart_diagram_spatial",
       "secondaryAxes": [
         "low_quality_scan"
@@ -1050,17 +1026,20 @@
           "id": "p02.egress.door-west",
           "canonicalClaimId": "p02.egress.door-west",
           "claimType": "directed_edge",
-          "expectation": "The second egress arrow runs from the opening west along corridor C2.",
+          "expectation": "The second egress arrow runs from the archived Revision B opening west along corridor C2.",
           "harm": 1,
           "evidencePolicy": {
             "type": "directed_edge",
             "source": [
-              "opening",
-              "door"
+              "archived opening",
+              "Revision B opening",
+              "old opening",
+              "old corridor opening"
             ],
             "destination": [
               "west along corridor C2",
               "west along C2",
+              "west through C2",
               "C2 west"
             ],
             "relation": [
@@ -1209,7 +1188,7 @@
       "goldSection": "A2.14 - Controlled floor plan and overlay",
       "kind": "diagram",
       "modality": "vector_geometry",
-      "uniqueEvidence": true,
+      "uniqueEvidence": false,
       "primaryAxis": "chart_diagram_spatial",
       "secondaryAxes": [],
       "textOnlyRecoverable": false,
@@ -1360,7 +1339,7 @@
       "goldSection": "A2.14 - Controlled floor plan and overlay",
       "kind": "diagram",
       "modality": "vector_geometry",
-      "uniqueEvidence": true,
+      "uniqueEvidence": false,
       "primaryAxis": "chart_diagram_spatial",
       "secondaryAxes": [],
       "textOnlyRecoverable": false,
@@ -1458,6 +1437,20 @@
               [
                 "D-214B"
               ]
+            ],
+            "localBindings": [
+              [
+                [
+                  "CR-6"
+                ],
+                [
+                  "corridor side",
+                  "C2"
+                ],
+                [
+                  "D-214B"
+                ]
+              ]
             ]
           }
         },
@@ -1512,6 +1505,36 @@
                 "door",
                 "opening"
               ]
+            ],
+            "localBindings": [
+              [
+                [
+                  "archived"
+                ],
+                [
+                  "dashed red"
+                ],
+                [
+                  "door",
+                  "opening"
+                ]
+              ],
+              [
+                [
+                  "current"
+                ],
+                [
+                  "solid blue",
+                  "solid teal",
+                  "teal/blue",
+                  "teal-blue",
+                  "blue/teal"
+                ],
+                [
+                  "door",
+                  "opening"
+                ]
+              ]
             ]
           }
         },
@@ -1557,7 +1580,7 @@
       "goldSection": "A2.14 - Controlled floor plan and overlay",
       "kind": "diagram",
       "modality": "vector_geometry",
-      "uniqueEvidence": true,
+      "uniqueEvidence": false,
       "primaryAxis": "chart_diagram_spatial",
       "secondaryAxes": [],
       "textOnlyRecoverable": false,
@@ -1572,12 +1595,14 @@
           "evidencePolicy": {
             "type": "directed_edge",
             "source": [
-              "Egress runs from Lab B",
-              "Egress from Lab B",
-              "Lab B through"
+              "Lab B"
             ],
             "destination": [
               "D-214B"
+            ],
+            "relation": [
+              "egress",
+              "through"
             ]
           }
         },
@@ -1585,16 +1610,18 @@
           "id": "p03.egress.door-west",
           "canonicalClaimId": "p03.egress.door-west",
           "claimType": "directed_edge",
-          "expectation": "The second egress segment runs from D-214B west along corridor C2.",
+          "expectation": "The second egress segment continues west along corridor C2.",
           "harm": 1,
           "evidencePolicy": {
             "type": "directed_edge",
             "source": [
-              "D-214B"
+              "D-214B",
+              "current opening"
             ],
             "destination": [
               "west along corridor C2",
               "west along C2",
+              "west through C2",
               "C2 west"
             ],
             "relation": [
@@ -1747,6 +1774,27 @@
               ],
               [
                 "shared wall"
+              ]
+            ],
+            "localBindings": [
+              [
+                [
+                  "old",
+                  "Revision B"
+                ],
+                [
+                  "new",
+                  "Revision C"
+                ],
+                [
+                  "Lab B"
+                ],
+                [
+                  "C2"
+                ],
+                [
+                  "shared wall"
+                ]
               ]
             ]
           }
@@ -2126,7 +2174,10 @@
             "type": "directed_edge",
             "source": [
               "old diffuser",
-              "old position"
+              "old position",
+              "SP-7",
+              "C1 conflict area",
+              "SP-7/C1 conflict area"
             ],
             "destination": [
               "SD-4"
@@ -2221,6 +2272,16 @@
               [
                 "U42-U43"
               ]
+            ],
+            "localBindings": [
+              [
+                [
+                  "CS-2"
+                ],
+                [
+                  "U42-U43"
+                ]
+              ]
             ]
           }
         },
@@ -2239,6 +2300,16 @@
               [
                 "U36-U37"
               ]
+            ],
+            "localBindings": [
+              [
+                [
+                  "PP-7"
+                ],
+                [
+                  "U36-U37"
+                ]
+              ]
             ]
           }
         },
@@ -2256,6 +2327,16 @@
               ],
               [
                 "U31-U32"
+              ]
+            ],
+            "localBindings": [
+              [
+                [
+                  "AC-6"
+                ],
+                [
+                  "U31-U32"
+                ]
               ]
             ]
           }
@@ -2276,6 +2357,16 @@
               [
                 "U26-U28"
               ]
+            ],
+            "localBindings": [
+              [
+                [
+                  "UPS-A"
+                ],
+                [
+                  "U26-U28"
+                ]
+              ]
             ]
           }
         },
@@ -2294,6 +2385,16 @@
               [
                 "U19"
               ]
+            ],
+            "localBindings": [
+              [
+                [
+                  "GW-3"
+                ],
+                [
+                  "U19"
+                ]
+              ]
             ]
           }
         },
@@ -2311,6 +2412,16 @@
               ],
               [
                 "U14-U15"
+              ]
+            ],
+            "localBindings": [
+              [
+                [
+                  "NVR-B"
+                ],
+                [
+                  "U14-U15"
+                ]
               ]
             ]
           }
@@ -4427,29 +4538,6 @@
           }
         },
         {
-          "id": "p09.door.corridor",
-          "canonicalClaimId": "p09.door.corridor",
-          "claimType": "visual_description",
-          "expectation": "Photo 06 is taken from the corridor side of the opening.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "qualitative",
-            "requiredTerms": [
-              [
-                "Photo 06"
-              ],
-              [
-                "corridor",
-                "C2"
-              ],
-              [
-                "side",
-                "view"
-              ]
-            ]
-          }
-        },
-        {
           "id": "p09.door.annotation",
           "canonicalClaimId": "p09.door.annotation",
           "claimType": "visual_description",
@@ -4471,25 +4559,6 @@
               [
                 "not",
                 "rather than"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p09.door.clear",
-          "canonicalClaimId": "p09.door.clear",
-          "claimType": "visual_description",
-          "expectation": "The photographed opening is unobstructed.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "qualitative",
-            "requiredTerms": [
-              [
-                "opening"
-              ],
-              [
-                "unobstructed",
-                "clear"
               ]
             ]
           }
@@ -4550,7 +4619,7 @@
           "id": "p09.rack.drop",
           "canonicalClaimId": "p09.rack.drop",
           "claimType": "visual_description",
-          "expectation": "The tray turns downward and drops at the rack's west/top corner.",
+          "expectation": "The tray drops at the rack's west/top corner.",
           "harm": 1,
           "evidencePolicy": {
             "type": "qualitative",
@@ -4559,11 +4628,19 @@
                 "tray"
               ],
               [
+                "drop",
                 "drops",
+                "transition",
                 "downward",
                 "vertical"
               ],
               [
+                "image-upper-left",
+                "image upper left",
+                "upper-left",
+                "upper left",
+                "west/top",
+                "west-top",
                 "west",
                 "top corner"
               ]
@@ -4591,33 +4668,6 @@
               ],
               [
                 "entry"
-              ]
-            ]
-          }
-        },
-        {
-          "id": "p09.rack.clear",
-          "canonicalClaimId": "p09.rack.clear",
-          "claimType": "visual_description",
-          "expectation": "The image-right service side of rack R2 is unobstructed.",
-          "harm": 1,
-          "evidencePolicy": {
-            "type": "qualitative",
-            "requiredTerms": [
-              [
-                "image-right",
-                "right"
-              ],
-              [
-                "service side"
-              ],
-              [
-                "rack R2",
-                "R2"
-              ],
-              [
-                "unobstructed",
-                "clear"
               ]
             ]
           }
@@ -5078,7 +5128,7 @@
           "id": "p10.identity.date",
           "canonicalClaimId": "p10.identity.date",
           "claimType": "scalar",
-          "expectation": "The release date is 2026-06-16.",
+          "expectation": "The release date is 16 June 2026 (2026-06-16).",
           "harm": 1,
           "evidencePolicy": {
             "type": "lexical",

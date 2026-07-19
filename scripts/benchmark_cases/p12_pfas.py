@@ -86,111 +86,190 @@ def _chart_font(size: int, *, bold: bool = False) -> ImageFont.FreeTypeFont | Im
     return ImageFont.load_default(size=size)
 
 
-def _calibration_plate(curves: Sequence[tuple[str, list[float], list[float], str]]) -> Image.Image:
-    """Raster-only calibration plate; exact point labels have no text-layer twin."""
-    image = Image.new("RGB", (1500, 690), "#f8f8f5")
+def _calibration_plate(panels: Sequence[dict[str, object]]) -> Image.Image:
+    """Dense raster-only calibration review plate with no native answer recap."""
+    image = Image.new("RGB", (1800, 1160), "#f7f7f3")
     draw = ImageDraw.Draw(image)
-    title_font = _chart_font(25, bold=True)
-    label_font = _chart_font(15)
-    small = _chart_font(14)
-    for panel, (name, levels, responses, color) in enumerate(curves):
-        color_name = {
-            "#1d4e89": "blue",
-            "#2d6a4f": "green",
-            "#a15c00": "amber",
-        }[color.lower()]
-        left = 35 + panel * 490
-        top = 34
-        right = left + 455
-        bottom = 650
-        draw.rectangle((left, top, right, bottom), outline="#8d959c", width=2)
-        draw.text((left + 18, top + 15), name, font=title_font, fill="#17202a")
-        draw.text((left + 18, top + 50), "Weighted 1/x^2; point label = ng/L | response", font=small, fill="#59636e")
-        draw.line((left + 18, top + 91, left + 58, top + 91), fill=color, width=4)
-        draw.ellipse((left + 34, top + 86, left + 44, top + 96), fill=color, outline=color)
+    heading = _chart_font(27, bold=True)
+    title_font = _chart_font(24, bold=True)
+    body = _chart_font(19)
+    small = _chart_font(17)
+    tiny = _chart_font(15)
+
+    draw.text((28, 18), "CALIBRATION REVIEW PLATE - WEIGHTED 1/x^2", font=heading, fill="#17202a")
+    draw.text(
+        (770, 24),
+        "filled circle = included  |  open diamond = excluded  |  inset bars = back-calculated residual %",
+        font=small,
+        fill="#4e5963",
+    )
+
+    panel_width, panel_height = 566, 520
+    for index, panel in enumerate(panels):
+        column, row = index % 3, index // 3
+        left = 28 + column * 590
+        top = 66 + row * 540
+        right = left + panel_width
+        bottom = top + panel_height
+        name = str(panel["name"])
+        levels = [float(value) for value in panel["levels"]]  # type: ignore[index]
+        responses = [float(value) for value in panel["responses"]]  # type: ignore[index]
+        residuals = [float(value) for value in panel["residuals"]]  # type: ignore[index]
+        color = str(panel["color"])
+        excluded_index = panel.get("excluded_index")
+
+        draw.rectangle((left, top, right, bottom), fill="#fbfbf8", outline="#7f8991", width=2)
+        draw.text((left + 14, top + 11), f"{index + 1}. {name}", font=title_font, fill="#17202a")
         draw.text(
-            (left + 70, top + 78),
-            f"LEGEND: {color_name} line/points = {name}",
-            font=small,
-            fill="#303840",
+            (left + 14, top + 43),
+            f"{panel['equation']}  |  R2 {panel['r2']}  |  {panel['range']}",
+            font=body,
+            fill="#3f4952",
         )
-        x0, y0 = left + 72, bottom - 92
-        x1, y1 = right - 28, top + 130
+
+        x0, y0 = left + 54, top + 332
+        x1, y1 = left + 382, top + 102
         draw.line((x0, y0, x1, y0), fill="#17202a", width=2)
         draw.line((x0, y0, x0, y1), fill="#17202a", width=2)
+        for fraction in (0.25, 0.5, 0.75):
+            y = int(y0 - fraction * (y0 - y1))
+            draw.line((x0, y, x1, y), fill="#d8dcdf", width=1)
         log_low = math.log10(min(levels))
         log_span = math.log10(max(levels)) - log_low
-        response_max = max(responses) * 1.12
+        response_max = max(responses) * 1.08
         points: list[tuple[int, int]] = []
-        offsets = [(2, -50), (-4, -28), (-15, -52), (-45, 30), (-76, -12)]
-        for index, (level, response) in enumerate(zip(levels, responses)):
-            x = int(x0 + 18 + (math.log10(level) - log_low) / log_span * (x1 - x0 - 36))
-            y = int(y0 - 18 - response / response_max * (y0 - y1 - 30))
+        for point_index, (level, response) in enumerate(zip(levels, responses)):
+            x = int(x0 + 12 + (math.log10(level) - log_low) / log_span * (x1 - x0 - 24))
+            y = int(y0 - 10 - response / response_max * (y0 - y1 - 20))
             points.append((x, y))
-            draw.ellipse((x - 5, y - 5, x + 5, y + 5), fill=color, outline=color)
-            dx, dy = offsets[index]
-            label = f"{level:g} | {response:.3f}"
-            draw.line((x, y, x + dx // 2, y + dy // 2), fill="#aeb4b9", width=1)
-            draw.text((x + dx, y + dy), label, font=label_font, fill="#17202a")
-        for first, second in zip(points, points[1:]):
+            if excluded_index == point_index:
+                draw.polygon([(x, y - 8), (x + 8, y), (x, y + 8), (x - 8, y)], outline=color, fill="#fbfbf8")
+            else:
+                draw.ellipse((x - 6, y - 6, x + 6, y + 6), fill=color, outline=color)
+        included_points = [point for point_index, point in enumerate(points) if excluded_index != point_index]
+        for first, second in zip(included_points, included_points[1:]):
             draw.line((*first, *second), fill=color, width=3)
-        draw.text((left + 148, bottom - 42), "log concentration (ng/L)", font=label_font, fill="#303840")
-        draw.text((left + 8, top + 275), "response\nratio", font=label_font, fill="#303840")
+        draw.text((left + 125, top + 338), "concentration ng/L (log)", font=small, fill="#303840")
+        draw.text((left + 9, top + 185), "response\nratio", font=small, fill="#303840")
+
+        # Residual inset is a separate visual encoding. The zero line and +/-20
+        # bounds make an excluded or retained edge standard auditable by sight.
+        rx0, ry0 = left + 418, top + 119
+        rx1, ry1 = right - 14, top + 331
+        zero_y = int((ry0 + ry1) / 2)
+        draw.rectangle((rx0, ry0, rx1, ry1), outline="#a2a8ad", width=1)
+        draw.line((rx0 + 6, zero_y, rx1 - 6, zero_y), fill="#5d666d", width=1)
+        draw.line((rx0 + 6, ry0 + 12, rx1 - 6, ry0 + 12), fill="#b94942", width=1)
+        draw.line((rx0 + 6, ry1 - 12, rx1 - 6, ry1 - 12), fill="#b94942", width=1)
+        bar_width = max(5, int((rx1 - rx0 - 18) / len(residuals)) - 4)
+        for residual_index, residual in enumerate(residuals):
+            x = rx0 + 9 + residual_index * (bar_width + 4)
+            height = int(abs(residual) / 20.0 * (ry1 - ry0 - 30) / 2)
+            bar_color = "#b94942" if excluded_index == residual_index else color
+            if residual >= 0:
+                draw.rectangle((x, zero_y - height, x + bar_width, zero_y), fill=bar_color)
+            else:
+                draw.rectangle((x, zero_y, x + bar_width, zero_y + height), fill=bar_color)
+        draw.text((rx0 + 7, top + 94), "residual %", font=tiny, fill="#4e5963")
+
+        level_text = " / ".join(f"{value:g}" for value in levels)
+        response_text = " / ".join(f"{value:.3f}" for value in responses)
+        draw.text((left + 14, top + 376), f"LEVEL ng/L  {level_text}", font=tiny, fill="#303840")
+        draw.text((left + 14, top + 401), f"RESPONSE    {response_text}", font=tiny, fill="#303840")
+        draw.rectangle((left + 13, top + 435, right - 13, bottom - 13), fill="#eef1f1", outline="#c5cacc")
+        draw.text((left + 24, top + 446), str(panel["review"]), font=body, fill="#17202a")
+        draw.text((left + 24, top + 478), str(panel["disposition"]), font=small, fill=color)
     return image
 
 
 def _chromatogram_plate() -> Image.Image:
-    """Four raster-only audit panels with exact trace annotations."""
-    image = Image.new("RGB", (1500, 870), "#f7f7f4")
+    """Eight crowded raster-only panels from one routine integration review."""
+    image = Image.new("RGB", (1800, 1120), "#f7f7f4")
     draw = ImageDraw.Draw(image)
-    title_font = _chart_font(24, bold=True)
-    note_font = _chart_font(18)
+    title_font = _chart_font(22, bold=True)
+    note_font = _chart_font(17)
     tick_font = _chart_font(14)
     panels = [
         {
-            "title": "A  LRB-240410-01 / PFOS quantifier",
+            "title": "A  LRB-240410-01 / PFOS Q1",
             "rt": 5.64,
             "peak": 0,
             "color": "#59636e",
-            "notes": ["noise window 38-44 cps", "no integrated peak", "file 240410_10.wiff"],
+            "state": "NO PEAK / BLANK ACCEPTED",
+            "notes": ["noise 38-44 cps", "file 240410_10.wiff", "integration: none"],
         },
         {
-            "title": "B  DW-240408-03 / PFOA quantifier",
+            "title": "B  DW-240408-03 / PFOA Q1",
             "rt": 4.41,
             "peak": 205,
             "color": "#2d6a4f",
-            "notes": ["area 25,621", "quant/qual ratio 0.31", "file 240410_14.wiff"],
+            "state": "ACCEPTED / FINAL BATCH RESULT",
+            "notes": ["area 25,621", "Q1/Q2 ratio 0.31", "file 240410_14.wiff"],
         },
         {
-            "title": "C  DW-240409-04 / 13C8-PFOA original",
+            "title": "C  DW-240409-04 / 13C8-PFOA IS",
             "rt": 4.39,
             "peak": 82,
             "color": "#9e2a2b",
-            "notes": ["IS recovery 38%", "integration IR-18A", "sequence 18"],
+            "state": "SEQ 18 HOLD / ORIGINAL REJECTED",
+            "notes": ["IS recovery 38%", "IR-18A", "file 240410_18.wiff"],
         },
         {
-            "title": "D  DW-240409-04 / 13C8-PFOA reinjection",
+            "title": "D  DW-240409-04-RI / 13C8-PFOA IS",
             "rt": 4.40,
             "peak": 196,
             "color": "#1d4e89",
-            "notes": ["IS recovery 91%", "integration IR-19B", "sequence 19"],
+            "state": "SEQ 19 ACCEPTED / CONTROLLING",
+            "notes": ["IS recovery 91%", "IR-19B", "file 240410_19.wiff"],
+        },
+        {
+            "title": "E  DW-240409-04 / PFOA Q1",
+            "rt": 4.42,
+            "peak": 124,
+            "color": "#9e2a2b",
+            "state": "SEQ 18 NOT REPORTABLE",
+            "notes": ["area 11,180", "Q1/Q2 ratio 0.27", "IR-18A linked"],
+        },
+        {
+            "title": "F  DW-240409-04-RI / PFOA Q1",
+            "rt": 4.41,
+            "peak": 96,
+            "color": "#1d4e89",
+            "state": "SEQ 19 ACCEPTED / 1.06 ng/L J",
+            "notes": ["area 8,420", "Q1/Q2 ratio 0.30", "IR-19B linked"],
+        },
+        {
+            "title": "G  CCV-10-CLOSE / PFOA Q1",
+            "rt": 4.41,
+            "peak": 218,
+            "color": "#2d6a4f",
+            "state": "ACCEPTED / 103.1% RECOVERY",
+            "notes": ["back-calc 10.31 ng/L", "area 80,755", "file 240410_21.wiff"],
+        },
+        {
+            "title": "H  DW-240409-05 / 6:2 FTS Q2",
+            "rt": 5.18,
+            "peak": 142,
+            "color": "#7a4f9a",
+            "state": "REVIEWED / QUALIFIER CONFIRMED",
+            "notes": ["area 13,290", "Q1/Q2 ratio 0.22", "file 240410_20.wiff"],
         },
     ]
     for index, panel in enumerate(panels):
-        ox = 32 + (index % 2) * 735
-        oy = 28 + (index // 2) * 420
-        draw.rectangle((ox, oy, ox + 700, oy + 390), outline="#8b9298", width=2)
-        draw.text((ox + 18, oy + 14), panel["title"], font=title_font, fill="#17202a")
-        x0, y0 = ox + 82, oy + 286
-        x1, y1 = ox + 655, oy + 86
+        ox = 24 + (index % 4) * 444
+        oy = 24 + (index // 4) * 548
+        draw.rectangle((ox, oy, ox + 424, oy + 524), outline="#8b9298", width=2)
+        draw.text((ox + 13, oy + 12), str(panel["title"]), font=title_font, fill="#17202a")
+        x0, y0 = ox + 58, oy + 324
+        x1, y1 = ox + 402, oy + 78
         draw.line((x0, y0, x1, y0), fill="#17202a", width=2)
         draw.line((x0, y0, x0, y1), fill="#17202a", width=2)
         for tick in range(0, 9, 2):
             x = x0 + int(tick / 8 * (x1 - x0))
             draw.line((x, y0, x, y0 + 8), fill="#17202a", width=1)
             draw.text((x - 5, y0 + 11), str(tick), font=tick_font, fill="#59636e")
-        draw.text((ox + 318, oy + 323), "Time (min)", font=note_font, fill="#303840")
-        draw.text((ox + 8, oy + 155), "Intensity\n(cps)", font=note_font, fill="#303840")
+        draw.text((ox + 175, oy + 351), "time (min)", font=note_font, fill="#303840")
+        draw.text((ox + 6, oy + 185), "cps", font=note_font, fill="#303840")
         peak_x = x0 + int(float(panel["rt"]) / 8 * (x1 - x0))
         rng = random.Random(12_800 + index)
         trace: list[tuple[int, int]] = []
@@ -203,8 +282,11 @@ def _chromatogram_plate() -> Image.Image:
         for first, second in zip(trace, trace[1:]):
             draw.line((*first, *second), fill=str(panel["color"]), width=2)
         draw.line((peak_x, y1, peak_x, y0), fill="#b9bec3", width=1)
-        draw.text((peak_x - 35, y1 - 22), f"{float(panel['rt']):.2f} min", font=note_font, fill=str(panel["color"]))
-        draw.text((ox + 18, oy + 352), "  |  ".join(panel["notes"]), font=note_font, fill="#303840")
+        draw.text((peak_x - 33, y1 - 22), f"{float(panel['rt']):.2f} min", font=note_font, fill=str(panel["color"]))
+        draw.rectangle((ox + 12, oy + 386, ox + 412, oy + 423), fill="#e9eded")
+        draw.text((ox + 22, oy + 396), str(panel["state"]), font=note_font, fill=str(panel["color"]))
+        for note_index, note in enumerate(panel["notes"]):
+            draw.text((ox + 18, oy + 437 + note_index * 25), str(note), font=note_font, fill="#303840")
     return image
 
 
@@ -262,10 +344,80 @@ def _table_gold(headers: Sequence[str], rows: Sequence[Sequence[str]]) -> str:
 
 
 def build(output_root):
-    calibration_curves = [
-        ("PFOA", [0.25, 1.0, 5.0, 20.0, 80.0], [0.021, 0.077, 0.406, 1.393, 5.986], "#1d4e89"),
-        ("PFOS", [0.5, 2.0, 10.0, 50.0, 100.0], [0.042, 0.184, 0.958, 4.753, 8.177], "#2d6a4f"),
-        ("HFPO-DA", [0.5, 2.0, 10.0, 50.0, 80.0], [0.044, 0.175, 0.790, 4.400, 6.632], "#a15c00"),
+    calibration_panels: list[dict[str, object]] = [
+        {
+            "name": "PFOA",
+            "levels": [0.25, 0.5, 1.0, 5.0, 20.0, 50.0, 80.0],
+            "responses": [0.021, 0.040, 0.077, 0.406, 1.393, 3.731, 5.986],
+            "residuals": [11.8, -6.1, 3.4, -2.8, 1.9, -4.2, 5.1],
+            "color": "#1d4e89",
+            "equation": "y = 0.0748x + 0.0021",
+            "r2": "0.9986",
+            "range": "0.25-80 ng/L",
+            "review": "Max residual +11.8% at 0.25 ng/L (L1)",
+            "disposition": "L1 retained - within the +/-20% lowest-level allowance",
+        },
+        {
+            "name": "PFNA",
+            "levels": [0.25, 0.5, 1.0, 5.0, 20.0, 50.0, 80.0],
+            "responses": [0.018, 0.034, 0.070, 0.352, 1.411, 3.510, 5.621],
+            "residuals": [-18.7, 9.2, -5.5, 3.1, -2.4, 4.8, -3.0],
+            "color": "#6a4c93",
+            "equation": "y = 0.0702x + 0.0008",
+            "r2": "0.9964",
+            "range": "0.25-80 ng/L",
+            "review": "Max residual -18.7% at 0.25 ng/L (L1)",
+            "disposition": "L1 retained - within the +/-20% lowest-level allowance",
+        },
+        {
+            "name": "PFOS",
+            "levels": [0.5, 1.0, 2.0, 10.0, 25.0, 50.0, 100.0],
+            "responses": [0.042, 0.089, 0.184, 0.958, 2.392, 4.753, 8.177],
+            "residuals": [-9.4, 4.1, -3.8, 2.5, -6.2, 7.9, 14.6],
+            "color": "#2d6a4f",
+            "equation": "y = 0.0831x + 0.0184",
+            "r2": "0.9978",
+            "range": "0.50-100 ng/L",
+            "review": "Max residual +14.6% at 100 ng/L (L7)",
+            "disposition": "Upper point retained - within the +/-15% criterion",
+        },
+        {
+            "name": "PFHxS",
+            "levels": [0.5, 1.0, 2.0, 10.0, 25.0, 50.0, 100.0],
+            "responses": [0.038, 0.080, 0.162, 0.821, 2.049, 4.086, 8.169],
+            "residuals": [7.2, -5.1, 3.7, -2.9, 2.1, -8.4, 4.6],
+            "color": "#bc6c25",
+            "equation": "y = 0.0817x + 0.0019",
+            "r2": "0.9991",
+            "range": "0.50-100 ng/L",
+            "review": "Max residual -8.4% at 50 ng/L (L6)",
+            "disposition": "All seven levels retained - no residual flag",
+        },
+        {
+            "name": "6:2 FTS",
+            "levels": [1.0, 2.0, 5.0, 10.0, 25.0, 50.0, 100.0],
+            "responses": [0.052, 0.141, 0.269, 0.548, 1.361, 2.716, 5.433],
+            "residuals": [-4.8, 23.6, 6.2, -3.1, 2.8, -5.9, 4.4],
+            "color": "#9e2a2b",
+            "equation": "y = 0.0544x + 0.0007",
+            "r2": "0.9981 after L2 exclusion",
+            "range": "1.00-100 ng/L",
+            "excluded_index": 1,
+            "review": "L2 residual +23.6% at 2.0 ng/L; vial bubble CAL-EX-06",
+            "disposition": "L2 excluded; six-level refit accepted under signed exception",
+        },
+        {
+            "name": "HFPO-DA",
+            "levels": [0.5, 1.0, 2.0, 10.0, 20.0, 50.0, 80.0],
+            "responses": [0.044, 0.086, 0.175, 0.790, 1.664, 4.400, 6.632],
+            "residuals": [9.7, -6.8, 3.5, -4.2, 2.9, 6.1, -5.0],
+            "color": "#007f8b",
+            "equation": "y = 0.0830x + 0.0041",
+            "r2": "0.9989",
+            "range": "0.50-80 ng/L",
+            "review": "Max residual +9.7% at 0.50 ng/L (L1)",
+            "disposition": "All seven levels retained - no curvature flag",
+        },
     ]
     case = CaseBuilder(
         output_root=output_root,
@@ -508,137 +660,141 @@ def build(output_root):
         ],
     )
 
-    # Page 3 - calibration figure plus residual decisions.
+    # Page 3 - one crowded calibration review plate. The per-analyte equations,
+    # residuals, excluded-standard state, and point bindings exist only inside
+    # the raster plate; native text supplies the general acceptance rule only.
     c = case.new_page(
         "Calibration curves and residual disposition",
-        subtitle="Weighted 1/x^2 calibration review | labeled standards and residual disposition",
+        subtitle="Six-analyte weighted review | fit, residual, and exclusion disposition",
         section_code="FIGURE 03",
     )
-    plate = _calibration_plate(calibration_curves)
-    c.drawImage(image_reader(plate), 42, 402, width=528, height=243, preserveAspectRatio=True, mask="auto")
+    plate = _calibration_plate(calibration_panels)
+    c.drawImage(image_reader(plate), 42, 280, width=528, height=340, preserveAspectRatio=True, mask="auto")
     c.setStrokeColor(HexColor("#9AA0A6"))
-    c.rect(42, 402, 528, 243, fill=0, stroke=1)
-    residual_headers = ["Analyte", "Weighted R2", "Max abs back-calc residual", "Disposition"]
-    residual_rows = [
-        ["PFOA", "0.9986", "11.8% at 0.25 ng/L", "1/x^2 retained"],
-        ["PFOS", "0.9978", "14.6% at 100 ng/L", "Upper point retained"],
-        ["HFPO-DA", "0.9989", "9.7% at 0.50 ng/L", "No curvature flag"],
-    ]
-    draw_label(c, "Residual disposition", 42, 369)
-    draw_table(c, 42, 355, [72, 83, 171, 202], [residual_headers, *residual_rows], font_size=6.8, zebra=True)
+    c.rect(42, 280, 528, 340, fill=0, stroke=1)
+    draw_label(c, "Method acceptance rule", 42, 246)
     draw_paragraph(
         c,
-        "Acceptance: weighted R2 >= 0.995 and each back-calculated standard within +/-15%, except the lowest level may be within +/-20%.",
+        "Use weighted 1/x^2. Accept R2 >= 0.995 and each included back-calculated standard within +/-15%; the lowest included level may be within +/-20%. A standard may be excluded only under a signed, source-visible exception.",
         42,
-        244,
+        230,
         520,
         size=7.8,
         leading=10.7,
     )
+    draw_paragraph(
+        c,
+        "Panel-specific fit, exclusion, and residual disposition are recorded in Figure 03; the signed calibration exception log controls exclusions.",
+        42,
+        174,
+        520,
+        font="DocSans-Italic",
+        size=7.5,
+        leading=10.4,
+        color=MUTED,
+    )
+
+    panel_gold: list[str] = []
+    for panel in calibration_panels:
+        levels = [float(value) for value in panel["levels"]]  # type: ignore[index]
+        responses = [float(value) for value in panel["responses"]]  # type: ignore[index]
+        residuals = [float(value) for value in panel["residuals"]]  # type: ignore[index]
+        panel_gold.append(
+            f"- **{panel['name']}** - {panel['equation']}; R2 {panel['r2']}; range {panel['range']}. "
+            f"Levels: {', '.join(f'{value:g}' for value in levels)} ng/L. "
+            f"Responses: {', '.join(f'{value:.3f}' for value in responses)}. "
+            f"Residuals: {', '.join(f'{value:+.1f}%' for value in residuals)}. "
+            f"Review: {panel['review']}. Disposition: {panel['disposition']}."
+        )
     case.add_gold(
         "Page 3 - Calibration curves and residual disposition",
-        "Figure 03 labels each standard as concentration in ng/L | response ratio.\n\n"
-        + "\n".join(f"- {name}: " + ", ".join(f"{level:g} | {response:.3f}" for level, response in zip(levels, responses)) for name, levels, responses, _ in calibration_curves)
-        + "\n\nChart reconstruction: the horizontal x-axis is log concentration in ng/L and the vertical y-axis is response ratio. The legend maps the blue line and points to PFOA, green to PFOS, and amber to HFPO-DA. Each panel uses weighted 1/x^2 calibration and labels every point with both concentration and response. The PFOA series rises monotonically from 0.021 to 5.986. The PFOS series rises monotonically from 0.042 to 8.177. The HFPO-DA series rises monotonically from 0.044 to 6.632."
-        + "\n\n"
-        + _table_gold(residual_headers, residual_rows)
-        + "\n\nAcceptance: weighted R2 >= 0.995; standards +/-15%, with +/-20% permitted at the lowest level.",
+        "Figure 03 is a 2x3 raster calibration-review plate in this panel order: PFOA, PFNA, PFOS, PFHxS, 6:2 FTS, HFPO-DA. Filled circles are included standards, an open diamond is an excluded standard, and inset bars are back-calculated residual percentages. The horizontal axis is log concentration in ng/L and the vertical axis is response ratio.\n\n"
+        + "\n".join(panel_gold)
+        + "\n\nThe general method rule is weighted 1/x^2, R2 >= 0.995, included standards within +/-15%, and the lowest included standard within +/-20%. Only the 6:2 FTS 2.0 ng/L L2 standard is excluded, under the source-visible CAL-EX-06 vial-bubble exception; the six-level refit is accepted.",
     )
-    curve_leaves: list[dict] = []
-    for name, levels, responses, _ in calibration_curves:
+
+    calibration_leaves: list[dict] = [
+        leaf(
+            "p03.chart.axes",
+            "Figure 03 uses log concentration in ng/L on the horizontal axis and response ratio on the vertical axis.",
+            harm=2,
+            claim_type="structure",
+        ),
+        leaf(
+            "p03.chart.encoding",
+            "Filled circles are included standards, an open diamond is an excluded standard, and inset bars encode back-calculated residual percent.",
+            harm=2,
+            claim_type="structure",
+        ),
+        leaf(
+            "p03.chart.panel-order",
+            "The panel order is PFOA -> PFNA -> PFOS -> PFHxS -> 6:2 FTS -> HFPO-DA.",
+            claim_type="ordered_record",
+            evidence_policy={
+                "type": "ordered_tokens",
+                "tokens": [["PFOA"], ["PFNA"], ["PFOS"], ["PFHxS"], ["6:2 FTS"], ["HFPO-DA"]],
+            },
+        ),
+        leaf(
+            "p03.chart.rule",
+            "The review uses weighted 1/x^2, requires R2 >= 0.995, requires included standards within +/-15%, and permits the lowest included standard within +/-20%.",
+            harm=2,
+        ),
+    ]
+    residual_leaves: list[dict] = []
+    for panel in calibration_panels:
+        name = str(panel["name"])
         slug = name.lower().replace(":", "").replace(" ", "-")
-        for index, (level, response) in enumerate(zip(levels, responses), start=1):
-            curve_leaves.append(
+        levels = [float(value) for value in panel["levels"]]  # type: ignore[index]
+        responses = [float(value) for value in panel["responses"]]  # type: ignore[index]
+        calibration_leaves.extend(
+            [
                 leaf(
-                    f"p03.curve.{slug}.{index:02d}",
-                    f"{name} has response ratio {response:.3f} at concentration {level:g}.",
-                    evidence_policy={
-                        "type": "lexical",
-                        "allOf": [
-                            [name],
-                            [f"{level:g}"],
-                            [f"{response:.3f}"],
-                            ["response ratio", "ratio"],
-                        ],
-                    },
-                )
+                    f"p03.fit.{slug}",
+                    f"{name} uses {panel['equation']} with R2 {panel['r2']} over {panel['range']}.",
+                    harm=2 if name == "6:2 FTS" else 1,
+                ),
+                leaf(
+                    f"p03.curve.{slug}.low",
+                    f"{name} binds its low standard {levels[0]:g} ng/L to response ratio {responses[0]:.3f}.",
+                ),
+                leaf(
+                    f"p03.curve.{slug}.mid",
+                    f"{name} binds its middle standard {levels[3]:g} ng/L to response ratio {responses[3]:.3f}.",
+                ),
+                leaf(
+                    f"p03.curve.{slug}.high",
+                    f"{name} binds its high standard {levels[-1]:g} ng/L to response ratio {responses[-1]:.3f}.",
+                ),
+            ]
+        )
+        residual_leaves.append(
+            leaf(
+                f"p03.residual.{slug}",
+                f"For {name}, {panel['review']}; {panel['disposition']}.",
+                harm=2 if name in {"PFNA", "6:2 FTS"} else 1,
             )
-    case.add_region("p03.curves", "Calibration curve points", "chart", curve_leaves, budget=2)
+        )
     case.add_region(
-        "p03.chart-contract",
-        "Calibration chart axes, legend, and trend",
+        "p03.calibration-panels",
+        "Six-panel calibration curves and point bindings",
         "chart",
-        [
-            leaf(
-                "p03.chart.axes",
-                "The chart uses log concentration in ng/L on the horizontal x-axis and response ratio on the vertical y-axis.",
-                harm=2,
-                claim_type="structure",
-                evidence_policy={
-                    "type": "lexical",
-                    "allOf": [
-                        ["horizontal x-axis", "x-axis", "horizontal axis"],
-                        ["log concentration"],
-                        ["ng/L"],
-                        ["vertical y-axis", "y-axis", "vertical axis"],
-                        ["response ratio"],
-                    ],
-                },
-            ),
-            leaf(
-                "p03.chart.legend.pfoa",
-                "The legend maps the blue line and points to the PFOA calibration series.",
-                evidence_policy={"type": "lexical", "allOf": [["legend"], ["blue"], ["line"], ["points"], ["PFOA"]]},
-            ),
-            leaf(
-                "p03.chart.legend.pfos",
-                "The legend maps the green line and points to the PFOS calibration series.",
-                evidence_policy={"type": "lexical", "allOf": [["legend"], ["green"], ["line"], ["points"], ["PFOS"]]},
-            ),
-            leaf(
-                "p03.chart.legend.hfpo",
-                "The legend maps the amber line and points to the HFPO-DA calibration series.",
-                evidence_policy={"type": "lexical", "allOf": [["legend"], ["amber"], ["line"], ["points"], ["HFPO-DA"]]},
-            ),
-            leaf(
-                "p03.chart.encoding",
-                "Each panel uses weighted 1/x^2 calibration and labels every point with both concentration and response.",
-                evidence_policy={
-                    "type": "lexical",
-                    "allOf": [["weighted 1/x^2", "1/x^2"], ["point", "points"], ["concentration"], ["response"]],
-                },
-            ),
-            leaf(
-                "p03.chart.trend.pfoa",
-                "The PFOA series rises monotonically from response ratio 0.021 at its lowest standard to 5.986 at its highest standard.",
-                harm=2,
-                evidence_policy={"type": "lexical", "allOf": [["PFOA"], ["rises monotonically", "monotonic increase", "increases", "positive slope"], ["0.021"], ["5.986"]]},
-            ),
-            leaf(
-                "p03.chart.trend.pfos",
-                "The PFOS series rises monotonically from response ratio 0.042 at its lowest standard to 8.177 at its highest standard.",
-                harm=2,
-                evidence_policy={"type": "lexical", "allOf": [["PFOS"], ["rises monotonically", "monotonic increase", "increases", "positive slope"], ["0.042"], ["8.177"]]},
-            ),
-            leaf(
-                "p03.chart.trend.hfpo",
-                "The HFPO-DA series rises monotonically from response ratio 0.044 at its lowest standard to 6.632 at its highest standard.",
-                harm=2,
-                evidence_policy={"type": "lexical", "allOf": [["HFPO-DA"], ["rises monotonically", "monotonic increase", "increases", "positive slope"], ["0.044"], ["6.632"]]},
-            ),
-        ],
-        budget=2,
+        calibration_leaves,
+        budget=3,
+        modality="mixed",
+        primary_axis="chart_diagram_spatial",
+        text_only_recoverable=False,
     )
     case.add_region(
-        "p03.residuals",
-        "Residual disposition",
-        "table",
-        _schema_order_leaves("p03.residuals", residual_headers, [row[0] for row in residual_rows])
-        + [
-            leaf("p03.residual.pfos", "PFOS weighted R2 is 0.9978 and its 14.6% maximum residual occurs at 100 ng/L; the upper point is retained.", harm=2),
-            leaf("p03.residual.hfpo", "HFPO-DA weighted R2 is 0.9989 with a 9.7% residual at 0.50 ng/L and no curvature flag."),
-            leaf("p03.residual.criteria", "Weighted R2 must be >=0.995; standards must be within +/-15%, except the lowest level may be within +/-20%.", harm=2),
-        ],
+        "p03.residual-review",
+        "Per-analyte residual and excluded-standard state",
+        "chart",
+        residual_leaves,
+        budget=2,
+        modality="mixed",
+        primary_axis="chart_diagram_spatial",
+        secondary_axes=["source_precedence"],
+        text_only_recoverable=False,
     )
 
     # Pages 4-5 - one continued validation table, intentionally split at PFNA/PFDA.
@@ -894,8 +1050,6 @@ def build(output_root):
         _schema_order_leaves("p07.sequence", sequence_headers, [row[0] for row in sequence_rows])
         + [
             leaf("p07.sequence.17", "Sequence 17 is CCV-10 at 11:38 with 95% IS recovery and Accepted state."),
-            leaf("p07.sequence.18", "Sequence 18 is DW-240409-04 at 11:51 with 38% IS recovery and state HOLD MX-24-041.", harm=2),
-            leaf("p07.sequence.19", "Sequence 19 is DW-240409-04-RI at 12:18 with 91% IS recovery and Accepted state.", harm=2),
             leaf("p07.sequence.21", "Sequence 21 is closing CCV-10-CLOSE at 12:44 with 93% IS recovery and Accepted state."),
         ],
         budget=2,
@@ -913,100 +1067,99 @@ def build(output_root):
         budget=2,
     )
 
-    # Page 8 - instrument integration evidence with a routing register.
+    # Page 8 - a crowded integration contact sheet. The native register maps
+    # panel IDs to injection/channel only; visual annotations carry all trace
+    # measurements, review state, and accepted-versus-rejected meaning.
     c = case.new_page(
         "Raw integration and chromatogram review",
-        subtitle="Instrument review plate with panel routing and integration annotations",
+        subtitle="Eight-panel quantifier, qualifier, and internal-standard review",
         section_code="INTEGRATION 08",
     )
     chrom = _chromatogram_plate()
-    c.drawImage(image_reader(chrom), 42, 321, width=528, height=306, preserveAspectRatio=True, mask="auto")
+    c.drawImage(image_reader(chrom), 42, 330, width=528, height=329, preserveAspectRatio=True, mask="auto")
     c.setStrokeColor(HexColor("#9AA0A6"))
-    c.rect(42, 321, 528, 306, fill=0, stroke=1)
-    routing_headers = ["Panel", "Review purpose", "Related record", "Use limitation"]
+    c.rect(42, 330, 528, 329, fill=0, stroke=1)
+    routing_headers = ["Panel", "Injection", "Trace channel", "Review role"]
     routing_rows = [
-        ["A", "Reagent-blank trace", "LRB-240410-01", "sample concentration"],
-        ["B", "Target-analyte integration", "DW-240408-03", "final batch release"],
-        ["C", "Original internal standard", "IR-18A", "accepted result"],
-        ["D", "Reinjection internal standard", "IR-19B", "correction scope"],
+        ["A", "Seq 10", "PFOS Q1", "Reagent blank"],
+        ["B", "Seq 14", "PFOA Q1", "Batch sample"],
+        ["C", "Seq 18", "13C8-PFOA IS", "Original internal standard"],
+        ["D", "Seq 19", "13C8-PFOA IS", "Reinjection internal standard"],
+        ["E", "Seq 18", "PFOA Q1", "Original quantifier"],
+        ["F", "Seq 19", "PFOA Q1", "Reinjection quantifier"],
+        ["G", "Seq 21", "PFOA Q1", "Closing CCV"],
+        ["H", "Seq 20", "6:2 FTS Q2", "Qualifier review"],
     ]
-    draw_label(c, "Panel routing", 42, 288)
-    draw_table(c, 42, 274, [48, 145, 130, 205], [routing_headers, *routing_rows], font_size=6.6, zebra=True)
-    draw_paragraph(c, "Instrument annotations control retention time, area, ratio, and internal-standard recovery; the routing register supplies panel identity only.", 42, 145, 520, font="DocSans-Italic", size=7.6, leading=10.5, color=MUTED)
+    draw_label(c, "Integration cross-reference index", 42, 298)
+    draw_table(c, 42, 284, [48, 82, 154, 244], [routing_headers, *routing_rows], font_size=6.2, zebra=True)
+    draw_paragraph(c, "The index cross-references injection and trace channel. Signed instrument annotations are the controlled source for retention time, area, ratio, recovery, file, and review state.", 42, 88, 520, font="DocSans-Italic", size=7.1, leading=9.8, color=MUTED)
     case.add_gold(
         "Page 8 - Raw integration and chromatogram review",
         "Instrument panel evidence:\n"
-        "- Panel A, LRB-240410-01/PFOS quantifier: 5.64 min marker, noise window 38-44 cps, no integrated peak, file 240410_10.wiff.\n"
-        "- Panel B, DW-240408-03/PFOA quantifier: 4.41 min, area 25,621, quant/qual ratio 0.31, file 240410_14.wiff.\n"
-        "- Panel C, DW-240409-04/13C8-PFOA original: 4.39 min, IS recovery 38%, integration IR-18A, sequence 18.\n"
-        "- Panel D, DW-240409-04/13C8-PFOA reinjection: 4.40 min, IS recovery 91%, integration IR-19B, sequence 19.\n\n"
+        "- Panel A, LRB-240410-01 / PFOS Q1: 5.64 min, noise 38-44 cps, file 240410_10.wiff, no integration, NO PEAK / BLANK ACCEPTED.\n"
+        "- Panel B, DW-240408-03 / PFOA Q1: 4.41 min, area 25,621, Q1/Q2 ratio 0.31, file 240410_14.wiff, ACCEPTED / FINAL BATCH RESULT.\n"
+        "- Panel C, DW-240409-04 / 13C8-PFOA IS: 4.39 min, IS recovery 38%, IR-18A, file 240410_18.wiff, SEQ 18 HOLD / ORIGINAL REJECTED.\n"
+        "- Panel D, DW-240409-04-RI / 13C8-PFOA IS: 4.40 min, IS recovery 91%, IR-19B, file 240410_19.wiff, SEQ 19 ACCEPTED / CONTROLLING.\n"
+        "- Panel E, DW-240409-04 / PFOA Q1: 4.42 min, area 11,180, Q1/Q2 ratio 0.27, IR-18A linked, SEQ 18 NOT REPORTABLE.\n"
+        "- Panel F, DW-240409-04-RI / PFOA Q1: 4.41 min, area 8,420, Q1/Q2 ratio 0.30, IR-19B linked, SEQ 19 ACCEPTED / 1.06 ng/L J.\n"
+        "- Panel G, CCV-10-CLOSE / PFOA Q1: 4.41 min, back-calculated 10.31 ng/L, area 80,755, file 240410_21.wiff, ACCEPTED / 103.1% RECOVERY.\n"
+        "- Panel H, DW-240409-05 / 6:2 FTS Q2: 5.18 min, area 13,290, Q1/Q2 ratio 0.22, file 240410_20.wiff, REVIEWED / QUALIFIER CONFIRMED.\n\n"
         + _table_gold(routing_headers, routing_rows)
-        + "\n\nThe literal Use limitation values are `accepted result` for Panel C and `correction scope` for Panel D. Exact RT, area, ratio, and internal-standard recovery values come from the instrument annotations; the routing register supplies panel identity only.",
+        + "\n\nThe native index supplies injection and channel identity only; the visual plate controls trace measurements and review state.",
     )
+    chromatogram_claims = [
+        ("a", "Panel A is LRB-240410-01 / PFOS Q1.", "5.64", "noise is 38-44 cps", "there is no integration and the file is 240410_10.wiff", "NO PEAK / BLANK ACCEPTED"),
+        ("b", "Panel B is DW-240408-03 / PFOA Q1.", "4.41", "area is 25,621", "Q1/Q2 ratio is 0.31 and the file is 240410_14.wiff", "ACCEPTED / FINAL BATCH RESULT"),
+        ("c", "Panel C is DW-240409-04 / 13C8-PFOA IS.", "4.39", "IS recovery is 38%", "IR-18A is linked to file 240410_18.wiff", "SEQ 18 HOLD / ORIGINAL REJECTED"),
+        ("d", "Panel D is DW-240409-04-RI / 13C8-PFOA IS.", "4.40", "IS recovery is 91%", "IR-19B is linked to file 240410_19.wiff", "SEQ 19 ACCEPTED / CONTROLLING"),
+        ("e", "Panel E is DW-240409-04 / PFOA Q1.", "4.42", "area is 11,180", "Q1/Q2 ratio is 0.27 and IR-18A is linked", "SEQ 18 NOT REPORTABLE"),
+        ("f", "Panel F is DW-240409-04-RI / PFOA Q1.", "4.41", "area is 8,420", "Q1/Q2 ratio is 0.30 and IR-19B is linked", "SEQ 19 ACCEPTED / 1.06 ng/L J"),
+        ("g", "Panel G is CCV-10-CLOSE / PFOA Q1.", "4.41", "back-calculated concentration is 10.31 ng/L", "area is 80,755 and the file is 240410_21.wiff", "ACCEPTED / 103.1% RECOVERY"),
+        ("h", "Panel H is DW-240409-05 / 6:2 FTS Q2.", "5.18", "area is 13,290", "Q1/Q2 ratio is 0.22 and the file is 240410_20.wiff", "REVIEWED / QUALIFIER CONFIRMED"),
+    ]
+    chromatogram_leaves: list[dict] = []
+    for slug, binding, rt, measure_a, measure_b, state in chromatogram_claims:
+        panel_name = slug.upper()
+        chromatogram_leaves.extend(
+            [
+                leaf(f"p08.chrom.{slug}.binding", binding),
+                leaf(f"p08.chrom.{slug}.rt", f"Panel {panel_name} marks retention time {rt} min."),
+                leaf(f"p08.chrom.{slug}.measure-a", f"For Panel {panel_name}, {measure_a}."),
+                leaf(f"p08.chrom.{slug}.measure-b", f"For Panel {panel_name}, {measure_b}."),
+                leaf(
+                    f"p08.chrom.{slug}.state",
+                    f"Panel {panel_name} is marked {state}.",
+                    harm=2 if slug in {"c", "d", "e", "f"} else 1,
+                ),
+            ]
+        )
     case.add_region(
         "p08.chromatograms",
-        "Instrument chromatogram and integration plate",
+        "Eight-panel chromatogram and integration contact sheet",
         "image",
-        [
-            leaf("p08.chrom.a.binding", "Panel A is the LRB-240410-01 PFOS quantifier trace."),
-            leaf("p08.chrom.a.evidence", "Panel A marks 5.64 min, a 38-44 cps noise window, no integrated peak, and file 240410_10.wiff.", harm=2),
-            leaf("p08.chrom.b.binding", "Panel B is the DW-240408-03 PFOA quantifier trace."),
-            leaf("p08.chrom.b.evidence", "Panel B shows 4.41 min, area 25,621, quant/qual ratio 0.31, and file 240410_14.wiff.", harm=2),
-            leaf("p08.chrom.c.binding", "Panel C is the DW-240409-04 13C8-PFOA original trace linked to sequence 18 and IR-18A."),
-            leaf("p08.chrom.c.recovery", "Panel C shows original internal-standard recovery of 38% at 4.39 min.", harm=2),
-            leaf("p08.chrom.d.binding", "Panel D is the DW-240409-04 13C8-PFOA reinjection trace linked to sequence 19 and IR-19B."),
-            leaf("p08.chrom.d.recovery", "Panel D shows reinjection internal-standard recovery of 91% at 4.40 min.", harm=2),
-        ],
-        budget=2,
+        chromatogram_leaves,
+        budget=4,
+        modality="raster",
+        primary_axis="image_description",
+        secondary_axes=["source_precedence", "mixed_modality_fusion"],
+        text_only_recoverable=False,
     )
     case.add_region(
         "p08.routing",
-        "Panel routing register",
+        "Native panel-to-injection index",
         "table",
-        [
-            table_binding_leaf(
-                "p08.routing.c",
-                "For Panel C, Use limitation is accepted result.",
-                "C",
-                "Use limitation",
-                "accepted result",
-            ),
-            table_binding_leaf(
-                "p08.routing.c.purpose",
-                "For Panel C, Review purpose is Original internal standard.",
-                "C",
-                "Review purpose",
-                "Original internal standard",
-            ),
-            table_binding_leaf(
-                "p08.routing.c.record",
-                "For Panel C, Related record is IR-18A.",
-                "C",
-                "Related record",
-                "IR-18A",
-            ),
-            table_binding_leaf(
-                "p08.routing.d",
-                "For Panel D, Use limitation is correction scope.",
-                "D",
-                "Use limitation",
-                "correction scope",
-            ),
-            table_binding_leaf(
-                "p08.routing.d.purpose",
-                "For Panel D, Review purpose is Reinjection internal standard.",
-                "D",
-                "Review purpose",
-                "Reinjection internal standard",
-            ),
-            table_binding_leaf(
-                "p08.routing.d.record",
-                "For Panel D, Related record is IR-19B.",
-                "D",
-                "Related record",
-                "IR-19B",
-            ),
-            leaf("p08.routing.boundary", "Exact RT, area, ratio, and IS-recovery values come from the instrument annotations; the routing register supplies panel identity only."),
+        _schema_order_leaves("p08.routing", routing_headers, [row[0] for row in routing_rows])
+        + [
+            table_binding_leaf(f"p08.routing.{panel.lower()}.injection", f"For Panel {panel}, Injection is {injection}.", panel, "Injection", injection)
+            for panel, injection, _, _ in routing_rows
+        ]
+        + [
+            table_binding_leaf(f"p08.routing.{panel.lower()}.channel", f"For Panel {panel}, Trace channel is {channel}.", panel, "Trace channel", channel)
+            for panel, _, channel, _ in routing_rows
+            if panel in {"C", "D", "E", "F", "G", "H"}
+        ]
+        + [
+            leaf("p08.routing.boundary", "The native index supplies injection and channel identity only; visual annotations control trace measurements and review state."),
         ],
     )
 
@@ -1204,18 +1357,8 @@ def build(output_root):
         "image",
         [
             leaf("p11.correction.scope", "CR-24-044 applies only to DW-240409-04; other batch results are unchanged.", harm=2),
-            leaf("p11.correction.precedence", "CR-24-044 supersedes sequence 18/IR-18A fields and makes accepted sequence 19/IR-19B controlling.", harm=2),
-            directed_edge_leaf(
-                "p11.correction.pfoa",
-                "DW-240409-04 PFOA changes from 1.84 ng/L J to 1.06 ng/L J.",
-                ["1.84 ng/L J"],
-                ["1.06 ng/L J"],
-                relation=["DW-240409-04 PFOA changes", "DW-240409-04 PFOA is corrected", "DW-240409-04 PFOA corrected"],
-                harm=2,
-            ),
             leaf("p11.correction.pfos", "DW-240409-04 PFOS remains <0.50 ng/L U with no qualifier change.", harm=2),
             leaf("p11.correction.reason", "The correction reason is sequence 18 internal-standard recovery below the 50-150% criterion."),
-            leaf("p11.correction.audit", "The correction must not overwrite the audit trail."),
             leaf("p11.correction.signatures", "L. Chen signed 22 Apr 2024 09:40 and R. Patel signed 22 Apr 2024 16:10."),
         ],
         budget=2,
@@ -1281,7 +1424,7 @@ def build(output_root):
         _table_gold(result_headers, result_rows)
         + "\n\n"
         + _table_gold(determination_headers, determination_rows)
-        + "\n\nThe batch is released with J and U qualifiers preserved. DW-240409-04 is accepted as corrected from sequence 19/IR-19B under CR-24-044. The final determination does not erase provisional exports, rejected integrations, or maintenance records. L. Chen signed 22 Apr 2024 09:40 and R. Patel released 22 Apr 2024 16:10.",
+        + "\n\nThe batch is released with J and U qualifiers preserved. DW-240409-04's record lifecycle begins with held sequence 18 at 38% IS recovery and rejected original integration IR-18A, then continues through accepted DW-240409-04-RI sequence 19 at 91% IS recovery and controlling reinjection IR-19B. Panels E and F preserve the original not-reportable PFOA Q1 trace and the accepted reinjection trace. Signed CR-24-044 changes provisional PFOA 1.84 ng/L J to released R-06 at 1.06 ng/L J with U95 0.25 ng/L, while PFOS remains <0.50 ng/L U. The final determination does not erase provisional exports, rejected integrations, or maintenance records. L. Chen signed 22 Apr 2024 09:40 and R. Patel released 22 Apr 2024 16:10.",
     )
     case.add_region(
         "p12.results",
@@ -1326,7 +1469,6 @@ def build(output_root):
                 claim_type="table_binding",
                 evidence_policy={"type": "table_binding", "row": ["R-04"], "column": ["U95"], "value": ["0.55 ng/L"]},
             ),
-            leaf("p12.result.r06", "R-06 releases DW-240409-04 PFOA at 1.06 ng/L J with U95 0.25 ng/L under CR-24-044.", harm=2),
             leaf("p12.result.r07", "R-07 releases DW-240409-04 PFOS as <0.50 ng/L U under CR-24-044.", harm=2),
             leaf(
                 "p12.result.r08",
@@ -1356,14 +1498,59 @@ def build(output_root):
         [
             leaf("p12.det.calibration", "Calibration is accepted based on weighted fits and residual review."),
             leaf("p12.det.recovery", "Recovery and precision are accepted with valid n=7 and documented EX-24-011 replacement."),
-            leaf("p12.det.d4", "DW-240409-04 is accepted as corrected from sequence 19/IR-19B under CR-24-044.", harm=2),
             leaf("p12.det.release", "The batch is RELEASED with J and U qualifiers retained exactly.", harm=2),
-            leaf("p12.det.audit", "Release does not erase provisional exports, rejected integrations, or maintenance records."),
             leaf("p12.det.signatures", "L. Chen signed technical review at 09:40 and R. Patel released at 16:10 on 22 Apr 2024."),
         ],
-        budget=2,
+        budget=1,
         primary_axis="source_precedence",
         secondary_axes=["summarization_coverage"],
+    )
+    case.add_region(
+        "join.dw24040904-release",
+        "DW-240409-04 rejected-integration-to-release lifecycle",
+        "mixed",
+        [
+            leaf(
+                "join.dw24040904.original",
+                "DW-240409-04 sequence 18 is held at 38% IS recovery with original integration IR-18A rejected and its PFOA Q1 trace not reportable.",
+                harm=2,
+            ),
+            leaf(
+                "join.dw24040904.reinjection",
+                "DW-240409-04-RI sequence 19 is accepted at 91% IS recovery with reinjection IR-19B controlling.",
+                harm=2,
+            ),
+            directed_edge_leaf(
+                "join.dw24040904.correction",
+                "Signed CR-24-044 changes DW-240409-04 PFOA from provisional 1.84 ng/L J to 1.06 ng/L J.",
+                ["provisional 1.84 ng/L J", "1.84 ng/L J"],
+                ["1.06 ng/L J"],
+                relation=["Signed CR-24-044 changes DW-240409-04 PFOA", "Signed CR-24-044 corrects DW-240409-04 PFOA"],
+                harm=2,
+            ),
+            leaf(
+                "join.dw24040904.release",
+                "Released result R-06 is DW-240409-04 PFOA at 1.06 ng/L J with U95 0.25 ng/L under CR-24-044.",
+                harm=2,
+            ),
+            leaf(
+                "join.dw24040904.pfos",
+                "Across the correction and release, DW-240409-04 PFOS remains <0.50 ng/L U.",
+                harm=2,
+            ),
+            leaf(
+                "join.dw24040904.audit",
+                "The accepted reinjection controls release without erasing the provisional export or rejected original integration.",
+                harm=2,
+            ),
+        ],
+        pages=[7, 8, 11, 12],
+        budget=2,
+        modality="mixed",
+        primary_axis="source_precedence",
+        secondary_axes=["long_context_coherence", "mixed_modality_fusion"],
+        text_only_recoverable=False,
+        gold_section="Page 12 - Final signed validation and batch determination",
     )
     record = case.finish()
     rasterize_pdf_pages(

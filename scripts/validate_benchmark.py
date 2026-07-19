@@ -231,6 +231,7 @@ def validate_facts(
     leaf_ids: set[str] = set()
     canonical_claim_ids: set[str] = set()
     anchored_pages: set[int] = set()
+    document_page_by_source_page: dict[int, int] = {}
     leaf_count = 0
     source_layers = {"native_text", "raster", "vector_geometry", "mixed", "native_layer_recovery"}
     kinds = {"text", "table", "chart", "diagram", "form", "image", "structure", "mixed"}
@@ -274,6 +275,27 @@ def validate_facts(
                 validation.error(f"{case['id']}/{region_id}: page anchor {page!r} is out of range")
             else:
                 anchored_pages.add(page)
+            document_page = anchor.get("documentPage")
+            if document_page is not None and (
+                not isinstance(document_page, int) or isinstance(document_page, bool) or document_page < 1
+            ):
+                validation.error(f"{case['id']}/{region_id}: documentPage must be a positive integer")
+            if isinstance(page, int) and not isinstance(page, bool) and isinstance(document_page, int) and not isinstance(document_page, bool):
+                existing_document_page = document_page_by_source_page.get(page)
+                if existing_document_page is not None and existing_document_page != document_page:
+                    validation.error(
+                        f"{case['id']}: source page {page} maps to conflicting document pages "
+                        f"{existing_document_page} and {document_page}"
+                    )
+                document_page_by_source_page[page] = document_page
+            elif isinstance(page, int) and not isinstance(page, bool) and document_page is None:
+                existing_document_page = document_page_by_source_page.get(page)
+                if existing_document_page is not None and existing_document_page != page:
+                    validation.error(
+                        f"{case['id']}: source page {page} mixes implicit document page {page} "
+                        f"with explicit document page {existing_document_page}"
+                    )
+                document_page_by_source_page[page] = page
             if anchor.get("layer") not in source_layers:
                 validation.error(f"{case['id']}/{region_id}: unsupported source layer {anchor.get('layer')!r}")
             section_path = anchor.get("sectionPath")
@@ -389,6 +411,17 @@ def validate_facts(
                             f"{case['id']}/{leaf_id}: evidencePolicy does not guarantee "
                             f"{violation.signal.kind} {violation.signal.value!r}: {violation.reason}"
                         )
+    ordered_document_pages = sorted(document_page_by_source_page.items())
+    for (source_page, document_page), (next_source_page, next_document_page) in zip(
+        ordered_document_pages,
+        ordered_document_pages[1:],
+        strict=False,
+    ):
+        if next_document_page < document_page:
+            validation.error(
+                f"{case['id']}: documentPage mapping decreases from source page {source_page} "
+                f"({document_page}) to {next_source_page} ({next_document_page})"
+            )
     missing_pages = sorted(set(range(1, int(case["pages"]) + 1)) - anchored_pages)
     if missing_pages:
         validation.warn(f"{case['id']}: no scored region is anchored to page(s) {missing_pages}")

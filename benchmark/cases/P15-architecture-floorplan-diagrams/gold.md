@@ -28,7 +28,7 @@ The authority order is final release, Revision C sheets, answered RFI, then arch
 
 ## A2.14-B - Archived floor plan
 
-Revision B is visibly stamped superseded and dated 7 June 2026; the archived field-background record is 214-B-0707. The overall footprint is 45 ft by 22 ft. Clean Prep 214 is 18 ft 6 in by 12 ft and is west of Lab B 215, which is 16 ft by 12 ft. Freezer 216 is east of Lab B; Lab B is directly north of corridor C2; Wash 217 is immediately west of corridor C2; IT Closet 218 is south of Freezer 216 and east of C2. The old Lab B opening is near the middle of its south wall, has a north swing into Lab B, and is keyed by callout 6. Callout 9 points to rack R2 in IT Closet 218; callout 11 points to FZ-3 in Freezer 216. The first egress segment runs from Lab B through the old opening and the second turns west along C2. The base sheet carries no reader symbol at the opening.
+Revision B is visibly stamped superseded and dated 7 June 2026; the archived field-background record is 214-B-0707. The overall footprint is 45 ft by 22 ft. Clean Prep 214 is 18 ft 6 in by 12 ft and is west of Lab B 215, which is 16 ft by 12 ft. Freezer 216 is east of Lab B; Lab B is directly north of corridor C2; Wash 217 is immediately west of corridor C2; IT Closet 218 is south of Freezer 216 and east of C2. The old Lab B opening is near the middle of its south wall, has a north swing into Lab B, and is keyed by callout 6. Callout 9 points to rack R2 in IT Closet 218; callout 11 points to FZ-3 in Freezer 216. The first egress segment runs from Lab B through the old opening and the second turns west along C2.
 
 ## A2.14 - Controlled floor plan and overlay
 
@@ -94,7 +94,7 @@ The field query was received on 2026-06-09. Maintain D-214A at Revision B positi
 
 ## PH-214 - Field photo and punch evidence
 
-Photo 06 is a corridor-side view of D-214B. The reader is mounted on the image-right/east jamb, outside the Lab B opening; annotation A circles the reader rather than the opening. The opening remains clear. Photo 09 shows rack R2 in room 218. The overhead tray approaches from image-left/west and drops at the rack's west/top corner; annotation B circles that entry. The service side on the image-right/east side of rack R2 is unobstructed.
+Photo 06 is a corridor-side view of D-214B. The reader is mounted on the image-right/east jamb, outside the Lab B opening; annotation A circles the reader rather than the opening. Photo 09 shows rack R2 in room 218. The overhead tray approaches from image-left/west and drops at the rack's west/top corner; annotation B circles that entry.
 
 | Image | Captured | View | Custodian | Checksum |
 | --- | --- | --- | --- | --- |
