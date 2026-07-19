@@ -1,7 +1,7 @@
 {
   "name": "Doc2MD",
   "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
-  "generatedAt": "2026-07-19T18:21:14.811Z",
+  "generatedAt": "2026-07-19T18:29:50.865Z",
   "caseCount": 5,
   "pageCount": 86,
   "cases": [
@@ -110,7 +110,7 @@
     "evaluatorSourceHash": "ad46b76808f8fbe5e3de4c0fa14059e6eda23c14f00af89e7c7c4775dd0f32c5",
     "packageLockHash": "7e378a2f46e1f7e3e7ca7bd469db2a25fd1b61bdc37834d9f56771dcc031eabd",
     "measurementStartedAt": "2026-07-19T11:48:26.366Z",
-    "measurementFinishedAt": "2026-07-19T18:20:59.324Z"
+    "measurementFinishedAt": "2026-07-19T18:26:41.877Z"
   },
   "costMethodology": {
     "comparison": "Every input token is priced at the model's uncached list rate; output uses list price.",
@@ -121,7 +121,7 @@
   "scorerCalibration": {
     "schemaVersion": 7,
     "calibrationKey": "3933275e12f3aca7b51d7f65a93eb5f6ed029eee341abd8d4e479531c54e91da",
-    "generatedAt": "2026-07-19T18:19:09.700Z",
+    "generatedAt": "2026-07-19T18:23:29.434Z",
     "passed": true,
     "requirement": "Every canonical gold scores 100 with no unsupported claims; controls distinguish paraphrase, omission, contradiction, genuine additions, typo-like replacements, and members belonging to another region.",
     "evaluatorResolvedModel": "gemini-3.5-flash",
@@ -278,10 +278,6 @@
   },
   "exclusions": [
     {
-      "modelId": "openai-gpt-5.4-nano",
-      "reason": "No complete draw has a valid score for the current scorer and corpus."
-    },
-    {
       "modelId": "openai-gpt-5.6-terra",
       "reason": "No complete draw has a valid score for the current scorer and corpus."
     },
@@ -294,10 +290,10 @@
       "reason": "No complete draw has a valid score for the current scorer and corpus."
     }
   ],
-  "incrementalSpendUsd": 1.7934020300000002,
-  "incrementalInferenceSpendUsd": 0.588017,
-  "incrementalEvaluatorSpendUsd": 1.2053850300000002,
-  "totalCostUsd": 9.282935029999999,
+  "incrementalSpendUsd": 2.6838861,
+  "incrementalInferenceSpendUsd": 0.0689442,
+  "incrementalEvaluatorSpendUsd": 2.6149419000000003,
+  "totalCostUsd": 11.966821130000001,
   "models": [
     {
       "modelId": "openai-gpt-5.6-sol",
@@ -907,6 +903,209 @@
       ],
       "measurementStartedAt": "2026-07-19T11:52:40.981Z",
       "measurementFinishedAt": "2026-07-19T14:18:24.419Z"
+    },
+    {
+      "modelId": "openai-gpt-5.4-nano",
+      "configuredModel": {
+        "id": "openai-gpt-5.4-nano",
+        "modelName": "gpt-5.4-nano",
+        "provider": "openai",
+        "reasoning": "none",
+        "location": null,
+        "maxOutputTokens": 60000
+      },
+      "resolvedModel": "gpt-5.4-nano-2026-03-17",
+      "evaluatorResolvedModel": "gemini-3.5-flash",
+      "pricingVersion": "2026-07-11",
+      "drawCount": 1,
+      "score": 55.64453155825494,
+      "scoreMin": 55.64453155825494,
+      "scoreMax": 55.64453155825494,
+      "scoreStddev": null,
+      "inferenceCostUsd": 0.0689442,
+      "normalizedInferenceCostUsd": 0.0689442,
+      "actualInferenceCostUsd": 0.0689442,
+      "evaluatorCostUsd": 2.6149419000000003,
+      "totalCostUsd": 2.6838861,
+      "cumulativeInferenceCostUsd": 0.0689442,
+      "cumulativeActualInferenceCostUsd": 0.0689442,
+      "cumulativeEvaluatorCostUsd": 2.6149419000000003,
+      "inputTokens": 66246,
+      "cacheReadTokens": 0,
+      "cacheWriteTokens": 0,
+      "cacheHitRate": 0,
+      "evaluatorInputTokens": 644263,
+      "evaluatorCacheReadTokens": 0,
+      "evaluatorCacheHitRate": 0,
+      "totalOutputTokens": 44556,
+      "inferenceSeconds": 299.972,
+      "cases": [
+        {
+          "caseId": "P12-pfas-method-validation",
+          "title": "PFAS Method Validation and Batch Release Packet",
+          "score": 52.716991341991346,
+          "scoreMin": 52.716991341991346,
+          "scoreMax": 52.716991341991346,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.008371,
+          "actualInferenceCostUsd": 0.008371
+        },
+        {
+          "caseId": "P15-architecture-floorplan-diagrams",
+          "title": "Suite 214 Laboratory Coordination Set",
+          "score": 46.715102707749764,
+          "scoreMin": 46.715102707749764,
+          "scoreMax": 46.715102707749764,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.006935149999999999,
+          "actualInferenceCostUsd": 0.006935149999999999
+        },
+        {
+          "caseId": "P17-clinical-trial-site-monitoring",
+          "title": "HTX-204 Site 014 Monitoring Source Packet",
+          "score": 86.53532800532801,
+          "scoreMin": 86.53532800532801,
+          "scoreMax": 86.53532800532801,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.04333555,
+          "actualInferenceCostUsd": 0.04333555
+        },
+        {
+          "caseId": "P21-semiconductor-lot-disposition",
+          "title": "Lot Q8R7-22 Material Review File",
+          "score": 60.81914344685242,
+          "scoreMin": 60.81914344685242,
+          "scoreMax": 60.81914344685242,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0055227,
+          "actualInferenceCostUsd": 0.0055227
+        },
+        {
+          "caseId": "P23-native-text-layer-recovery",
+          "title": "Northstar Cold Chain Supplier Cutover Authorization",
+          "score": 31.436092289353162,
+          "scoreMin": 31.436092289353162,
+          "scoreMax": 31.436092289353162,
+          "scoreStddev": null,
+          "inferenceCostUsd": 0.0047798,
+          "actualInferenceCostUsd": 0.0047798
+        }
+      ],
+      "draws": [
+        {
+          "draw": 1,
+          "score": 55.64453155825494,
+          "inferenceCostUsd": 0.0689442,
+          "actualInferenceCostUsd": 0.0689442,
+          "evaluatorCostUsd": 2.6149419000000003,
+          "totalOutputTokens": 44556,
+          "inputTokens": 66246,
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "evaluatorInputTokens": 644263,
+          "evaluatorCacheReadTokens": 0,
+          "inferenceSeconds": 299.972,
+          "cases": [
+            {
+              "caseId": "P12-pfas-method-validation",
+              "title": "PFAS Method Validation and Batch Release Packet",
+              "score": 52.716991341991346,
+              "inferenceCostUsd": 0.008371,
+              "actualInferenceCostUsd": 0.008371,
+              "evaluatorCostUsd": 0.2791611,
+              "outputTokens": 5172,
+              "inputTokens": 9530,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "evaluatorInputTokens": 39055,
+              "evaluatorCacheReadTokens": 0,
+              "inferenceElapsedMs": 35471,
+              "resolvedModel": "gpt-5.4-nano-2026-03-17",
+              "evaluatorResolvedModel": "gemini-3.5-flash",
+              "startedAt": "2026-07-19T18:23:29.512Z",
+              "finishedAt": "2026-07-19T18:24:04.983Z"
+            },
+            {
+              "caseId": "P15-architecture-floorplan-diagrams",
+              "title": "Suite 214 Laboratory Coordination Set",
+              "score": 46.715102707749764,
+              "inferenceCostUsd": 0.006935149999999999,
+              "actualInferenceCostUsd": 0.006935149999999999,
+              "evaluatorCostUsd": 0.2404512,
+              "outputTokens": 4123,
+              "inputTokens": 8907,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "evaluatorInputTokens": 33700,
+              "evaluatorCacheReadTokens": 0,
+              "inferenceElapsedMs": 26846,
+              "resolvedModel": "gpt-5.4-nano-2026-03-17",
+              "evaluatorResolvedModel": "gemini-3.5-flash",
+              "startedAt": "2026-07-19T18:23:29.451Z",
+              "finishedAt": "2026-07-19T18:23:56.297Z"
+            },
+            {
+              "caseId": "P17-clinical-trial-site-monitoring",
+              "title": "HTX-204 Site 014 Monitoring Source Packet",
+              "score": 86.53532800532801,
+              "inferenceCostUsd": 0.04333555,
+              "actualInferenceCostUsd": 0.04333555,
+              "evaluatorCostUsd": 1.7280054000000002,
+              "outputTokens": 29227,
+              "inputTokens": 34009,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "evaluatorInputTokens": 521994,
+              "evaluatorCacheReadTokens": 0,
+              "inferenceElapsedMs": 192178,
+              "resolvedModel": "gpt-5.4-nano-2026-03-17",
+              "evaluatorResolvedModel": "gemini-3.5-flash",
+              "startedAt": "2026-07-19T18:23:29.699Z",
+              "finishedAt": "2026-07-19T18:26:41.877Z"
+            },
+            {
+              "caseId": "P21-semiconductor-lot-disposition",
+              "title": "Lot Q8R7-22 Material Review File",
+              "score": 60.81914344685242,
+              "inferenceCostUsd": 0.0055227,
+              "actualInferenceCostUsd": 0.0055227,
+              "evaluatorCostUsd": 0.177984,
+              "outputTokens": 3334,
+              "inputTokens": 6776,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "evaluatorInputTokens": 23836,
+              "evaluatorCacheReadTokens": 0,
+              "inferenceElapsedMs": 26729,
+              "resolvedModel": "gpt-5.4-nano-2026-03-17",
+              "evaluatorResolvedModel": "gemini-3.5-flash",
+              "startedAt": "2026-07-19T18:23:29.568Z",
+              "finishedAt": "2026-07-19T18:23:56.295Z"
+            },
+            {
+              "caseId": "P23-native-text-layer-recovery",
+              "title": "Northstar Cold Chain Supplier Cutover Authorization",
+              "score": 31.436092289353162,
+              "inferenceCostUsd": 0.0047798,
+              "actualInferenceCostUsd": 0.0047798,
+              "evaluatorCostUsd": 0.1893402,
+              "outputTokens": 2700,
+              "inputTokens": 7024,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "evaluatorInputTokens": 25678,
+              "evaluatorCacheReadTokens": 0,
+              "inferenceElapsedMs": 18748,
+              "resolvedModel": "gpt-5.4-nano-2026-03-17",
+              "evaluatorResolvedModel": "gemini-3.5-flash",
+              "startedAt": "2026-07-19T18:23:29.451Z",
+              "finishedAt": "2026-07-19T18:23:48.198Z"
+            }
+          ]
+        }
+      ],
+      "measurementStartedAt": "2026-07-19T18:23:29.451Z",
+      "measurementFinishedAt": "2026-07-19T18:26:41.877Z"
     },
     {
       "modelId": "openai-gpt-5-nano",
