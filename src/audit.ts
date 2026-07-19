@@ -201,8 +201,8 @@ export async function auditBenchmark() {
     schemaVersion: 3,
     id: "closed-table-fixture",
     title: "Closed table fixture",
-    family: "calibration",
-    tags: ["calibration"],
+    family: "fixture",
+    tags: ["fixture"],
     regions: [{
       id: "colors",
       label: "Color register",

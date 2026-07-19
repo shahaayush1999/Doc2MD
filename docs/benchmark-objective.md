@@ -10,7 +10,7 @@ Rebuild Doc2MD into an unsaturated, operationally valid benchmark for faithful P
 
 The benchmark must measure whether a model can turn a real native PDF into one exhaustive, faithful, machine-usable Markdown document. Correctness and recoverability matter more than visual Markdown similarity. Difficulty must come from authentic document complexity, never ambiguity, illegibility, adversarial nonsense, arbitrary caps, or score-shaping tricks.
 
-## Outcome and calibration guardrails
+## Outcome and anchor guardrails
 
 - Use `openai-gpt-5-nano` as the deliberately weak, cheap development anchor.
 - Use `vertex-gemini-3.1-flash-lite` as the good development anchor.

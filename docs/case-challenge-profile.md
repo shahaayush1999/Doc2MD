@@ -47,7 +47,7 @@ This internal profile defines why each case belongs in the canonical five-case, 
 ## Maintenance rules
 
 - Keep a case only when it owns at least one realistic primary difficulty that no other scored case owns.
-- Do not tune content or weights to force anchor scores. Calibration bands are diagnostic release guardrails.
+- Do not tune content or weights to force anchor scores. Anchor bands are diagnostic release guardrails.
 - Treat `source.pdf` as ground truth and keep `gold.md`, `facts.json`, and `spec.md` synchronized with every source revision.
 - Score a semantic claim once through a canonical claim identity even when several pages corroborate it.
 - Keep important visual facts out of adjacent native captions and summaries.

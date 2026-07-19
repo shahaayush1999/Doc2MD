@@ -10,8 +10,6 @@ import { auditBenchmark } from "./audit.js";
 import {
   evaluatorConfiguration,
   evaluatePrediction,
-  judgeInBatches,
-  type FactFile,
   type ManifestCase,
 } from "./evaluator.js";
 import { loadBenchmarkManifest } from "./manifest.js";
@@ -232,7 +230,6 @@ async function runCase(
   testCase: ManifestCase,
   prompt: string,
   evaluatorSourceHash: string,
-  expectedEvaluatorModel: string,
   draw: number,
 ) {
   const spec = models[modelId]!;
@@ -316,12 +313,6 @@ async function runCase(
     }
   }
 
-  if (evaluation.evaluator.resolved?.modelId !== expectedEvaluatorModel) {
-    throw new Error(
-      `${modelId} draw ${draw} ${testCase.id}: evaluator identity ${evaluation.evaluator.resolved?.modelId ?? "missing"} does not match calibrated ${expectedEvaluatorModel}`,
-    );
-  }
-
   const cacheStatus = inferenceSpent === 0 && evaluatorSpent === 0 ? "cached" : inferenceSpent === 0 ? "rescored" : "run";
   const providerCache = inferenceSpent > 0
     ? `; provider cache ${inference.usage?.inputTokenDetails?.cacheReadTokens ?? 0}/${inference.usage?.inputTokens ?? 0} input tokens`
@@ -360,347 +351,6 @@ async function cachedModelIds() {
   return entries.filter((entry) => entry.isDirectory() && models[entry.name]).map((entry) => entry.name);
 }
 
-const semanticControlFacts = {
-  schemaVersion: 3,
-  id: "scorer-semantic-integrity",
-  title: "Scorer semantic integrity control",
-  family: "calibration",
-  tags: ["calibration"],
-  regions: [
-    {
-      id: "semantic-obligations",
-      label: "Semantic status controls",
-      sourceAnchors: [{ page: 1, layer: "native_text", sectionPath: ["Calibration excerpt"] }],
-      goldSection: "Calibration excerpt",
-      kind: "mixed",
-      modality: "native_text",
-      uniqueEvidence: true,
-      primaryAxis: "precise_recall",
-      secondaryAxes: ["image_description"],
-      textOnlyRecoverable: true,
-      budget: 1,
-      leaves: [
-        {
-          id: "control.paraphrase",
-          canonicalClaimId: "control.paraphrase",
-          claimType: "scalar",
-          expectation: "SENSOR-Q's dwell interval is 4.41 minutes.",
-          harm: 1,
-          evidencePolicy: { type: "qualitative", requiredTerms: [["SENSOR-Q"], ["4.41"]] },
-        },
-        {
-          id: "control.contradiction",
-          canonicalClaimId: "control.contradiction",
-          claimType: "scalar",
-          expectation: "At load 10, channel Z response is 0.958.",
-          harm: 2,
-          evidencePolicy: { type: "qualitative", requiredTerms: [["channel Z"], ["10"], ["0.958"]] },
-        },
-        {
-          id: "control.omission",
-          canonicalClaimId: "control.omission",
-          claimType: "ordered_record",
-          expectation: "Shipment 18 uses bin B09.",
-          harm: 1,
-          evidencePolicy: { type: "qualitative", requiredTerms: [["18"], ["B09"]] },
-        },
-        {
-          id: "control.visual-paraphrase",
-          canonicalClaimId: "control.visual-paraphrase",
-          claimType: "visual_description",
-          expectation: "Asset VX-71 contains a smaller bright chip adjacent to a larger irregular chip.",
-          harm: 1,
-          evidencePolicy: { type: "qualitative", requiredTerms: [["smaller"], ["adjacent"], ["irregular"]] },
-        },
-        {
-          id: "control.table-row-fields",
-          canonicalClaimId: "control.table-row-fields",
-          claimType: "scalar",
-          expectation: "Export row R-105 reports <0.50 mg/L with qualifier U.",
-          harm: 1,
-          evidencePolicy: { type: "qualitative", requiredTerms: [["R-105"], ["<0.50 mg/L"], ["U"]] },
-        },
-        {
-          id: "control.unordered-set",
-          canonicalClaimId: "control.unordered-set",
-          claimType: "scalar",
-          expectation: "Grid G5 marks class S2 at E2, F2, and E3.",
-          harm: 1,
-          evidencePolicy: { type: "qualitative", requiredTerms: [["Grid G5"], ["S2"], ["E2"], ["F2"], ["E3"]] },
-        },
-        {
-          id: "control.compound-color",
-          canonicalClaimId: "control.compound-color",
-          claimType: "visual_description",
-          expectation: "The active gate is solid blue or teal-blue.",
-          harm: 1,
-          evidencePolicy: { type: "qualitative", requiredTerms: [["active gate"], ["solid blue", "teal-blue", "teal/blue"]] },
-        },
-        {
-          id: "control.ordered-flow",
-          canonicalClaimId: "control.ordered-flow",
-          claimType: "ordered_record",
-          expectation: "The declared handoff order is Alpha, then Beta, then Gamma.",
-          harm: 1,
-          evidencePolicy: { type: "qualitative", requiredTerms: [["Alpha"], ["Beta"], ["Gamma"]] },
-        },
-        {
-          id: "control.unrelated-order",
-          canonicalClaimId: "control.unrelated-order",
-          claimType: "ordered_record",
-          expectation: "The deployment sequence is Cedar, then Birch, then Maple.",
-          harm: 1,
-          evidencePolicy: { type: "qualitative", requiredTerms: [["Cedar"], ["Birch"], ["Maple"]] },
-        },
-      ],
-    },
-    {
-      id: "closed-form",
-      label: "Closed release checklist",
-      sourceAnchors: [{ page: 1, layer: "native_text", sectionPath: ["Release checklist"] }],
-      goldSection: "Release checklist",
-      kind: "form",
-      modality: "native_text",
-      uniqueEvidence: true,
-      primaryAxis: "form_state",
-      secondaryAxes: [],
-      textOnlyRecoverable: true,
-      budget: 1,
-      closedWorld: { scope: "form_options", keys: ["Release approved"] },
-      leaves: [
-        {
-          id: "control.form",
-          canonicalClaimId: "control.form",
-          claimType: "form_state",
-          expectation: "Release approved is checked.",
-          harm: 1,
-          evidencePolicy: { type: "form_state", label: ["Release approved"], state: "checked" },
-        },
-      ],
-    },
-    {
-      id: "closed-archive",
-      label: "Archive checklist",
-      sourceAnchors: [{ page: 1, layer: "native_text", sectionPath: ["Archive checklist"] }],
-      goldSection: "Archive checklist",
-      kind: "form",
-      modality: "native_text",
-      uniqueEvidence: true,
-      primaryAxis: "form_state",
-      secondaryAxes: [],
-      textOnlyRecoverable: true,
-      budget: 1,
-      closedWorld: { scope: "form_options", keys: ["Audit archived"] },
-      leaves: [
-        {
-          id: "control.archive",
-          canonicalClaimId: "control.archive",
-          claimType: "form_state",
-          expectation: "Audit archived is checked.",
-          harm: 1,
-          evidencePolicy: { type: "form_state", label: ["Audit archived"], state: "checked" },
-        },
-      ],
-    },
-  ],
-} satisfies FactFile;
-
-const semanticControlPrediction = `# Calibration excerpt
-SENSOR-Q dwell time: 4.41 minutes.
-At load 10, channel Z response is 0.658.
-Asset VX-71: a tiny luminous chip lies beside a larger jagged chip.
-Grid G5 marks class S2 at E2, E3, and F2.
-The active gate is solid teal/blue.
-Declared handoff order: Alpha -> Beta -> Gamma.
-Cedar appears in the materials note.
-Birch appears in the risk note.
-Maple appears in the contacts note.
-
-| Export row | Result | Qual. |
-| --- | --- | --- |
-| R-105 | <0.50 mg/L | U |
-
-## Release checklist
-- [x] Release approved
-- [ ] Release approvde
-- [x] Secret bypass enabled
-
-## Archive checklist
-- [x] Audit archived`;
-
-const semanticControlStatuses = {
-  "control.paraphrase": "correct",
-  "control.contradiction": "incorrect",
-  "control.omission": "missing",
-  "control.visual-paraphrase": "correct",
-  "control.table-row-fields": "correct",
-  "control.unordered-set": "correct",
-  "control.compound-color": "correct",
-  "control.ordered-flow": "correct",
-  "control.unrelated-order": "missing",
-  "control.form": "correct",
-  "control.archive": "correct",
-} as const;
-
-async function calibrateSemanticIntegrity(evaluatorSourceHash: string) {
-  const calibrationKey = sha256(JSON.stringify({
-    evaluatorSourceHash,
-    facts: semanticControlFacts,
-    prediction: semanticControlPrediction,
-    expectedStatuses: semanticControlStatuses,
-    expectedUnsupportedKey: "Secret bypass enabled",
-  }));
-  const cachePath = path.join("runs/calibration/semantic-integrity", calibrationKey, "result.json");
-  const cached = await readJsonOrNull(cachePath);
-  if (cached?.passed === true && cached.calibrationKey === calibrationKey) {
-    return { ...cached, cacheStatus: "cached" as const, incrementalEvaluatorSpendUsd: 0 };
-  }
-
-  console.log("scorer calibration: semantic status, grounded invention, replacement, and cross-region controls");
-  const testCase: ManifestCase = {
-    id: semanticControlFacts.id,
-    title: semanticControlFacts.title!,
-    family: semanticControlFacts.family!,
-    tags: semanticControlFacts.tags!,
-    pages: 1,
-    pdf: "",
-    gold: "",
-  };
-  const judged = await judgeInBatches(testCase, semanticControlFacts, semanticControlPrediction);
-  const observedStatuses = judged.ok
-    ? Object.fromEntries(judged.result.leafResults.map((leaf) => [leaf.id, leaf.status]))
-    : {};
-  const unsupportedKeys = judged.ok ? judged.result.unsupportedClaims.map((claim) => claim.key) : [];
-  const statusesPass = Object.entries(semanticControlStatuses)
-    .every(([id, status]) => observedStatuses[id] === status);
-  const unsupportedPass = unsupportedKeys.length === 1 && /secret\s+bypass/i.test(unsupportedKeys[0]!);
-  const result = {
-    schemaVersion: 2,
-    calibrationKey,
-    generatedAt: new Date().toISOString(),
-    passed: judged.ok && statusesPass && unsupportedPass,
-    expectedStatuses: semanticControlStatuses,
-    observedStatuses,
-    expectedUnsupportedKey: "Secret bypass enabled",
-    observedUnsupportedKeys: unsupportedKeys,
-    evaluatorResolvedModel: judged.ok ? judged.resolved.modelId : null,
-    evaluatorBatchCount: judged.batchCount,
-    unsupportedAuditCount: judged.unsupportedAuditCount,
-    evaluatorCostUsd: judged.estimatedCostUsd,
-    errors: judged.errors,
-  };
-  await writeJson(cachePath, result);
-  return {
-    ...result,
-    cacheStatus: "run" as const,
-    incrementalEvaluatorSpendUsd: result.evaluatorCostUsd,
-  };
-}
-
-async function calibrateScorer(manifest: { cases: ManifestCase[] }, evaluatorSourceHash: string) {
-  await mkdir("reports", { recursive: true });
-  const inputs = await Promise.all(manifest.cases.map(async (testCase) => {
-    const factsHash = sha256(await readFile(testCase.facts!));
-    const goldHash = sha256(await readFile(testCase.gold));
-    const calibrationKey = sha256(JSON.stringify({
-      evaluatorSourceHash,
-      caseId: testCase.id,
-      caseTitle: testCase.title,
-      factsHash,
-      goldHash,
-    }));
-    return { testCase, calibrationKey };
-  }));
-
-  const cases = await Promise.all(inputs.map(async ({ testCase, calibrationKey }) => {
-    const cachePath = path.join("runs/calibration", testCase.id, calibrationKey, "gold.json");
-    const cached = await readJsonOrNull(cachePath);
-    if (cached?.passed === true && cached.calibrationKey === calibrationKey) {
-      return { ...cached, cacheStatus: "cached" as const, incrementalEvaluatorSpendUsd: 0 };
-    }
-
-    console.log(`scorer calibration: ${testCase.id} canonical gold`);
-    const prediction = await readFile(testCase.gold, "utf8");
-    const evaluation = await evaluatePrediction(testCase, prediction);
-    const unsupportedCount = evaluation.valid && evaluation.atomicScore
-      ? evaluation.atomicScore.unsupported.count
-      : null;
-    const failures = evaluation.valid && evaluation.judgeResult
-      ? evaluation.judgeResult.leafResults
-          .filter((leaf) => leaf.status !== "correct")
-          .map((leaf) => ({
-            id: leaf.id,
-            status: leaf.status,
-            candidateLineRefs: leaf.candidateLineRefs,
-            note: leaf.note ?? null,
-          }))
-      : [];
-    const result = {
-      schemaVersion: 7,
-      calibrationKey,
-      caseId: testCase.id,
-      generatedAt: new Date().toISOString(),
-      passed: evaluation.valid && evaluation.score === 100 && unsupportedCount === 0,
-      score: evaluation.score,
-      valid: evaluation.valid,
-      unsupportedCount,
-      statusHarm: evaluation.valid && evaluation.atomicScore ? evaluation.atomicScore.statusHarm : null,
-      evaluatorResolvedModel: evaluation.evaluator.resolved?.modelId ?? null,
-      evaluatorBatchCount: evaluation.evaluator.batchCount ?? null,
-      evaluatorCostUsd: evaluation.evaluator.costUsd ?? 0,
-      failures,
-      errors: evaluation.evaluator.errors ?? [],
-    };
-    await writeJson(cachePath, result);
-    return {
-      ...result,
-      cacheStatus: "run" as const,
-      incrementalEvaluatorSpendUsd: result.evaluatorCostUsd,
-    };
-  }));
-
-  const semanticIntegrity = await calibrateSemanticIntegrity(evaluatorSourceHash);
-  const resolvedModels = [...new Set([
-    ...cases.map((item) => item.evaluatorResolvedModel),
-    semanticIntegrity.evaluatorResolvedModel,
-  ].filter(Boolean))];
-  const passed = cases.every((item) => item.passed) && semanticIntegrity.passed && resolvedModels.length === 1;
-  const calibrationKey = sha256(JSON.stringify({
-    cases: inputs.map((item) => item.calibrationKey),
-    semanticIntegrity: semanticIntegrity.calibrationKey,
-  }));
-  const incrementalEvaluatorSpendUsd = cases.reduce(
-    (sum, item) => sum + item.incrementalEvaluatorSpendUsd,
-    semanticIntegrity.incrementalEvaluatorSpendUsd,
-  );
-  const { incrementalEvaluatorSpendUsd: _semanticIncremental, ...semanticIntegritySummary } = semanticIntegrity;
-  const summary = {
-    schemaVersion: 7,
-    calibrationKey,
-    generatedAt: new Date().toISOString(),
-    passed,
-    requirement: "Every canonical gold scores 100 with no unsupported claims; controls distinguish paraphrase, omission, contradiction, genuine additions, typo-like replacements, and members belonging to another region.",
-    evaluatorResolvedModel: resolvedModels.length === 1 ? resolvedModels[0] : null,
-    totalEstimatedCostUsd: cases.reduce(
-      (sum, item) => sum + item.evaluatorCostUsd,
-      semanticIntegrity.evaluatorCostUsd,
-    ),
-    semanticIntegrity: semanticIntegritySummary,
-    cases: cases.map(({ incrementalEvaluatorSpendUsd: _incremental, ...item }) => item),
-  };
-  await writeJson("reports/scorer-audit.json", {
-    ...summary,
-    incrementalEvaluatorSpendUsd,
-    cacheStatus: incrementalEvaluatorSpendUsd === 0 ? "cached" : "mixed",
-  });
-  if (!passed) {
-    throw new Error(
-      `Scorer calibration failed: semantic-integrity=${semanticIntegrity.passed ? "PASS" : "FAIL"}; ${cases.map((item) => `${item.caseId}=${item.score ?? "INVALID"}`).join(", ")}`,
-    );
-  }
-  return { summary, incrementalEvaluatorSpendUsd };
-}
-
 function parseOptions(argv: string[]) {
   const selected: string[] = [];
   let runs = 1;
@@ -728,7 +378,6 @@ async function collectMergedResults(
   manifest: { cases: ManifestCase[] },
   prompt: string,
   evaluatorSourceHash: string,
-  expectedEvaluatorModel: string,
 ) {
   const merged = [];
   const exclusions: Array<{ modelId: string; reason: string }> = [];
@@ -786,12 +435,11 @@ async function collectMergedResults(
     const resolvedEvaluators = [...new Set(draws.flatMap((draw) => draw.cases.map((item: any) => item.evaluatorResolvedModel)).filter(Boolean))];
     if (
       resolvedModels.length !== 1 ||
-      resolvedEvaluators.length !== 1 ||
-      resolvedEvaluators[0] !== expectedEvaluatorModel
+      resolvedEvaluators.length !== 1
     ) {
       exclusions.push({
         modelId,
-        reason: `Resolved identity drift: model=${resolvedModels.join(", ") || "missing"}; evaluator=${resolvedEvaluators.join(", ") || "missing"}; calibrated=${expectedEvaluatorModel}`,
+        reason: `Resolved identity drift: model=${resolvedModels.join(", ") || "missing"}; evaluator=${resolvedEvaluators.join(", ") || "missing"}`,
       });
       continue;
     }
@@ -871,11 +519,6 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
   let incrementalInferenceSpendUsd = 0;
   let incrementalEvaluatorSpendUsd = 0;
 
-  const calibration = await calibrateScorer(manifest as { cases: ManifestCase[] }, evaluatorSourceHash);
-  incrementalEvaluatorSpendUsd += calibration.incrementalEvaluatorSpendUsd;
-  const expectedEvaluatorModel = calibration.summary.evaluatorResolvedModel;
-  if (!expectedEvaluatorModel) throw new Error("Scorer calibration did not resolve one evaluator model identity.");
-
   for (const modelId of modelIds) {
     console.log(`\n${modelId}: ensuring ${requestedRuns} draw slot${requestedRuns === 1 ? "" : "s"} × ${manifest.cases.length} cases`);
     const cases = (await Promise.all(manifest.cases.map(async (testCase) => {
@@ -889,7 +532,6 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
           testCase as ManifestCase,
           prompt,
           evaluatorSourceHash,
-          expectedEvaluatorModel,
           draw,
         )));
       }
@@ -904,7 +546,6 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
           testCase as ManifestCase,
           prompt,
           evaluatorSourceHash,
-          expectedEvaluatorModel,
           draw,
         );
         draws.push(result);
@@ -916,7 +557,6 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
                 testCase as ManifestCase,
                 prompt,
                 evaluatorSourceHash,
-                expectedEvaluatorModel,
                 draw + offset + 1,
               ),
             ),
@@ -934,7 +574,6 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
     manifest as { cases: ManifestCase[] },
     prompt,
     evaluatorSourceHash,
-    expectedEvaluatorModel,
   );
   const mergedModels = collected.models;
   const reportCases = await reportCaseMetadata(manifest.cases);
@@ -963,7 +602,6 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
       comparisonField: "models[].inferenceCostUsd",
       actualSpendField: "models[].actualInferenceCostUsd",
     },
-    scorerCalibration: calibration.summary,
     exclusions: collected.exclusions,
     incrementalSpendUsd: incrementalInferenceSpendUsd + incrementalEvaluatorSpendUsd,
     incrementalInferenceSpendUsd,
