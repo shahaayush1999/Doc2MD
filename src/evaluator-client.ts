@@ -47,7 +47,7 @@ let client: GoogleGenAI | null = null;
 // The personal AI Studio project allows 15 requests/minute for the evaluator.
 // Allocate request starts globally within this process so concurrent case and
 // batch evaluation remains below that limit without serializing response time.
-const evaluatorStartIntervalMs = 4_200;
+const evaluatorStartIntervalMs = 6_000;
 let nextEvaluatorStartAt = 0;
 let pacingTail: Promise<void> = Promise.resolve();
 const thinkingLevels = {
