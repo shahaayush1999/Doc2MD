@@ -1,6 +1,7 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
+import { setTimeout as delay } from "node:timers/promises";
 
 export type ModelSpec = {
   id: string;
@@ -184,8 +185,39 @@ export const models: Record<string, ModelSpec> = {
 
 export const defaultModelIds = ["openai-gpt-5-nano", "google-gemini-3.1-flash-lite"];
 
+// The strictest Google candidate model in this benchmark allows 5 RPM on the
+// personal AI Studio free tier. Pace the underlying fetches—not just cases—so
+// automatic SDK retries cannot accidentally exceed that quota.
+const googleCandidateStartIntervalMs = 15_000;
+let nextGoogleCandidateStartAt = 0;
+let googleCandidatePacingTail: Promise<void> = Promise.resolve();
+
+async function waitForGoogleCandidateStart() {
+  const previous = googleCandidatePacingTail;
+  let release!: () => void;
+  googleCandidatePacingTail = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await previous;
+  try {
+    const waitMs = Math.max(0, nextGoogleCandidateStartAt - Date.now());
+    if (waitMs > 0) await delay(waitMs);
+    nextGoogleCandidateStartAt = Date.now() + googleCandidateStartIntervalMs;
+  } finally {
+    release();
+  }
+}
+
+async function pacedGoogleCandidateFetch(input: RequestInfo | URL, init?: RequestInit) {
+  await waitForGoogleCandidateStart();
+  return fetch(input, init);
+}
+
 export function createModel(spec: ModelSpec) {
   if (spec.provider === "anthropic") return createAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY })(spec.modelName);
   if (spec.provider === "openai") return createOpenAI()(spec.modelName);
-  return createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY })(spec.modelName);
+  return createGoogleGenerativeAI({
+    apiKey: process.env.GEMINI_API_KEY,
+    fetch: pacedGoogleCandidateFetch,
+  })(spec.modelName);
 }

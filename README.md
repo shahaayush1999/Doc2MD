@@ -40,7 +40,7 @@ npm run bench -- --model google-gemini-3.5-flash --runs 3
 
 `--runs 3` means “ensure draws 1–3 exist.” It reuses every valid cached slot and runs only missing model/case/draw combinations. The existing cache is draw 1, so requesting three draws after a normal run creates only draws 2 and 3.
 
-Models run serially. Within each model, every case pipeline runs concurrently. Each pipeline sends the native PDF to the model and starts evaluation as soon as that case finishes.
+Models run serially. Within each model, every case pipeline runs concurrently. Each pipeline sends the native PDF to the model and starts evaluation as soon as that case finishes. Google candidate request attempts, including automatic SDK retries, are started 15 seconds apart to remain below the strictest selected model's 5 RPM personal AI Studio limit.
 
 Results are cached per model and case:
 
