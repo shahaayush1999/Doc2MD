@@ -44,10 +44,10 @@ export class EvaluatorGenerationError extends Error {
 }
 
 let client: GoogleGenAI | null = null;
-// The personal AI Studio project allows 15 requests/minute for the evaluator.
-// Allocate request starts globally within this process so concurrent case and
-// batch evaluation remains below that limit without serializing response time.
-const evaluatorStartIntervalMs = 6_000;
+// The personal AI Studio project allows 15 requests and 250k input tokens per
+// minute for the evaluator. The largest stable case prefix is about 50k tokens,
+// so four globally paced starts per minute leave headroom under both limits.
+const evaluatorStartIntervalMs = 15_000;
 let nextEvaluatorStartAt = 0;
 let pacingTail: Promise<void> = Promise.resolve();
 const thinkingLevels = {
