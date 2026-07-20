@@ -200,6 +200,45 @@ function errorMessage(error: unknown) {
   return error instanceof Error ? `${error.name}: ${error.message}` : String(error);
 }
 
+class CaseRunError extends Error {
+  incrementalInferenceCostUsd: number;
+  incrementalEvaluatorCostUsd: number;
+
+  constructor(
+    message: string,
+    incrementalInferenceCostUsd: number,
+    incrementalEvaluatorCostUsd: number,
+  ) {
+    super(message);
+    this.name = "CaseRunError";
+    this.incrementalInferenceCostUsd = incrementalInferenceCostUsd;
+    this.incrementalEvaluatorCostUsd = incrementalEvaluatorCostUsd;
+  }
+}
+
+async function allSettledOrThrow<T>(promises: Promise<T>[], message: string) {
+  const settled = await Promise.allSettled(promises);
+  const failures = settled.flatMap((result) => result.status === "rejected" ? [result.reason] : []);
+  if (failures.length > 0) throw new AggregateError(failures, message);
+  return settled.map((result) => (result as PromiseFulfilledResult<T>).value);
+}
+
+function failedSpend(error: unknown): { inference: number; evaluator: number } {
+  if (error instanceof CaseRunError) {
+    return {
+      inference: error.incrementalInferenceCostUsd,
+      evaluator: error.incrementalEvaluatorCostUsd,
+    };
+  }
+  if (error instanceof AggregateError) {
+    return error.errors.reduce((sum, item) => {
+      const child = failedSpend(item);
+      return { inference: sum.inference + child.inference, evaluator: sum.evaluator + child.evaluator };
+    }, { inference: 0, evaluator: 0 });
+  }
+  return { inference: 0, evaluator: 0 };
+}
+
 async function runCase(
   modelId: string,
   testCase: ManifestCase,
@@ -305,8 +344,10 @@ async function runCase(
     evaluation.cacheKey = await scoreKey(testCase, prediction, evaluatorSemanticHash);
     await writeJson(path.join(directory, "score.json"), evaluation);
     if (!evaluation.valid || !Number.isFinite(evaluation.score)) {
-      throw new Error(
+      throw new CaseRunError(
         `${modelId} draw ${draw} ${testCase.id}: evaluator failed; ${evaluation.evaluator.errors?.join("; ") || "no diagnostic"}`,
+        inferenceSpent,
+        evaluatorSpent,
       );
     }
   }
@@ -513,22 +554,23 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
     : [...new Set([...defaultModelIds, ...availableCachedModelIds])];
   let incrementalInferenceSpendUsd = 0;
   let incrementalEvaluatorSpendUsd = 0;
+  const runFailures: string[] = [];
 
   for (const modelId of modelIds) {
     console.log(`\n${modelId}: ensuring ${requestedRuns} draw slot${requestedRuns === 1 ? "" : "s"} × ${manifest.cases.length} cases`);
-    const cases = (await Promise.all(manifest.cases.map(async (testCase) => {
+    const settledCases = await Promise.allSettled(manifest.cases.map(async (testCase) => {
       const drawNumbers = Array.from({ length: requestedRuns }, (_, index) => index + 1);
       const cachedSlots = await Promise.all(drawNumbers.map((draw) =>
         loadCachedCase(modelId, testCase as ManifestCase, prompt, evaluatorSemanticHash, draw),
       ));
       if (cachedSlots.every(Boolean)) {
-        return Promise.all(drawNumbers.map((draw) => runCase(
+        return allSettledOrThrow(drawNumbers.map((draw) => runCase(
           modelId,
           testCase as ManifestCase,
           prompt,
           evaluatorSemanticHash,
           draw,
-        )));
+        )), `${modelId} ${testCase.id}: one or more cached draw pipelines failed`);
       }
 
       // When inference is missing, one provider call warms the repeated-input
@@ -545,7 +587,7 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
         );
         draws.push(result);
         if (result.incrementalInferenceCostUsd > 0 && draw < requestedRuns) {
-          draws.push(...await Promise.all(
+          draws.push(...await allSettledOrThrow(
             Array.from({ length: requestedRuns - draw }, (_, offset) =>
               runCase(
                 modelId,
@@ -555,12 +597,22 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
                 draw + offset + 1,
               ),
             ),
+            `${modelId} ${testCase.id}: one or more warmed draw pipelines failed`,
           ));
           break;
         }
       }
       return draws;
-    }))).flat();
+    }));
+    const cases = settledCases.flatMap((result, index) => {
+      if (result.status === "fulfilled") return result.value;
+      const spend = failedSpend(result.reason);
+      incrementalInferenceSpendUsd += spend.inference;
+      incrementalEvaluatorSpendUsd += spend.evaluator;
+      runFailures.push(`${modelId}/${manifest.cases[index]!.id}: ${errorMessage(result.reason)}`);
+      console.error(`${modelId}/${manifest.cases[index]!.id}: failed after sibling pipelines were preserved`);
+      return [];
+    });
     incrementalInferenceSpendUsd += cases.reduce((sum, testCase) => sum + testCase.incrementalInferenceCostUsd, 0);
     incrementalEvaluatorSpendUsd += cases.reduce((sum, testCase) => sum + testCase.incrementalEvaluatorCostUsd, 0);
   }
@@ -622,6 +674,9 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
   })));
   console.log(`Incremental model inference spend: $${incrementalInferenceSpendUsd.toFixed(6)}`);
   console.log("Report: reports/index.html");
+  if (runFailures.length > 0) {
+    throw new AggregateError(runFailures, `${runFailures.length} case pipeline${runFailures.length === 1 ? "" : "s"} failed; all completed work was preserved and the report was regenerated.`);
+  }
   return summary;
 }
 

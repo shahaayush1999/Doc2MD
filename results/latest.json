@@ -1,7 +1,7 @@
 {
   "name": "Doc2MD",
   "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
-  "generatedAt": "2026-07-20T14:39:14.305Z",
+  "generatedAt": "2026-07-20T15:44:11.504Z",
   "caseCount": 5,
   "pageCount": 86,
   "cases": [
@@ -118,7 +118,20 @@
     "comparisonField": "models[].inferenceCostUsd",
     "actualSpendField": "models[].actualInferenceCostUsd"
   },
-  "exclusions": [],
+  "exclusions": [
+    {
+      "modelId": "anthropic-claude-haiku-4.5",
+      "reason": "No complete draw has a valid score for the current scorer and corpus."
+    },
+    {
+      "modelId": "google-gemini-3.5-flash",
+      "reason": "No complete draw has a valid score for the current scorer and corpus."
+    },
+    {
+      "modelId": "openai-gpt-5.6-terra",
+      "reason": "No complete draw has a valid score for the current scorer and corpus."
+    }
+  ],
   "incrementalSpendUsd": 0,
   "incrementalInferenceSpendUsd": 0,
   "incrementalEvaluatorSpendUsd": 0,
