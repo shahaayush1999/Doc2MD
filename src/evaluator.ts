@@ -3204,8 +3204,8 @@ async function judgeUnsupportedClaims(
         messages: [{
           role: "user",
           content: [
-            { type: "text", text: candidatePrompt(prediction, allowedPages, expectedPageCount) },
             { type: "text", text: unsupportedAuditPrompt(testCase, regions, repairNote) },
+            { type: "text", text: candidatePrompt(prediction, allowedPages, expectedPageCount) },
           ],
         }],
         reasoning: evaluator.reasoning,
@@ -3272,8 +3272,8 @@ async function judgeSemanticBatch(
         messages: [{
           role: "user",
           content: [
-            { type: "text", text: candidatePrompt(prediction, allowedPages, expectedPageCount) },
             { type: "text", text: judgeBatchPrompt(testCase, batch, repairNote) },
+            { type: "text", text: candidatePrompt(prediction, allowedPages, expectedPageCount) },
           ],
         }],
         reasoning: evaluator.reasoning,
