@@ -5,7 +5,7 @@ import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
-import { generateText } from "ai";
+import { generateText, streamText, type ModelMessage } from "ai";
 import { auditBenchmark } from "./audit.js";
 import {
   evaluatorConfiguration,
@@ -262,29 +262,52 @@ async function runCase(
     const started = performance.now();
     const requestInferenceKey = await inferenceKey(spec, testCase, prompt);
     const requestPromptCacheKey = promptCacheKey(requestInferenceKey);
-    const response = await generateText({
+    const messages: ModelMessage[] = [{
+      role: "user",
+      content: [
+        { type: "text", text: prompt },
+        {
+          type: "file",
+          data: pdf,
+          mediaType: "application/pdf",
+          filename: `${testCase.id}.pdf`,
+          ...(spec.provider === "openai" && spec.modelName.startsWith("gpt-5.6-") ? {
+            providerOptions: {
+              openai: { promptCacheBreakpoint: { mode: "explicit" as const } },
+            },
+          } : {}),
+        },
+      ],
+    }];
+    const request = {
       model: createModel(spec),
-      messages: [{
-        role: "user",
-        content: [
-          { type: "text", text: prompt },
-          {
-            type: "file",
-            data: pdf,
-            mediaType: "application/pdf",
-            filename: `${testCase.id}.pdf`,
-            ...(spec.provider === "openai" && spec.modelName.startsWith("gpt-5.6-") ? {
-              providerOptions: {
-                openai: { promptCacheBreakpoint: { mode: "explicit" as const } },
-              },
-            } : {}),
-          },
-        ],
-      }],
+      messages,
       maxOutputTokens: outputLimit,
       maxRetries: 2,
       ...(spec.reasoning ? { reasoning: spec.reasoning } : {}),
-      ...(spec.provider === "openai" ? {
+    };
+    const response = spec.provider === "anthropic"
+      ? await (async () => {
+        // Long document reconstructions can exceed Node's non-streaming header
+        // timeout before Anthropic returns the complete response. Streaming
+        // receives headers immediately while preserving the same final text and
+        // usage contract consumed by the benchmark.
+        const streamed = streamText({
+          ...request,
+          providerOptions: {
+            anthropic: { thinking: { type: "disabled" as const } },
+          },
+        });
+        const [text, usage, responseMetadata, finishReason] = await Promise.all([
+          streamed.text,
+          streamed.usage,
+          streamed.response,
+          streamed.finishReason,
+        ]);
+        return { text, usage, response: responseMetadata, finishReason };
+      })()
+      : await generateText(spec.provider === "openai" ? {
+        ...request,
         providerOptions: {
           openai: {
             promptCacheKey: requestPromptCacheKey,
@@ -293,12 +316,7 @@ async function runCase(
             } : {}),
           },
         },
-      } : spec.provider === "anthropic" ? {
-        providerOptions: {
-          anthropic: { thinking: { type: "disabled" as const } },
-        },
-      } : {}),
-    });
+      } : request);
     const usage = usageWithCacheWrite(spec, response.usage);
     prediction = response.text;
     inferenceSpent = calculateCost(spec, usage);
