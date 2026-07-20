@@ -13,7 +13,7 @@ The benchmark must measure whether a model can turn a real native PDF into one e
 ## Outcome and anchor guardrails
 
 - Use `openai-gpt-5-nano` as the deliberately weak, cheap development anchor.
-- Use `vertex-gemini-3.1-flash-lite` as the good development anchor.
+- Use `google-gemini-3.1-flash-lite` as the good development anchor.
 - Require a large, obvious separation across several independent capability families.
 - Preserve meaningful headroom for stronger future systems; neither development anchor may saturate.
 - Scores should roughly track operational usefulness in a production document-processing pipeline.
