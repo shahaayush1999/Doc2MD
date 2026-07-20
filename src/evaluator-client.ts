@@ -1,4 +1,5 @@
 import { GoogleGenAI, ThinkingLevel } from "@google/genai";
+import { setTimeout as delay } from "node:timers/promises";
 
 type Usage = {
   inputTokens: number;
@@ -43,6 +44,12 @@ export class EvaluatorGenerationError extends Error {
 }
 
 let client: GoogleGenAI | null = null;
+// The personal AI Studio project allows 15 requests/minute for the evaluator.
+// Allocate request starts globally within this process so concurrent case and
+// batch evaluation remains below that limit without serializing response time.
+const evaluatorStartIntervalMs = 4_200;
+let nextEvaluatorStartAt = 0;
+let pacingTail: Promise<void> = Promise.resolve();
 const thinkingLevels = {
   minimal: ThinkingLevel.MINIMAL,
   low: ThinkingLevel.LOW,
@@ -71,7 +78,24 @@ function generationUsage(metadata: any): Usage {
   };
 }
 
+async function waitForEvaluatorStart() {
+  const previous = pacingTail;
+  let release!: () => void;
+  pacingTail = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await previous;
+  try {
+    const waitMs = Math.max(0, nextEvaluatorStartAt - Date.now());
+    if (waitMs > 0) await delay(waitMs);
+    nextEvaluatorStartAt = Date.now() + evaluatorStartIntervalMs;
+  } finally {
+    release();
+  }
+}
+
 export async function generateEvaluatorJson(request: EvaluatorJsonRequest): Promise<EvaluatorJsonResponse> {
+  await waitForEvaluatorStart();
   const response = await evaluatorClient().models.generateContent({
     model: request.model,
     contents: `${request.stablePrompt}\n\n${request.prompt}`,

@@ -1,10 +1,11 @@
+import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
 
 export type ModelSpec = {
   id: string;
   modelName: string;
-  provider: "google" | "openai";
+  provider: "anthropic" | "google" | "openai";
   reasoning?: "none" | "minimal";
   location?: string;
   maxOutputTokens?: number;
@@ -16,6 +17,36 @@ export type ModelSpec = {
 };
 
 export const models: Record<string, ModelSpec> = {
+  "anthropic-claude-haiku-4.5": {
+    id: "anthropic-claude-haiku-4.5",
+    modelName: "claude-haiku-4-5-20251001",
+    provider: "anthropic",
+    reasoning: "none",
+    pricingVersion: "2026-07-20",
+    inputPerMillion: 1,
+    cachedInputPerMillion: 0.1,
+    outputPerMillion: 5,
+  },
+  "anthropic-claude-sonnet-5": {
+    id: "anthropic-claude-sonnet-5",
+    modelName: "claude-sonnet-5",
+    provider: "anthropic",
+    reasoning: "none",
+    pricingVersion: "2026-07-20-introductory",
+    inputPerMillion: 2,
+    cachedInputPerMillion: 0.2,
+    outputPerMillion: 10,
+  },
+  "anthropic-claude-opus-4.8": {
+    id: "anthropic-claude-opus-4.8",
+    modelName: "claude-opus-4-8",
+    provider: "anthropic",
+    reasoning: "none",
+    pricingVersion: "2026-07-20",
+    inputPerMillion: 5,
+    cachedInputPerMillion: 0.5,
+    outputPerMillion: 25,
+  },
   "openai-gpt-4o-mini": {
     id: "openai-gpt-4o-mini",
     modelName: "gpt-4o-mini",
@@ -154,6 +185,7 @@ export const models: Record<string, ModelSpec> = {
 export const defaultModelIds = ["openai-gpt-5-nano", "google-gemini-3.1-flash-lite"];
 
 export function createModel(spec: ModelSpec) {
+  if (spec.provider === "anthropic") return createAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY })(spec.modelName);
   if (spec.provider === "openai") return createOpenAI()(spec.modelName);
   return createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY })(spec.modelName);
 }

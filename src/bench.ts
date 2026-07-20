@@ -254,6 +254,10 @@ async function runCase(
             } : {}),
           },
         },
+      } : spec.provider === "anthropic" ? {
+        providerOptions: {
+          anthropic: { thinking: { type: "disabled" as const } },
+        },
       } : {}),
     });
     const usage = usageWithCacheWrite(spec, response.usage);
@@ -277,7 +281,7 @@ async function runCase(
       providerCache: {
         mode: spec.provider === "openai"
           ? spec.modelName.startsWith("gpt-5.6-") ? "explicit-prefix-30m" : "prompt-cache-key"
-          : "implicit",
+          : spec.provider === "google" ? "implicit" : "none",
         key: spec.provider === "openai" ? requestPromptCacheKey : null,
         cacheReadTokens: usage?.inputTokenDetails?.cacheReadTokens ?? 0,
         cacheWriteTokens: usage?.inputTokenDetails?.cacheWriteTokens ?? 0,
@@ -295,8 +299,9 @@ async function runCase(
 
   let evaluation = cached?.evaluation ?? null;
   if (!evaluation) {
-    evaluation = await evaluatePrediction(testCase, prediction);
-    evaluatorSpent = evaluation.evaluator.costUsd;
+    const evaluated = await evaluatePrediction(testCase, prediction, path.join(directory, "evaluation-parts"));
+    evaluation = evaluated.evaluation;
+    evaluatorSpent = evaluated.incrementalCostUsd;
     evaluation.cacheKey = await scoreKey(testCase, prediction, evaluatorSemanticHash);
     await writeJson(path.join(directory, "score.json"), evaluation);
     if (!evaluation.valid || !Number.isFinite(evaluation.score)) {

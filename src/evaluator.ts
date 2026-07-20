@@ -1,4 +1,6 @@
-import { readFile } from "node:fs/promises";
+import { createHash, randomUUID } from "node:crypto";
+import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { z } from "zod";
 import { EvaluatorGenerationError, generateEvaluatorJson } from "./evaluator-client.js";
@@ -3021,6 +3023,56 @@ function usageCost(usage: any): number {
   return evaluatorPriceReport(usage).estimatedCostUsd;
 }
 
+function sha256(value: string) {
+  return createHash("sha256").update(value).digest("hex");
+}
+
+async function readJsonOrNull(filePath: string) {
+  try {
+    return JSON.parse(await readFile(filePath, "utf8")) as any;
+  } catch {
+    return null;
+  }
+}
+
+async function writeJsonAtomic(filePath: string, value: unknown) {
+  await mkdir(path.dirname(filePath), { recursive: true });
+  const temporaryPath = `${filePath}.${process.pid}.${randomUUID()}.tmp`;
+  try {
+    await writeFile(temporaryPath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+    await rename(temporaryPath, filePath);
+  } finally {
+    await rm(temporaryPath, { force: true }).catch(() => undefined);
+  }
+}
+
+async function checkpointEvaluatorPart(
+  directory: string | undefined,
+  name: string,
+  cacheKey: string,
+  run: () => Promise<any>,
+) {
+  const filePath = directory ? path.join(directory, `${name}.json`) : null;
+  const previous = filePath ? await readJsonOrNull(filePath) : null;
+  if (previous?.cacheKey === cacheKey && previous?.result?.ok === true) {
+    return { ...previous.result, fromCheckpoint: true, incrementalUsages: [] };
+  }
+
+  const fresh = await run();
+  const priorFailure = previous?.cacheKey === cacheKey && previous?.result?.ok === false
+    ? previous.result
+    : null;
+  const result = priorFailure ? {
+    ...fresh,
+    attempts: (priorFailure.attempts ?? 0) + (fresh.attempts ?? 0),
+    errors: [...(priorFailure.errors ?? []), ...(fresh.errors ?? [])],
+    elapsedMs: (priorFailure.elapsedMs ?? 0) + (fresh.elapsedMs ?? 0),
+    usages: [...(priorFailure.usages ?? []), ...(fresh.usages ?? [])],
+  } : fresh;
+  if (filePath) await writeJsonAtomic(filePath, { cacheKey, result });
+  return { ...result, fromCheckpoint: false, incrementalUsages: fresh.usages ?? [] };
+}
+
 function combineUsage(usages: any[]) {
   if (usages.length === 0) return null;
   return {
@@ -3338,19 +3390,41 @@ async function judgeSemanticBatch(
   throw new Error("Unreachable semantic evaluator retry state.");
 }
 
-export async function judgeInBatches(testCase: ManifestCase, facts: FactFile, prediction: string) {
+export async function judgeInBatches(
+  testCase: ManifestCase,
+  facts: FactFile,
+  prediction: string,
+  checkpointDirectory?: string,
+) {
   const started = performance.now();
   const expectedPageCount = candidateOutputPageCount(facts);
   const credited = deterministicPrecredits(facts, prediction);
   const batches = semanticBatches(facts, credited);
   const closedWorldRegions = semanticClosedWorldRegions(facts);
   const closedWorldBatches = unsupportedBatches(closedWorldRegions);
+  const checkpointIdentity = {
+    evaluator: evaluatorScoringIdentity(),
+    testCase: { id: testCase.id, title: testCase.title, pages: testCase.pages ?? null },
+    facts: sha256(JSON.stringify(facts)),
+    prediction: sha256(prediction),
+  };
   const [batchResults, unsupportedAudits] = await Promise.all([
-    Promise.all(batches.map((batch) => judgeSemanticBatch(testCase, batch, prediction, expectedPageCount))),
-    Promise.all(closedWorldBatches.map((regions) => judgeUnsupportedClaims(testCase, facts, regions, prediction))),
+    Promise.all(batches.map((batch) => checkpointEvaluatorPart(
+      checkpointDirectory,
+      `semantic-${String(batch.index).padStart(3, "0")}`,
+      sha256(JSON.stringify({ ...checkpointIdentity, kind: "semantic", batch })),
+      () => judgeSemanticBatch(testCase, batch, prediction, expectedPageCount),
+    ))),
+    Promise.all(closedWorldBatches.map((regions, index) => checkpointEvaluatorPart(
+      checkpointDirectory,
+      `unsupported-${String(index + 1).padStart(3, "0")}`,
+      sha256(JSON.stringify({ ...checkpointIdentity, kind: "unsupported", regions })),
+      () => judgeUnsupportedClaims(testCase, facts, regions, prediction),
+    ))),
   ]);
   const allResults = [...batchResults, ...unsupportedAudits];
   const usages = allResults.flatMap((result) => result.usages);
+  const incrementalUsages = allResults.flatMap((result) => result.incrementalUsages);
   const errors = allResults.flatMap((result) => result.errors);
   const failed = allResults.find((result) => !result.ok);
   const usage = combineUsage(usages);
@@ -3367,6 +3441,7 @@ export async function judgeInBatches(testCase: ManifestCase, facts: FactFile, pr
       elapsedMs: Math.round(performance.now() - started),
       usage,
       estimatedCostUsd: usages.reduce((sum, item) => sum + usageCost(item), 0),
+      incrementalCostUsd: incrementalUsages.reduce((sum, item) => sum + usageCost(item), 0),
     };
   }
 
@@ -3385,6 +3460,7 @@ export async function judgeInBatches(testCase: ManifestCase, facts: FactFile, pr
       elapsedMs: Math.round(performance.now() - started),
       usage,
       estimatedCostUsd: usages.reduce((sum, item) => sum + usageCost(item), 0),
+      incrementalCostUsd: incrementalUsages.reduce((sum, item) => sum + usageCost(item), 0),
     };
   }
 
@@ -3417,23 +3493,51 @@ export async function judgeInBatches(testCase: ManifestCase, facts: FactFile, pr
     elapsedMs: Math.round(performance.now() - started),
     usage,
     estimatedCostUsd: usages.reduce((sum, item) => sum + usageCost(item), 0),
+    incrementalCostUsd: incrementalUsages.reduce((sum, item) => sum + usageCost(item), 0),
   };
 }
 
-export async function evaluatePrediction(testCase: ManifestCase, prediction: string) {
+export async function evaluatePrediction(
+  testCase: ManifestCase,
+  prediction: string,
+  checkpointDirectory?: string,
+) {
   if (!testCase.facts) throw new Error(`${testCase.id} has no facts file.`);
   const facts = parseFactFile(JSON.parse(await readFile(testCase.facts, "utf8")), {
     caseId: testCase.id,
     pages: testCase.pages,
   });
-  const judged = await judgeInBatches(testCase, facts, prediction);
+  const judged = await judgeInBatches(testCase, facts, prediction, checkpointDirectory);
   if (!judged.ok) {
     return {
-      valid: false,
-      score: null,
+      evaluation: {
+        valid: false,
+        score: null,
+        evaluator: {
+          model: evaluator.modelName,
+          configuration: evaluatorConfiguration(),
+          batchCount: judged.batchCount,
+          unsupportedAuditCount: judged.unsupportedAuditCount,
+          deterministicCreditCount: judged.deterministicCreditCount,
+          attempts: judged.attempts,
+          errors: judged.errors,
+          elapsedMs: judged.elapsedMs,
+          usage: judged.usage,
+          costUsd: judged.estimatedCostUsd,
+        },
+      },
+      incrementalCostUsd: judged.incrementalCostUsd,
+    };
+  }
+  const atomicScore = scoreAtomicRegions(facts, judged.result, prediction);
+  return {
+    evaluation: {
+      valid: true,
+      score: atomicScore.score,
       evaluator: {
         model: evaluator.modelName,
         configuration: evaluatorConfiguration(),
+        resolved: judged.resolved,
         batchCount: judged.batchCount,
         unsupportedAuditCount: judged.unsupportedAuditCount,
         deterministicCreditCount: judged.deterministicCreditCount,
@@ -3443,26 +3547,9 @@ export async function evaluatePrediction(testCase: ManifestCase, prediction: str
         usage: judged.usage,
         costUsd: judged.estimatedCostUsd,
       },
-    };
-  }
-  const atomicScore = scoreAtomicRegions(facts, judged.result, prediction);
-  return {
-    valid: true,
-    score: atomicScore.score,
-    evaluator: {
-      model: evaluator.modelName,
-      configuration: evaluatorConfiguration(),
-      resolved: judged.resolved,
-      batchCount: judged.batchCount,
-      unsupportedAuditCount: judged.unsupportedAuditCount,
-      deterministicCreditCount: judged.deterministicCreditCount,
-      attempts: judged.attempts,
-      errors: judged.errors,
-      elapsedMs: judged.elapsedMs,
-      usage: judged.usage,
-      costUsd: judged.estimatedCostUsd,
+      atomicScore,
+      judgeResult: judged.result,
     },
-    atomicScore,
-    judgeResult: judged.result,
+    incrementalCostUsd: judged.incrementalCostUsd,
   };
 }

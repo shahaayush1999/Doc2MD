@@ -1,7 +1,7 @@
 {
   "name": "Doc2MD",
   "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
-  "generatedAt": "2026-07-20T13:33:34.692Z",
+  "generatedAt": "2026-07-20T14:39:14.305Z",
   "caseCount": 5,
   "pageCount": 86,
   "cases": [
@@ -108,7 +108,7 @@
     "promptHash": "a59e08b0d026f54ba1ade9e3ff9035ffcbb969c207d5bf74ea5f15d687951531",
     "manifestHash": "6bd3806fee287f8711329e89682903fe7e4acc6cc91ba1fe6230fe3583b306a0",
     "evaluatorSemanticHash": "1bb8e19f22de0e4adca69f37031a05a0a7c61b7e856e9e7e735c4888e9b453b3",
-    "packageLockHash": "4251d1d0818993c4345c9572b3c38e1cdb1abafc04318f4216c13931e7b2075d",
+    "packageLockHash": "f7feb33a7e2a1e3af381818f06c809f04ad3f3f127b726bb6702aef4e9865e90",
     "measurementStartedAt": "2026-07-19T11:48:26.366Z",
     "measurementFinishedAt": "2026-07-19T18:26:41.877Z"
   },

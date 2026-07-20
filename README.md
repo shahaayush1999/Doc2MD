@@ -24,7 +24,7 @@ Set the relevant provider keys in `.env.local`. On a fresh cache, the default ru
 - `openai-gpt-5-nano`
 - `google-gemini-3.1-flash-lite`
 
-Google models and the Gemini 3.1 Flash-Lite evaluator use the Gemini API through a server-side `GEMINI_API_KEY` created in Google AI Studio.
+Google models and the Gemini 3.1 Flash-Lite evaluator use the Gemini API through a server-side `GEMINI_API_KEY` created in Google AI Studio. Anthropic models use `ANTHROPIC_API_KEY`; the registered no-thinking models are `anthropic-claude-haiku-4.5`, `anthropic-claude-sonnet-5`, and `anthropic-claude-opus-4.8`.
 
 Select any registered model with repeatable flags:
 
@@ -48,19 +48,20 @@ Results are cached per model and case:
 runs/cache/<model>/<case>/prediction.md
 runs/cache/<model>/<case>/inference.json
 runs/cache/<model>/<case>/score.json
+runs/cache/<model>/<case>/evaluation-parts/*.json
 runs/cache/<model>/<case>/draws/002/{prediction.md,inference.json,score.json}
 runs/cache/<model>/<case>/draws/003/{prediction.md,inference.json,score.json}
 reports/summary.json
 reports/index.html
 ```
 
-Inference is reused only when the PDF bytes, conversion prompt, model configuration, and output limit match. Evaluation is reused only when the prediction, facts, evaluator model, and score-affecting settings match. Changes to provider transport, prompt caching, or pricing do not invalidate an otherwise identical score. A scoring-semantics change therefore rescores cached predictions without rerunning the model. Adding a new case runs only that missing case for previously cached models. Explicit `--model` flags run/check only those models; without flags, the command checks the default anchors plus every model already present in the cache.
+Inference is reused only when the PDF bytes, conversion prompt, model configuration, and output limit match. Evaluation is reused only when the prediction, facts, evaluator model, and score-affecting settings match. Every successful evaluator batch is checkpointed immediately; if another batch fails or rate-limits, rerunning reuses both the completed model inference and completed evaluator batches and calls only the unfinished batches. Changes to provider transport, prompt caching, or pricing do not invalidate an otherwise identical score. A scoring-semantics change therefore rescores cached predictions without rerunning the model. Adding a new case runs only that missing case for previously cached models. Explicit `--model` flags run/check only those models; without flags, the command checks the default anchors plus every model already present in the cache.
 
 After every invocation, the merged report is rebuilt from every model with at least one complete draw for the current manifest. Each draw is the equal-weight mean of its case scores; repeated models report the mean of those complete suite draws plus their range and sample SD. Operating cost, summed case-call latency, and output tokens are shown as means per draw so models with different draw counts remain comparable. Because cases run concurrently, summed case-call latency is not suite wall-clock time.
 
 ## Scoring
 
-Gemini 3.1 Flash-Lite evaluates compact batches of candidate Markdown against source-anchored atomic obligations and classifies each obligation as correct, missing, or incorrect. Collision-safe deterministic checks first pre-credit unambiguous table bindings, form states, and directed relationships, so the evaluator returns only unresolved obligations; ordered records and ambiguous or repeated locators stay with the semantic evaluator. Stable answer-key batches remain at the beginning of each Gemini API request so the provider's automatic implicit cache can reuse them across candidate models; reported cache-hit tokens are recorded. Each scoring request remains capped at 32 obligations. A separate conservative audit can penalize source-invented claims only within explicitly declared, source-grounded closed worlds. Corpus and answer-key quality are reviewed during benchmark development; the runtime command never grades the gold answers or runs a paid evaluator preflight.
+Gemini 3.1 Flash-Lite evaluates compact batches of candidate Markdown against source-anchored atomic obligations and classifies each obligation as correct, missing, or incorrect. Evaluator request starts are spaced 4.2 seconds apart to stay below the personal AI Studio project's 15 RPM free-tier limit while model cases remain concurrent. Collision-safe deterministic checks first pre-credit unambiguous table bindings, form states, and directed relationships, so the evaluator returns only unresolved obligations; ordered records and ambiguous or repeated locators stay with the semantic evaluator. Stable answer-key batches remain at the beginning of each Gemini API request so the provider's automatic implicit cache can reuse them across candidate models; reported cache-hit tokens are recorded. Each scoring request remains capped at 32 obligations. A separate conservative audit can penalize source-invented claims only within explicitly declared, source-grounded closed worlds. Corpus and answer-key quality are reviewed during benchmark development; the runtime command never grades the gold answers or runs a paid evaluator preflight.
 
 The scorer has no case-ID branches or corpus-size assumptions. Case-specific knowledge belongs only in each case's `facts.json`, `gold.md`, and `spec.md`; generic runtime validation rejects rubric IDs or ungrounded members masquerading as source-visible closed-world keys. A leaf's `expectation` is the complete semantic contract sent to the evaluator, so non-obvious acceptable equivalents must be stated there. `evidencePolicy` aliases support conservative deterministic recognition and do not silently broaden that semantic contract.
 
