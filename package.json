@@ -26,6 +26,7 @@
   "dependencies": {
     "@ai-sdk/google-vertex": "^5.0.7",
     "@ai-sdk/openai": "^4.0.16",
+    "@google/genai": "^2.12.0",
     "ai": "^7.0.11",
     "zod": "^4.4.3"
   },

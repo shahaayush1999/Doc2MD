@@ -1,9 +1,9 @@
 import { readFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
-import { generateObject, NoObjectGeneratedError } from "ai";
 import { z } from "zod";
+import { EvaluatorGenerationError, generateCachedJson } from "./evaluator-client.js";
 import { calculateCost } from "./pricing.js";
-import { createModel, models } from "./models.js";
+import { models } from "./models.js";
 
 export type ManifestCase = {
   id: string;
@@ -215,13 +215,13 @@ export class EvaluatorContractError extends Error {
 }
 
 const evaluator = models["vertex-gemini-3.1-flash-lite"]!;
-const scoringProtocolVersion = 8;
+const scoringProtocolVersion = 9;
 const judgeBatchLeafLimit = 32;
+const judgeCacheBatchLeafLimit = 64;
 const unsupportedBatchRegionLimit = 24;
 const unsupportedBatchMemberLimit = 256;
 const judgeMaxOutputTokens = 12_000;
 const judgeMaxAttempts = 2;
-const judgeTransportMaxRetries = 2;
 const judgeSampling = { temperature: 0, seed: 731_2026 } as const;
 
 export function evaluatorConfiguration() {
@@ -234,10 +234,12 @@ export function evaluatorConfiguration() {
     sampling: judgeSampling,
     scoringProtocolVersion,
     batchLeafLimit: judgeBatchLeafLimit,
+    cacheBatchLeafLimit: judgeCacheBatchLeafLimit,
     unsupportedBatchRegionLimit,
     unsupportedBatchMemberLimit,
     maxOutputTokens: judgeMaxOutputTokens,
     maxAttempts: judgeMaxAttempts,
+    cache: "vertex-explicit-stable-batch-v1",
     pricingVersion: evaluator.pricingVersion,
   };
 }
@@ -2764,7 +2766,13 @@ type SemanticRegion = {
   leaves: Array<Pick<FactLeaf, "id" | "claimType" | "expectation" | "evidencePolicy">>;
 };
 
-type SemanticBatch = { index: number; regions: SemanticRegion[]; leafIds: string[] };
+type SemanticBatch = {
+  index: number;
+  requestIndex: number;
+  regions: SemanticRegion[];
+  stableLeafIds: string[];
+  leafIds: string[];
+};
 
 type SemanticClosedWorldRegion = {
   id: string;
@@ -2866,18 +2874,17 @@ function deterministicPrecredits(facts: FactFile, prediction: string) {
 }
 
 function semanticBatches(facts: FactFile, credited: Map<string, JudgeResult["leafResults"][number]>): SemanticBatch[] {
-  const regions: SemanticRegion[] = facts.regions.flatMap((region) => {
-    const leaves = region.leaves
-      .filter((leaf) => !credited.has(leaf.id))
-      .map(({ id, claimType, expectation, evidencePolicy }) => ({ id, claimType, expectation, evidencePolicy }));
-    if (leaves.length === 0) return [];
-    return [{
+  const regions: SemanticRegion[] = facts.regions.map((region) => ({
       id: region.id,
       label: region.label,
       pages: [...new Set(region.sourceAnchors.map(candidatePageForAnchor))].sort((left, right) => left - right),
-      leaves,
-    }];
-  });
+      leaves: region.leaves.map(({ id, claimType, expectation, evidencePolicy }) => ({
+        id,
+        claimType,
+        expectation,
+        evidencePolicy,
+      })),
+    }));
 
   const batches: SemanticBatch[] = [];
   let pending: SemanticRegion[] = [];
@@ -2886,16 +2893,18 @@ function semanticBatches(facts: FactFile, credited: Map<string, JudgeResult["lea
     if (pending.length === 0) return;
     batches.push({
       index: batches.length + 1,
+      requestIndex: 0,
       regions: pending,
-      leafIds: pending.flatMap((region) => region.leaves.map((leaf) => leaf.id)),
+      stableLeafIds: pending.flatMap((region) => region.leaves.map((leaf) => leaf.id)),
+      leafIds: [],
     });
     pending = [];
     pendingCount = 0;
   };
   for (const region of regions) {
     for (let offset = 0; offset < region.leaves.length;) {
-      if (pendingCount === judgeBatchLeafLimit) flush();
-      const capacity = judgeBatchLeafLimit - pendingCount;
+      if (pendingCount === judgeCacheBatchLeafLimit) flush();
+      const capacity = judgeCacheBatchLeafLimit - pendingCount;
       const leaves = region.leaves.slice(offset, offset + capacity);
       pending.push({ ...region, leaves });
       pendingCount += leaves.length;
@@ -2903,10 +2912,21 @@ function semanticBatches(facts: FactFile, credited: Map<string, JudgeResult["lea
     }
   }
   flush();
-  return batches;
+  return batches.flatMap((batch) => {
+    const unresolved = batch.stableLeafIds.filter((id) => !credited.has(id));
+    const requests: SemanticBatch[] = [];
+    for (let offset = 0; offset < unresolved.length; offset += judgeBatchLeafLimit) {
+      requests.push({
+        ...batch,
+        requestIndex: requests.length + 1,
+        leafIds: unresolved.slice(offset, offset + judgeBatchLeafLimit),
+      });
+    }
+    return requests;
+  });
 }
 
-function judgeBatchPrompt(testCase: ManifestCase, batch: SemanticBatch, repairNote?: string): string {
+function judgeBatchPrompt(testCase: ManifestCase, batch: SemanticBatch): string {
   const obligations = batch.regions.flatMap((region) => region.leaves.map((leaf) => ({
     id: leaf.id,
     pages: region.pages,
@@ -2915,12 +2935,16 @@ function judgeBatchPrompt(testCase: ManifestCase, batch: SemanticBatch, repairNo
     expectation: leaf.expectation,
   })));
   return `Case: ${testCase.id} - ${testCase.title}
-Batch ${batch.index}; return these ${batch.leafIds.length} leaf ids in exact order.
-Return leaf ids, never region names or region ids.
+Stable answer-key batch ${batch.index}. The later request names the subset of leaf ids to return.
+Return only requested leaf ids, never region names or region ids.
 
 OBLIGATIONS:
-${JSON.stringify(obligations, null, 2)}
-${repairNote ? `\nThe previous attempt was invalid. Correct this: ${repairNote}` : ""}`;
+${JSON.stringify(obligations, null, 2)}`;
+}
+
+function judgeBatchRequest(batch: SemanticBatch, repairNote?: string): string {
+  return `Return exactly these ${batch.leafIds.length} leaf ids in this order: ${batch.leafIds.join(", ")}.
+${repairNote ? `The previous attempt was invalid. Correct this: ${repairNote}\n` : ""}`;
 }
 
 function candidatePrompt(prediction: string, allowedPages: Set<number>, expectedPageCount: number): string {
@@ -2968,12 +2992,11 @@ function unsupportedBatches(regions: SemanticClosedWorldRegion[]) {
   return batches;
 }
 
-function unsupportedAuditPrompt(testCase: ManifestCase, regions: SemanticClosedWorldRegion[], repairNote?: string) {
+function unsupportedAuditPrompt(testCase: ManifestCase, regions: SemanticClosedWorldRegion[]) {
   return `Case: ${testCase.id} - ${testCase.title}
 
 CLOSED-WORLD REGIONS:
-${JSON.stringify(regions, null, 2)}
-${repairNote ? `\nThe previous attempt was invalid. Correct this: ${repairNote}` : ""}`;
+${JSON.stringify(regions, null, 2)}`;
 }
 
 export function evaluatorPriceReport(usage: any) {
@@ -3006,16 +3029,14 @@ function combineUsage(usages: any[]) {
 
 function conciseError(error: unknown): string {
   let message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
-  if (NoObjectGeneratedError.isInstance(error)) {
-    const rawCause = error.cause instanceof Error ? `${error.cause.name}: ${error.cause.message}` : error.cause ? String(error.cause) : "none";
-    const cause = rawCause.length > 700 ? `${rawCause.slice(0, 120)} ... ${rawCause.slice(-560)}` : rawCause;
-    message += ` [finishReason=${error.finishReason ?? "unknown"}; generatedChars=${error.text?.length ?? 0}; cause=${cause}]`;
+  if (error instanceof EvaluatorGenerationError) {
+    message += ` [finishReason=${error.finishReason ?? "unknown"}]`;
   }
   return message.length > 1_000 ? `${message.slice(0, 997)}...` : message;
 }
 
 function retryableJudgeError(error: unknown): boolean {
-  return error instanceof EvaluatorContractError || NoObjectGeneratedError.isInstance(error);
+  return error instanceof EvaluatorContractError || error instanceof EvaluatorGenerationError;
 }
 
 /**
@@ -3198,39 +3219,34 @@ async function judgeUnsupportedClaims(
   let repairNote: string | undefined;
   for (let attempt = 1; attempt <= judgeMaxAttempts; attempt += 1) {
     try {
-      const response = await generateObject({
-        model: createModel(evaluator),
-        schema: unsupportedAuditSchema(regions),
-        system: unsupportedInstructions,
-        messages: [{
-          role: "user",
-          content: [
-            { type: "text", text: unsupportedAuditPrompt(testCase, regions, repairNote) },
-            { type: "text", text: candidatePrompt(prediction, allowedPages, expectedPageCount) },
-          ],
-        }],
-        reasoning: evaluator.reasoning,
+      const response = await generateCachedJson({
+        model: evaluator.modelName,
+        systemInstruction: unsupportedInstructions,
+        stablePrompt: unsupportedAuditPrompt(testCase, regions),
+        prompt: `${repairNote ? `The previous attempt was invalid. Correct this: ${repairNote}\n\n` : ""}${candidatePrompt(prediction, allowedPages, expectedPageCount)}`,
+        responseJsonSchema: z.toJSONSchema(unsupportedAuditSchema(regions)),
         temperature: judgeSampling.temperature,
         seed: judgeSampling.seed,
         maxOutputTokens: judgeMaxOutputTokens,
-        maxRetries: judgeTransportMaxRetries,
+        thinkingLevel: evaluator.reasoning === "minimal" ? "minimal" : undefined,
       });
+      if (response.cacheCreateUsage) usages.push(response.cacheCreateUsage);
       usages.push(response.usage);
-      const validated = validateUnsupportedAudit(regions, facts, response.object, prediction);
+      const validated = validateUnsupportedAudit(regions, facts, response.value, prediction);
       errors.push(...validated.rejected.map((item) => `unsupported accusation discarded: ${item}`));
       return {
         ok: true as const,
         unsupportedClaims: validated.claims,
-        resolvedModel: response.response.modelId,
-        responseId: response.response.id,
-        warnings: response.warnings ?? [],
+        resolvedModel: response.modelId,
+        responseId: response.responseId,
+        warnings: [],
         attempts: attempt,
         errors,
         elapsedMs: Math.round(performance.now() - started),
         usages,
       };
     } catch (error) {
-      if (NoObjectGeneratedError.isInstance(error) && error.usage) usages.push(error.usage);
+      if (error instanceof EvaluatorGenerationError && error.usage) usages.push(error.usage);
       const message = conciseError(error);
       errors.push(`unsupported audit attempt ${attempt}: ${message}`);
       if (attempt < judgeMaxAttempts && retryableJudgeError(error)) {
@@ -3260,43 +3276,41 @@ async function judgeSemanticBatch(
   expectedPageCount: number,
 ) {
   const started = performance.now();
-  const allowedPages = new Set(batch.regions.flatMap((region) => region.pages));
+  const requestedIds = new Set(batch.leafIds);
+  const allowedPages = new Set(batch.regions.flatMap((region) =>
+    region.leaves.some((leaf) => requestedIds.has(leaf.id)) ? region.pages : [],
+  ));
   const usages: any[] = [];
   const errors: string[] = [];
   let repairNote: string | undefined;
   for (let attempt = 1; attempt <= judgeMaxAttempts; attempt += 1) {
     try {
-      const response = await generateObject({
-        model: createModel(evaluator),
-        schema: semanticBatchSchema(batch),
-        system: judgeInstructions,
-        messages: [{
-          role: "user",
-          content: [
-            { type: "text", text: judgeBatchPrompt(testCase, batch, repairNote) },
-            { type: "text", text: candidatePrompt(prediction, allowedPages, expectedPageCount) },
-          ],
-        }],
-        reasoning: evaluator.reasoning,
+      const response = await generateCachedJson({
+        model: evaluator.modelName,
+        systemInstruction: judgeInstructions,
+        stablePrompt: judgeBatchPrompt(testCase, batch),
+        prompt: `${judgeBatchRequest(batch, repairNote)}\n${candidatePrompt(prediction, allowedPages, expectedPageCount)}`,
+        responseJsonSchema: z.toJSONSchema(semanticBatchSchema(batch)),
         temperature: judgeSampling.temperature,
         seed: judgeSampling.seed,
         maxOutputTokens: judgeMaxOutputTokens,
-        maxRetries: judgeTransportMaxRetries,
+        thinkingLevel: evaluator.reasoning === "minimal" ? "minimal" : undefined,
       });
+      if (response.cacheCreateUsage) usages.push(response.cacheCreateUsage);
       usages.push(response.usage);
       return {
         ok: true as const,
-        leafResults: validateSemanticBatch(batch, response.object, prediction, expectedPageCount),
-        resolvedModel: response.response.modelId,
-        responseId: response.response.id,
-        warnings: response.warnings ?? [],
+        leafResults: validateSemanticBatch(batch, response.value, prediction, expectedPageCount),
+        resolvedModel: response.modelId,
+        responseId: response.responseId,
+        warnings: [],
         attempts: attempt,
         errors,
         elapsedMs: Math.round(performance.now() - started),
         usages,
       };
     } catch (error) {
-      if (NoObjectGeneratedError.isInstance(error) && error.usage) usages.push(error.usage);
+      if (error instanceof EvaluatorGenerationError && error.usage) usages.push(error.usage);
       const message = conciseError(error);
       errors.push(`batch ${batch.index} attempt ${attempt}: ${message}`);
       if (attempt < judgeMaxAttempts && retryableJudgeError(error)) {

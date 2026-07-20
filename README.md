@@ -24,6 +24,15 @@ Set the relevant provider keys in `.env.local`. On a fresh cache, the default ru
 - `openai-gpt-5-nano`
 - `vertex-gemini-3.1-flash-lite`
 
+The Gemini 3.1 Flash-Lite evaluator uses Google Cloud Application Default Credentials (ADC), not a downloaded service-account key. Give a dedicated service account `roles/aiplatform.user`, allow the local user to impersonate it with `roles/iam.serviceAccountTokenCreator`, and authenticate through the official Google Cloud CLI:
+
+```bash
+gcloud auth application-default login \
+  --impersonate-service-account=SERVICE_ACCOUNT@PROJECT_ID.iam.gserviceaccount.com
+```
+
+Set `GOOGLE_VERTEX_PROJECT` and `GOOGLE_VERTEX_LOCATION=global` in `.env.local`. On Google Cloud, use the workload's attached service account or Workload Identity instead of running the local login command. Candidate-model API keys remain optional and independent of evaluator authentication.
+
 Select any registered model with repeatable flags:
 
 ```bash
@@ -58,7 +67,7 @@ After every invocation, the merged report is rebuilt from every model with at le
 
 ## Scoring
 
-Gemini 3.1 Flash-Lite evaluates compact batches of candidate Markdown against source-anchored atomic obligations and classifies each obligation as correct, missing, or incorrect. Collision-safe deterministic checks first pre-credit unambiguous table bindings, form states, and directed relationships, so the evaluator receives only unresolved obligations; ordered records and ambiguous or repeated locators stay with the semantic evaluator. A separate conservative audit can penalize source-invented claims only within explicitly declared, source-grounded closed worlds. Vertex may apply its implicit cache opportunistically, but the API-key authentication used by this repository cannot create project-scoped explicit context caches. Corpus and answer-key quality are reviewed during benchmark development; the runtime command never grades the gold answers or runs a paid evaluator preflight.
+Gemini 3.1 Flash-Lite evaluates compact batches of candidate Markdown against source-anchored atomic obligations and classifies each obligation as correct, missing, or incorrect. Collision-safe deterministic checks first pre-credit unambiguous table bindings, form states, and directed relationships, so the evaluator returns only unresolved obligations; ordered records and ambiguous or repeated locators stay with the semantic evaluator. Stable answer-key batches are stored in official Vertex explicit context caches and reused across candidate models, while each scoring request remains capped at 32 obligations. Small prefixes below Vertex's caching minimum run normally. Cache resources are deleted when the benchmark command finishes and expire automatically after two hours if the process is interrupted. A separate conservative audit can penalize source-invented claims only within explicitly declared, source-grounded closed worlds. Corpus and answer-key quality are reviewed during benchmark development; the runtime command never grades the gold answers or runs a paid evaluator preflight.
 
 The scorer has no case-ID branches or corpus-size assumptions. Case-specific knowledge belongs only in each case's `facts.json`, `gold.md`, and `spec.md`; generic runtime validation rejects rubric IDs or ungrounded members masquerading as source-visible closed-world keys. A leaf's `expectation` is the complete semantic contract sent to the evaluator, so non-obvious acceptable equivalents must be stated there. `evidencePolicy` aliases support conservative deterministic recognition and do not silently broaden that semantic contract.
 

@@ -7,6 +7,7 @@ import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { generateText } from "ai";
 import { auditBenchmark } from "./audit.js";
+import { disposeEvaluatorCaches } from "./evaluator-client.js";
 import {
   evaluatorConfiguration,
   evaluatePrediction,
@@ -520,18 +521,20 @@ async function collectMergedResults(
   return { models: merged.sort((a, b) => b.score - a.score), exclusions };
 }
 
-export async function runBenchmark(requestedModelIds: string[], requestedRuns = 1) {
+async function runBenchmarkCore(requestedModelIds: string[], requestedRuns = 1) {
   await validateCorpusArtifacts();
   const { manifest } = await loadBenchmarkManifest();
   await auditBenchmark();
-  const [promptFile, evaluatorSource] = await Promise.all([
+  const [promptFile, evaluatorSource, evaluatorClientSource] = await Promise.all([
     readFile(promptPath, "utf8"),
     readFile("src/evaluator.ts"),
+    readFile("src/evaluator-client.ts"),
   ]);
   const prompt = promptFile.trimEnd();
   const { pricingVersion: _pricingVersion, ...scoringConfiguration } = evaluatorConfiguration();
   const evaluatorSourceHash = sha256(JSON.stringify({
     evaluatorSource: sha256(evaluatorSource),
+    evaluatorClientSource: sha256(evaluatorClientSource),
     configuration: scoringConfiguration,
   }));
   const modelIds = requestedModelIds.length > 0 ? requestedModelIds : [...new Set([...defaultModelIds, ...(await cachedModelIds())])];
@@ -647,6 +650,14 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
   console.log(`Incremental model inference spend: $${incrementalInferenceSpendUsd.toFixed(6)}`);
   console.log("Report: reports/index.html");
   return summary;
+}
+
+export async function runBenchmark(requestedModelIds: string[], requestedRuns = 1) {
+  try {
+    return await runBenchmarkCore(requestedModelIds, requestedRuns);
+  } finally {
+    await disposeEvaluatorCaches();
+  }
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
