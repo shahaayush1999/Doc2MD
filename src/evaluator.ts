@@ -218,7 +218,7 @@ export class EvaluatorContractError extends Error {
 
 const evaluator = models["google-gemini-3.1-flash-lite"]!;
 // Increment only when evaluator behavior changes what receives credit or a penalty.
-const evaluatorSemanticVersion = 1;
+const evaluatorSemanticVersion = 2;
 const judgeBatchLeafLimit = 32;
 const judgeCacheBatchLeafLimit = 64;
 const unsupportedBatchRegionLimit = 24;
@@ -505,6 +505,28 @@ function explicitCandidatePages(lines: string[], expectedPageCount?: number): Ar
     if (prior?.page === anchor.page) continue;
     if (prior && anchor.page < prior.page) return pages;
     monotonicAnchors.push(anchor);
+  }
+
+  // Models commonly reproduce printed page counters as footers. When those
+  // counters are followed by a page-break rule, the content preceding each
+  // counter belongs to that page. Treating the footer as a page start shifts
+  // every subsequent page and incorrectly removes otherwise valid evidence.
+  const footerAnchors = monotonicAnchors.every((anchor) =>
+    counterPage.get(anchor.index) === anchor.page &&
+    (anchor.page === trustedTotal || lines.slice(anchor.index + 1, anchor.index + 5).some(isSeparator)),
+  );
+  if (monotonicAnchors.length >= 2 && footerAnchors) {
+    let previous: { index: number; page: number } | undefined;
+    for (const anchor of monotonicAnchors) {
+      const start = anchor.page === 1
+        ? 0
+        : previous?.page === anchor.page - 1 ? previous.index + 1 : null;
+      if (start !== null) {
+        for (let line = start; line <= anchor.index; line += 1) pages[line] = anchor.page;
+      }
+      previous = anchor;
+    }
+    return pages;
   }
 
   // A complete sequence of N-1 rules delimits N output pages when every
