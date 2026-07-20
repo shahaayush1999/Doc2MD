@@ -9,6 +9,7 @@ import { generateText } from "ai";
 import { auditBenchmark } from "./audit.js";
 import {
   evaluatorConfiguration,
+  evaluatorScoringIdentity,
   evaluatePrediction,
   type ManifestCase,
 } from "./evaluator.js";
@@ -134,26 +135,14 @@ async function inferenceKey(spec: ModelSpec, testCase: ManifestCase, prompt: str
   }));
 }
 
-async function legacyInferenceKey(spec: ModelSpec, testCase: ManifestCase, prompt: string) {
-  const pdf = await readFile(testCase.pdf);
-  return sha256(JSON.stringify({
-    protocolVersion: inferenceProtocolVersion,
-    ingestionMode,
-    packageLock: await packageLockHash(),
-    pdf: sha256(pdf),
-    prompt: sha256(prompt),
-    model: configuredModel(spec),
-  }));
-}
-
-async function scoreKey(testCase: ManifestCase, prediction: string, evaluatorSourceHash: string) {
+async function scoreKey(testCase: ManifestCase, prediction: string, evaluatorSemanticHash: string) {
   if (!testCase.facts) throw new Error(`${testCase.id} has no facts file.`);
   return sha256(
     JSON.stringify({
       prediction: sha256(prediction),
       facts: sha256(await readFile(testCase.facts)),
       case: { id: testCase.id, title: testCase.title },
-      evaluator: evaluatorSourceHash,
+      evaluator: evaluatorSemanticHash,
     }),
   );
 }
@@ -175,7 +164,7 @@ function inferenceTelemetryIssue(prediction: string, inference: any): string | n
   return null;
 }
 
-async function loadCachedCase(modelId: string, testCase: ManifestCase, prompt: string, evaluatorSourceHash: string, draw = 1) {
+async function loadCachedCase(modelId: string, testCase: ManifestCase, prompt: string, evaluatorSemanticHash: string, draw = 1) {
   const directory = cacheDirectory(modelId, testCase.id, draw);
   const [prediction, rawInference, evaluation] = await Promise.all([
     readFile(path.join(directory, "prediction.md"), "utf8").catch(() => null),
@@ -193,24 +182,9 @@ async function loadCachedCase(modelId: string, testCase: ManifestCase, prompt: s
     }
     return null;
   }
-  const [expectedInferenceKey, previousInferenceKey] = await Promise.all([
-    inferenceKey(models[modelId]!, testCase, prompt),
-    legacyInferenceKey(models[modelId]!, testCase, prompt),
-  ]);
-  if (inference.cacheKey !== expectedInferenceKey && inference.cacheKey !== previousInferenceKey) return null;
-  if (inference.cacheKey === previousInferenceKey && previousInferenceKey !== expectedInferenceKey) {
-    inference = {
-      ...inference,
-      cacheKey: expectedInferenceKey,
-      cacheKeyMigration: {
-        from: previousInferenceKey,
-        migratedAt: new Date().toISOString(),
-        reason: "Removed unrelated package-lock coupling from inference identity.",
-      },
-    };
-    await writeJson(path.join(directory, "inference.json"), inference);
-  }
-  const expectedScoreKey = await scoreKey(testCase, prediction, evaluatorSourceHash);
+  const expectedInferenceKey = await inferenceKey(models[modelId]!, testCase, prompt);
+  if (inference.cacheKey !== expectedInferenceKey) return null;
+  const expectedScoreKey = await scoreKey(testCase, prediction, evaluatorSemanticHash);
   const validEvaluation = evaluation?.valid === true && Number.isFinite(evaluation.score);
   return {
     directory,
@@ -230,13 +204,13 @@ async function runCase(
   modelId: string,
   testCase: ManifestCase,
   prompt: string,
-  evaluatorSourceHash: string,
+  evaluatorSemanticHash: string,
   draw: number,
 ) {
   const spec = models[modelId]!;
   const directory = cacheDirectory(modelId, testCase.id, draw);
   await mkdir(directory, { recursive: true });
-  let cached = await loadCachedCase(modelId, testCase, prompt, evaluatorSourceHash, draw);
+  let cached = await loadCachedCase(modelId, testCase, prompt, evaluatorSemanticHash, draw);
   let prediction = cached?.prediction ?? null;
   let inference = cached?.inference ?? null;
   let inferenceSpent = 0;
@@ -323,7 +297,7 @@ async function runCase(
   if (!evaluation) {
     evaluation = await evaluatePrediction(testCase, prediction);
     evaluatorSpent = evaluation.evaluator.costUsd;
-    evaluation.cacheKey = await scoreKey(testCase, prediction, evaluatorSourceHash);
+    evaluation.cacheKey = await scoreKey(testCase, prediction, evaluatorSemanticHash);
     await writeJson(path.join(directory, "score.json"), evaluation);
     if (!evaluation.valid || !Number.isFinite(evaluation.score)) {
       throw new Error(
@@ -396,7 +370,7 @@ function parseOptions(argv: string[]) {
 async function collectMergedResults(
   manifest: { cases: ManifestCase[] },
   prompt: string,
-  evaluatorSourceHash: string,
+  evaluatorSemanticHash: string,
 ) {
   const merged = [];
   const exclusions: Array<{ modelId: string; reason: string }> = [];
@@ -406,7 +380,7 @@ async function collectMergedResults(
     for (let draw = 1; draw <= 20; draw += 1) {
       const cases = [];
       for (const testCase of manifest.cases) {
-        const cached = await loadCachedCase(modelId, testCase, prompt, evaluatorSourceHash, draw);
+        const cached = await loadCachedCase(modelId, testCase, prompt, evaluatorSemanticHash, draw);
         if (!cached?.evaluation || !Number.isFinite(cached.evaluation.score)) break;
         cases.push({
           caseId: testCase.id,
@@ -525,18 +499,9 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
   await validateCorpusArtifacts();
   const { manifest } = await loadBenchmarkManifest();
   await auditBenchmark();
-  const [promptFile, evaluatorSource, evaluatorClientSource] = await Promise.all([
-    readFile(promptPath, "utf8"),
-    readFile("src/evaluator.ts"),
-    readFile("src/evaluator-client.ts"),
-  ]);
+  const promptFile = await readFile(promptPath, "utf8");
   const prompt = promptFile.trimEnd();
-  const { pricingVersion: _pricingVersion, ...scoringConfiguration } = evaluatorConfiguration();
-  const evaluatorSourceHash = sha256(JSON.stringify({
-    evaluatorSource: sha256(evaluatorSource),
-    evaluatorClientSource: sha256(evaluatorClientSource),
-    configuration: scoringConfiguration,
-  }));
+  const evaluatorSemanticHash = sha256(JSON.stringify(evaluatorScoringIdentity()));
   const availableCachedModelIds = (await cachedModelIds()).filter((modelId) => models[modelId]);
   const modelIds = requestedModelIds.length > 0
     ? requestedModelIds
@@ -549,14 +514,14 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
     const cases = (await Promise.all(manifest.cases.map(async (testCase) => {
       const drawNumbers = Array.from({ length: requestedRuns }, (_, index) => index + 1);
       const cachedSlots = await Promise.all(drawNumbers.map((draw) =>
-        loadCachedCase(modelId, testCase as ManifestCase, prompt, evaluatorSourceHash, draw),
+        loadCachedCase(modelId, testCase as ManifestCase, prompt, evaluatorSemanticHash, draw),
       ));
       if (cachedSlots.every(Boolean)) {
         return Promise.all(drawNumbers.map((draw) => runCase(
           modelId,
           testCase as ManifestCase,
           prompt,
-          evaluatorSourceHash,
+          evaluatorSemanticHash,
           draw,
         )));
       }
@@ -570,7 +535,7 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
           modelId,
           testCase as ManifestCase,
           prompt,
-          evaluatorSourceHash,
+          evaluatorSemanticHash,
           draw,
         );
         draws.push(result);
@@ -581,7 +546,7 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
                 modelId,
                 testCase as ManifestCase,
                 prompt,
-                evaluatorSourceHash,
+                evaluatorSemanticHash,
                 draw + offset + 1,
               ),
             ),
@@ -598,7 +563,7 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
   const collected = await collectMergedResults(
     manifest as { cases: ManifestCase[] },
     prompt,
-    evaluatorSourceHash,
+    evaluatorSemanticHash,
   );
   const mergedModels = collected.models;
   const reportCases = await reportCaseMetadata(manifest.cases);
@@ -616,7 +581,7 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
       ingestionMode,
       promptHash,
       manifestHash,
-      evaluatorSourceHash,
+      evaluatorSemanticHash,
       packageLockHash: await packageLockHash(),
       measurementStartedAt: mergedModels.map((model) => model.measurementStartedAt).filter(Boolean).sort()[0] ?? null,
       measurementFinishedAt: mergedModels.map((model) => model.measurementFinishedAt).filter(Boolean).sort().at(-1) ?? null,

@@ -215,7 +215,8 @@ export class EvaluatorContractError extends Error {
 }
 
 const evaluator = models["google-gemini-3.1-flash-lite"]!;
-const scoringProtocolVersion = 10;
+// Increment only when evaluator behavior changes what receives credit or a penalty.
+const evaluatorSemanticVersion = 1;
 const judgeBatchLeafLimit = 32;
 const judgeCacheBatchLeafLimit = 64;
 const unsupportedBatchRegionLimit = 24;
@@ -224,21 +225,27 @@ const judgeMaxOutputTokens = 12_000;
 const judgeMaxAttempts = 2;
 const judgeSampling = { temperature: 0, seed: 731_2026 } as const;
 
-export function evaluatorConfiguration() {
+export function evaluatorScoringIdentity() {
   return {
-    id: evaluator.id,
     modelName: evaluator.modelName,
-    provider: evaluator.provider,
     reasoning: evaluator.reasoning,
-    location: evaluator.location ?? null,
     sampling: judgeSampling,
-    scoringProtocolVersion,
+    semanticVersion: evaluatorSemanticVersion,
     batchLeafLimit: judgeBatchLeafLimit,
-    cacheBatchLeafLimit: judgeCacheBatchLeafLimit,
     unsupportedBatchRegionLimit,
     unsupportedBatchMemberLimit,
     maxOutputTokens: judgeMaxOutputTokens,
     maxAttempts: judgeMaxAttempts,
+  };
+}
+
+export function evaluatorConfiguration() {
+  return {
+    id: evaluator.id,
+    provider: evaluator.provider,
+    location: evaluator.location ?? null,
+    ...evaluatorScoringIdentity(),
+    cacheBatchLeafLimit: judgeCacheBatchLeafLimit,
     cache: "gemini-api-implicit-stable-prefix-v1",
     pricingVersion: evaluator.pricingVersion,
   };

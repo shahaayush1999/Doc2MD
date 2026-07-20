@@ -54,7 +54,7 @@ reports/summary.json
 reports/index.html
 ```
 
-Inference is reused only when the PDF bytes, conversion prompt, model configuration, and output limit match. Evaluation is reused only when the prediction, facts, and evaluator implementation match. A scorer change therefore rescores cached predictions without rerunning the model. Adding a new case runs only that missing case for previously cached models. Explicit `--model` flags run/check only those models; without flags, the command checks the default anchors plus every model already present in the cache.
+Inference is reused only when the PDF bytes, conversion prompt, model configuration, and output limit match. Evaluation is reused only when the prediction, facts, evaluator model, and score-affecting settings match. Changes to provider transport, prompt caching, or pricing do not invalidate an otherwise identical score. A scoring-semantics change therefore rescores cached predictions without rerunning the model. Adding a new case runs only that missing case for previously cached models. Explicit `--model` flags run/check only those models; without flags, the command checks the default anchors plus every model already present in the cache.
 
 After every invocation, the merged report is rebuilt from every model with at least one complete draw for the current manifest. Each draw is the equal-weight mean of its case scores; repeated models report the mean of those complete suite draws plus their range and sample SD. Operating cost, summed case-call latency, and output tokens are shown as means per draw so models with different draw counts remain comparable. Because cases run concurrently, summed case-call latency is not suite wall-clock time.
 

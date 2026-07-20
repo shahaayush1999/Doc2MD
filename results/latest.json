@@ -1,7 +1,7 @@
 {
   "name": "Doc2MD",
   "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
-  "generatedAt": "2026-07-20T09:21:40.602Z",
+  "generatedAt": "2026-07-20T13:23:08.824Z",
   "caseCount": 5,
   "pageCount": 86,
   "cases": [
@@ -107,8 +107,8 @@
     "ingestionMode": "native PDF attached directly to the provider model API",
     "promptHash": "a59e08b0d026f54ba1ade9e3ff9035ffcbb969c207d5bf74ea5f15d687951531",
     "manifestHash": "6bd3806fee287f8711329e89682903fe7e4acc6cc91ba1fe6230fe3583b306a0",
-    "evaluatorSourceHash": "affb614a78df1200c85cb307881ff0924f41a3bc892e5d1041bbfd5378a25bc6",
-    "packageLockHash": "6f73b24d939c8dfa5f3939f4570cf37aad4f81bb5ce646a3ce85ca4c118fe3aa",
+    "evaluatorSemanticHash": "1bb8e19f22de0e4adca69f37031a05a0a7c61b7e856e9e7e735c4888e9b453b3",
+    "packageLockHash": "4251d1d0818993c4345c9572b3c38e1cdb1abafc04318f4216c13931e7b2075d",
     "measurementStartedAt": "2026-07-19T11:48:26.366Z",
     "measurementFinishedAt": "2026-07-19T18:26:41.877Z"
   },
@@ -531,29 +531,29 @@
       "measurementFinishedAt": "2026-07-19T18:20:59.324Z"
     },
     {
-      "modelId": "vertex-gemini-3.1-flash-lite",
+      "modelId": "google-gemini-3.1-flash-lite",
       "configuredModel": {
-        "id": "vertex-gemini-3.1-flash-lite",
+        "id": "google-gemini-3.1-flash-lite",
         "modelName": "gemini-3.1-flash-lite",
-        "provider": "google-vertex",
+        "provider": "google",
         "reasoning": "minimal",
         "location": null,
         "maxOutputTokens": 60000
       },
       "resolvedModel": "gemini-3.1-flash-lite",
       "evaluatorResolvedModel": "gemini-3.1-flash-lite",
-      "pricingVersion": "2026-07-11",
+      "pricingVersion": "2026-07-20",
       "drawCount": 1,
       "score": 71.94151236000455,
       "scoreMin": 71.94151236000455,
       "scoreMax": 71.94151236000455,
       "scoreStddev": null,
-      "inferenceCostUsd": 0.12719835000000002,
-      "normalizedInferenceCostUsd": 0.12719835000000002,
+      "inferenceCostUsd": 0.07066575,
+      "normalizedInferenceCostUsd": 0.07066575,
       "actualInferenceCostUsd": 0.12719835000000002,
       "evaluatorCostUsd": 0.20376945000000002,
       "totalCostUsd": 0.33096780000000003,
-      "cumulativeInferenceCostUsd": 0.12719835000000002,
+      "cumulativeInferenceCostUsd": 0.07066575,
       "cumulativeActualInferenceCostUsd": 0.12719835000000002,
       "cumulativeEvaluatorCostUsd": 0.20376945000000002,
       "inputTokens": 47205,
@@ -573,7 +573,7 @@
           "scoreMin": 93.75167112299465,
           "scoreMax": 93.75167112299465,
           "scoreStddev": null,
-          "inferenceCostUsd": 0.025104150000000002,
+          "inferenceCostUsd": 0.01394675,
           "actualInferenceCostUsd": 0.025104150000000002
         },
         {
@@ -583,7 +583,7 @@
           "scoreMin": 52.8921568627451,
           "scoreMax": 52.8921568627451,
           "scoreStddev": null,
-          "inferenceCostUsd": 0.011708550000000002,
+          "inferenceCostUsd": 0.00650475,
           "actualInferenceCostUsd": 0.011708550000000002
         },
         {
@@ -593,7 +593,7 @@
           "scoreMin": 61.94031746031745,
           "scoreMax": 61.94031746031745,
           "scoreStddev": null,
-          "inferenceCostUsd": 0.06945975,
+          "inferenceCostUsd": 0.03858875,
           "actualInferenceCostUsd": 0.06945975
         },
         {
@@ -603,7 +603,7 @@
           "scoreMin": 80.28364179679969,
           "scoreMax": 80.28364179679969,
           "scoreStddev": null,
-          "inferenceCostUsd": 0.01154745,
+          "inferenceCostUsd": 0.00641525,
           "actualInferenceCostUsd": 0.01154745
         },
         {
@@ -613,7 +613,7 @@
           "scoreMin": 70.83977455716585,
           "scoreMax": 70.83977455716585,
           "scoreStddev": null,
-          "inferenceCostUsd": 0.00937845,
+          "inferenceCostUsd": 0.00521025,
           "actualInferenceCostUsd": 0.00937845
         }
       ],
@@ -621,7 +621,7 @@
         {
           "draw": 1,
           "score": 71.94151236000455,
-          "inferenceCostUsd": 0.12719835000000002,
+          "inferenceCostUsd": 0.07066575,
           "actualInferenceCostUsd": 0.12719835000000002,
           "evaluatorCostUsd": 0.20376945000000002,
           "totalOutputTokens": 39243,
@@ -636,7 +636,7 @@
               "caseId": "P12-pfas-method-validation",
               "title": "PFAS Method Validation and Batch Release Packet",
               "score": 93.75167112299465,
-              "inferenceCostUsd": 0.025104150000000002,
+              "inferenceCostUsd": 0.01394675,
               "actualInferenceCostUsd": 0.025104150000000002,
               "evaluatorCostUsd": 0.039272850000000005,
               "outputTokens": 8175,
@@ -655,7 +655,7 @@
               "caseId": "P15-architecture-floorplan-diagrams",
               "title": "Suite 214 Laboratory Coordination Set",
               "score": 52.8921568627451,
-              "inferenceCostUsd": 0.011708550000000002,
+              "inferenceCostUsd": 0.00650475,
               "actualInferenceCostUsd": 0.011708550000000002,
               "evaluatorCostUsd": 0.028922850000000003,
               "outputTokens": 3387,
@@ -674,7 +674,7 @@
               "caseId": "P17-clinical-trial-site-monitoring",
               "title": "HTX-204 Site 014 Monitoring Source Packet",
               "score": 61.94031746031745,
-              "inferenceCostUsd": 0.06945975,
+              "inferenceCostUsd": 0.03858875,
               "actualInferenceCostUsd": 0.06945975,
               "evaluatorCostUsd": 0.09825660000000001,
               "outputTokens": 21483,
@@ -693,7 +693,7 @@
               "caseId": "P21-semiconductor-lot-disposition",
               "title": "Lot Q8R7-22 Material Review File",
               "score": 80.28364179679969,
-              "inferenceCostUsd": 0.01154745,
+              "inferenceCostUsd": 0.00641525,
               "actualInferenceCostUsd": 0.01154745,
               "evaluatorCostUsd": 0.0198027,
               "outputTokens": 3414,
@@ -712,7 +712,7 @@
               "caseId": "P23-native-text-layer-recovery",
               "title": "Northstar Cold Chain Supplier Cutover Authorization",
               "score": 70.83977455716585,
-              "inferenceCostUsd": 0.00937845,
+              "inferenceCostUsd": 0.00521025,
               "actualInferenceCostUsd": 0.00937845,
               "evaluatorCostUsd": 0.01751445,
               "outputTokens": 2784,
