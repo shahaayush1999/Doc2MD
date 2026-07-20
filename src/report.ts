@@ -1,5 +1,5 @@
 const palette = ["#174f43", "#bb7a28", "#6d6f78", "#785d91", "#356c83"];
-const labColors: Record<string, string> = { openai: "#174f43", "google-vertex": "#bb7a28" };
+const labColors: Record<string, string> = { openai: "#174f43", google: "#bb7a28" };
 
 type ReportCase = {
   id: string;
@@ -16,8 +16,8 @@ function escapeHtml(value: unknown) {
 }
 
 function label(model: string | { modelId: string; configuredModel?: { modelName?: string } }): string {
-  if (typeof model === "string") return model.replace(/^vertex-/, "").replace(/^openai-/, "");
-  return model.configuredModel?.modelName ?? model.modelId.replace(/^vertex-/, "").replace(/^openai-/, "");
+  if (typeof model === "string") return model.replace(/^(?:google|openai)-/, "");
+  return model.configuredModel?.modelName ?? model.modelId.replace(/^(?:google|openai)-/, "");
 }
 
 function money(value: number) {

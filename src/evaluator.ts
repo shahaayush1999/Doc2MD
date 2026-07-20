@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
 import { z } from "zod";
-import { EvaluatorGenerationError, generateCachedJson } from "./evaluator-client.js";
+import { EvaluatorGenerationError, generateEvaluatorJson } from "./evaluator-client.js";
 import { calculateCost } from "./pricing.js";
 import { models } from "./models.js";
 
@@ -214,8 +214,8 @@ export class EvaluatorContractError extends Error {
   }
 }
 
-const evaluator = models["vertex-gemini-3.1-flash-lite"]!;
-const scoringProtocolVersion = 9;
+const evaluator = models["google-gemini-3.1-flash-lite"]!;
+const scoringProtocolVersion = 10;
 const judgeBatchLeafLimit = 32;
 const judgeCacheBatchLeafLimit = 64;
 const unsupportedBatchRegionLimit = 24;
@@ -239,7 +239,7 @@ export function evaluatorConfiguration() {
     unsupportedBatchMemberLimit,
     maxOutputTokens: judgeMaxOutputTokens,
     maxAttempts: judgeMaxAttempts,
-    cache: "vertex-explicit-stable-batch-v1",
+    cache: "gemini-api-implicit-stable-prefix-v1",
     pricingVersion: evaluator.pricingVersion,
   };
 }
@@ -3219,7 +3219,7 @@ async function judgeUnsupportedClaims(
   let repairNote: string | undefined;
   for (let attempt = 1; attempt <= judgeMaxAttempts; attempt += 1) {
     try {
-      const response = await generateCachedJson({
+      const response = await generateEvaluatorJson({
         model: evaluator.modelName,
         systemInstruction: unsupportedInstructions,
         stablePrompt: unsupportedAuditPrompt(testCase, regions),
@@ -3230,7 +3230,6 @@ async function judgeUnsupportedClaims(
         maxOutputTokens: judgeMaxOutputTokens,
         thinkingLevel: evaluator.reasoning === "minimal" ? "minimal" : undefined,
       });
-      if (response.cacheCreateUsage) usages.push(response.cacheCreateUsage);
       usages.push(response.usage);
       const validated = validateUnsupportedAudit(regions, facts, response.value, prediction);
       errors.push(...validated.rejected.map((item) => `unsupported accusation discarded: ${item}`));
@@ -3285,7 +3284,7 @@ async function judgeSemanticBatch(
   let repairNote: string | undefined;
   for (let attempt = 1; attempt <= judgeMaxAttempts; attempt += 1) {
     try {
-      const response = await generateCachedJson({
+      const response = await generateEvaluatorJson({
         model: evaluator.modelName,
         systemInstruction: judgeInstructions,
         stablePrompt: judgeBatchPrompt(testCase, batch),
@@ -3296,7 +3295,6 @@ async function judgeSemanticBatch(
         maxOutputTokens: judgeMaxOutputTokens,
         thinkingLevel: evaluator.reasoning === "minimal" ? "minimal" : undefined,
       });
-      if (response.cacheCreateUsage) usages.push(response.cacheCreateUsage);
       usages.push(response.usage);
       return {
         ok: true as const,

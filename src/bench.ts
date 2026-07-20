@@ -7,7 +7,6 @@ import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { generateText } from "ai";
 import { auditBenchmark } from "./audit.js";
-import { disposeEvaluatorCaches } from "./evaluator-client.js";
 import {
   evaluatorConfiguration,
   evaluatePrediction,
@@ -402,6 +401,7 @@ async function collectMergedResults(
   const merged = [];
   const exclusions: Array<{ modelId: string; reason: string }> = [];
   for (const modelId of await cachedModelIds()) {
+    if (!models[modelId]) continue;
     const draws: any[] = [];
     for (let draw = 1; draw <= 20; draw += 1) {
       const cases = [];
@@ -521,7 +521,7 @@ async function collectMergedResults(
   return { models: merged.sort((a, b) => b.score - a.score), exclusions };
 }
 
-async function runBenchmarkCore(requestedModelIds: string[], requestedRuns = 1) {
+export async function runBenchmark(requestedModelIds: string[], requestedRuns = 1) {
   await validateCorpusArtifacts();
   const { manifest } = await loadBenchmarkManifest();
   await auditBenchmark();
@@ -537,7 +537,10 @@ async function runBenchmarkCore(requestedModelIds: string[], requestedRuns = 1) 
     evaluatorClientSource: sha256(evaluatorClientSource),
     configuration: scoringConfiguration,
   }));
-  const modelIds = requestedModelIds.length > 0 ? requestedModelIds : [...new Set([...defaultModelIds, ...(await cachedModelIds())])];
+  const availableCachedModelIds = (await cachedModelIds()).filter((modelId) => models[modelId]);
+  const modelIds = requestedModelIds.length > 0
+    ? requestedModelIds
+    : [...new Set([...defaultModelIds, ...availableCachedModelIds])];
   let incrementalInferenceSpendUsd = 0;
   let incrementalEvaluatorSpendUsd = 0;
 
@@ -650,14 +653,6 @@ async function runBenchmarkCore(requestedModelIds: string[], requestedRuns = 1) 
   console.log(`Incremental model inference spend: $${incrementalInferenceSpendUsd.toFixed(6)}`);
   console.log("Report: reports/index.html");
   return summary;
-}
-
-export async function runBenchmark(requestedModelIds: string[], requestedRuns = 1) {
-  try {
-    return await runBenchmarkCore(requestedModelIds, requestedRuns);
-  } finally {
-    await disposeEvaluatorCaches();
-  }
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

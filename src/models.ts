@@ -1,10 +1,10 @@
-import { createGoogleVertex } from "@ai-sdk/google-vertex";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
 
 export type ModelSpec = {
   id: string;
   modelName: string;
-  provider: "google-vertex" | "openai";
+  provider: "google" | "openai";
   reasoning?: "none" | "minimal";
   location?: string;
   maxOutputTokens?: number;
@@ -36,23 +36,22 @@ export const models: Record<string, ModelSpec> = {
     cachedInputPerMillion: 0.005,
     outputPerMillion: 0.4,
   },
-  "vertex-gemini-3.1-flash-lite": {
-    id: "vertex-gemini-3.1-flash-lite",
+  "google-gemini-3.1-flash-lite": {
+    id: "google-gemini-3.1-flash-lite",
     modelName: "gemini-3.1-flash-lite",
-    provider: "google-vertex",
+    provider: "google",
     reasoning: "minimal",
-    pricingVersion: "2026-07-11",
-    inputPerMillion: 0.45,
-    cachedInputPerMillion: 0.045,
-    outputPerMillion: 2.7,
+    pricingVersion: "2026-07-20",
+    inputPerMillion: 0.25,
+    cachedInputPerMillion: 0.025,
+    outputPerMillion: 1.5,
   },
-  "vertex-gemini-2.5-flash-lite": {
-    id: "vertex-gemini-2.5-flash-lite",
+  "google-gemini-2.5-flash-lite": {
+    id: "google-gemini-2.5-flash-lite",
     modelName: "gemini-2.5-flash-lite",
-    provider: "google-vertex",
+    provider: "google",
     reasoning: "minimal",
-    location: "global",
-    pricingVersion: "2026-07-11",
+    pricingVersion: "2026-07-20",
     inputPerMillion: 0.1,
     cachedInputPerMillion: 0.01,
     outputPerMillion: 0.4,
@@ -77,36 +76,35 @@ export const models: Record<string, ModelSpec> = {
     cachedInputPerMillion: 0.075,
     outputPerMillion: 4.5,
   },
-  "vertex-gemini-3-flash-preview": {
-    id: "vertex-gemini-3-flash-preview",
+  "google-gemini-3-flash-preview": {
+    id: "google-gemini-3-flash-preview",
     modelName: "gemini-3-flash-preview",
-    provider: "google-vertex",
+    provider: "google",
     reasoning: "minimal",
-    location: "global",
-    pricingVersion: "2026-07-11",
-    inputPerMillion: 0.9,
-    cachedInputPerMillion: 0.09,
-    outputPerMillion: 5.4,
+    pricingVersion: "2026-07-20",
+    inputPerMillion: 0.5,
+    cachedInputPerMillion: 0.05,
+    outputPerMillion: 3,
   },
-  "vertex-gemini-3.1-pro": {
-    id: "vertex-gemini-3.1-pro",
+  "google-gemini-3.1-pro": {
+    id: "google-gemini-3.1-pro",
     modelName: "gemini-3.1-pro-preview",
-    provider: "google-vertex",
+    provider: "google",
     reasoning: "minimal",
-    pricingVersion: "2026-07-11",
+    pricingVersion: "2026-07-20",
     inputPerMillion: 2,
     cachedInputPerMillion: 0.2,
     outputPerMillion: 12,
   },
-  "vertex-gemini-3.5-flash": {
-    id: "vertex-gemini-3.5-flash",
+  "google-gemini-3.5-flash": {
+    id: "google-gemini-3.5-flash",
     modelName: "gemini-3.5-flash",
-    provider: "google-vertex",
+    provider: "google",
     reasoning: "minimal",
-    pricingVersion: "2026-07-11",
-    inputPerMillion: 2.7,
-    cachedInputPerMillion: 0.27,
-    outputPerMillion: 16.2,
+    pricingVersion: "2026-07-20",
+    inputPerMillion: 1.5,
+    cachedInputPerMillion: 0.15,
+    outputPerMillion: 9,
   },
   "openai-gpt-5.6-luna": {
     id: "openai-gpt-5.6-luna",
@@ -153,18 +151,9 @@ export const models: Record<string, ModelSpec> = {
   },
 };
 
-export const defaultModelIds = ["openai-gpt-5-nano", "vertex-gemini-3.1-flash-lite"];
+export const defaultModelIds = ["openai-gpt-5-nano", "google-gemini-3.1-flash-lite"];
 
 export function createModel(spec: ModelSpec) {
   if (spec.provider === "openai") return createOpenAI()(spec.modelName);
-
-  const location = spec.location ?? process.env.GOOGLE_VERTEX_LOCATION;
-  let baseURL: string | undefined;
-  if (process.env.GOOGLE_VERTEX_API_KEY && spec.location) {
-    const project = process.env.GOOGLE_VERTEX_PROJECT;
-    if (!project) throw new Error(`${spec.id} requires GOOGLE_VERTEX_PROJECT for location ${spec.location}.`);
-    const host = spec.location === "global" ? "aiplatform.googleapis.com" : `${spec.location}-aiplatform.googleapis.com`;
-    baseURL = `https://${host}/v1/projects/${encodeURIComponent(project)}/locations/${spec.location}/publishers/google`;
-  }
-  return createGoogleVertex({ location, baseURL })(spec.modelName);
+  return createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY })(spec.modelName);
 }
