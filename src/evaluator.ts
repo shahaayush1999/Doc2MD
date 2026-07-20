@@ -2806,6 +2806,16 @@ function unsupportedAuditSchema(regions: SemanticClosedWorldRegion[]) {
   });
 }
 
+function unsupportedAuditTransportSchema(regions: SemanticClosedWorldRegion[]) {
+  const ids = regions.map((region) => region.id) as [string, ...string[]];
+  // Gemini 3.1 Flash-Lite currently rejects this otherwise-valid schema when
+  // maxItems is present on the outer array. Keep the limit in local validation
+  // above and omit only that transport constraint.
+  return z.strictObject({
+    unsupportedClaims: z.array(semanticUnsupportedClaimSchema.extend({ regionId: z.enum(ids) })),
+  });
+}
+
 const deterministicPrecreditPolicies = new Set<FactLeaf["evidencePolicy"]["type"]>([
   "table_binding",
   "form_state",
@@ -3283,7 +3293,7 @@ async function judgeUnsupportedClaims(
         systemInstruction: unsupportedInstructions,
         stablePrompt: unsupportedAuditPrompt(testCase, regions),
         prompt: `${repairNote ? `The previous attempt was invalid. Correct this: ${repairNote}\n\n` : ""}${candidatePrompt(prediction, allowedPages, expectedPageCount)}`,
-        responseJsonSchema: z.toJSONSchema(unsupportedAuditSchema(regions)),
+        responseJsonSchema: z.toJSONSchema(unsupportedAuditTransportSchema(regions)),
         temperature: judgeSampling.temperature,
         seed: judgeSampling.seed,
         maxOutputTokens: judgeMaxOutputTokens,

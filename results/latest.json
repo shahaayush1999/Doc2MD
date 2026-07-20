@@ -1,7 +1,7 @@
 {
   "name": "Doc2MD",
   "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
-  "generatedAt": "2026-07-20T15:44:11.504Z",
+  "generatedAt": "2026-07-20T16:25:35.869Z",
   "caseCount": 5,
   "pageCount": 86,
   "cases": [
@@ -124,6 +124,14 @@
       "reason": "No complete draw has a valid score for the current scorer and corpus."
     },
     {
+      "modelId": "anthropic-claude-opus-4.8",
+      "reason": "No complete draw has a valid score for the current scorer and corpus."
+    },
+    {
+      "modelId": "anthropic-claude-sonnet-5",
+      "reason": "No complete draw has a valid score for the current scorer and corpus."
+    },
+    {
       "modelId": "google-gemini-3.5-flash",
       "reason": "No complete draw has a valid score for the current scorer and corpus."
     },
@@ -132,9 +140,9 @@
       "reason": "No complete draw has a valid score for the current scorer and corpus."
     }
   ],
-  "incrementalSpendUsd": 0,
-  "incrementalInferenceSpendUsd": 0,
-  "incrementalEvaluatorSpendUsd": 0,
+  "incrementalSpendUsd": 1.709352,
+  "incrementalInferenceSpendUsd": 1.520505,
+  "incrementalEvaluatorSpendUsd": 0.18884700000000001,
   "totalCostUsd": 4.429963175,
   "models": [
     {
