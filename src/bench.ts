@@ -86,6 +86,7 @@ function promptCacheKey(inferenceCacheKey: string) {
 
 function usageWithCacheWrite(spec: ModelSpec, usage: any) {
   if (!spec.cacheWritePerMillion) return usage;
+  if (Number.isFinite(usage?.inputTokenDetails?.cacheWriteTokens)) return usage;
   const input = Math.max(0, usage?.inputTokens ?? 0);
   const cached = Math.min(input, Math.max(0, usage?.inputTokenDetails?.cacheReadTokens ?? 0));
   return {
@@ -250,7 +251,23 @@ async function runCase(
     const requestPromptCacheKey = promptCacheKey(requestInferenceKey);
     const response = await generateText({
       model: createModel(spec),
-      messages: [{ role: "user", content: [{ type: "text", text: prompt }, { type: "file", data: pdf, mediaType: "application/pdf", filename: `${testCase.id}.pdf` }] }],
+      messages: [{
+        role: "user",
+        content: [
+          { type: "text", text: prompt },
+          {
+            type: "file",
+            data: pdf,
+            mediaType: "application/pdf",
+            filename: `${testCase.id}.pdf`,
+            ...(spec.provider === "openai" && spec.modelName.startsWith("gpt-5.6-") ? {
+              providerOptions: {
+                openai: { promptCacheBreakpoint: { mode: "explicit" as const } },
+              },
+            } : {}),
+          },
+        ],
+      }],
       maxOutputTokens: outputLimit,
       maxRetries: 2,
       ...(spec.reasoning ? { reasoning: spec.reasoning } : {}),
@@ -258,7 +275,9 @@ async function runCase(
         providerOptions: {
           openai: {
             promptCacheKey: requestPromptCacheKey,
-            ...(spec.modelName.startsWith("gpt-5.6-") ? { promptCacheRetention: "24h" as const } : {}),
+            ...(spec.modelName.startsWith("gpt-5.6-") ? {
+              promptCacheOptions: { mode: "explicit" as const, ttl: "30m" as const },
+            } : {}),
           },
         },
       } : {}),
@@ -283,7 +302,7 @@ async function runCase(
       usage,
       providerCache: {
         mode: spec.provider === "openai"
-          ? spec.modelName.startsWith("gpt-5.6-") ? "prompt-cache-key-24h" : "prompt-cache-key"
+          ? spec.modelName.startsWith("gpt-5.6-") ? "explicit-prefix-30m" : "prompt-cache-key"
           : "implicit",
         key: spec.provider === "openai" ? requestPromptCacheKey : null,
         cacheReadTokens: usage?.inputTokenDetails?.cacheReadTokens ?? 0,

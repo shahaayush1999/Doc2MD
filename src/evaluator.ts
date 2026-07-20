@@ -214,8 +214,8 @@ export class EvaluatorContractError extends Error {
   }
 }
 
-const evaluator = models["vertex-gemini-3.5-flash"]!;
-const scoringProtocolVersion = 7;
+const evaluator = models["vertex-gemini-3.1-flash-lite"]!;
+const scoringProtocolVersion = 8;
 const judgeBatchLeafLimit = 32;
 const unsupportedBatchRegionLimit = 24;
 const unsupportedBatchMemberLimit = 256;
@@ -2999,6 +2999,7 @@ function combineUsage(usages: any[]) {
     totalTokens: usages.reduce((sum, usage) => sum + (usage?.totalTokens ?? 0), 0),
     inputTokenDetails: {
       cacheReadTokens: usages.reduce((sum, usage) => sum + (usage?.inputTokenDetails?.cacheReadTokens ?? 0), 0),
+      cacheWriteTokens: usages.reduce((sum, usage) => sum + (usage?.inputTokenDetails?.cacheWriteTokens ?? 0), 0),
     },
   };
 }
