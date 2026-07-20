@@ -24,7 +24,7 @@ Set the relevant provider keys in `.env.local`. On a fresh cache, the default ru
 - `openai-gpt-5-nano`
 - `google-gemini-3.1-flash-lite`
 
-Google models and the Gemini 3.1 Flash-Lite evaluator use the Gemini API through a server-side `GEMINI_API_KEY` created in Google AI Studio. Vertex AI credentials and Application Default Credentials are not used.
+Google models and the Gemini 3.1 Flash-Lite evaluator use the Gemini API through a server-side `GEMINI_API_KEY` created in Google AI Studio.
 
 Select any registered model with repeatable flags:
 
