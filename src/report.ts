@@ -67,25 +67,7 @@ function interactiveChart(models: any[]) {
       const yt=yTicks.map(v=>'<line x1="'+p.l+'" y1="'+y(v)+'" x2="'+right+'" y2="'+y(v)+'" class="grid"/><text x="'+(p.l-14)+'" y="'+(y(v)+5)+'" text-anchor="end" class="tick">'+v+'</text>').join("");
       const xt=(m.log?[min,Math.sqrt(min*max),max]:[0,max/3,max*2/3,max]).map(v=>'<line x1="'+x(v||min)+'" y1="'+bottom+'" x2="'+x(v||min)+'" y2="'+(bottom+7)+'" class="axis"/><text x="'+x(v||min)+'" y="'+(bottom+27)+'" text-anchor="middle" class="tick">'+m.format(v)+'</text>').join("");
       const items=points.map((d,i)=>({d,i,px:x(m.value(d)),py:y(d.score),text:d.name}));
-      const box=(x,y,anchor,width)=>({l:anchor==='start'?x:anchor==='end'?x-width:x-width/2,r:anchor==='start'?x+width:anchor==='end'?x:x+width/2,t:y-13,b:y+3});
-      const intersects=(a,b,pad=0)=>a.l<b.r+pad&&a.r>b.l-pad&&a.t<b.b+pad&&a.b>b.t-pad;
-      const candidateSets=items.map(item=>{
-        const width=Math.max(72,item.text.length*6.5),positions=[
-          [item.px+13,item.py+4,'start'],[item.px+13,item.py-10,'start'],
-          [item.px+13,item.py-24,'start'],[item.px+13,item.py-38,'start'],
-          [item.px+22,item.py-10,'start'],[item.px+22,item.py-24,'start'],
-          [item.px+22,item.py-38,'start'],[item.px+31,item.py-24,'start'],
-          [item.px+31,item.py-38,'start'],[item.px+40,item.py-38,'start']
-        ];
-        return positions.map(([lx,ly,anchor],preference)=>{const rect=box(lx,ly,anchor,width);let penalty=preference;
-          if(rect.l<p.l+3||rect.r>W-5||rect.t<p.t+3||rect.b>bottom-3)penalty+=100000;
-          return {item,lx,ly,anchor,rect,penalty};
-        });
-      });
-      let states=[{chosen:[],penalty:0}];
-      candidateSets.forEach(candidates=>{const next=[];states.forEach(state=>candidates.forEach(candidate=>{const collisions=state.chosen.reduce((sum,placed)=>sum+(intersects(candidate.rect,placed.rect,5)?1:0),0);next.push({chosen:[...state.chosen,candidate],penalty:state.penalty+candidate.penalty+collisions*20000})}));states=next.sort((a,b)=>a.penalty-b.penalty).slice(0,400)});
-      const best=states[0].chosen;
-      const labels=best.map(({item,lx,ly,anchor})=>'<text x="'+lx+'" y="'+ly+'" text-anchor="'+anchor+'" class="point-label" data-point="'+item.i+'">'+esc(item.text)+'</text>').join('');
+      const labels=items.map(item=>'<text x="'+(item.px+13)+'" y="'+(item.py+4)+'" text-anchor="start" class="point-label" data-point="'+item.i+'">'+esc(item.text)+'</text>').join('');
       const marks=items.map(item=>{const axisValue=m.detail(m.value(item.d)),aria=item.d.name+'; score '+item.d.score.toFixed(2)+'; '+axisValue;return '<g class="chart-point" data-point="'+item.i+'" tabindex="0" role="button" aria-label="'+esc(aria)+'"><circle class="point-dot" cx="'+item.px+'" cy="'+item.py+'" r="5.5" fill="'+item.d.color+'" stroke="#fffdf8" stroke-width="1.5"/></g>'}).join("");
       const crosshair='<g class="crosshair" visibility="hidden" aria-hidden="true"><line class="crosshair-line crosshair-x"/><line class="crosshair-line crosshair-y"/><text class="crosshair-value crosshair-x-value" y="'+(bottom+27)+'" text-anchor="middle"></text><text class="crosshair-value crosshair-y-value" x="'+(p.l-14)+'" text-anchor="end"></text></g>';
       const stage=document.querySelector("#chart-stage");
