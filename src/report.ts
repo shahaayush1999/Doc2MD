@@ -69,9 +69,10 @@ function interactiveChart(models: any[]) {
       const intersects=(a,b,pad=0)=>a.l<b.r+pad&&a.r>b.l-pad&&a.t<b.b+pad&&a.b>b.t-pad;
       const candidateSets=items.map(item=>{
         const width=Math.max(72,item.text.length*6.5),positions=[
-          [item.px+13,item.py-10,'start'],[item.px-13,item.py-10,'end'],[item.px+13,item.py+19,'start'],[item.px-13,item.py+19,'end'],
-          [item.px,item.py-16,'middle'],[item.px,item.py+25,'middle'],[item.px+18,item.py-30,'start'],[item.px-18,item.py-30,'end'],
-          [item.px+18,item.py+39,'start'],[item.px-18,item.py+39,'end'],[item.px,item.py-36,'middle'],[item.px,item.py+45,'middle']
+          [item.px+13,item.py+4,'start'],[item.px-13,item.py+4,'end'],
+          [item.px+13,item.py-10,'start'],[item.px-13,item.py-10,'end'],[item.px,item.py-16,'middle'],
+          [item.px+18,item.py-25,'start'],[item.px-18,item.py-25,'end'],[item.px,item.py-32,'middle'],
+          [item.px+24,item.py-41,'start'],[item.px-24,item.py-41,'end'],[item.px,item.py-48,'middle']
         ];
         return positions.map(([lx,ly,anchor],preference)=>{const rect=box(lx,ly,anchor,width);let penalty=preference;
           if(rect.l<p.l+3||rect.r>right-3||rect.t<p.t+3||rect.b>bottom-3)penalty+=100000;

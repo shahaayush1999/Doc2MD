@@ -1,7 +1,7 @@
 {
   "name": "Doc2MD",
   "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
-  "generatedAt": "2026-07-22T15:33:02.743Z",
+  "generatedAt": "2026-07-22T15:38:02.154Z",
   "caseCount": 5,
   "pageCount": 86,
   "cases": [
@@ -107,9 +107,9 @@
     "actualSpendField": "models[].actualInferenceCostUsd"
   },
   "exclusions": [],
-  "incrementalSpendUsd": 1.613238375,
-  "incrementalInferenceSpendUsd": 1.484463125,
-  "incrementalEvaluatorSpendUsd": 0.12877525,
+  "incrementalSpendUsd": 0,
+  "incrementalInferenceSpendUsd": 0,
+  "incrementalEvaluatorSpendUsd": 0,
   "totalCostUsd": 12.437562375,
   "models": [
     {
