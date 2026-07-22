@@ -152,6 +152,7 @@ export const models: Record<string, ModelSpec> = {
     id: "google-gemini-3.6-flash",
     modelName: "gemini-3.6-flash",
     provider: "google",
+    reasoning: "minimal",
     pricingVersion: "2026-07-21",
     inputPerMillion: 1.5,
     cachedInputPerMillion: 0.15,
