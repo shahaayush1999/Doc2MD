@@ -511,8 +511,13 @@ function explicitCandidatePages(lines: string[], expectedPageCount?: number): Ar
   // counters are followed by a page-break rule, the content preceding each
   // counter belongs to that page. Treating the footer as a page start shifts
   // every subsequent page and incorrectly removes otherwise valid evidence.
+  const counterStartsShortBlock = (anchorIndex: number) => {
+    const blockStart = [...boundaryStarts].reverse().find((start) => start <= anchorIndex) ?? 0;
+    return lines.slice(blockStart, anchorIndex).filter((line) => line.trim()).length <= 6;
+  };
   const footerAnchors = monotonicAnchors.every((anchor) =>
     counterPage.get(anchor.index) === anchor.page &&
+    !counterStartsShortBlock(anchor.index) &&
     (anchor.page === trustedTotal || lines.slice(anchor.index + 1, anchor.index + 3).some(isSeparator)),
   );
   if (monotonicAnchors.length >= 2 && footerAnchors) {
