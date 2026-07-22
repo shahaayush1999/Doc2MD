@@ -1,7 +1,7 @@
 {
   "name": "Doc2MD",
   "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
-  "generatedAt": "2026-07-22T15:38:02.154Z",
+  "generatedAt": "2026-07-22T15:45:26.606Z",
   "caseCount": 5,
   "pageCount": 86,
   "cases": [
