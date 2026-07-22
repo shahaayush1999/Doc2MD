@@ -78,6 +78,16 @@ export const models: Record<string, ModelSpec> = {
     cachedInputPerMillion: 0.025,
     outputPerMillion: 1.5,
   },
+  "google-gemini-3.5-flash-lite": {
+    id: "google-gemini-3.5-flash-lite",
+    modelName: "gemini-3.5-flash-lite",
+    provider: "google",
+    reasoning: "minimal",
+    pricingVersion: "2026-07-21",
+    inputPerMillion: 0.3,
+    cachedInputPerMillion: 0.03,
+    outputPerMillion: 2.5,
+  },
   "google-gemini-2.5-flash-lite": {
     id: "google-gemini-2.5-flash-lite",
     modelName: "gemini-2.5-flash-lite",
@@ -137,6 +147,15 @@ export const models: Record<string, ModelSpec> = {
     inputPerMillion: 1.5,
     cachedInputPerMillion: 0.15,
     outputPerMillion: 9,
+  },
+  "google-gemini-3.6-flash": {
+    id: "google-gemini-3.6-flash",
+    modelName: "gemini-3.6-flash",
+    provider: "google",
+    pricingVersion: "2026-07-21",
+    inputPerMillion: 1.5,
+    cachedInputPerMillion: 0.15,
+    outputPerMillion: 7.5,
   },
   "openai-gpt-5.6-luna": {
     id: "openai-gpt-5.6-luna",
