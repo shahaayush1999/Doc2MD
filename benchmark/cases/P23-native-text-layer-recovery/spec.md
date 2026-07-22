@@ -1,5 +1,15 @@
 # Northstar Cold Chain Supplier Cutover Authorization
 
+Report title: Broken-layout and native-layer recovery
+
+Report category: malformed export recovery and reading order
+
+Report summary: Measures whether a model reconstructs logical reading order after font substitution, page spill, overlapping boxes, detached labels, shuffled PDF objects, fragmented cross-page connectors, and mixed native and raster evidence.
+
+Modality profile: a 7-physical-page malformed office export produced from 5 logical pages; native text, raster evidence, and object coordinates each supply incomplete pieces
+
+Report capabilities: native-layer recovery, malformed layout, reading order, mixed-modality fusion, detached labels, overlapping text, cross-page joins, source precedence
+
 Source modality: five logical presentation pages exported through LibreOffice Writer as a seven-physical-page mixed native/raster PDF. Logical page 4 catastrophically spills: its title remains on physical page 4, the Draw graph lands on physical page 5, and the detached exception register lands on physical page 6. The clean 220-DPI executed form still prints logical 5/5 but appears on physical page 7.
 
 Family: `office export recovery`

@@ -1,105 +1,93 @@
 {
   "name": "Doc2MD",
   "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
-  "generatedAt": "2026-07-22T14:08:34.767Z",
+  "generatedAt": "2026-07-22T15:03:55.089Z",
   "caseCount": 5,
   "pageCount": 86,
   "cases": [
     {
       "id": "P12-pfas-method-validation",
-      "title": "PFAS Method Validation and Batch Release Packet",
-      "family": "environmental analytical laboratory",
+      "title": "Dense tables, scans, and correction chains",
+      "family": "structured reconstruction and source control",
       "tags": [
-        "mixed-modality",
-        "scientific",
-        "calibration",
-        "continued-table",
-        "full-page-scans",
-        "chromatograms",
-        "source-precedence"
+        "table reconstruction",
+        "precise recall",
+        "visual extraction",
+        "form state",
+        "continued records",
+        "source precedence"
       ],
       "pages": 12,
-      "purpose": "Test exact scientific reconstruction across native tables, visual-only plots, full-page bench scans, continued tables, QC calculations, and a signed correction chain that changes one final result.",
-      "sourceModality": "six native-only pages, three full-page raster scans, and three mixed pages with raster evidence; page images and native text are both necessary"
+      "purpose": "Measures whether a model can exhaustively rebuild dense tables, equations, plots, scanned forms, continued records, and a correction trail that changes the controlling value without dropping bindings or qualifiers.",
+      "sourceModality": "6 native pages, 3 raster pages, and 3 mixed pages; native text and page vision are both required"
     },
     {
       "id": "P15-architecture-floorplan-diagrams",
-      "title": "Suite 214 Laboratory Coordination Set",
-      "family": "architectural and building systems",
+      "title": "Spatial diagrams, topology, and cross-page bindings",
+      "family": "spatial reasoning and relational reconstruction",
       "tags": [
-        "mixed-pdf",
-        "floorplan-overlay",
-        "reflected-ceiling-plan",
-        "rack-elevation",
-        "directed-topology",
-        "panel-schedule",
-        "scanned-rfi",
-        "field-photos",
-        "source-precedence"
+        "spatial reconstruction",
+        "directed topology",
+        "cross-page binding",
+        "table reconstruction",
+        "form state",
+        "image description",
+        "source precedence"
       ],
       "pages": 10,
-      "purpose": "Test long-range technical coordination across archived and controlling plans, spatial overlays, MEP geometry, rack and patch bindings, directed network paths, electrical form states, scanned redlines, field-image evidence, and final release authority.",
-      "sourceModality": "five born-digital technical sheets, two full-page image-only scans, and three mixed pages with native schedules plus scanned forms or field images"
+      "purpose": "Measures whether a model preserves two-dimensional relationships, overlays, directed paths, component bindings, table and form state, scanned annotations, and controlling-versus-archived evidence as consumable Markdown.",
+      "sourceModality": "5 native pages, 2 full-page scans, and 3 mixed pages combining native structures with raster evidence"
     },
     {
       "id": "P17-clinical-trial-site-monitoring",
-      "title": "HTX-204 Site 014 Monitoring Source Packet",
-      "family": "regulated clinical site monitoring",
+      "title": "Long-context state tracking across 48 pages",
+      "family": "long-context coherence and cumulative state",
       "tags": [
-        "long-context",
-        "mixed-modality",
-        "full-page-scans",
-        "continued-tables",
-        "source-precedence",
-        "corrected-entries",
-        "checkbox-state",
-        "longitudinal-entities",
-        "tail-obligations"
+        "long-context coherence",
+        "longitudinal entity tracking",
+        "continued tables",
+        "scan recovery",
+        "form state",
+        "tail recall",
+        "source precedence"
       ],
       "pages": 48,
-      "purpose": "Test faithful reconstruction of a realistically long regulated source packet whose controlling facts emerge through continued logs, scanned forms, visible corrections, cumulative state, delayed follow-up evidence, and tail obligations distributed across more than forty pages without a synthetic answer map.",
-      "sourceModality": "48-page mixed packet: 28 intended native-only pages, 12 intended full-page scans, and 8 mixed pages with embedded scanned source regions"
+      "purpose": "Measures whether a model maintains entities and controlling state across continued logs, scanned forms, corrections, delayed follow-up evidence, repeated identifiers, and tail pages without summarizing away detail.",
+      "sourceModality": "28 native pages, 12 full-page scans, and 8 mixed pages with embedded raster regions"
     },
     {
       "id": "P21-semiconductor-lot-disposition",
-      "title": "Lot Q8R7-22 Material Review File",
-      "family": "semiconductor manufacturing quality",
+      "title": "Visual evidence, coordinate binding, and final-state recovery",
+      "family": "visual-record fusion and exact binding",
       "tags": [
-        "native-pdf",
-        "wafer-maps",
-        "metrology",
-        "spc",
-        "sem-images",
-        "mrb",
-        "source-precedence"
+        "visual-to-record binding",
+        "chart and diagram spatial reasoning",
+        "image description",
+        "table reconstruction",
+        "form state",
+        "source precedence"
       ],
       "pages": 9,
-      "purpose": "Test wafer-coordinate bindings, process-source conflicts, metrology and SPC state, realistic but synthetic SEM-style image regions, MRB decisions, and shipment authority.",
-      "sourceModality": "mixed manufacturing file with native records, two full-page scanned reviews, synthetic SEM-style imagery, and scanned inspection forms"
+      "purpose": "Measures whether a model joins image evidence, coordinate maps, charts, structured records, form states, conflicting sources, and final authorization while preserving exact entity-to-value bindings.",
+      "sourceModality": "native records, 2 full-page scans, synthetic inspection imagery, and scanned forms"
     },
     {
       "id": "P23-native-text-layer-recovery",
-      "title": "Northstar Cold Chain Supplier Cutover Authorization",
-      "family": "office export recovery",
+      "title": "Broken-layout and native-layer recovery",
+      "family": "malformed export recovery and reading order",
       "tags": [
-        "native-pdf",
-        "libreoffice-export",
-        "malformed-layout",
-        "cross-office-conversion",
-        "overlapping-text-boxes",
-        "font-substitution",
-        "detached-labels",
-        "scrambled-reading-order",
-        "broken-object-stacking",
-        "native-text-recovery",
-        "mixed-modality",
-        "tables",
-        "source-precedence",
-        "reading-order"
+        "native-layer recovery",
+        "malformed layout",
+        "reading order",
+        "mixed-modality fusion",
+        "detached labels",
+        "overlapping text",
+        "cross-page joins",
+        "source precedence"
       ],
       "pages": 7,
-      "purpose": "recover the intended logical packet after a realistic Slides/PowerPoint-style office round trip substitutes missing condensed fonts, inflates runs, decomposes tables into independently positioned cells, detaches headers, changes object order, overlaps native text, breaks logical pagination, and collides graphic groups with register content across several pages. The native PDF object stream is intentionally shuffled rather than an intact row-wise table export; visible coordinates and row IDs preserve the bindings. On the dependency spread, native connector-ID/label fragments split across physical pages 5-6 must be joined to visible raster arrow endpoints and direction on physical page 5, while the associated exception register has also spilled to physical page 6, so neither modality nor page is a complete answer key. Physical page 7 remains the clean executed source of truth.",
-      "sourceModality": "five logical presentation pages exported through LibreOffice Writer as a seven-physical-page mixed native/raster PDF. Logical page 4 catastrophically spills: its title remains on physical page 4, the Draw graph lands on physical page 5, and the detached exception register lands on physical page 6. The clean 220-DPI executed form still prints logical 5/5 but appears on physical page 7."
+      "purpose": "Measures whether a model reconstructs logical reading order after font substitution, page spill, overlapping boxes, detached labels, shuffled PDF objects, fragmented cross-page connectors, and mixed native and raster evidence.",
+      "sourceModality": "a 7-physical-page malformed office export produced from 5 logical pages; native text, raster evidence, and object coordinates each supply incomplete pieces"
     }
   ],
   "provenance": {
@@ -124,9 +112,9 @@
       "reason": "No complete draw has a valid score for the current scorer and corpus."
     }
   ],
-  "incrementalSpendUsd": 0.029477250000000003,
+  "incrementalSpendUsd": 0,
   "incrementalInferenceSpendUsd": 0,
-  "incrementalEvaluatorSpendUsd": 0.029477250000000003,
+  "incrementalEvaluatorSpendUsd": 0,
   "totalCostUsd": 10.824324,
   "models": [
     {

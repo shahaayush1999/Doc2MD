@@ -109,17 +109,21 @@ function specField(spec: string, field: string) {
   return match?.[1]?.trim().replaceAll("`", "") || null;
 }
 
+function specListField(spec: string, field: string) {
+  return specField(spec, field)?.split(",").map((item) => item.trim()).filter(Boolean) ?? null;
+}
+
 async function reportCaseMetadata(cases: Array<ManifestCase & { spec: string }>) {
   return Promise.all(cases.map(async (testCase) => {
     const spec = await readFile(testCase.spec, "utf8");
     return {
       id: testCase.id,
-      title: testCase.title,
-      family: testCase.family,
-      tags: testCase.tags,
+      title: specField(spec, "Report title") ?? testCase.title,
+      family: specField(spec, "Report category") ?? testCase.family,
+      tags: specListField(spec, "Report capabilities") ?? testCase.tags,
       pages: testCase.pages ?? 0,
-      purpose: specField(spec, "Purpose") ?? `Test faithful PDF-to-Markdown reconstruction for ${testCase.title}.`,
-      sourceModality: specField(spec, "Source modality") ?? "Native PDF input; see the case tags for its evidence mix.",
+      purpose: specField(spec, "Report summary") ?? specField(spec, "Purpose") ?? `Test faithful PDF-to-Markdown reconstruction for ${testCase.title}.`,
+      sourceModality: specField(spec, "Modality profile") ?? specField(spec, "Source modality") ?? "Native PDF input; see the case tags for its evidence mix.",
     };
   }));
 }
