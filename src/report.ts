@@ -59,9 +59,11 @@ function interactiveChart(models: any[]) {
     const yMin=Math.max(0,Math.floor((scoreMin-scoreSpan*.1)/scoreStep)*scoreStep),yMax=Math.min(100,Math.ceil((scoreMax+scoreSpan*.1)/scoreStep)*scoreStep);
     const yTicks=Array.from({length:Math.round((yMax-yMin)/scoreStep)+1},(_,i)=>yMin+i*scoreStep);
     function render(key){
-      const m=metrics[key],W=1000,H=500,p={l:84,r:70,t:70,b:78},right=W-p.r,bottom=H-p.b,vals=points.map(m.value),min=m.log?Math.min(...vals):0,max=Math.max(...vals);
-      const norm=v=>m.log?(Math.log10(v)-Math.log10(min))/(Math.log10(max)-Math.log10(min)||1):v/(max||1);
-      const x=v=>p.l+norm(v)*(right-p.l),y=v=>p.t+(1-(v-yMin)/(yMax-yMin))*(bottom-p.t);
+      const m=metrics[key],W=1000,H=500,p={l:84,r:70,t:70,b:78},right=W-p.r,bottom=H-p.b,vals=points.map(m.value),min=m.log?Math.min(...vals):0,max=Math.max(...vals),domainHeadroom=.12;
+      const logMin=m.log?Math.log10(min):0,logSpan=m.log?Math.log10(max)-logMin:0;
+      const norm=v=>m.log?(Math.log10(v)-logMin)/(logSpan*(1+domainHeadroom)||1):v/(max*(1+domainHeadroom)||1);
+      const yDisplayMax=yMax+(yMax-yMin)*domainHeadroom;
+      const x=v=>p.l+norm(v)*(right-p.l),y=v=>p.t+(1-(v-yMin)/(yDisplayMax-yMin))*(bottom-p.t);
       const yt=yTicks.map(v=>'<line x1="'+p.l+'" y1="'+y(v)+'" x2="'+right+'" y2="'+y(v)+'" class="grid"/><text x="'+(p.l-14)+'" y="'+(y(v)+5)+'" text-anchor="end" class="tick">'+v+'</text>').join("");
       const xt=(m.log?[min,Math.sqrt(min*max),max]:[0,max/3,max*2/3,max]).map(v=>'<line x1="'+x(v||min)+'" y1="'+bottom+'" x2="'+x(v||min)+'" y2="'+(bottom+7)+'" class="axis"/><text x="'+x(v||min)+'" y="'+(bottom+27)+'" text-anchor="middle" class="tick">'+m.format(v)+'</text>').join("");
       const items=points.map((d,i)=>({d,i,px:x(m.value(d)),py:y(d.score),text:d.name}));
