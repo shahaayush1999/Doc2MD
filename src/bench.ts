@@ -385,7 +385,7 @@ async function runCase(
     title: testCase.title,
     score: evaluation.score as number | null,
     inferenceCostUsd: calculateUncachedCost(spec, inference.usage),
-    actualInferenceCostUsd: Number.isFinite(inference.costUsd) ? inference.costUsd : calculateCost(spec, inference.usage),
+    actualInferenceCostUsd: calculateCost(spec, inference.usage),
     evaluatorCostUsd: evaluation.evaluator.costUsd ?? 0,
     incrementalCostUsd: inferenceSpent + evaluatorSpent,
     incrementalInferenceCostUsd: inferenceSpent,
@@ -455,9 +455,7 @@ async function collectMergedResults(
           title: testCase.title,
           score: cached.evaluation.score,
           inferenceCostUsd: calculateUncachedCost(models[modelId]!, cached.inference.usage),
-          actualInferenceCostUsd: Number.isFinite(cached.inference.costUsd)
-            ? cached.inference.costUsd
-            : calculateCost(models[modelId]!, cached.inference.usage),
+          actualInferenceCostUsd: calculateCost(models[modelId]!, cached.inference.usage),
           evaluatorCostUsd: cached.evaluation.evaluator.costUsd ?? 0,
           outputTokens: cached.inference.usage?.outputTokens ?? 0,
           inputTokens: cached.inference.usage?.inputTokens ?? 0,

@@ -1,7 +1,7 @@
 {
   "name": "Doc2MD",
   "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
-  "generatedAt": "2026-07-30T17:29:28.630Z",
+  "generatedAt": "2026-07-30T17:37:20.259Z",
   "caseCount": 5,
   "pageCount": 86,
   "cases": [
@@ -110,7 +110,7 @@
   "incrementalSpendUsd": 0,
   "incrementalInferenceSpendUsd": 0,
   "incrementalEvaluatorSpendUsd": 0,
-  "totalCostUsd": 16.76331607499999,
+  "totalCostUsd": 15.99600985,
   "models": [
     {
       "modelId": "openai-gpt-5.6-sol",
@@ -741,11 +741,11 @@
       "scoreStddev": null,
       "inferenceCostUsd": 1.05806,
       "normalizedInferenceCostUsd": 1.05806,
-      "actualInferenceCostUsd": 1.484463125,
+      "actualInferenceCostUsd": 1.1875704999999999,
       "evaluatorCostUsd": 0.12877525,
-      "totalCostUsd": 1.613238375,
+      "totalCostUsd": 1.31634575,
       "cumulativeInferenceCostUsd": 1.05806,
-      "cumulativeActualInferenceCostUsd": 1.484463125,
+      "cumulativeActualInferenceCostUsd": 1.1875704999999999,
       "cumulativeEvaluatorCostUsd": 0.12877525,
       "inputTokens": 259036,
       "cacheReadTokens": 0,
@@ -765,7 +765,7 @@
           "scoreMax": 98.41193181818181,
           "scoreStddev": null,
           "inferenceCostUsd": 0.164308,
-          "actualInferenceCostUsd": 0.229219375
+          "actualInferenceCostUsd": 0.1833755
         },
         {
           "caseId": "P15-architecture-floorplan-diagrams",
@@ -775,7 +775,7 @@
           "scoreMax": 85.51120448179272,
           "scoreStddev": null,
           "inferenceCostUsd": 0.108406,
-          "actualInferenceCostUsd": 0.15480625
+          "actualInferenceCostUsd": 0.123845
         },
         {
           "caseId": "P17-clinical-trial-site-monitoring",
@@ -785,7 +785,7 @@
           "scoreMax": 98.8,
           "scoreStddev": null,
           "inferenceCostUsd": 0.62459,
-          "actualInferenceCostUsd": 0.87405125
+          "actualInferenceCostUsd": 0.699241
         },
         {
           "caseId": "P21-semiconductor-lot-disposition",
@@ -795,7 +795,7 @@
           "scoreMax": 95.06578947368422,
           "scoreStddev": null,
           "inferenceCostUsd": 0.10364,
-          "actualInferenceCostUsd": 0.146901875
+          "actualInferenceCostUsd": 0.1175215
         },
         {
           "caseId": "P23-native-text-layer-recovery",
@@ -805,7 +805,7 @@
           "scoreMax": 79.17995169082126,
           "scoreStddev": null,
           "inferenceCostUsd": 0.057116,
-          "actualInferenceCostUsd": 0.079484375
+          "actualInferenceCostUsd": 0.0635875
         }
       ],
       "draws": [
@@ -813,7 +813,7 @@
           "draw": 1,
           "score": 91.39377549289601,
           "inferenceCostUsd": 1.05806,
-          "actualInferenceCostUsd": 1.484463125,
+          "actualInferenceCostUsd": 1.1875704999999999,
           "evaluatorCostUsd": 0.12877525,
           "totalOutputTokens": 44999,
           "inputTokens": 259036,
@@ -828,7 +828,7 @@
               "title": "PFAS Method Validation and Batch Release Packet",
               "score": 98.41193181818181,
               "inferenceCostUsd": 0.164308,
-              "actualInferenceCostUsd": 0.229219375,
+              "actualInferenceCostUsd": 0.1833755,
               "evaluatorCostUsd": 0.028793000000000003,
               "outputTokens": 7336,
               "inputTokens": 38138,
@@ -847,7 +847,7 @@
               "title": "Suite 214 Laboratory Coordination Set",
               "score": 85.51120448179272,
               "inferenceCostUsd": 0.108406,
-              "actualInferenceCostUsd": 0.15480625,
+              "actualInferenceCostUsd": 0.123845,
               "evaluatorCostUsd": 0.02037975,
               "outputTokens": 3887,
               "inputTokens": 30881,
@@ -866,7 +866,7 @@
               "title": "HTX-204 Site 014 Monitoring Source Packet",
               "score": 98.8,
               "inferenceCostUsd": 0.62459,
-              "actualInferenceCostUsd": 0.87405125,
+              "actualInferenceCostUsd": 0.699241,
               "evaluatorCostUsd": 0.05358025,
               "outputTokens": 27165,
               "inputTokens": 149305,
@@ -885,7 +885,7 @@
               "title": "Lot Q8R7-22 Material Review File",
               "score": 95.06578947368422,
               "inferenceCostUsd": 0.10364,
-              "actualInferenceCostUsd": 0.146901875,
+              "actualInferenceCostUsd": 0.1175215,
               "evaluatorCostUsd": 0.01450975,
               "outputTokens": 4009,
               "inputTokens": 27766,
@@ -904,7 +904,7 @@
               "title": "Northstar Cold Chain Supplier Cutover Authorization",
               "score": 79.17995169082126,
               "inferenceCostUsd": 0.057116,
-              "actualInferenceCostUsd": 0.079484375,
+              "actualInferenceCostUsd": 0.0635875,
               "evaluatorCostUsd": 0.0115125,
               "outputTokens": 2602,
               "inputTokens": 12946,
@@ -1350,11 +1350,11 @@
       "scoreStddev": null,
       "inferenceCostUsd": 0.1046516,
       "normalizedInferenceCostUsd": 0.1046516,
-      "actualInferenceCostUsd": 0.588017,
+      "actualInferenceCostUsd": 0.11760340000000001,
       "evaluatorCostUsd": 0.127185225,
-      "totalCostUsd": 0.7152022250000001,
+      "totalCostUsd": 0.24478862500000004,
       "cumulativeInferenceCostUsd": 0.1046516,
-      "cumulativeActualInferenceCostUsd": 0.588017,
+      "cumulativeActualInferenceCostUsd": 0.11760340000000001,
       "cumulativeEvaluatorCostUsd": 0.127185225,
       "inputTokens": 259036,
       "cacheReadTokens": 0,
@@ -1374,7 +1374,7 @@
           "scoreMax": 99.71875,
           "scoreStddev": null,
           "inferenceCostUsd": 0.016642,
-          "actualInferenceCostUsd": 0.0927445
+          "actualInferenceCostUsd": 0.0185489
         },
         {
           "caseId": "P15-architecture-floorplan-diagrams",
@@ -1384,7 +1384,7 @@
           "scoreMax": 72.19654528478058,
           "scoreStddev": null,
           "inferenceCostUsd": 0.011023,
-          "actualInferenceCostUsd": 0.06283525
+          "actualInferenceCostUsd": 0.01256705
         },
         {
           "caseId": "P17-clinical-trial-site-monitoring",
@@ -1394,7 +1394,7 @@
           "scoreMax": 99.6,
           "scoreStddev": null,
           "inferenceCostUsd": 0.061909399999999996,
-          "actualInferenceCostUsd": 0.34687325
+          "actualInferenceCostUsd": 0.06937465
         },
         {
           "caseId": "P21-semiconductor-lot-disposition",
@@ -1404,7 +1404,7 @@
           "scoreMax": 96.38157894736842,
           "scoreStddev": null,
           "inferenceCostUsd": 0.009342800000000002,
-          "actualInferenceCostUsd": 0.0536555
+          "actualInferenceCostUsd": 0.0107311
         },
         {
           "caseId": "P23-native-text-layer-recovery",
@@ -1414,7 +1414,7 @@
           "scoreMax": 77.04428341384862,
           "scoreStddev": null,
           "inferenceCostUsd": 0.0057344,
-          "actualInferenceCostUsd": 0.0319085
+          "actualInferenceCostUsd": 0.0063817
         }
       ],
       "draws": [
@@ -1422,7 +1422,7 @@
           "draw": 1,
           "score": 88.98823152919952,
           "inferenceCostUsd": 0.1046516,
-          "actualInferenceCostUsd": 0.588017,
+          "actualInferenceCostUsd": 0.11760340000000001,
           "evaluatorCostUsd": 0.127185225,
           "totalOutputTokens": 44037,
           "inputTokens": 259036,
@@ -1437,7 +1437,7 @@
               "title": "PFAS Method Validation and Batch Release Packet",
               "score": 99.71875,
               "inferenceCostUsd": 0.016642,
-              "actualInferenceCostUsd": 0.0927445,
+              "actualInferenceCostUsd": 0.0185489,
               "evaluatorCostUsd": 0.028303475,
               "outputTokens": 7512,
               "inputTokens": 38138,
@@ -1456,7 +1456,7 @@
               "title": "Suite 214 Laboratory Coordination Set",
               "score": 72.19654528478058,
               "inferenceCostUsd": 0.011023,
-              "actualInferenceCostUsd": 0.06283525,
+              "actualInferenceCostUsd": 0.01256705,
               "evaluatorCostUsd": 0.0208335,
               "outputTokens": 4039,
               "inputTokens": 30881,
@@ -1475,7 +1475,7 @@
               "title": "HTX-204 Site 014 Monitoring Source Packet",
               "score": 99.6,
               "inferenceCostUsd": 0.061909399999999996,
-              "actualInferenceCostUsd": 0.34687325,
+              "actualInferenceCostUsd": 0.06937465,
               "evaluatorCostUsd": 0.0530865,
               "outputTokens": 26707,
               "inputTokens": 149305,
@@ -1494,7 +1494,7 @@
               "title": "Lot Q8R7-22 Material Review File",
               "score": 96.38157894736842,
               "inferenceCostUsd": 0.009342800000000002,
-              "actualInferenceCostUsd": 0.0536555,
+              "actualInferenceCostUsd": 0.0107311,
               "evaluatorCostUsd": 0.01386375,
               "outputTokens": 3158,
               "inputTokens": 27766,
@@ -1513,7 +1513,7 @@
               "title": "Northstar Cold Chain Supplier Cutover Authorization",
               "score": 77.04428341384862,
               "inferenceCostUsd": 0.0057344,
-              "actualInferenceCostUsd": 0.0319085,
+              "actualInferenceCostUsd": 0.0063817,
               "evaluatorCostUsd": 0.011098,
               "outputTokens": 2621,
               "inputTokens": 12946,
