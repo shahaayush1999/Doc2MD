@@ -462,9 +462,36 @@ function pageScopedLines(
   return lines.map((line, index) => allowedPages.has(pageByLine[index] ?? -1) ? line : "");
 }
 
+function fencedCodeLineMask(lines: string[]): boolean[] {
+  const mask = new Array<boolean>(lines.length).fill(false);
+  let fence: { character: string; length: number } | null = null;
+  for (let index = 0; index < lines.length; index += 1) {
+    const marker = lines[index]!.match(/^\s{0,3}(`{3,}|~{3,})/);
+    if (!fence) {
+      if (!marker) continue;
+      fence = { character: marker[1]![0]!, length: marker[1]!.length };
+      mask[index] = true;
+      continue;
+    }
+    mask[index] = true;
+    if (
+      marker &&
+      marker[1]![0] === fence.character &&
+      marker[1]!.length >= fence.length &&
+      lines[index]!.trim() === marker[1]
+    ) {
+      fence = null;
+    }
+  }
+  return mask;
+}
+
 function explicitCandidatePages(lines: string[], expectedPageCount?: number): Array<number | null> {
-  const isSeparator = (line: string) => /^\s*(?:-{3,}|\*{3,})\s*$/.test(line);
+  const fencedCodeLines = fencedCodeLineMask(lines);
+  const isSeparator = (line: string, index: number) =>
+    !fencedCodeLines[index] && /^\s*(?:-{3,}|\*{3,})\s*$/.test(line);
   const counterCandidates = lines.flatMap((line, index) => {
+    if (fencedCodeLines[index]) return [];
     const plain = line.replace(/[*_`]/g, "").trim();
     const match = plain.match(/(?:^|[^\d+\-])(\d{1,3})\s*\/\s*(\d{1,3})\s*>?\s*$/);
     if (!match) return [];
@@ -488,11 +515,12 @@ function explicitCandidatePages(lines: string[], expectedPageCount?: number): Ar
   );
   const pages: Array<number | null> = new Array(lines.length).fill(null);
   const separatorStarts = lines.flatMap((line, index) =>
-    isSeparator(line) && index + 1 < lines.length ? [index + 1] : [],
+    isSeparator(line, index) && index + 1 < lines.length ? [index + 1] : [],
   );
   const boundaryStarts = sortedUniqueRefs([0, ...separatorStarts]);
   const anchors: Array<{ index: number; page: number }> = [];
   for (let index = 0; index < lines.length; index += 1) {
+    if (fencedCodeLines[index]) continue;
     const marker = lines[index]!.match(
       /^\s*(?:<!--\s*)?(?:#{1,6}\s*)?PAGE\s*:?\s*(\d+)(?:\s*(?:\/|of)\s*\d+)?\s*(?:-->)?\s*$/i,
     );
@@ -520,7 +548,12 @@ function explicitCandidatePages(lines: string[], expectedPageCount?: number): Ar
   const footerAnchors = monotonicAnchors.every((anchor) =>
     counterPage.get(anchor.index) === anchor.page &&
     !counterStartsShortBlock(anchor.index) &&
-    (anchor.page === trustedTotal || lines.slice(anchor.index + 1, anchor.index + 3).some(isSeparator)),
+    (
+      anchor.page === trustedTotal ||
+      lines.slice(anchor.index + 1, anchor.index + 3).some((line, offset) =>
+        isSeparator(line, anchor.index + 1 + offset)
+      )
+    ),
   );
   if (monotonicAnchors.length >= 2 && footerAnchors) {
     let previous: { index: number; page: number } | undefined;
