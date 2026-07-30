@@ -17,7 +17,7 @@ function escapeHtml(value: unknown) {
 
 function label(model: string | { modelId: string; configuredModel?: { modelName?: string } }): string {
   if (typeof model === "string") return model.replace(/^(?:anthropic|google|openai)-/, "");
-  return model.configuredModel?.modelName ?? model.modelId.replace(/^(?:anthropic|google|openai)-/, "");
+  return model.modelId.replace(/^(?:anthropic|google|openai)-/, "");
 }
 
 function money(value: number) {
@@ -34,7 +34,7 @@ function humanizeTag(tag: string) {
 
 function interactiveChart(models: any[]) {
   const data = JSON.stringify(models.map((model) => ({
-    name: model.configuredModel?.modelName ?? label(model), score: model.score, cost: model.inferenceCostUsd,
+    name: label(model), score: model.score, cost: model.inferenceCostUsd,
     time: model.inferenceSeconds, tokens: model.totalOutputTokens,
     color: modelColor(model, 0),
   }))).replaceAll("<", "\\u003c");
