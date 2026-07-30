@@ -466,7 +466,7 @@ function explicitCandidatePages(lines: string[], expectedPageCount?: number): Ar
   const isSeparator = (line: string) => /^\s*(?:-{3,}|\*{3,})\s*$/.test(line);
   const counterCandidates = lines.flatMap((line, index) => {
     const plain = line.replace(/[*_`]/g, "").trim();
-    const match = plain.match(/(?:^|[^\d+])(\d{1,3})\s*\/\s*(\d{1,3})\s*>?\s*$/);
+    const match = plain.match(/(?:^|[^\d+\-])(\d{1,3})\s*\/\s*(\d{1,3})\s*>?\s*$/);
     if (!match) return [];
     const page = Number(match[1]);
     const total = Number(match[2]);
@@ -493,7 +493,9 @@ function explicitCandidatePages(lines: string[], expectedPageCount?: number): Ar
   const boundaryStarts = sortedUniqueRefs([0, ...separatorStarts]);
   const anchors: Array<{ index: number; page: number }> = [];
   for (let index = 0; index < lines.length; index += 1) {
-    const marker = lines[index]!.match(/^\s*(?:<!--\s*)?(?:#{1,6}\s*)?PAGE\s*:?\s*(\d+)\b/i);
+    const marker = lines[index]!.match(
+      /^\s*(?:<!--\s*)?(?:#{1,6}\s*)?PAGE\s*:?\s*(\d+)(?:\s*(?:\/|of)\s*\d+)?\s*(?:-->)?\s*$/i,
+    );
     const page = marker ? Number(marker[1]) : counterPage.get(index);
     if (page === undefined || page < 1 || (trustedTotal !== undefined && page > trustedTotal)) continue;
     anchors.push({ index, page });
