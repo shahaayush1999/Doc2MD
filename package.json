@@ -10,6 +10,7 @@
     "audit": "npm run validate && node --import tsx src/audit.ts",
     "render": "uv run python scripts/validate_benchmark.py --benchmark benchmark --render tmp/pdfs/benchmark --json",
     "bench": "node --env-file=.env.local --import tsx src/bench.ts",
+    "parsers:setup": "node --import tsx src/setup-parsers.ts",
     "typecheck": "tsc --noEmit"
   },
   "repository": {
@@ -27,7 +28,9 @@
     "@ai-sdk/anthropic": "^4.0.16",
     "@ai-sdk/google": "^4.0.18",
     "@ai-sdk/openai": "^4.0.16",
+    "@firecrawl/pdf-inspector": "1.11.2",
     "@google/genai": "^2.12.0",
+    "@llamaindex/llama-cloud": "^2.13.0",
     "ai": "^7.0.11",
     "zod": "^4.4.3"
   },

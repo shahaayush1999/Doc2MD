@@ -92,7 +92,7 @@ def _wafer_map(c, ox, oy, wafer, cells, color):
 def build(output_root):
     case = CaseBuilder(
         output_root=output_root,
-        case_id="P21-semiconductor-lot-disposition",
+        case_id="task-4",
         title="Lot Q8R7-22 Material Review File",
         family="semiconductor manufacturing quality",
         tags=["native-pdf", "wafer-maps", "metrology", "spc", "sem-images", "mrb", "source-precedence"],

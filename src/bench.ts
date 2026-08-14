@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { generateText, streamText, type ModelMessage } from "ai";
 import { auditBenchmark } from "./audit.js";
 import {
+  compatibleEvaluatorScoringIdentities,
   evaluatorConfiguration,
   evaluatorScoringIdentity,
   evaluatePrediction,
@@ -15,14 +16,16 @@ import {
 } from "./evaluator.js";
 import { loadBenchmarkManifest } from "./manifest.js";
 import { calculateCost, calculateUncachedCost } from "./pricing.js";
-import { createModel, defaultModelIds, models, type ModelSpec } from "./models.js";
+import { createModel, defaultModelIds, type ModelSpec } from "./models.js";
+import { candidates, isParserSpec, type CandidateSpec } from "./candidates.js";
+import { parserCacheIdentity, runParser } from "./parsers.js";
 import { renderReport } from "./report.js";
 
 const cacheRoot = "runs/cache";
 const promptPath = "benchmark/prompt.md";
 const maxOutputTokens = 60_000;
 const inferenceProtocolVersion = 2;
-const ingestionMode = "native PDF attached directly to the provider model API";
+const modelIngestionMode = "native PDF attached directly to the provider model API";
 const reportedInvalidInferenceSlots = new Set<string>();
 const execFile = promisify(execFileCallback);
 
@@ -70,14 +73,26 @@ function cacheDirectory(modelId: string, caseId: string, draw = 1) {
   return draw === 1 ? firstDraw : path.join(firstDraw, "draws", String(draw).padStart(3, "0"));
 }
 
-function configuredModel(spec: ModelSpec) {
+function configuredModel(spec: CandidateSpec) {
+  if (!isParserSpec(spec)) {
+    return {
+      id: spec.id,
+      modelName: spec.modelName,
+      provider: spec.provider,
+      reasoning: spec.reasoning ?? null,
+      location: spec.location ?? null,
+      maxOutputTokens: spec.maxOutputTokens ?? maxOutputTokens,
+    };
+  }
   return {
     id: spec.id,
     modelName: spec.modelName,
     provider: spec.provider,
-    reasoning: spec.reasoning ?? null,
-    location: spec.location ?? null,
-    maxOutputTokens: spec.maxOutputTokens ?? maxOutputTokens,
+    kind: "parser",
+    version: spec.version,
+    reasoning: null,
+    location: null,
+    maxOutputTokens: null,
   };
 }
 
@@ -128,14 +143,24 @@ async function reportCaseMetadata(cases: Array<ManifestCase & { spec: string }>)
   }));
 }
 
-async function inferenceKey(spec: ModelSpec, testCase: ManifestCase, prompt: string) {
+async function inferenceKey(spec: CandidateSpec, testCase: ManifestCase, prompt: string) {
   const pdf = await readFile(testCase.pdf);
+  if (!isParserSpec(spec)) {
+    return sha256(JSON.stringify({
+      protocolVersion: inferenceProtocolVersion,
+      ingestionMode: modelIngestionMode,
+      pdf: sha256(pdf),
+      prompt: sha256(prompt),
+      model: configuredModel(spec),
+    }));
+  }
   return sha256(JSON.stringify({
     protocolVersion: inferenceProtocolVersion,
-    ingestionMode,
+    ingestionMode: spec.ingestionMode,
     pdf: sha256(pdf),
-    prompt: sha256(prompt),
-    model: configuredModel(spec),
+    prompt: null,
+    candidate: configuredModel(spec),
+    parser: await parserCacheIdentity(spec),
   }));
 }
 
@@ -151,7 +176,8 @@ async function scoreKey(testCase: ManifestCase, prediction: string, evaluatorSem
   );
 }
 
-function inferenceTelemetryIssue(prediction: string, inference: any): string | null {
+function inferenceTelemetryIssue(spec: CandidateSpec, prediction: string, inference: any): string | null {
+  if (isParserSpec(spec)) return prediction.trim() ? null : "empty parser prediction";
   const outputTokens = inference?.usage?.outputTokens;
   const outputBytes = Buffer.byteLength(prediction, "utf8");
   if (!Number.isSafeInteger(outputTokens) || outputTokens < 0 || (outputBytes > 0 && outputTokens === 0)) {
@@ -168,7 +194,33 @@ function inferenceTelemetryIssue(prediction: string, inference: any): string | n
   return null;
 }
 
-async function loadCachedCase(modelId: string, testCase: ManifestCase, prompt: string, evaluatorSemanticHash: string, draw = 1) {
+function reportedParserCost(spec: CandidateSpec, inference: any): number | null {
+  if (!isParserSpec(spec)) return null;
+  if (Number.isFinite(inference?.costUsd)) return inference.costUsd;
+  if (spec.parser !== "reducto") return null;
+  const credits = inference?.parser?.credits;
+  const creditPriceUsd = inference?.parser?.creditPriceUsd;
+  return Number.isFinite(credits) && Number.isFinite(creditPriceUsd)
+    ? credits * creditPriceUsd
+    : null;
+}
+
+function comparisonInferenceCost(spec: CandidateSpec, inference: any) {
+  return reportedParserCost(spec, inference) ?? calculateUncachedCost(spec, inference.usage);
+}
+
+function actualInferenceCost(spec: CandidateSpec, inference: any) {
+  return reportedParserCost(spec, inference) ?? calculateCost(spec, inference.usage);
+}
+
+async function loadCachedCase(
+  modelId: string,
+  testCase: ManifestCase,
+  prompt: string,
+  evaluatorSemanticHash: string,
+  draw = 1,
+  compatibleEvaluatorSemanticHashes: string[] = [],
+) {
   const directory = cacheDirectory(modelId, testCase.id, draw);
   const [prediction, rawInference, evaluation] = await Promise.all([
     readFile(path.join(directory, "prediction.md"), "utf8").catch(() => null),
@@ -177,7 +229,8 @@ async function loadCachedCase(modelId: string, testCase: ManifestCase, prompt: s
   ]);
   let inference = rawInference;
   if (prediction === null || !inference) return null;
-  const telemetryIssue = inferenceTelemetryIssue(prediction, inference);
+  const spec = candidates[modelId]!;
+  const telemetryIssue = inferenceTelemetryIssue(spec, prediction, inference);
   if (telemetryIssue) {
     const slot = `${modelId}/${testCase.id}/draw-${draw}`;
     if (!reportedInvalidInferenceSlots.has(slot)) {
@@ -186,15 +239,20 @@ async function loadCachedCase(modelId: string, testCase: ManifestCase, prompt: s
     }
     return null;
   }
-  const expectedInferenceKey = await inferenceKey(models[modelId]!, testCase, prompt);
+  const expectedInferenceKey = await inferenceKey(spec, testCase, prompt);
   if (inference.cacheKey !== expectedInferenceKey) return null;
   const expectedScoreKey = await scoreKey(testCase, prediction, evaluatorSemanticHash);
+  const compatibleScoreKeys = await Promise.all(compatibleEvaluatorSemanticHashes.map((hash) =>
+    scoreKey(testCase, prediction, hash)
+  ));
   const validEvaluation = evaluation?.valid === true && Number.isFinite(evaluation.score);
   return {
     directory,
     prediction,
     inference,
-    evaluation: validEvaluation && evaluation.cacheKey === expectedScoreKey ? evaluation : null,
+    evaluation: validEvaluation && [expectedScoreKey, ...compatibleScoreKeys].includes(evaluation.cacheKey)
+      ? evaluation
+      : null,
     inferenceKey: expectedInferenceKey,
     scoreKey: expectedScoreKey,
   };
@@ -227,6 +285,18 @@ async function allSettledOrThrow<T>(promises: Promise<T>[], message: string) {
   return settled.map((result) => (result as PromiseFulfilledResult<T>).value);
 }
 
+async function allSettledSequentially<T>(tasks: Array<() => Promise<T>>) {
+  const results: PromiseSettledResult<T>[] = [];
+  for (const task of tasks) {
+    try {
+      results.push({ status: "fulfilled", value: await task() });
+    } catch (reason) {
+      results.push({ status: "rejected", reason });
+    }
+  }
+  return results;
+}
+
 function failedSpend(error: unknown): { inference: number; evaluator: number } {
   if (error instanceof CaseRunError) {
     return {
@@ -249,106 +319,144 @@ async function runCase(
   prompt: string,
   evaluatorSemanticHash: string,
   draw: number,
+  compatibleEvaluatorSemanticHashes: string[] = [],
 ) {
-  const spec = models[modelId]!;
+  const spec = candidates[modelId]!;
   const directory = cacheDirectory(modelId, testCase.id, draw);
   await mkdir(directory, { recursive: true });
-  let cached = await loadCachedCase(modelId, testCase, prompt, evaluatorSemanticHash, draw);
+  let cached = await loadCachedCase(
+    modelId,
+    testCase,
+    prompt,
+    evaluatorSemanticHash,
+    draw,
+    compatibleEvaluatorSemanticHashes,
+  );
   let prediction = cached?.prediction ?? null;
   let inference = cached?.inference ?? null;
   let inferenceSpent = 0;
   let evaluatorSpent = 0;
+  let inferenceRan = false;
 
   if (prediction === null || !inference) {
-    const pdf = await readFile(testCase.pdf);
-    const outputLimit = spec.maxOutputTokens ?? maxOutputTokens;
     const startedAt = new Date();
     const started = performance.now();
     const requestInferenceKey = await inferenceKey(spec, testCase, prompt);
-    const requestPromptCacheKey = promptCacheKey(requestInferenceKey);
-    const messages: ModelMessage[] = [{
-      role: "user",
-      content: [
-        { type: "text", text: prompt },
-        {
-          type: "file",
-          data: pdf,
-          mediaType: "application/pdf",
-          filename: `${testCase.id}.pdf`,
-          ...(spec.provider === "openai" && spec.modelName.startsWith("gpt-5.6-") ? {
-            providerOptions: {
-              openai: { promptCacheBreakpoint: { mode: "explicit" as const } },
-            },
-          } : {}),
-        },
-      ],
-    }];
-    const request = {
-      model: createModel(spec),
-      messages,
-      maxOutputTokens: outputLimit,
-      maxRetries: 2,
-      ...(spec.reasoning ? { reasoning: spec.reasoning } : {}),
-    };
-    const response = spec.provider === "anthropic"
-      ? await (async () => {
-        // Long document reconstructions can exceed Node's non-streaming header
-        // timeout before Anthropic returns the complete response. Streaming
-        // receives headers immediately while preserving the same final text and
-        // usage contract consumed by the benchmark.
-        const streamed = streamText({
-          ...request,
-          providerOptions: {
-            anthropic: { thinking: { type: "disabled" as const } },
-          },
-        });
-        const [text, usage, responseMetadata, finishReason] = await Promise.all([
-          streamed.text,
-          streamed.usage,
-          streamed.response,
-          streamed.finishReason,
-        ]);
-        return { text, usage, response: responseMetadata, finishReason };
-      })()
-      : await generateText(spec.provider === "openai" ? {
-        ...request,
-        providerOptions: {
-          openai: {
-            promptCacheKey: requestPromptCacheKey,
-            ...(spec.modelName.startsWith("gpt-5.6-") ? {
-              promptCacheOptions: { mode: "explicit" as const, ttl: "30m" as const },
+    let usage: any;
+    let resolvedModel: string;
+    let finishReason: string;
+    let providerCache: Record<string, unknown>;
+    let parserMetadata: Record<string, unknown> | null = null;
+    let parserCostUsd: number | null = null;
+
+    if (isParserSpec(spec)) {
+      const parsed = await runParser(spec, testCase, directory);
+      prediction = parsed.text;
+      usage = parsed.usage;
+      resolvedModel = parsed.resolvedModel;
+      finishReason = "complete";
+      parserMetadata = parsed.metadata;
+      parserCostUsd = parsed.costUsd ?? null;
+      providerCache = {
+        mode: "none",
+        key: null,
+        cacheReadTokens: usage.inputTokenDetails?.cacheReadTokens ?? 0,
+        cacheWriteTokens: 0,
+      };
+    } else {
+      const pdf = await readFile(testCase.pdf);
+      const outputLimit = spec.maxOutputTokens ?? maxOutputTokens;
+      const requestPromptCacheKey = promptCacheKey(requestInferenceKey);
+      const messages: ModelMessage[] = [{
+        role: "user",
+        content: [
+          { type: "text", text: prompt },
+          {
+            type: "file",
+            data: pdf,
+            mediaType: "application/pdf",
+            filename: `${testCase.id}.pdf`,
+            ...(spec.provider === "openai" && spec.modelName.startsWith("gpt-5.6-") ? {
+              providerOptions: {
+                openai: { promptCacheBreakpoint: { mode: "explicit" as const } },
+              },
             } : {}),
           },
-        },
-      } : request);
-    const usage = usageWithCacheWrite(spec, response.usage);
-    prediction = response.text;
-    inferenceSpent = calculateCost(spec, usage);
-    const finishedAt = new Date();
-    inference = {
-      modelId,
-      configuredModel: configuredModel(spec),
-      resolvedModel: response.response.modelId,
-      ingestionMode,
-      protocolVersion: inferenceProtocolVersion,
-      packageLockHash: await packageLockHash(),
-      pricingVersion: spec.pricingVersion,
-      startedAt: startedAt.toISOString(),
-      finishedAt: finishedAt.toISOString(),
-      timestampSource: "provider-call-clock",
-      elapsedMs: Math.round(performance.now() - started),
-      finishReason: response.finishReason,
-      usage,
-      providerCache: {
+        ],
+      }];
+      const request = {
+        model: createModel(spec),
+        messages,
+        maxOutputTokens: outputLimit,
+        maxRetries: 2,
+        ...(spec.reasoning ? { reasoning: spec.reasoning } : {}),
+      };
+      const response = spec.provider === "anthropic"
+        ? await (async () => {
+          // Long document reconstructions can exceed Node's non-streaming header
+          // timeout before Anthropic returns the complete response. Streaming
+          // receives headers immediately while preserving the same final text and
+          // usage contract consumed by the benchmark.
+          const streamed = streamText({
+            ...request,
+            providerOptions: {
+              anthropic: { thinking: { type: "disabled" as const } },
+            },
+          });
+          const [text, responseUsage, responseMetadata, responseFinishReason] = await Promise.all([
+            streamed.text,
+            streamed.usage,
+            streamed.response,
+            streamed.finishReason,
+          ]);
+          return { text, usage: responseUsage, response: responseMetadata, finishReason: responseFinishReason };
+        })()
+        : await generateText(spec.provider === "openai" ? {
+          ...request,
+          providerOptions: {
+            openai: {
+              promptCacheKey: requestPromptCacheKey,
+              ...(spec.modelName.startsWith("gpt-5.6-") ? {
+                promptCacheOptions: { mode: "explicit" as const, ttl: "30m" as const },
+              } : {}),
+            },
+          },
+        } : request);
+      usage = usageWithCacheWrite(spec, response.usage);
+      prediction = response.text;
+      resolvedModel = response.response.modelId;
+      finishReason = response.finishReason;
+      providerCache = {
         mode: spec.provider === "openai"
           ? spec.modelName.startsWith("gpt-5.6-") ? "explicit-prefix-30m" : "prompt-cache-key"
           : spec.provider === "google" ? "implicit" : "none",
         key: spec.provider === "openai" ? requestPromptCacheKey : null,
         cacheReadTokens: usage?.inputTokenDetails?.cacheReadTokens ?? 0,
         cacheWriteTokens: usage?.inputTokenDetails?.cacheWriteTokens ?? 0,
-      },
+      };
+    }
+
+    inferenceRan = true;
+    inferenceSpent = parserCostUsd ?? calculateCost(spec, usage);
+    const finishedAt = new Date();
+    inference = {
+      modelId,
+      configuredModel: configuredModel(spec),
+      resolvedModel,
+      ingestionMode: isParserSpec(spec) ? spec.ingestionMode : modelIngestionMode,
+      protocolVersion: inferenceProtocolVersion,
+      packageLockHash: await packageLockHash(),
+      pricingVersion: spec.pricingVersion,
+      startedAt: startedAt.toISOString(),
+      finishedAt: finishedAt.toISOString(),
+      timestampSource: "candidate-call-clock",
+      elapsedMs: Math.round(performance.now() - started),
+      finishReason,
+      usage,
+      providerCache,
+      parser: parserMetadata,
       costUsd: inferenceSpent,
-      uncachedCostUsd: calculateUncachedCost(spec, usage),
+      uncachedCostUsd: parserCostUsd ?? calculateUncachedCost(spec, usage),
       cacheKey: requestInferenceKey,
     };
     await Promise.all([
@@ -374,8 +482,8 @@ async function runCase(
     }
   }
 
-  const cacheStatus = inferenceSpent === 0 && evaluatorSpent === 0 ? "cached" : inferenceSpent === 0 ? "rescored" : "run";
-  const providerCache = inferenceSpent > 0
+  const cacheStatus = inferenceRan ? "run" : evaluatorSpent > 0 ? "rescored" : "cached";
+  const providerCache = inferenceRan && !isParserSpec(spec)
     ? `; provider cache ${inference.usage?.inputTokenDetails?.cacheReadTokens ?? 0}/${inference.usage?.inputTokens ?? 0} input tokens`
     : "";
   console.log(`${modelId} draw ${draw} ${testCase.id}: ${evaluation.score === null ? "INVALID" : evaluation.score.toFixed(1)} (${cacheStatus}${providerCache})`);
@@ -384,8 +492,8 @@ async function runCase(
     caseId: testCase.id,
     title: testCase.title,
     score: evaluation.score as number | null,
-    inferenceCostUsd: calculateUncachedCost(spec, inference.usage),
-    actualInferenceCostUsd: calculateCost(spec, inference.usage),
+    inferenceCostUsd: comparisonInferenceCost(spec, inference),
+    actualInferenceCostUsd: actualInferenceCost(spec, inference),
     evaluatorCostUsd: evaluation.evaluator.costUsd ?? 0,
     incrementalCostUsd: inferenceSpent + evaluatorSpent,
     incrementalInferenceCostUsd: inferenceSpent,
@@ -407,9 +515,9 @@ function sampleStddev(values: number[]) {
   return Math.sqrt(values.reduce((sum, value) => sum + (value - average) ** 2, 0) / (values.length - 1));
 }
 
-async function cachedModelIds() {
+async function cachedCandidateIds() {
   const entries = await readdir(cacheRoot, { withFileTypes: true }).catch(() => []);
-  return entries.filter((entry) => entry.isDirectory() && models[entry.name]).map((entry) => entry.name);
+  return entries.filter((entry) => entry.isDirectory() && candidates[entry.name]).map((entry) => entry.name);
 }
 
 function parseOptions(argv: string[]) {
@@ -418,8 +526,8 @@ function parseOptions(argv: string[]) {
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
     const value = argv[index + 1];
-    if (argument === "--model" && value) {
-      if (!models[value]) throw new Error(`Unknown model ${value}. Models: ${Object.keys(models).join(", ")}`);
+    if ((argument === "--model" || argument === "--candidate") && value) {
+      if (!candidates[value]) throw new Error(`Unknown candidate ${value}. Candidates: ${Object.keys(candidates).join(", ")}`);
       if (!selected.includes(value)) selected.push(value);
       index += 1;
       continue;
@@ -430,7 +538,7 @@ function parseOptions(argv: string[]) {
       index += 1;
       continue;
     }
-    throw new Error("Usage: npm run bench -- [--model MODEL_ID ...] [--runs N]");
+    throw new Error("Usage: npm run bench -- [--candidate CANDIDATE_ID ...] [--model MODEL_ID ...] [--runs N]");
   }
   return { modelIds: selected, runs };
 }
@@ -439,23 +547,31 @@ async function collectMergedResults(
   manifest: { cases: ManifestCase[] },
   prompt: string,
   evaluatorSemanticHash: string,
+  compatibleEvaluatorSemanticHashes: string[] = [],
 ) {
   const merged = [];
   const exclusions: Array<{ modelId: string; reason: string }> = [];
-  for (const modelId of await cachedModelIds()) {
-    if (!models[modelId]) continue;
+  for (const modelId of await cachedCandidateIds()) {
+    if (!candidates[modelId]) continue;
     const draws: any[] = [];
     for (let draw = 1; draw <= 20; draw += 1) {
       const cases = [];
       for (const testCase of manifest.cases) {
-        const cached = await loadCachedCase(modelId, testCase, prompt, evaluatorSemanticHash, draw);
+        const cached = await loadCachedCase(
+          modelId,
+          testCase,
+          prompt,
+          evaluatorSemanticHash,
+          draw,
+          compatibleEvaluatorSemanticHashes,
+        );
         if (!cached?.evaluation || !Number.isFinite(cached.evaluation.score)) break;
         cases.push({
           caseId: testCase.id,
           title: testCase.title,
           score: cached.evaluation.score,
-          inferenceCostUsd: calculateUncachedCost(models[modelId]!, cached.inference.usage),
-          actualInferenceCostUsd: calculateCost(models[modelId]!, cached.inference.usage),
+          inferenceCostUsd: comparisonInferenceCost(candidates[modelId]!, cached.inference),
+          actualInferenceCostUsd: actualInferenceCost(candidates[modelId]!, cached.inference),
           evaluatorCostUsd: cached.evaluation.evaluator.costUsd ?? 0,
           outputTokens: cached.inference.usage?.outputTokens ?? 0,
           inputTokens: cached.inference.usage?.inputTokens ?? 0,
@@ -493,10 +609,7 @@ async function collectMergedResults(
     }
     const resolvedModels = [...new Set(draws.flatMap((draw) => draw.cases.map((item: any) => item.resolvedModel)).filter(Boolean))];
     const resolvedEvaluators = [...new Set(draws.flatMap((draw) => draw.cases.map((item: any) => item.evaluatorResolvedModel)).filter(Boolean))];
-    if (
-      resolvedModels.length !== 1 ||
-      resolvedEvaluators.length !== 1
-    ) {
+    if (resolvedModels.length !== 1 || resolvedEvaluators.length === 0) {
       exclusions.push({
         modelId,
         reason: `Resolved identity drift: model=${resolvedModels.join(", ") || "missing"}; evaluator=${resolvedEvaluators.join(", ") || "missing"}`,
@@ -516,6 +629,7 @@ async function collectMergedResults(
         scoreStddev: sampleStddev(scores),
         inferenceCostUsd: mean(observations.map((observation) => observation.inferenceCostUsd)),
         actualInferenceCostUsd: mean(observations.map((observation) => observation.actualInferenceCostUsd)),
+        inferenceSeconds: mean(observations.map((observation) => observation.inferenceElapsedMs)) / 1_000,
       };
     });
     const inferenceCostUsd = mean(draws.map((draw) => draw.inferenceCostUsd));
@@ -523,10 +637,12 @@ async function collectMergedResults(
     const evaluatorCostUsd = mean(draws.map((draw) => draw.evaluatorCostUsd));
     merged.push({
       modelId,
-      configuredModel: configuredModel(models[modelId]!),
+      configuredModel: configuredModel(candidates[modelId]!),
       resolvedModel: resolvedModels[0],
-      evaluatorResolvedModel: resolvedEvaluators[0],
-      pricingVersion: models[modelId]!.pricingVersion,
+      evaluatorResolvedModel: resolvedEvaluators.length === 1
+        ? resolvedEvaluators[0]
+        : `mixed (${resolvedEvaluators.join(", ")})`,
+      pricingVersion: candidates[modelId]!.pricingVersion,
       drawCount: draws.length,
       score: mean(drawScores),
       scoreMin: Math.min(...drawScores),
@@ -568,7 +684,9 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
   const promptFile = await readFile(promptPath, "utf8");
   const prompt = promptFile.trimEnd();
   const evaluatorSemanticHash = sha256(JSON.stringify(evaluatorScoringIdentity()));
-  const availableCachedModelIds = (await cachedModelIds()).filter((modelId) => models[modelId]);
+  const compatibleEvaluatorSemanticHashes = compatibleEvaluatorScoringIdentities()
+    .map((identity) => sha256(JSON.stringify(identity)));
+  const availableCachedModelIds = (await cachedCandidateIds()).filter((modelId) => candidates[modelId]);
   const modelIds = requestedModelIds.length > 0
     ? requestedModelIds
     : [...new Set([...defaultModelIds, ...availableCachedModelIds])];
@@ -578,10 +696,17 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
 
   for (const modelId of modelIds) {
     console.log(`\n${modelId}: ensuring ${requestedRuns} draw slot${requestedRuns === 1 ? "" : "s"} × ${manifest.cases.length} cases`);
-    const settledCases = await Promise.allSettled(manifest.cases.map(async (testCase) => {
+    const runTestCase = async (testCase: ManifestCase) => {
       const drawNumbers = Array.from({ length: requestedRuns }, (_, index) => index + 1);
       const cachedSlots = await Promise.all(drawNumbers.map((draw) =>
-        loadCachedCase(modelId, testCase as ManifestCase, prompt, evaluatorSemanticHash, draw),
+        loadCachedCase(
+          modelId,
+          testCase as ManifestCase,
+          prompt,
+          evaluatorSemanticHash,
+          draw,
+          compatibleEvaluatorSemanticHashes,
+        ),
       ));
       if (cachedSlots.every(Boolean)) {
         return allSettledOrThrow(drawNumbers.map((draw) => runCase(
@@ -590,6 +715,7 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
           prompt,
           evaluatorSemanticHash,
           draw,
+          compatibleEvaluatorSemanticHashes,
         )), `${modelId} ${testCase.id}: one or more cached draw pipelines failed`);
       }
 
@@ -604,6 +730,7 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
           prompt,
           evaluatorSemanticHash,
           draw,
+          compatibleEvaluatorSemanticHashes,
         );
         draws.push(result);
         if (result.incrementalInferenceCostUsd > 0 && draw < requestedRuns) {
@@ -615,6 +742,7 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
                 prompt,
                 evaluatorSemanticHash,
                 draw + offset + 1,
+                compatibleEvaluatorSemanticHashes,
               ),
             ),
             `${modelId} ${testCase.id}: one or more warmed draw pipelines failed`,
@@ -623,7 +751,15 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
         }
       }
       return draws;
-    }));
+    };
+    const tasks = manifest.cases.map((testCase) => () => runTestCase(testCase as ManifestCase));
+    // CPU document pipelines contend heavily when several copies of their
+    // layout/OCR models run together. Hosted model candidates retain the
+    // existing case concurrency; local and hybrid parser pipelines run cases
+    // serially so their aggregate case time approximates suite wall time.
+    const settledCases = isParserSpec(candidates[modelId]!)
+      ? await allSettledSequentially(tasks)
+      : await Promise.allSettled(tasks.map((task) => task()));
     const cases = settledCases.flatMap((result, index) => {
       if (result.status === "fulfilled") return result.value;
       const spend = failedSpend(result.reason);
@@ -641,6 +777,7 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
     manifest as { cases: ManifestCase[] },
     prompt,
     evaluatorSemanticHash,
+    compatibleEvaluatorSemanticHashes,
   );
   const mergedModels = collected.models;
   const reportCases = await reportCaseMetadata(manifest.cases);
@@ -655,7 +792,7 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
     cases: reportCases,
     provenance: {
       inferenceProtocolVersion,
-      ingestionMode,
+      ingestionMode: "candidate-specific; see each inference.json and configured candidate",
       promptHash,
       manifestHash,
       evaluatorSemanticHash,
@@ -664,8 +801,8 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
       measurementFinishedAt: mergedModels.map((model) => model.measurementFinishedAt).filter(Boolean).sort().at(-1) ?? null,
     },
     costMethodology: {
-      comparison: "Every input token is priced at the model's uncached list rate; output uses list price.",
-      actualSpend: "Provider-reported cache reads and configured cache-write rates are applied separately.",
+      comparison: "Hosted and hybrid candidates use published production list price applied to provider-reported billable tokens or credits; free tiers and promotional credits are ignored. Local candidates have zero conversion-API cost.",
+      actualSpend: "Provider-reported cache reads and configured cache-write rates are retained for operational accounting but do not discount the normalized comparison cost.",
       comparisonField: "models[].inferenceCostUsd",
       actualSpendField: "models[].actualInferenceCostUsd",
     },
@@ -686,13 +823,13 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
     writeFile("reports/index.html", renderReport(summary), "utf8"),
   ]);
   console.table(mergedModels.map((model) => ({
-    model: model.modelId,
+    candidate: model.modelId,
     draws: model.drawCount,
     score: model.score,
     meanUncachedInferenceCostUsd: model.inferenceCostUsd,
     meanActualInferenceSpendUsd: model.actualInferenceCostUsd,
   })));
-  console.log(`Incremental model inference spend: $${incrementalInferenceSpendUsd.toFixed(6)}`);
+  console.log(`Incremental candidate conversion spend: $${incrementalInferenceSpendUsd.toFixed(6)}`);
   console.log("Report: reports/index.html");
   if (runFailures.length > 0) {
     throw new AggregateError(runFailures, `${runFailures.length} case pipeline${runFailures.length === 1 ? "" : "s"} failed; all completed work was preserved and the report was regenerated.`);

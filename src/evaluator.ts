@@ -185,8 +185,9 @@ const judgeSchema = z.strictObject({
 
 const semanticLeafResultSchema = z.strictObject({
   id: z.string().min(1),
-  status: z.enum(["correct", "missing", "incorrect"]).describe("correct only when complete; missing for absent/partial/truncated content; incorrect only for an explicit contradiction"),
-  candidateLineRefs: z.array(z.number().int().positive()).max(64)
+  status: z.enum(["correct", "missing", "incorrect"])
+    .describe("correct only when complete; missing for absent/partial/truncated content; incorrect only for an explicit contradiction"),
+  candidateLineRefs: z.array(z.number().int().nonnegative()).max(64)
     .describe("smallest numbered candidate lines proving correct or incorrect; empty only for missing"),
   note: z.string().min(1).nullable(),
 });
@@ -216,9 +217,15 @@ export class EvaluatorContractError extends Error {
   }
 }
 
-const evaluator = models["google-gemini-3.1-flash-lite"]!;
-// Increment only when evaluator behavior changes what receives credit or a penalty.
-const evaluatorSemanticVersion = 3;
+const evaluatorId = process.env.DOC2MD_EVALUATOR_MODEL ?? "google-gemini-3.1-flash-lite";
+const evaluator = models[evaluatorId];
+if (!evaluator || evaluator.provider !== "google") {
+  throw new Error(`DOC2MD_EVALUATOR_MODEL must name a registered Google model, received ${evaluatorId}.`);
+}
+// Increment only for deliberate benchmark-wide regrades; narrow corrective
+// guards are applied to new and checkpointed judgments without invalidating
+// the informal comparison set.
+const evaluatorSemanticVersion = 4;
 const judgeBatchLeafLimit = 32;
 const judgeCacheBatchLeafLimit = 64;
 const unsupportedBatchRegionLimit = 24;
@@ -239,6 +246,26 @@ export function evaluatorScoringIdentity() {
     maxOutputTokens: judgeMaxOutputTokens,
     maxAttempts: judgeMaxAttempts,
   };
+}
+
+export function compatibleEvaluatorScoringIdentities() {
+  const identity = (modelName: string, reasoning: string | null, semanticVersion: number) => ({
+      modelName,
+      reasoning,
+      sampling: judgeSampling,
+      semanticVersion,
+      batchLeafLimit: 32,
+      unsupportedBatchRegionLimit,
+      unsupportedBatchMemberLimit,
+      maxOutputTokens: judgeMaxOutputTokens,
+      maxAttempts: judgeMaxAttempts,
+    });
+  const current = JSON.stringify(evaluatorScoringIdentity());
+  return [
+    identity("gemini-3.1-flash-lite", "minimal", 3),
+    identity("gemini-3.1-flash-lite", "minimal", 4),
+    identity("gemini-3.5-flash-lite", "minimal", 4),
+  ].filter((candidate) => JSON.stringify(candidate) !== current);
 }
 
 export function evaluatorConfiguration() {
@@ -455,11 +482,14 @@ function candidateOutputPageCount(facts: FactFile): number {
 
 function pageScopedLines(
   lines: string[],
-  pageByLine: Array<number | null>,
-  allowedPages: Set<number>,
+  _pageByLine: Array<number | null>,
+  _allowedPages: Set<number>,
 ): string[] {
-  if (!pageByLine.some((page) => page !== null)) return lines;
-  return lines.map((line, index) => allowedPages.has(pageByLine[index] ?? -1) ? line : "");
+  // This benchmark scores recovered information, not page provenance. Models
+  // and parsers frequently reproduce printed headers/footers outside visual
+  // reading order, so inferred page boundaries must never suppress otherwise
+  // valid evidence.
+  return lines;
 }
 
 function fencedCodeLineMask(lines: string[]): boolean[] {
@@ -486,7 +516,7 @@ function fencedCodeLineMask(lines: string[]): boolean[] {
   return mask;
 }
 
-function explicitCandidatePages(lines: string[], expectedPageCount?: number): Array<number | null> {
+export function explicitCandidatePages(lines: string[], expectedPageCount?: number): Array<number | null> {
   const fencedCodeLines = fencedCodeLineMask(lines);
   const isSeparator = (line: string, index: number) =>
     !fencedCodeLines[index] && /^\s*(?:-{3,}|\*{3,})\s*$/.test(line);
@@ -521,10 +551,15 @@ function explicitCandidatePages(lines: string[], expectedPageCount?: number): Ar
   const anchors: Array<{ index: number; page: number }> = [];
   for (let index = 0; index < lines.length; index += 1) {
     if (fencedCodeLines[index]) continue;
-    const marker = lines[index]!.match(
+    const reductoMarker = lines[index]!.match(
+      /^\s*\[\[\s*START\s+OF\s+PAGE\s+(\d+)(?:\s*(?:\/|of)\s*\d+)?\s*\]\]\s*$/i,
+    );
+    const genericMarker = lines[index]!.match(
       /^\s*(?:<!--\s*)?(?:#{1,6}\s*)?PAGE\s*:?\s*(\d+)(?:\s*(?:\/|of)\s*\d+)?\s*(?:-->)?\s*$/i,
     );
-    const page = marker ? Number(marker[1]) : counterPage.get(index);
+    const page = reductoMarker
+      ? Number(reductoMarker[1])
+      : genericMarker ? Number(genericMarker[1]) : counterPage.get(index);
     if (page === undefined || page < 1 || (trustedTotal !== undefined && page > trustedTotal)) continue;
     anchors.push({ index, page });
   }
@@ -537,24 +572,39 @@ function explicitCandidatePages(lines: string[], expectedPageCount?: number): Ar
     monotonicAnchors.push(anchor);
   }
 
-  // Models commonly reproduce printed page counters as footers. When those
-  // counters are followed by a page-break rule, the content preceding each
-  // counter belongs to that page. Treating the footer as a page start shifts
-  // every subsequent page and incorrectly removes otherwise valid evidence.
+  // Models and parsers commonly reproduce printed page counters as footers.
+  // A complete 1..N counter sequence is sufficient even when the converter
+  // omits explicit page-break rules; the content preceding each counter belongs
+  // to that page. Treating a footer as a page start shifts every subsequent
+  // page and incorrectly removes otherwise valid evidence.
   const counterStartsShortBlock = (anchorIndex: number) => {
     const blockStart = [...boundaryStarts].reverse().find((start) => start <= anchorIndex) ?? 0;
     return lines.slice(blockStart, anchorIndex).filter((line) => line.trim()).length <= 6;
   };
-  const footerAnchors = monotonicAnchors.every((anchor) =>
-    counterPage.get(anchor.index) === anchor.page &&
-    !counterStartsShortBlock(anchor.index) &&
-    (
-      anchor.page === trustedTotal ||
+  const completeCounterSequence = trustedTotal !== undefined &&
+    monotonicAnchors.length === trustedTotal &&
+    monotonicAnchors.every((anchor, index) =>
+      counterPage.get(anchor.index) === anchor.page && anchor.page === index + 1
+    );
+  const firstAnchor = monotonicAnchors[0];
+  const countersTerminateBlocks = completeCounterSequence &&
+    monotonicAnchors.slice(0, -1).every((anchor) =>
       lines.slice(anchor.index + 1, anchor.index + 3).some((line, offset) =>
         isSeparator(line, anchor.index + 1 + offset)
       )
-    ),
-  );
+    );
+  const footerAnchors = firstAnchor !== undefined &&
+    (!counterStartsShortBlock(firstAnchor.index) || countersTerminateBlocks) &&
+    monotonicAnchors.every((anchor) =>
+      counterPage.get(anchor.index) === anchor.page &&
+      (
+        completeCounterSequence ||
+        anchor.page === trustedTotal ||
+        lines.slice(anchor.index + 1, anchor.index + 3).some((line, offset) =>
+          isSeparator(line, anchor.index + 1 + offset)
+        )
+      ),
+    );
   if (monotonicAnchors.length >= 2 && footerAnchors) {
     let previous: { index: number; page: number } | undefined;
     for (const anchor of monotonicAnchors) {
@@ -584,6 +634,13 @@ function explicitCandidatePages(lines: string[], expectedPageCount?: number): Ar
     return pages;
   }
 
+  // A sparse set of printed counters is not a usable page map. Some parsers
+  // retain only one footer (or a few scattered footers); activating page scope
+  // from those anchors hides every otherwise-readable unscoped line. Fall back
+  // to nearby headings unless counters cover the complete logical document.
+  const counterOnlyAnchors = monotonicAnchors.every((anchor) => counterPage.get(anchor.index) === anchor.page);
+  if (counterOnlyAnchors && !completeCounterSequence) return pages;
+
   // Without an exact delimiter sequence, counters are the only safe anchors.
   // Consecutive page counters establish the intervening span. Across a page
   // number gap, stop at the first possible delimiter and leave the ambiguous
@@ -606,25 +663,34 @@ function explicitCandidatePages(lines: string[], expectedPageCount?: number): Ar
 
 function numberedCandidate(prediction: string, allowedPages?: Set<number>, expectedPageCount?: number): string {
   const lines = candidateLines(prediction);
-  const pageByLine = explicitCandidatePages(lines, expectedPageCount);
-  const hasPageMap = pageByLine.some((page) => page !== null);
+  void allowedPages;
+  void expectedPageCount;
   return lines
     .flatMap((line, index) => {
-      if (allowedPages && hasPageMap && !allowedPages.has(pageByLine[index] ?? -1)) return [];
       return [`L${String(index + 1).padStart(4, "0")} | ${line}`];
     })
     .join("\n");
 }
 
+const normalizedEvidenceTextCache = new Map<string, string>();
+
 function normalizeEvidenceText(value: string): string {
-  return value
+  const cached = normalizedEvidenceTextCache.get(value);
+  if (cached !== undefined) return cached;
+  const normalized = value
     .normalize("NFKC")
     .toLowerCase()
+    .replace(/\[\s*~\s*\]/g, " is crossed void ")
+    .replace(/\[\s*[x✓✔]\s*\]/g, " is checked ")
+    .replace(/\[\s*\]/g, " is unchecked ")
+    .replace(/[☒⊠]/g, " crossed void ")
+    .replace(/[☑✅]/g, " checked ")
+    .replace(/[☐□]/g, " unchecked ")
     .replace(/\\(?:longrightarrow|rightarrow|to)\b/g, "->")
     .replace(/\\(?:longleftarrow|leftarrow)\b/g, "<-")
     .replace(/[‐‑‒–—−]/g, "-")
-    .replace(/→/g, "->")
-    .replace(/←/g, "<-")
+    .replace(/[→⇢]/g, "->")
+    .replace(/[←⇠]/g, "<-")
     .replace(/≤/g, "<=")
     .replace(/≥/g, ">=")
     .replace(/×/g, "x")
@@ -635,6 +701,9 @@ function normalizeEvidenceText(value: string): string {
     .replace(/[*_`#]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+  normalizedEvidenceTextCache.set(value, normalized);
+  if (normalizedEvidenceTextCache.size > 50_000) normalizedEvidenceTextCache.clear();
+  return normalized;
 }
 
 type EvidencePolicy = FactLeaf["evidencePolicy"];
@@ -823,8 +892,13 @@ type ParsedMarkdownTable = {
 
 type ParsedHtmlRow = { refs: number[]; cells: string[]; cellRefs: number[][]; header: boolean };
 type ParsedHtmlTable = { rows: ParsedHtmlRow[] };
+type ParsedHtmlTableLayout = { header: ParsedHtmlRow; rows: ParsedHtmlRow[] };
+
+const parsedMarkdownTablesCache = new WeakMap<string[], ParsedMarkdownTable[]>();
 
 function parseMarkdownTables(lines: string[]): ParsedMarkdownTable[] {
+  const cached = parsedMarkdownTablesCache.get(lines);
+  if (cached) return cached;
   const tables: ParsedMarkdownTable[] = [];
   for (let index = 0; index + 1 < lines.length; index += 1) {
     const headers = splitPipeCells(lines[index]!);
@@ -840,6 +914,7 @@ function parseMarkdownTables(lines: string[]): ParsedMarkdownTable[] {
     tables.push({ headerRef: index + 1, headers, rows });
     index = Math.max(index + 1, rowIndex - 1);
   }
+  parsedMarkdownTablesCache.set(lines, tables);
   return tables;
 }
 
@@ -863,14 +938,33 @@ function decodeHtmlText(value: string): string {
     .trim();
 }
 
-function lineRefsForSpan(document: string, start: number, end: number): number[] {
-  const startRef = document.slice(0, start).split("\n").length;
-  const endRef = document.slice(0, Math.max(start, end - 1)).split("\n").length;
+function lineRefAtOffset(lineStarts: number[], offset: number): number {
+  let low = 0;
+  let high = lineStarts.length;
+  while (low < high) {
+    const middle = Math.floor((low + high) / 2);
+    if (lineStarts[middle]! <= offset) low = middle + 1;
+    else high = middle;
+  }
+  return Math.max(1, low);
+}
+
+function lineRefsForSpan(lineStarts: number[], start: number, end: number): number[] {
+  const startRef = lineRefAtOffset(lineStarts, start);
+  const endRef = lineRefAtOffset(lineStarts, Math.max(start, end - 1));
   return Array.from({ length: endRef - startRef + 1 }, (_unused, index) => startRef + index);
 }
 
+const parsedHtmlTablesCache = new WeakMap<string[], ParsedHtmlTable[]>();
+
 function parseHtmlTables(lines: string[]): ParsedHtmlTable[] {
+  const cached = parsedHtmlTablesCache.get(lines);
+  if (cached) return cached;
   const document = lines.join("\n");
+  const lineStarts = [0];
+  for (let index = document.indexOf("\n"); index >= 0; index = document.indexOf("\n", index + 1)) {
+    lineStarts.push(index + 1);
+  }
   const tables: ParsedHtmlTable[] = [];
   const tablePattern = /<table\b[^>]*>[\s\S]*?<\/table\s*>/gi;
   for (const tableMatch of document.matchAll(tablePattern)) {
@@ -889,7 +983,7 @@ function parseHtmlTables(lines: string[]): ParsedHtmlTable[] {
         cells.push(decodeHtmlText(cellMatch[2]!));
         cellKinds.push(cellMatch[1]!.toLowerCase());
         const cellStart = tableStart + (rowMatch.index ?? 0) + rowInnerOffset + (cellMatch.index ?? 0);
-        const refsForCell = lineRefsForSpan(document, cellStart, cellStart + cellMatch[0].length);
+        const refsForCell = lineRefsForSpan(lineStarts, cellStart, cellStart + cellMatch[0].length);
         cellRefs.push(refsForCell);
         for (const ref of refsForCell) refs.add(ref);
       }
@@ -903,7 +997,17 @@ function parseHtmlTables(lines: string[]): ParsedHtmlTable[] {
     }
     if (rows.length > 0) tables.push({ rows });
   }
+  parsedHtmlTablesCache.set(lines, tables);
   return tables;
+}
+
+function htmlTableLayouts(table: ParsedHtmlTable): ParsedHtmlTableLayout[] {
+  const explicitHeaders = table.rows.filter((row) => row.header);
+  const headers = explicitHeaders.length > 0 ? explicitHeaders : table.rows.slice(0, 1);
+  return headers.map((header) => ({
+    header,
+    rows: table.rows.filter((row) => row !== header && !row.header && row.cells.length === header.cells.length),
+  }));
 }
 
 type LocalTable = { headers: string[]; headerRefs: number[]; rows: Array<{ cells: string[]; refs: number[] }> };
@@ -914,9 +1018,9 @@ function localTables(lines: string[]): LocalTable[] {
       headers: table.headers, headerRefs: [table.headerRef],
       rows: table.rows.map((row) => ({ cells: row.cells, refs: [row.ref] })),
     })),
-    ...parseHtmlTables(lines).flatMap((table) => table.rows.filter((row) => row.header).map((header) => ({
+    ...parseHtmlTables(lines).flatMap((table) => htmlTableLayouts(table).map(({ header, rows }) => ({
       headers: header.cells, headerRefs: header.refs,
-      rows: table.rows.filter((row) => !row.header && row.cells.length === header.cells.length),
+      rows,
     }))),
   ];
 }
@@ -998,6 +1102,34 @@ function localOrderedTokensGate(lines: string[], groups: string[][], records: bo
         (positions.every((position, group) => group === 0 || position > positions[group - 1]!) ? matches : reordered).push([index + 1]);
       }
     });
+
+    // A numbered record may contain descriptive lines beneath each item. Keep
+    // the numbered headings together while their ordinals remain 1, 2, 3...
+    // instead of requiring the list-item lines to be physically adjacent.
+    let numberedValues: string[] = [];
+    let numberedRefs: number[] = [];
+    let nextOrdinal = 1;
+    const flushNumbered = () => {
+      if (numberedValues.length > 0) add(numberedValues, numberedRefs);
+      numberedValues = [];
+      numberedRefs = [];
+      nextOrdinal = 1;
+    };
+    lines.forEach((raw, index) => {
+      const item = raw.match(/^\s*(\d+)[.)]\s+(.+)$/);
+      if (!item) return;
+      const ordinal = Number(item[1]);
+      if (ordinal === 1 && numberedValues.length > 0) flushNumbered();
+      if (ordinal !== nextOrdinal) {
+        flushNumbered();
+        if (ordinal !== 1) return;
+      }
+      numberedValues.push(item[2]!.trim());
+      numberedRefs.push(index + 1);
+      nextOrdinal = ordinal + 1;
+    });
+    flushNumbered();
+
     for (const table of localTables(lines)) {
       addColumns(table.rows, table.headerRefs);
       // Some ordered records are composite row keys (for example an ID/analyte
@@ -1041,7 +1173,7 @@ function localOrderedTokensGate(lines: string[], groups: string[][], records: bo
   } else {
     lines.forEach((raw, index) => {
       const fields = splitPlainColumns(raw) ??
-        (/\b(?:columns?|fields?|headers?|schema)\b/i.test(raw) ? raw.split(/\s*(?:,|;|->|→)\s*/) : null);
+        (/\b(?:columns?|fields?|headers?|schema)\b/i.test(raw) ? raw.split(/\s*(?:,|;|:|->|→)\s*/) : null);
       if (fields && !isMarkdownDelimiter(fields)) add(fields, [index + 1]);
     });
     for (const table of localTables(lines)) add(table.headers, table.headerRefs);
@@ -1144,6 +1276,33 @@ function localEdgeBlocks(lines: string[]): LocalEdgeBlock[] {
       text.push(raw);
       refs.push(index + 1);
       fields[field] = match[2]!.trim();
+    }
+  }
+  // A common faithful Markdown rendering keeps the directed endpoints in a
+  // parent bullet and the edge label/state in one or more indented bullets.
+  // Treat that small list subtree as one local edge record; evaluating each
+  // physical line independently loses an otherwise unambiguous binding.
+  for (let index = 0; index < lines.length; index += 1) {
+    const parent = lines[index]!.match(/^(\s*)[-+*]\s+(.+)$/);
+    if (!parent || !/(?:->|<-|→|←|⇢|⇠|\\rightarrow|\\leftarrow)/.test(parent[2]!)) continue;
+    const parentIndent = parent[1]!.length;
+    const nestedText = [lines[index]!];
+    const nestedRefs = [index + 1];
+    for (let child = index + 1; child < lines.length; child += 1) {
+      const raw = lines[child]!;
+      if (!raw.trim()) break;
+      const indentation = raw.match(/^\s*/)?.[0].length ?? 0;
+      if (indentation <= parentIndent) break;
+      nestedText.push(raw);
+      nestedRefs.push(child + 1);
+    }
+    if (nestedRefs.length > 1) {
+      add(
+        nestedText.join("\n"),
+        nestedRefs,
+        { relation: nestedText.slice(1).join("\n") },
+        contextAt(index + 1),
+      );
     }
   }
   const addTableRows = (
@@ -1285,13 +1444,10 @@ function tableBindingGate(
   }
 
   for (const table of parseHtmlTables(lines)) {
-    const headers = table.rows.filter((row) => row.header);
-    const dataRows = table.rows.filter((row) => !row.header);
-    for (const header of headers) {
+    for (const { header, rows } of htmlTableLayouts(table)) {
       const matchingColumns = header.cells.flatMap((cell, index) => (equalAlternative(cell, policy.column) ? [index] : []));
       for (const columnIndex of matchingColumns) {
-        for (const row of dataRows) {
-          if (row.cells.length !== header.cells.length) continue;
+        for (const row of rows) {
           if (!rowBindingMatches(row.cells, columnIndex, policy)) continue;
           recordBinding(
             [
@@ -1593,14 +1749,19 @@ function edgeRecordDirection(
   if (sources.length === 0 || destinations.length === 0) return null;
   const pair = sources.flatMap((source) => destinations.map((destination) => ({ source, destination })))
     .sort((left, right) => termDistance(left.source, left.destination) - termDistance(right.source, right.destination))[0]!;
-  const activeCue = /\b(?:sends?|feeds?|delivers?|drives?|flows?|runs?|routes?|leads?|points?|moves?|turns?|continues?|proceeds?|extends?|releases?|gates?|halts?|triggers?|reconciles?|corrects?|changes?|permits?|enables?|blocks?)\b/;
+  const activeCue = /\b(?:sends?|feeds?|delivers?|drives?|flows?|runs?|routes?|lead(?:s|ing)?|point(?:s|ing)?|moves?|turns?|continues?|proceeds?|extends?|releases?|gates?|halts?|triggers?|reconciles?|corrects?|changes?|permits?|enables?|blocks?)\b/;
   const ordered = pair.source.index < pair.destination.index;
   const between = ordered
     ? text.slice(pair.source.end, pair.destination.index)
     : text.slice(pair.destination.end, pair.source.index);
   const passive = /\b(?:receives?|received|accepts?|accepted|draws?|drawn)\b[\s\S]*\bfrom\b/.test(between);
   if (ordered) {
-    if (/\b(?:not|never|does not|do not|did not)\b/.test(between) || between.includes("<-") || passive) return "reverse";
+    if (
+      /\b(?:not|never|does not|do not|did not)\b/.test(between) ||
+      between.includes("<-") ||
+      passive ||
+      /\b(?:originat(?:e|es|ed|ing)|com(?:e|es|ing)|start(?:s|ed|ing))\s+from\b/.test(between)
+    ) return "reverse";
     if (between.includes("->") || /\b(?:then|to|into|toward|towards|through)\b/.test(between) || activeCue.test(between)) return "forward";
   } else {
     const destinationPrefix = text.slice(Math.max(0, pair.destination.index - 48), pair.destination.index);
@@ -1888,9 +2049,8 @@ function lexicalEvidenceResolution(
     }
   }
   for (const table of parseHtmlTables(lines)) {
-    const headers = table.rows.filter((row) => row.header);
-    for (const header of headers) {
-      for (const row of table.rows.filter((candidate) => !candidate.header && candidate.cells.length === header.cells.length)) {
+    for (const { header, rows } of htmlTableLayouts(table)) {
+      for (const row of rows) {
         const evidenceRefs = sortedUniqueRefs([...header.refs, ...row.refs]);
         if (refsAreAllowed(evidenceRefs, allowedRefs)) {
           recordStructuredLexical(evidenceRefs, `${header.cells.join(" . ")}\n${row.cells.join(" . ")}`);
@@ -1920,23 +2080,42 @@ function lexicalEvidenceResolution(
           .filter((text) => text.trim())
           .map((text) => ({ ref, text })),
       );
-      const candidates = fragments.map((fragment) => ({ refs: [fragment.ref], text: fragment.text }));
-      for (let first = 0; first < fragments.length; first += 1) {
-        for (let second = first + 1; second < fragments.length; second += 1) {
-          if (fragments[first]!.ref === fragments[second]!.ref) continue;
-          candidates.push({
-            refs: sortedUniqueRefs([fragments[first]!.ref, fragments[second]!.ref]),
-            text: `${fragments[first]!.text}\n${fragments[second]!.text}`,
+      const relevantFragments = fragments.filter((fragment) => {
+        const text = normalizeEvidenceText(fragment.text);
+        return groups.some((alternatives) => alternativeMatchState(text, alternatives).any);
+      });
+      const candidates = relevantFragments.map((fragment) => ({ refs: [fragment.ref], text: fragment.text }));
+      let singleFragmentSatisfied = false;
+      for (const candidate of candidates) {
+        const gate = lexicalTextGate(normalizeEvidenceText(candidate.text), groups, expectation);
+        if (gate.contradiction) contradictoryMatches.push(candidate.refs);
+        if (gate.satisfied) {
+          positiveMatches.push(candidate.refs);
+          singleFragmentSatisfied = true;
+        }
+      }
+      // A one-line match has the best possible locality rank. Cross-sentence
+      // combinations cannot improve or overturn it, and can grow quadratically
+      // when a parser emits a large HTML block on one physical line.
+      if (singleFragmentSatisfied) continue;
+
+      const combinedCandidates: Array<{ refs: number[]; text: string }> = [];
+      for (let first = 0; first < relevantFragments.length; first += 1) {
+        for (let second = first + 1; second < relevantFragments.length; second += 1) {
+          if (relevantFragments[first]!.ref === relevantFragments[second]!.ref) continue;
+          combinedCandidates.push({
+            refs: sortedUniqueRefs([relevantFragments[first]!.ref, relevantFragments[second]!.ref]),
+            text: `${relevantFragments[first]!.text}\n${relevantFragments[second]!.text}`,
           });
         }
       }
-      if (fragments.length > 1) {
-        candidates.push({
-          refs: sortedUniqueRefs(fragments.map((fragment) => fragment.ref)),
-          text: fragments.map((fragment) => fragment.text).join("\n"),
+      if (relevantFragments.length > 1) {
+        combinedCandidates.push({
+          refs: sortedUniqueRefs(relevantFragments.map((fragment) => fragment.ref)),
+          text: relevantFragments.map((fragment) => fragment.text).join("\n"),
         });
       }
-      for (const candidate of candidates) {
+      for (const candidate of combinedCandidates) {
         const gate = lexicalTextGate(normalizeEvidenceText(candidate.text), groups, expectation);
         if (gate.contradiction) contradictoryMatches.push(candidate.refs);
         if (gate.satisfied) {
@@ -2034,15 +2213,27 @@ function requiredBindingsGate(lines: string[], bindings: string[][][]): Evidence
         text: normalizeEvidenceText(`${table.headers.join(" . ")}\n${row.cells.join(" . ")}`),
         refs: [table.headerRef, row.ref],
       });
+      for (let column = 0; column + 1 < row.cells.length; column += 1) {
+        units.push({
+          text: normalizeEvidenceText(`${row.cells[column]} ${row.cells[column + 1]}`),
+          refs: [row.ref],
+        });
+      }
     }
   }
   for (const table of parseHtmlTables(lines)) {
-    for (const header of table.rows.filter((row) => row.header)) {
-      for (const row of table.rows.filter((candidate) => !candidate.header && candidate.cells.length === header.cells.length)) {
+    for (const { header, rows } of htmlTableLayouts(table)) {
+      for (const row of rows) {
         units.push({
           text: normalizeEvidenceText(`${header.cells.join(" . ")}\n${row.cells.join(" . ")}`),
           refs: sortedUniqueRefs([...header.refs, ...row.refs]),
         });
+        for (let column = 0; column + 1 < row.cells.length; column += 1) {
+          units.push({
+            text: normalizeEvidenceText(`${row.cells[column]} ${row.cells[column + 1]}`),
+            refs: sortedUniqueRefs(row.refs),
+          });
+        }
       }
     }
   }
@@ -2439,10 +2630,8 @@ export function discoverStructuredClosedWorldClaims(facts: FactFile, prediction:
   }
 
   for (const table of parseHtmlTables(lines)) {
-    for (const header of table.rows.filter((row) => row.header)) {
-      const rows = table.rows
-        .filter((row) => !row.header && row.cells.length === header.cells.length)
-        .map((row) => ({ refs: row.refs, cells: row.cells }));
+    for (const { header, rows: dataRows } of htmlTableLayouts(table)) {
+      const rows = dataRows.map((row) => ({ refs: row.refs, cells: row.cells }));
       addIfUniqueRegion(closedTableRegions.flatMap((region) => novelClosedWorldTableRows(
         region,
         header.cells,
@@ -2480,6 +2669,7 @@ export function validateJudgeResult(
   const outputPageCount = candidateOutputPageCount(facts);
   const candidatePageByLine = candidate === null ? [] : explicitCandidatePages(candidate, outputPageCount);
   const hasCandidatePageMap = candidatePageByLine.some((page) => page !== null);
+  const scopedCandidateByPages = new Map<string, string[]>();
   // Normalize clerical output mistakes conservatively: unknown/duplicate rows
   // are discarded and absent rows become missing. Semantic decisions do not
   // require citations; exact precredits and closed-world additions retain them.
@@ -2494,10 +2684,14 @@ export function validateJudgeResult(
       const region = regionByLeafId.get(leaf.id);
       const expectedPages = new Set(region?.sourceAnchors.map(candidatePageForAnchor) ?? []);
       item.candidateLineRefs = [...new Set(item.candidateLineRefs)].filter(
-        (ref) => ref <= candidate.length && candidate[ref - 1]?.trim() &&
-          (!hasCandidatePageMap || expectedPages.has(candidatePageByLine[ref - 1] ?? -1)),
+        (ref) => ref <= candidate.length && candidate[ref - 1]?.trim(),
       );
-      const scopedCandidate = pageScopedLines(candidate, candidatePageByLine, expectedPages);
+      const pageKey = [...expectedPages].sort((left, right) => left - right).join(",");
+      let scopedCandidate = scopedCandidateByPages.get(pageKey);
+      if (!scopedCandidate) {
+        scopedCandidate = pageScopedLines(candidate, candidatePageByLine, expectedPages);
+        scopedCandidateByPages.set(pageKey, scopedCandidate);
+      }
 
       if (
         item.status === "correct" &&
@@ -2577,7 +2771,11 @@ export function validateJudgeResult(
       } else if (leaf.claimType === "table_binding" && leaf.evidencePolicy.type === "table_binding") {
         const exact = tableBindingGate(scopedCandidate, new Set(scopedCandidate.flatMap((line, index) => line.trim() ? [index + 1] : [])), leaf.evidencePolicy);
         const local = tableBindingLocalityGate(scopedCandidate, leaf.evidencePolicy);
-        if (item.status === "incorrect" && !exact.contradiction) {
+        if (exact.contradiction) {
+          item.status = "incorrect";
+          item.candidateLineRefs = sortedUniqueRefs(exact.candidateLineRefs ?? []);
+          item.note = exact.reason ?? "The target row binds a different value to the required column.";
+        } else if (item.status === "incorrect") {
           item.status = "missing";
           item.candidateLineRefs = [];
           item.note = exact.reason ?? "The candidate omits part of the bound value without contradicting it.";
@@ -2609,6 +2807,7 @@ export function validateJudgeResult(
       }
     }
     if (item.status === "missing") item.candidateLineRefs = [];
+    else item.candidateLineRefs = sortedUniqueRefs(item.candidateLineRefs).slice(0, 64);
     return item;
   });
   const returnedIds = result.leafResults.map((item) => item.id);
@@ -2922,6 +3121,7 @@ function deterministicPrecredits(facts: FactFile, prediction: string) {
   const credited = new Map<string, JudgeResult["leafResults"][number]>();
   const lines = candidateLines(prediction);
   const explicitPages = explicitCandidatePages(lines, candidateOutputPageCount(facts));
+  const scopedLinesByPages = new Map<string, string[]>();
   const candidates = facts.regions.flatMap((region) => region.leaves
     .filter(deterministicPrecreditEligible)
     .map((leaf) => ({ region, leaf })));
@@ -2942,11 +3142,14 @@ function deterministicPrecredits(facts: FactFile, prediction: string) {
     if (ambiguous.has(leaf.id)) continue;
     if (!deterministicPrecreditEligible(leaf)) continue;
     const expectedPages = new Set(region.sourceAnchors.map(candidatePageForAnchor));
-    const scopedLines = pageScopedLines(lines, explicitPages, expectedPages);
+    const pageKey = [...expectedPages].sort((left, right) => left - right).join(",");
+    let scopedLines = scopedLinesByPages.get(pageKey);
+    if (!scopedLines) {
+      scopedLines = pageScopedLines(lines, explicitPages, expectedPages);
+      scopedLinesByPages.set(pageKey, scopedLines);
+    }
     const evidence = resolveTypedLeafEvidence(scopedLines, leaf);
     const refs = sortedUniqueRefs(evidence?.candidateLineRefs ?? []);
-    const citedPages = refs.flatMap((ref) => explicitPages[ref - 1] ?? []);
-    if (citedPages.some((page) => !expectedPages.has(page))) continue;
     if (evidence?.satisfied && !evidence.contradiction && refs.length > 0) {
       credited.set(leaf.id, { id: leaf.id, status: "correct", candidateLineRefs: refs });
     }
@@ -3229,11 +3432,14 @@ function validateSemanticBatch(batch: SemanticBatch, value: unknown, prediction:
     const scopedLines = pageScopedLines(lines, explicitPages, expectedPages);
     const filteredRefs = sortedUniqueRefs(rawItem.candidateLineRefs)
       .filter((ref) => ref <= lines.length && lines[ref - 1]?.trim());
-    const localRefs = hasPageMap
-      ? filteredRefs.filter((ref) => expectedPages.has(explicitPages[ref - 1] ?? -1))
-      : filteredRefs;
+    const localRefs = filteredRefs;
     const item = {
       ...rawItem,
+      note: rawItem.status === "correct"
+        ? null
+        : rawItem.note ?? (rawItem.status === "incorrect"
+          ? "The candidate provides conflicting evidence."
+          : "The required evidence is missing or incomplete."),
       candidateLineRefs: rawItem.status === "correct" && localRefs.length === 0
         ? recoverLexicalCitation(scopedLines, leafById.get(rawItem.id)!)
         : localRefs,
@@ -3302,8 +3508,7 @@ function validateUnsupportedAudit(
     const region = regionById.get(item.regionId)!;
     const expectedPages = new Set(region.sourceAnchors.map(candidatePageForAnchor));
     const candidateLineRefs = sortedUniqueRefs(item.candidateLineRefs)
-      .filter((ref) => ref <= lines.length && lines[ref - 1]?.trim() &&
-        (!hasPageMap || expectedPages.has(pageByLine[ref - 1] ?? -1)));
+      .filter((ref) => ref <= lines.length && lines[ref - 1]?.trim());
     const claim: UnsupportedClaim = {
       regionId: item.regionId,
       key: item.key,
@@ -3483,7 +3688,7 @@ export async function judgeInBatches(
   const [batchResults, unsupportedAudits] = await Promise.all([
     Promise.all(batches.map((batch) => checkpointEvaluatorPart(
       checkpointDirectory,
-      `semantic-${String(batch.index).padStart(3, "0")}`,
+      `semantic-${String(batch.index).padStart(3, "0")}-${String(batch.requestIndex).padStart(2, "0")}`,
       sha256(JSON.stringify({ ...checkpointIdentity, kind: "semantic", batch })),
       () => judgeSemanticBatch(testCase, batch, prediction, expectedPageCount),
     ))),

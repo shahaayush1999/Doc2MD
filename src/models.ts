@@ -7,7 +7,7 @@ export type ModelSpec = {
   id: string;
   modelName: string;
   provider: "anthropic" | "google" | "openai";
-  reasoning?: "none" | "minimal";
+  reasoning?: "none" | "minimal" | "low";
   location?: string;
   maxOutputTokens?: number;
   pricingVersion: string;
@@ -188,12 +188,22 @@ export const models: Record<string, ModelSpec> = {
     cachedInputPerMillion: 0.15,
     outputPerMillion: 7.5,
   },
+  "google-gemini-3.7-flash": {
+    id: "google-gemini-3.7-flash",
+    modelName: "gemini-3.7-flash",
+    provider: "google",
+    reasoning: "low",
+    pricingVersion: "2026-08-13",
+    inputPerMillion: 0.75,
+    cachedInputPerMillion: 0.075,
+    outputPerMillion: 3.75,
+  },
   "openai-gpt-5.6-luna": {
     id: "openai-gpt-5.6-luna",
     modelName: "gpt-5.6-luna",
     provider: "openai",
     reasoning: "none",
-    pricingVersion: "2026-07-30",
+    pricingVersion: "2026-08-03",
     inputPerMillion: 0.2,
     cachedInputPerMillion: 0.02,
     cacheWritePerMillion: 0.25,
@@ -204,7 +214,7 @@ export const models: Record<string, ModelSpec> = {
     modelName: "gpt-5.6-terra",
     provider: "openai",
     reasoning: "none",
-    pricingVersion: "2026-07-30",
+    pricingVersion: "2026-08-03",
     inputPerMillion: 2,
     cachedInputPerMillion: 0.2,
     cacheWritePerMillion: 2.5,

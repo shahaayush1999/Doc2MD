@@ -5,6 +5,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -30,7 +31,7 @@ from .common import (
 )
 
 
-CASE_ID = "P23-native-text-layer-recovery"
+CASE_ID = "task-5"
 TITLE = "Northstar Cold Chain Supplier Cutover Authorization"
 FAMILY = "office export recovery"
 TAGS = [
@@ -832,7 +833,8 @@ def _dependency_graph(path: Path) -> None:
 
     # Opaque imported object groups sit above the original arrow stack. The
     # raster keeps endpoint geometry, arrowheads, and connector IDs; detached
-    # native E##/relation fragments on physical pages 5-6 supply the labels.
+    # native E##/relation fragments on the same reconstructed page supply the
+    # labels.
     overlays = [
         ((535, 180, 845, 285), "PHOENIX RELEASE\nGATES", (232, 226, 214), (96, 74, 51)),
         ((1030, 345, 1315, 465), "EXCEPTION\nOVERRIDES", (244, 220, 215), (148, 57, 49)),
@@ -1294,9 +1296,9 @@ def _build_docx(path: Path, stamp_path: Path, graph_path: Path, authorization_pa
     # fragments, and the exception register is a decomposed text-box grid.
     _page_title(document, 4, "Dependency graph and exception register", "REV E / CONTROLLED")
     _label(document, "Directed release logic - Rev E control paths")
-    # Writer cannot keep the oversized Draw canvas and its detached register
-    # objects on the logical slide.  The title remains on physical page 4, the
-    # graph spills to page 5, and the register spills again to page 6.
+    # Writer initially spills the imported Draw canvas and detached register
+    # objects while exporting. The normalization step below recombines those
+    # layers onto one physical page without repairing their internal damage.
     document.add_picture(str(graph_path), width=Inches(9.85))
     document.paragraphs[-1].paragraph_format.space_after = Pt(0)
     _add_edge_label_fragments(document)
@@ -1333,8 +1335,8 @@ def _build_docx(path: Path, stamp_path: Path, graph_path: Path, authorization_pa
 
     final_section = document.add_section(WD_SECTION.NEW_PAGE)
     _configure_section(final_section)
-    # Logical page 5 intentionally remains a clean 220-DPI executed scan on
-    # physical page 7. It controls the damaged lower-priority imported pages.
+    # Logical page 5 intentionally remains a clean 220-DPI executed scan. It
+    # controls the damaged lower-priority imported pages.
     _page_title(document, 5, "Executed selective authorization", "EFFECTIVE")
     document.add_picture(str(authorization_path), width=Inches(7.28))
     document.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -1345,7 +1347,7 @@ def _build_docx(path: Path, stamp_path: Path, graph_path: Path, authorization_pa
 def _export_with_libreoffice(docx_path: Path, pdf_path: Path, work_dir: Path) -> None:
     soffice = shutil.which("soffice") or "/opt/homebrew/bin/soffice"
     if not Path(soffice).exists():
-        raise RuntimeError("LibreOffice soffice is required to generate P23")
+        raise RuntimeError("LibreOffice soffice is required to generate Task 5")
     export_dir = work_dir / "export"
     profile_dir = work_dir / "lo-profile"
     export_dir.mkdir(parents=True, exist_ok=True)
@@ -1383,8 +1385,18 @@ def _export_with_libreoffice(docx_path: Path, pdf_path: Path, work_dir: Path) ->
     reader = PdfReader(str(converted))
     if len(reader.pages) != 7:
         raise ValueError(f"{CASE_ID}: LibreOffice generated {len(reader.pages)} pages; expected 7")
+
+    # LibreOffice splits logical page 4 into a nearly empty title page, the
+    # graph layer, and the exception-register layer. Keep the graph page as the
+    # base and overlay the register page in its already complementary lower
+    # position. Both raster and native PDF objects are preserved; only the
+    # accidental physical pagination is removed.
+    page_four = deepcopy(reader.pages[4])
+    page_four.merge_page(reader.pages[5], over=True)
+    logical_pages = [reader.pages[0], reader.pages[1], reader.pages[2], page_four, reader.pages[6]]
+
     writer = PdfWriter()
-    for page in reader.pages:
+    for page in logical_pages:
         writer.add_page(page)
     writer.add_metadata(
         {
@@ -1400,7 +1412,7 @@ def _export_with_libreoffice(docx_path: Path, pdf_path: Path, work_dir: Path) ->
 
     qpdf = shutil.which("qpdf")
     if not qpdf:
-        raise RuntimeError("qpdf is required to normalize P23 deterministically")
+        raise RuntimeError("qpdf is required to normalize Task 5 deterministically")
     subprocess.run(
         [qpdf, "--deterministic-id", "--object-streams=generate", str(normalized), str(pdf_path)],
         check=True,
@@ -1414,17 +1426,14 @@ GOLD_SECTIONS = {
     2: "2. Grouped cutover workplan",
     3: "3. Submitted-to-approved commercial reconciliation",
     4: "4. Dependency graph and exception register",
-    5: "4. Dependency graph and exception register",
-    6: "4. Dependency graph and exception register",
-    7: "5. Executed selective authorization",
+    5: "5. Executed selective authorization",
 }
 
 
 def _source_anchor(page: int, label: str, layer: str) -> dict:
-    document_page = 4 if page in {4, 5, 6} else 5 if page == 7 else page
     return {
         "page": page,
-        "documentPage": document_page,
+        "documentPage": page,
         "layer": layer,
         "sectionPath": [TITLE, GOLD_SECTIONS[page], label],
     }
@@ -1716,10 +1725,8 @@ def _regions() -> list[dict]:
                 for index, (source, destination, relation) in enumerate(GRAPH_EDGES[:7], start=1)
             ],
             source_anchors=[
-                _source_anchor(4, "Orphaned logical-page title", "native_layer_recovery"),
-                _source_anchor(5, "Displaced directed graph objects", "raster"),
-                _source_anchor(5, "Detached native connector-label fragments A", "native_layer_recovery"),
-                _source_anchor(6, "Detached native connector-label fragments B", "native_layer_recovery"),
+                _source_anchor(4, "Displaced directed graph objects", "raster"),
+                _source_anchor(4, "Detached native connector-label fragments", "native_layer_recovery"),
             ],
             modality="mixed",
             primary_axis="mixed_modality_fusion",
@@ -1745,10 +1752,8 @@ def _regions() -> list[dict]:
                 for index, (source, destination, relation) in enumerate(GRAPH_EDGES[7:], start=8)
             ],
             source_anchors=[
-                _source_anchor(4, "Orphaned logical-page title", "native_layer_recovery"),
-                _source_anchor(5, "Displaced directed graph objects", "raster"),
-                _source_anchor(5, "Detached native connector-label fragments A", "native_layer_recovery"),
-                _source_anchor(6, "Detached native connector-label fragments B", "native_layer_recovery"),
+                _source_anchor(4, "Displaced directed graph objects", "raster"),
+                _source_anchor(4, "Detached native connector-label fragments", "native_layer_recovery"),
             ],
             modality="mixed",
             primary_axis="mixed_modality_fusion",
@@ -1774,7 +1779,7 @@ def _regions() -> list[dict]:
                 },
                 scored_bindings=exception_bindings,
             ),
-            page=6,
+            page=4,
             layer="native_layer_recovery",
             modality="native_layer_recovery",
             primary_axis="native_layer_recovery",
@@ -1793,7 +1798,7 @@ def _regions() -> list[dict]:
                 form_state_leaf("p05.decision.credentials-release", "Kestrel credential decommission - RELEASE is unchecked.", ["Kestrel credential decommission - RELEASE", "credential decommission RELEASE"], "unchecked"),
                 form_state_leaf("p05.decision.credentials-hold", "Kestrel credential decommission - HOLD until C-3 is checked.", "Kestrel credential decommission - HOLD until C-3", "checked", harm=2),
             ],
-            page=7,
+            page=5,
             layer="raster",
             modality="raster",
             primary_axis="source_precedence",
@@ -1810,7 +1815,7 @@ def _regions() -> list[dict]:
                 form_state_leaf("p05.inventory.tus", "Tucson TZ-219 - 26 eligible pallets is checked.", "Tucson TZ-219 - 26 eligible pallets", "checked"),
                 form_state_leaf("p05.inventory.qa61", "QA-61 quarantine - six cases is unchecked and excluded.", "QA-61 quarantine - six cases", "unchecked", harm=2),
             ],
-            page=7,
+            page=5,
             layer="raster",
             modality="raster",
             primary_axis="image_description",
@@ -1828,7 +1833,7 @@ def _regions() -> list[dict]:
                 form_state_leaf("p05.gates.c3", "C-3 EX-07 signed plus REC-2048 zero unresolved before T-06 is checked.", "C-3 EX-07 signed + REC-2048 zero unresolved before T-06", "checked", harm=2),
                 form_state_leaf("p05.gates.c4", "C-4 invoke RB-12 at the selected continuous deviation is checked.", "C-4 Invoke RB-12 at selected continuous deviation", "checked"),
             ],
-            page=7,
+            page=5,
             layer="raster",
             modality="raster",
             primary_axis="image_description",
@@ -1845,7 +1850,7 @@ def _regions() -> list[dict]:
                 form_state_leaf("p05.threshold.current", ">1.0 C / 10 continuous min is checked.", ">1.0 C / 10 continuous min", "checked", harm=2),
                 form_state_leaf("p05.threshold.high", ">1.5 C / 15 min is unchecked.", ">1.5 C / 15 min", "unchecked"),
             ],
-            page=7,
+            page=5,
             layer="raster",
             modality="raster",
             primary_axis="image_description",
@@ -1861,7 +1866,7 @@ def _regions() -> list[dict]:
                 form_state_leaf("p05.correction.old", "Cutover start 14 Jul 2026 21:30 MST is crossed out.", ["Cutover start 14 Jul 2026 21:30 MST", "14 Jul 2026 21:30 MST"], "crossed", harm=2),
                 visual_leaf("p05.correction.current", "Avery Kim corrected the cutover start to 14 Jul 2026 at 22:00 MST and initialed AK on 10 Jul at 09:18.", [["corrected"], ["14 Jul 2026", "14 JUL 2026"], ["22:00 MST"], ["AK"], ["10 Jul", "10 JUL"], ["09:18"]], harm=2),
             ],
-            page=7,
+            page=5,
             layer="raster",
             modality="raster",
             primary_axis="image_description",
@@ -1879,7 +1884,7 @@ def _regions() -> list[dict]:
                 visual_leaf("p05.signatures.quality", "Dara Nwosu approved as quality on 10 Jul 2026 at 09:26 MST with QA-61 excluded.", [["Dara Nwosu"], ["quality"], ["approved"], ["10 Jul 2026"], ["09:26 MST"], ["QA-61 excluded"]], harm=2),
                 visual_leaf("p05.signatures.effective", "The effective record time is 10 Jul 2026 at 09:30 MST.", [["effective record"], ["10 Jul 2026"], ["09:30 MST"]]),
             ],
-            page=7,
+            page=5,
             layer="raster",
             modality="raster",
             primary_axis="image_description",
@@ -1982,9 +1987,14 @@ def build(output_root):
     )
     (case_dir / "spec.md").write_text(
         f"# {TITLE}\n\n"
-        "Source modality: five logical presentation pages exported through LibreOffice Writer as a seven-physical-page mixed native/raster PDF. Logical page 4 catastrophically spills: its title remains on physical page 4, the Draw graph lands on physical page 5, and the detached exception register lands on physical page 6. The clean 220-DPI executed form still prints logical 5/5 but appears on physical page 7.\n\n"
+        "Report title: Broken-layout and native-layer recovery\n\n"
+        "Report category: malformed export recovery and reading order\n\n"
+        "Report summary: Measures whether a model reconstructs logical reading order after font substitution, overlapping boxes, detached labels, shuffled PDF objects, and mixed native and raster evidence.\n\n"
+        "Modality profile: a 5-page malformed office export; native text, raster evidence, and object coordinates each supply incomplete pieces\n\n"
+        "Report capabilities: native-layer recovery, malformed layout, reading order, mixed-modality fusion, detached labels, overlapping text, source precedence\n\n"
+        "Source modality: five logical presentation pages exported through LibreOffice Writer as a five-page mixed native/raster PDF. Page 4 contains the damaged Draw graph, detached native connector labels, and exception register on one landscape page. The clean 220-DPI executed form remains logical and physical page 5.\n\n"
         f"Family: `{FAMILY}`\n\n"
-        "Purpose: recover the intended logical packet after a realistic Slides/PowerPoint-style office round trip substitutes missing condensed fonts, inflates runs, decomposes tables into independently positioned cells, detaches headers, changes object order, overlaps native text, breaks logical pagination, and collides graphic groups with register content across several pages. The native PDF object stream is intentionally shuffled rather than an intact row-wise table export; visible coordinates and row IDs preserve the bindings. On the dependency spread, native connector-ID/label fragments split across physical pages 5-6 must be joined to visible raster arrow endpoints and direction on physical page 5, while the associated exception register has also spilled to physical page 6, so neither modality nor page is a complete answer key. Physical page 7 remains the clean executed source of truth.\n\n"
+        "Purpose: recover the intended logical packet after a realistic Slides/PowerPoint-style office round trip substitutes missing condensed fonts, inflates runs, decomposes tables into independently positioned cells, detaches headers, changes object order, and overlaps native text. The native PDF object stream is intentionally shuffled rather than an intact row-wise table export; visible coordinates and row IDs preserve the bindings. On page 4, native connector-ID/label fragments must be joined to visible raster arrow endpoints and direction, while the damaged exception register preserves its bindings through coordinates and row IDs. Physical page 5 remains the clean executed source of truth.\n\n"
         "Every scored fact is directly present in a visible or native PDF object. No answer-key-only value, hidden text, arithmetic inference, tiny-font needle, blur, or arbitrary image degradation is used. The gold document reconstructs bindings, reading order, directed edges, superseded/current values, and executed states from those objects.\n\n"
         "The source PDF contains the office export's own text and image objects. Container normalization changes metadata and serialization only; it does not add, hide, or replace page content.\n\n"
         "Tags: "
@@ -2000,7 +2010,7 @@ def build(output_root):
         "title": TITLE,
         "family": FAMILY,
         "tags": TAGS,
-        "pages": 7,
+        "pages": 5,
         "pdf": f"{base}/source.pdf",
         "gold": f"{base}/gold.md",
         "spec": f"{base}/spec.md",

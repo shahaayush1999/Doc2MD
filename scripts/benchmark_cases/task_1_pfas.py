@@ -421,7 +421,7 @@ def build(output_root):
     ]
     case = CaseBuilder(
         output_root=output_root,
-        case_id="P12-pfas-method-validation",
+        case_id="task-1",
         title="PFAS Method Validation and Batch Release Packet",
         family="environmental analytical laboratory",
         tags=[

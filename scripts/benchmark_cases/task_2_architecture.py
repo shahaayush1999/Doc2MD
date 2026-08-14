@@ -385,7 +385,7 @@ def _field_photo(kind: str) -> Image.Image:
 def build(output_root: Path):
     case = CaseBuilder(
         output_root=output_root,
-        case_id="P15-architecture-floorplan-diagrams",
+        case_id="task-2",
         title="Suite 214 Laboratory Coordination Set",
         family="architectural and building systems",
         tags=[

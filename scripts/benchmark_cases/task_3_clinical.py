@@ -368,7 +368,7 @@ def _source_anchor(case: CaseBuilder, page: int, layer: str) -> dict[str, object
 def build(output_root):
     case = CaseBuilder(
         output_root=output_root,
-        case_id="P17-clinical-trial-site-monitoring",
+        case_id="task-3",
         title="HTX-204 Site 014 Monitoring Source Packet",
         family="regulated clinical site monitoring",
         tags=[

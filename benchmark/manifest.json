@@ -8,10 +8,10 @@
   "version": "1.0.0",
   "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
   "caseCount": 5,
-  "pageCount": 86,
+  "pageCount": 84,
   "cases": [
     {
-      "id": "P12-pfas-method-validation",
+      "id": "task-1",
       "title": "PFAS Method Validation and Batch Release Packet",
       "family": "environmental analytical laboratory",
       "tags": [
@@ -24,13 +24,13 @@
         "source-precedence"
       ],
       "pages": 12,
-      "pdf": "benchmark/cases/P12-pfas-method-validation/source.pdf",
-      "gold": "benchmark/cases/P12-pfas-method-validation/gold.md",
-      "spec": "benchmark/cases/P12-pfas-method-validation/spec.md",
-      "facts": "benchmark/cases/P12-pfas-method-validation/facts.json"
+      "pdf": "benchmark/cases/task-1/source.pdf",
+      "gold": "benchmark/cases/task-1/gold.md",
+      "spec": "benchmark/cases/task-1/spec.md",
+      "facts": "benchmark/cases/task-1/facts.json"
     },
     {
-      "id": "P15-architecture-floorplan-diagrams",
+      "id": "task-2",
       "title": "Suite 214 Laboratory Coordination Set",
       "family": "architectural and building systems",
       "tags": [
@@ -45,13 +45,13 @@
         "source-precedence"
       ],
       "pages": 10,
-      "pdf": "benchmark/cases/P15-architecture-floorplan-diagrams/source.pdf",
-      "gold": "benchmark/cases/P15-architecture-floorplan-diagrams/gold.md",
-      "spec": "benchmark/cases/P15-architecture-floorplan-diagrams/spec.md",
-      "facts": "benchmark/cases/P15-architecture-floorplan-diagrams/facts.json"
+      "pdf": "benchmark/cases/task-2/source.pdf",
+      "gold": "benchmark/cases/task-2/gold.md",
+      "spec": "benchmark/cases/task-2/spec.md",
+      "facts": "benchmark/cases/task-2/facts.json"
     },
     {
-      "id": "P17-clinical-trial-site-monitoring",
+      "id": "task-3",
       "title": "HTX-204 Site 014 Monitoring Source Packet",
       "family": "regulated clinical site monitoring",
       "tags": [
@@ -66,13 +66,13 @@
         "tail-obligations"
       ],
       "pages": 48,
-      "pdf": "benchmark/cases/P17-clinical-trial-site-monitoring/source.pdf",
-      "gold": "benchmark/cases/P17-clinical-trial-site-monitoring/gold.md",
-      "spec": "benchmark/cases/P17-clinical-trial-site-monitoring/spec.md",
-      "facts": "benchmark/cases/P17-clinical-trial-site-monitoring/facts.json"
+      "pdf": "benchmark/cases/task-3/source.pdf",
+      "gold": "benchmark/cases/task-3/gold.md",
+      "spec": "benchmark/cases/task-3/spec.md",
+      "facts": "benchmark/cases/task-3/facts.json"
     },
     {
-      "id": "P21-semiconductor-lot-disposition",
+      "id": "task-4",
       "title": "Lot Q8R7-22 Material Review File",
       "family": "semiconductor manufacturing quality",
       "tags": [
@@ -85,13 +85,13 @@
         "source-precedence"
       ],
       "pages": 9,
-      "pdf": "benchmark/cases/P21-semiconductor-lot-disposition/source.pdf",
-      "gold": "benchmark/cases/P21-semiconductor-lot-disposition/gold.md",
-      "spec": "benchmark/cases/P21-semiconductor-lot-disposition/spec.md",
-      "facts": "benchmark/cases/P21-semiconductor-lot-disposition/facts.json"
+      "pdf": "benchmark/cases/task-4/source.pdf",
+      "gold": "benchmark/cases/task-4/gold.md",
+      "spec": "benchmark/cases/task-4/spec.md",
+      "facts": "benchmark/cases/task-4/facts.json"
     },
     {
-      "id": "P23-native-text-layer-recovery",
+      "id": "task-5",
       "title": "Northstar Cold Chain Supplier Cutover Authorization",
       "family": "office export recovery",
       "tags": [
@@ -110,11 +110,11 @@
         "source-precedence",
         "reading-order"
       ],
-      "pages": 7,
-      "pdf": "benchmark/cases/P23-native-text-layer-recovery/source.pdf",
-      "gold": "benchmark/cases/P23-native-text-layer-recovery/gold.md",
-      "spec": "benchmark/cases/P23-native-text-layer-recovery/spec.md",
-      "facts": "benchmark/cases/P23-native-text-layer-recovery/facts.json"
+      "pages": 5,
+      "pdf": "benchmark/cases/task-5/source.pdf",
+      "gold": "benchmark/cases/task-5/gold.md",
+      "spec": "benchmark/cases/task-5/spec.md",
+      "facts": "benchmark/cases/task-5/facts.json"
     }
   ]
 }

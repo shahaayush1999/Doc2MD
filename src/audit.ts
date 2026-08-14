@@ -2,8 +2,10 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import {
   discoverStructuredClosedWorldClaims,
+  explicitCandidatePages,
   parseFactFile,
   resolveLeafEvidence,
+  validateJudgeResult,
   type FactLeaf,
   type FactRegion,
 } from "./evaluator.js";
@@ -173,6 +175,38 @@ export async function auditBenchmark() {
     }),
     "satisfied",
   );
+  requireGate(
+    "nested-bullet directed edge",
+    "### Directed links\n- **NODE-A** → **NODE-B**\n  - Tagged trunk: `data`\n- **NODE-B** → **NODE-C**\n  - Tagged trunk: `control`",
+    fixture("NODE-A sends data to NODE-B.", "directed_edge", {
+      type: "directed_edge", source: ["NODE-A"], destination: ["NODE-B"], relation: ["data"],
+    }),
+    "satisfied",
+  );
+  requireGate(
+    "nested-bullet dashed directed edge",
+    "- **NODE-A** ⇢ **NODE-B**\n  - `optional trend`\n  - Dashed conditional edge",
+    fixture("A dashed conditional trend runs from NODE-A to NODE-B.", "directed_edge", {
+      type: "directed_edge", source: ["NODE-A"], destination: ["NODE-B"], relation: ["dashed", "conditional", "trend"],
+    }),
+    "satisfied",
+  );
+  requireGate(
+    "unicode unchecked state",
+    "- ☐ Production field updated",
+    fixture("Production field updated is unchecked.", "scalar", {
+      type: "lexical", allOf: [["Production field updated"], ["unchecked"]],
+    }),
+    "satisfied",
+  );
+  requireGate(
+    "markdown unchecked state",
+    "| State | Status |\n|---|---|\n| Production field updated | [ ] |",
+    fixture("Production field updated is unchecked.", "scalar", {
+      type: "lexical", allOf: [["Production field updated"], ["unchecked"]],
+    }),
+    "satisfied",
+  );
   const reversedProse = resolveLeafEvidence(
     "NODE-A receives data from NODE-B.",
     fixture("NODE-A sends data to NODE-B.", "directed_edge", {
@@ -181,6 +215,24 @@ export async function auditBenchmark() {
   );
   if (reversedProse?.satisfied || reversedProse?.contradiction !== true) {
     throw new Error("directed prose: a receive-from relation was not recognized as reversed");
+  }
+  const originatingFrom = resolveLeafEvidence(
+    "CP-4 is the terminating point for a dashed blue data arrow originating from BAS-214.",
+    fixture("A dashed data path runs from CP-4 to BAS-214.", "directed_edge", {
+      type: "directed_edge", source: ["CP-4"], destination: ["BAS-214"], relation: ["data"],
+    }),
+  );
+  if (originatingFrom?.satisfied || originatingFrom?.contradiction !== true) {
+    throw new Error("directed prose: an originating-from relation was not recognized as reversed");
+  }
+  const leadingTo = resolveLeafEvidence(
+    "BAS-214: Dashed blue line (BAS data) leading to CP-4.",
+    fixture("A dashed data path runs from CP-4 to BAS-214.", "directed_edge", {
+      type: "directed_edge", source: ["CP-4"], destination: ["BAS-214"], relation: ["data"],
+    }),
+  );
+  if (leadingTo?.satisfied || leadingTo?.contradiction !== true) {
+    throw new Error("directed prose: a leading-to relation was not recognized as reversed");
   }
   requireGate(
     "unrelated negation",
@@ -196,6 +248,48 @@ export async function auditBenchmark() {
     }),
     "noncontradictory",
   );
+  requireGate(
+    "numbered record with detail lines",
+    "1. Alpha\ndetail for alpha\n\n2. Beta\ndetail for beta\n\n3. Gamma",
+    fixture("The order is Alpha, Beta, Gamma.", "ordered_record", {
+      type: "ordered_tokens", tokens: [["Alpha"], ["Beta"], ["Gamma"]],
+    }),
+    "satisfied",
+  );
+  requireGate(
+    "colon-delimited schema",
+    "Field: Controlled value",
+    fixture("The schema is Field, Controlled value.", "structure", {
+      type: "ordered_tokens", tokens: [["Field"], ["Controlled value"]],
+    }),
+    "satisfied",
+  );
+  const sparseCounterMap = explicitCandidatePages([
+    "# First section",
+    "Readable content that has no reliable page boundary.",
+    "5 / 5",
+  ], 5);
+  if (sparseCounterMap.some((page) => page !== null)) {
+    throw new Error("sparse page counter: one isolated footer incorrectly activated page scoping");
+  }
+
+  const shortFirstPageFooterMap = explicitCandidatePages([
+    "# Short cover",
+    "Only one line of page-one content.",
+    "1 / 3",
+    "---",
+    "# Page two content",
+    "Second-page detail.",
+    "2 / 3",
+    "---",
+    "# Page three content",
+    "Third-page detail.",
+    "3 / 3",
+  ], 3);
+  const expectedFooterPages = [1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3];
+  if (shortFirstPageFooterMap.some((page, index) => page !== expectedFooterPages[index])) {
+    throw new Error("short first page: a complete footer sequence was incorrectly treated as page starts");
+  }
 
   const closedTableFixture = parseFactFile({
     schemaVersion: 3,
@@ -252,7 +346,19 @@ export async function auditBenchmark() {
     throw new Error("closed table scope: a similarly shaped table in another region was misattributed");
   }
 
-  console.log(`Audit passed: ${manifest.cases.length} cases, ${regionCount} regions, ${leafCount} scored leaves, 8 representation checks.`);
+  const contradictedTable = validateJudgeResult(closedTableFixture, {
+    leafResults: [
+      { id: "red.state", status: "correct", candidateLineRefs: [3] },
+      { id: "blue.state", status: "correct", candidateLineRefs: [4] },
+    ],
+    unsupportedClaims: [],
+    rationale: "Fixture intentionally claims both rows are correct.",
+  }, "| Color | State |\n| --- | --- |\n| Red | blocked |\n| Blue | held |");
+  if (contradictedTable.leafResults.find((item) => item.id === "red.state")?.status !== "incorrect") {
+    throw new Error("table contradiction: a model's correct label overrode a contradictory bound value");
+  }
+
+  console.log(`Audit passed: ${manifest.cases.length} cases, ${regionCount} regions, ${leafCount} scored leaves, 18 representation checks.`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) await auditBenchmark();

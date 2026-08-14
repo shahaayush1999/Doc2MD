@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "id": "P23-native-text-layer-recovery",
+  "id": "task-5",
   "title": "Northstar Cold Chain Supplier Cutover Authorization",
   "family": "office export recovery",
   "tags": [
@@ -1714,16 +1714,6 @@
         {
           "page": 4,
           "documentPage": 4,
-          "layer": "native_layer_recovery",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "4. Dependency graph and exception register",
-            "Orphaned logical-page title"
-          ]
-        },
-        {
-          "page": 5,
-          "documentPage": 4,
           "layer": "raster",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
@@ -1732,23 +1722,13 @@
           ]
         },
         {
-          "page": 5,
+          "page": 4,
           "documentPage": 4,
           "layer": "native_layer_recovery",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
             "4. Dependency graph and exception register",
-            "Detached native connector-label fragments A"
-          ]
-        },
-        {
-          "page": 6,
-          "documentPage": 4,
-          "layer": "native_layer_recovery",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "4. Dependency graph and exception register",
-            "Detached native connector-label fragments B"
+            "Detached native connector-label fragments"
           ]
         }
       ],
@@ -1928,16 +1908,6 @@
         {
           "page": 4,
           "documentPage": 4,
-          "layer": "native_layer_recovery",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "4. Dependency graph and exception register",
-            "Orphaned logical-page title"
-          ]
-        },
-        {
-          "page": 5,
-          "documentPage": 4,
           "layer": "raster",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
@@ -1946,23 +1916,13 @@
           ]
         },
         {
-          "page": 5,
+          "page": 4,
           "documentPage": 4,
           "layer": "native_layer_recovery",
           "sectionPath": [
             "Northstar Cold Chain Supplier Cutover Authorization",
             "4. Dependency graph and exception register",
-            "Detached native connector-label fragments A"
-          ]
-        },
-        {
-          "page": 6,
-          "documentPage": 4,
-          "layer": "native_layer_recovery",
-          "sectionPath": [
-            "Northstar Cold Chain Supplier Cutover Authorization",
-            "4. Dependency graph and exception register",
-            "Detached native connector-label fragments B"
+            "Detached native connector-label fragments"
           ]
         }
       ],
@@ -2140,7 +2100,7 @@
       "label": "Clipped exception register under detached headings",
       "sourceAnchors": [
         {
-          "page": 6,
+          "page": 4,
           "documentPage": 4,
           "layer": "native_layer_recovery",
           "sectionPath": [
@@ -2491,7 +2451,7 @@
       "label": "Executed selective decision states",
       "sourceAnchors": [
         {
-          "page": 7,
+          "page": 5,
           "documentPage": 5,
           "layer": "raster",
           "sectionPath": [
@@ -2579,7 +2539,7 @@
       "label": "Executed inventory selection",
       "sourceAnchors": [
         {
-          "page": 7,
+          "page": 5,
           "documentPage": 5,
           "layer": "raster",
           "sectionPath": [
@@ -2650,7 +2610,7 @@
       "label": "Executed required-gate states",
       "sourceAnchors": [
         {
-          "page": 7,
+          "page": 5,
           "documentPage": 5,
           "layer": "raster",
           "sectionPath": [
@@ -2735,7 +2695,7 @@
       "label": "Selected rollback threshold",
       "sourceAnchors": [
         {
-          "page": 7,
+          "page": 5,
           "documentPage": 5,
           "layer": "raster",
           "sectionPath": [
@@ -2806,7 +2766,7 @@
       "label": "Handwritten start-time correction",
       "sourceAnchors": [
         {
-          "page": 7,
+          "page": 5,
           "documentPage": 5,
           "layer": "raster",
           "sectionPath": [
@@ -2882,7 +2842,7 @@
       "label": "Executed signatures and effective time",
       "sourceAnchors": [
         {
-          "page": 7,
+          "page": 5,
           "documentPage": 5,
           "layer": "raster",
           "sectionPath": [

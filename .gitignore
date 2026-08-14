@@ -4,6 +4,8 @@
 .DS_Store
 node_modules/
 .venv/
+.parser-envs/
+.parser-cache/
 tmp/
 benchmark/rendered/
 **/__pycache__/

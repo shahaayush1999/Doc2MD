@@ -2,7 +2,7 @@
 
 Doc2MD measures how faithfully a model converts a PDF into one Markdown document. It tests exhaustive recovery of text, tables, forms, visual information, reading order, source precedence, and long-document coherence—not summarization.
 
-The current corpus contains five cases and 86 pages under `benchmark/cases/`. The runtime, scorer, cache, and report are manifest-driven: cases may be added, removed, or replaced without changing them, provided the replacements conform to the standard native-PDF and facts-v3 contract. The small generator registry explicitly lists the builders that produce the current corpus. Each case has:
+The current corpus contains five cases and 84 pages under `benchmark/cases/`. The runtime, scorer, cache, and report are manifest-driven: cases may be added, removed, or replaced without changing them, provided the replacements conform to the standard native-PDF and facts-v3 contract. The small generator registry explicitly lists the builders that produce the current corpus. Each case has:
 
 ```text
 source.pdf   PDF sent to the model
@@ -31,6 +31,55 @@ Select any registered model with repeatable flags:
 ```bash
 npm run bench -- --model openai-gpt-5.4-nano --model google-gemini-3.1-flash-lite
 ```
+
+## Run off-the-shelf parsers
+
+Install the pinned, isolated Python parser environments once:
+
+```bash
+npm run parsers:setup
+```
+
+Poppler's `pdftotext` must be available on `PATH`. Marker fast CPU also requires `llama-server`; on macOS these can be installed with `brew install poppler llama.cpp`. Parser environments and downloaded model caches live under ignored `.parser-envs/` and `.parser-cache/` directories.
+
+Run any parser through the same prediction cache, evaluator, and report as the hosted models:
+
+```bash
+npm run bench -- --candidate pdftotext
+npm run bench -- --candidate firecrawl-pdf-inspector
+npm run bench -- --candidate markitdown-base
+npm run bench -- --candidate markitdown-ocr-gpt-5.6-luna
+npm run bench -- --candidate pymupdf4llm-default
+npm run bench -- --candidate docling-standard-cpu
+npm run bench -- --candidate marker-fast-cpu
+npm run bench -- --candidate reducto-standard
+npm run bench -- --candidate reducto-agentic
+npm run bench -- --candidate mistral-ocr-4
+npm run bench -- --candidate llamaparse-agentic
+npm run bench -- --candidate firecrawl-hosted-auto
+npm run bench -- --candidate landingai-dpt2
+npm run bench -- --candidate upstage-auto
+npm run bench -- --candidate nanonets-docstrange
+npm run bench -- --candidate unstructured-vlm-gpt4o
+```
+
+`--model` remains supported and is an alias for selecting a registered candidate, so model and parser IDs may be mixed in one invocation. Parser cases run serially; hosted model cases retain their existing concurrency. Every prediction and its inference metadata are saved before evaluation begins, so an evaluator rate limit never requires reconversion.
+
+`markitdown-ocr-gpt-5.6-luna` uses the released `markitdown-ocr` plugin and its public `llm_prompt` configuration. Its pinned prompt is [`benchmark/parser-prompts/markitdown-vision.md`](benchmark/parser-prompts/markitdown-vision.md); no package code is patched. The adapter rejects MarkItDown's documented silent base-converter fallback unless at least one vision call succeeds.
+
+`reducto-standard` uses Reducto's hosted Parse endpoint with standard hybrid OCR, whole-document output, dynamic table formatting, page markers, and the default figure-description capability made explicit. Set `REDUCTO_API_KEY` in `.env.local`. Its benchmark cost uses the credits reported by each response at the published Standard pay-as-you-go rate; introductory free credits are ignored.
+
+`reducto-agentic` adds Reducto's released text, table, and figure agentic review scopes, intelligent ordering, and the public per-scope prompt option with one generic document-fidelity prompt. It deliberately leaves the separate advanced chart agent disabled because the benchmark's observed failure was image binding rather than numerical chart extraction.
+
+The free-plan hosted batch uses `MISTRAL_API_KEY`, `LLAMA_CLOUD_API_KEY`, and optionally `FIRECRAWL_API_KEY` from `.env.local`. Mistral runs the standard OCR 4 Markdown endpoint, LlamaParse runs its default Agentic tier, and Firecrawl runs hosted PDF `auto` mode. Firecrawl permits a small keyless POC, but its anonymous daily cap may be too small for all 86 pages; a free account key is therefore recommended for the complete run.
+
+`landingai-dpt2` uses LandingAI ADE's ready-made Parse endpoint and whole-document Markdown output. `upstage-auto` uses Upstage Document Parse's automatic per-page routing between its Standard and Enhanced modes. Their benchmark costs use published list prices ($0.03/page for LandingAI; $0.01 Standard and $0.03 Enhanced per page for Upstage), ignoring free credits.
+
+`nanonets-docstrange` uses Nanonets DocStrange's asynchronous extraction endpoint with its default processing and Markdown output. Its cost uses the published pay-as-you-go rate of one credit per page and $1 per 100 credits ($0.01/page), ignoring the one-time free allowance.
+
+`unstructured-vlm-gpt4o` uses Unstructured's documented Partition endpoint with the released VLM strategy and its documented GPT-4o model option. The ordered JSON elements are serialized as Markdown-compatible HTML, preserving the provider's table, figure, checkbox, and layout markup without a custom parsing step. Its cost uses the Personal Workspace production list price of $0.03/page, ignoring the 15,000-page free allowance.
+
+Leaderboard cost ignores free tiers and promotional credits. Hosted and hybrid candidates use published production list price applied to provider-reported usage; local parsers report zero conversion-API cost. Evaluator time and evaluator cost are excluded from the candidate comparison.
 
 Ensure multiple independent draw slots for selected models:
 
@@ -61,7 +110,7 @@ After every invocation, the merged report is rebuilt from every model with at le
 
 ## Scoring
 
-Gemini 3.1 Flash-Lite evaluates compact batches of candidate Markdown against source-anchored atomic obligations and classifies each obligation as correct, missing, or incorrect. Evaluator request starts are spaced six seconds apart (10 RPM) to leave headroom below the personal AI Studio project's 15 RPM free-tier limit while model cases remain concurrent. Collision-safe deterministic checks first pre-credit unambiguous table bindings, form states, and directed relationships, so the evaluator returns only unresolved obligations; ordered records and ambiguous or repeated locators stay with the semantic evaluator. Stable answer-key batches remain at the beginning of each Gemini API request so the provider's automatic implicit cache can reuse them across candidate models; reported cache-hit tokens are recorded. Each scoring request remains capped at 32 obligations. A separate conservative audit can penalize source-invented claims only within explicitly declared, source-grounded closed worlds. Corpus and answer-key quality are reviewed during benchmark development; the runtime command never grades the gold answers or runs a paid evaluator preflight.
+Gemini 3.1 Flash-Lite evaluates compact batches of candidate Markdown against source-anchored atomic obligations and classifies each obligation as correct, missing, or incorrect. Evaluator requests start at a fixed 15-second cadence, leaving headroom below the personal AI Studio project's request and input-token limits. Collision-safe deterministic checks first pre-credit unambiguous table bindings, form states, and directed relationships, so the evaluator returns only unresolved obligations; ordered records and ambiguous or repeated locators stay with the semantic evaluator. Stable 64-obligation answer-key batches remain at the beginning of each request so Gemini's implicit cache can reuse them across candidates. Missing results contain only ids; correct and incorrect results also contain candidate-line evidence. A separate conservative audit can penalize source-invented claims only within explicitly declared, source-grounded closed worlds. Successful scores and individual evaluator requests are checkpointed independently; transport-only protocol changes retain compatible completed scores but invalidate incomplete request checkpoints. Corpus and answer-key quality are reviewed during benchmark development; the runtime command never grades the gold answers or runs a paid evaluator preflight.
 
 The scorer has no case-ID branches or corpus-size assumptions. Case-specific knowledge belongs only in each case's `facts.json`, `gold.md`, and `spec.md`; generic runtime validation rejects rubric IDs or ungrounded members masquerading as source-visible closed-world keys. A leaf's `expectation` is the complete semantic contract sent to the evaluator, so non-obvious acceptable equivalents must be stated there. `evidencePolicy` aliases support conservative deterministic recognition and do not silently broaden that semantic contract.
 

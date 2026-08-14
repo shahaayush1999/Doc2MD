@@ -13,21 +13,21 @@ import uuid
 from pathlib import Path
 
 from benchmark_cases import (
-    p12_pfas,
-    p15_architecture,
-    p17_clinical,
-    p21_semiconductor,
-    p23_native_recovery,
+    task_1_pfas,
+    task_2_architecture,
+    task_3_clinical,
+    task_4_semiconductor,
+    task_5_native_recovery,
 )
 from benchmark_cases.common import REPO_ROOT
 
 
 BUILDERS = (
-    p12_pfas.build,
-    p15_architecture.build,
-    p17_clinical.build,
-    p21_semiconductor.build,
-    p23_native_recovery.build,
+    task_1_pfas.build,
+    task_2_architecture.build,
+    task_3_clinical.build,
+    task_4_semiconductor.build,
+    task_5_native_recovery.build,
 )
 
 
