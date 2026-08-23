@@ -81,6 +81,10 @@ The free-plan hosted batch uses `MISTRAL_API_KEY`, `LLAMA_CLOUD_API_KEY`, and op
 
 Leaderboard cost ignores free tiers and promotional credits. Hosted and hybrid candidates use published production list price applied to provider-reported usage; local parsers report zero conversion-API cost. Evaluator time and evaluator cost are excluded from the candidate comparison.
 
+The intended Zennoia production comparison is direct whole-document GPT-5.6 Sol processing versus one-time page-parallel GPT-5.6 Luna preprocessing whose stored Markdown is then consumed by GPT-5.6 Sol production agents. The registered whole-document GPT-5.6 Luna result is benchmark coverage only; it was never a proposed production path and should not be substituted for that operational baseline.
+
+All saved hosted-model timings were observed through unpaid, data-sharing access rather than paid dedicated capacity. They include provider-tier scheduling, contention, and run-to-run instability, so they are directional benchmark observations—not forecasts of paid production latency. Raw observed timings remain in the results; no unmeasured paid-tier improvement is assumed. This timing caveat is independent of cost normalization, which continues to use published production list prices rather than free-tier discounts.
+
 Ensure multiple independent draw slots for selected models:
 
 ```bash
@@ -106,7 +110,7 @@ reports/index.html
 
 Inference is reused only when the PDF bytes, conversion prompt, model configuration, and output limit match. Evaluation is reused only when the prediction, facts, evaluator model, and score-affecting settings match. Every successful evaluator batch is checkpointed immediately; if another batch fails or rate-limits, rerunning reuses both the completed model inference and completed evaluator batches and calls only the unfinished batches. The runner waits for every started sibling case and draw to settle, continues later requested models after isolated failures, rebuilds the report, and only then returns a combined failure. Changes to provider transport, prompt caching, or pricing do not invalidate an otherwise identical score. A scoring-semantics change therefore rescores cached predictions without rerunning the model. Adding a new case runs only that missing case for previously cached models. Explicit `--model` flags run/check only those models; without flags, the command checks the default anchors plus every model already present in the cache.
 
-After every invocation, the merged report is rebuilt from every model with at least one complete draw for the current manifest. Each draw is the equal-weight mean of its case scores; repeated models report the mean of those complete suite draws plus their range and sample SD. Operating cost, summed case-call latency, and output tokens are shown as means per draw so models with different draw counts remain comparable. Because cases run concurrently, summed case-call latency is not suite wall-clock time.
+After every invocation, the merged report is rebuilt from every model with at least one complete draw for the current manifest. Each draw is the equal-weight mean of its case scores; repeated models report the mean of those complete suite draws plus their range and sample SD. Operating cost, summed case-call latency, and output tokens are shown as means per draw so models with different draw counts remain comparable. Because cases run concurrently, summed case-call latency is not suite wall-clock time. Hosted-model latency is the observed unpaid data-sharing-tier measurement described above, not a paid-production forecast.
 
 ## Scoring
 

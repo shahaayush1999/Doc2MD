@@ -8,7 +8,7 @@ The current hosted batch is limited to products with a real free mode and no pre
 
 ## POC results
 
-POCs used the ten-page mixed-modality Task 2 case on the development M4 Pro Mac. Times are directional local observations, not production hardware claims.
+POCs used the ten-page mixed-modality Task 2 case on the development M4 Pro Mac. Times are directional local observations, not production hardware claims. Hosted/model calls used unpaid, data-sharing access rather than paid dedicated capacity, so their timings also include provider-tier scheduling and instability and must not be treated as paid-production forecasts.
 
 | Candidate | POC result | Approximate conversion time |
 | --- | --- | ---: |
