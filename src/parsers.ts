@@ -27,6 +27,7 @@ const adapterProtocols: Record<ParserSpec["parser"], number> = {
   "markitdown-base": 1,
   "markitdown-ocr-luna": 1,
   "llm-page-parallelism-5.6-luna": 1,
+  "llm-page-parallelism-3.1-flash-lite": 1,
   pymupdf4llm: 1,
   docling: 1,
   marker: 1,
@@ -77,7 +78,7 @@ async function command(
     return await execFile(executablePath, args, { ...commandOptions, ...options });
   } catch (error: any) {
     const detail = String(error?.stderr || error?.stdout || error?.message || error).trim();
-    const setup = spec.parser === "pdftotext" || spec.parser === "llm-page-parallelism-5.6-luna"
+    const setup = spec.parser === "pdftotext" || spec.parser.startsWith("llm-page-parallelism-")
       ? "Install Poppler so pdftotext is available on PATH."
       : "Run `npm run parsers:setup` and follow any reported system-dependency instructions.";
     throw new Error(`${spec.id} failed. ${setup}${detail ? `\n${detail}` : ""}`);
@@ -107,7 +108,7 @@ export async function parserCacheIdentity(spec: ParserSpec) {
     identity.prompt = sha256(await readFile("benchmark/parser-prompts/markitdown-vision.md"));
     identity.script = sha256(await readFile("scripts/parser_adapters/run_markitdown_ocr.py"));
   }
-  if (spec.parser === "llm-page-parallelism-5.6-luna") {
+  if (spec.parser.startsWith("llm-page-parallelism-")) {
     identity.prompt = sha256(await readFile("benchmark/parser-prompts/llm-page-parallelism-5.6-luna.md"));
     const version = await command(spec, "pdfseparate", ["-v"]);
     identity.runtimeVersion = `${version.stdout}${version.stderr}`.trim().split("\n")[0] ?? "unknown";
@@ -172,8 +173,8 @@ export async function runParser(
     } finally {
       await rm(metadataPath, { force: true });
     }
-  } else if (spec.parser === "llm-page-parallelism-5.6-luna") {
-    const splitDirectory = await temporaryDirectory("llm-page-parallelism-5.6-luna");
+  } else if (spec.parser.startsWith("llm-page-parallelism-")) {
+    const splitDirectory = await temporaryDirectory(spec.parser);
     try {
       await command(spec, "pdfseparate", [pdf, path.join(splitDirectory, "page-%d.pdf")]);
       const pageFiles = (await readdir(splitDirectory))
@@ -182,7 +183,9 @@ export async function runParser(
       if (pageFiles.length === 0) throw new Error(`${spec.id} produced no single-page PDFs.`);
 
       const prompt = (await readFile("benchmark/parser-prompts/llm-page-parallelism-5.6-luna.md", "utf8")).trim();
-      const luna = models["openai-gpt-5.6-luna"]!;
+      const pageModel = spec.parser === "llm-page-parallelism-5.6-luna"
+        ? models["openai-gpt-5.6-luna"]!
+        : models["google-gemini-3.1-flash-lite"]!;
       const pageResults = await Promise.all(pageFiles.map(async (pageFile, index) => {
         const messages: ModelMessage[] = [{
           role: "user",
@@ -197,7 +200,7 @@ export async function runParser(
           ],
         }];
         const response = await generateText({
-          model: createModel(luna),
+          model: createModel(pageModel),
           messages,
           maxOutputTokens: 20_000,
           maxRetries: 2,
@@ -222,10 +225,10 @@ export async function runParser(
           ),
         },
       };
-      metadata = { pipeline: "llm-page-parallelism-5.6-luna", version: spec.version };
+      metadata = { pipeline: spec.id, version: spec.version };
       return {
         text,
-        resolvedModel: `llm-page-parallelism-5.6-luna-v${spec.version}`,
+        resolvedModel: `${spec.id}-v${spec.version}`,
         usage,
         metadata,
       };

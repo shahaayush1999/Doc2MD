@@ -6,6 +6,7 @@ export type ParserKind =
   | "markitdown-base"
   | "markitdown-ocr-luna"
   | "llm-page-parallelism-5.6-luna"
+  | "llm-page-parallelism-3.1-flash-lite"
   | "pymupdf4llm"
   | "docling"
   | "marker"
@@ -102,6 +103,19 @@ export const parsers: Record<string, ParserSpec> = {
     cachedInputPerMillion: luna.cachedInputPerMillion,
     cacheWritePerMillion: luna.cacheWritePerMillion,
     outputPerMillion: luna.outputPerMillion,
+  },
+  "llm-page-parallelism-3.1-flash-lite": {
+    id: "llm-page-parallelism-3.1-flash-lite",
+    kind: "parser",
+    parser: "llm-page-parallelism-3.1-flash-lite",
+    modelName: "llm-page-parallelism-3.1-flash-lite",
+    provider: "hybrid",
+    version: "0.1",
+    ingestionMode: "whole PDF split into pages and reconstructed in parallel with Gemini 3.1 Flash-Lite",
+    pricingVersion: models["google-gemini-3.1-flash-lite"]!.pricingVersion,
+    inputPerMillion: models["google-gemini-3.1-flash-lite"]!.inputPerMillion,
+    cachedInputPerMillion: models["google-gemini-3.1-flash-lite"]!.cachedInputPerMillion,
+    outputPerMillion: models["google-gemini-3.1-flash-lite"]!.outputPerMillion,
   },
   "pymupdf4llm-default": {
     id: "pymupdf4llm-default",
