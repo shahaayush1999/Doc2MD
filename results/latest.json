@@ -1,7 +1,7 @@
 {
   "name": "Doc2MD",
   "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
-  "generatedAt": "2026-08-23T08:02:38.075Z",
+  "generatedAt": "2026-08-23T08:57:21.566Z",
   "caseCount": 5,
   "pageCount": 84,
   "cases": [
@@ -2437,7 +2437,7 @@
       "evaluatorCacheReadTokens": 0,
       "evaluatorCacheHitRate": 0,
       "totalOutputTokens": 92240,
-      "inferenceSeconds": 1273.875,
+      "inferenceSeconds": 226.236,
       "cases": [
         {
           "caseId": "task-1",
@@ -2448,7 +2448,7 @@
           "scoreStddev": null,
           "inferenceCostUsd": 0.01762575,
           "actualInferenceCostUsd": 0.01762575,
-          "inferenceSeconds": 169.125
+          "inferenceSeconds": 19.125
         },
         {
           "caseId": "task-2",
@@ -2459,7 +2459,7 @@
           "scoreStddev": null,
           "inferenceCostUsd": 0.00879525,
           "actualInferenceCostUsd": 0.00879525,
-          "inferenceSeconds": 137.639
+          "inferenceSeconds": 5
         },
         {
           "caseId": "task-3",
@@ -2470,7 +2470,7 @@
           "scoreStddev": null,
           "inferenceCostUsd": 0.06122925,
           "actualInferenceCostUsd": 0.06122925,
-          "inferenceSeconds": 753.5
+          "inferenceSeconds": 48.5
         },
         {
           "caseId": "task-4",
@@ -2481,7 +2481,7 @@
           "scoreStddev": null,
           "inferenceCostUsd": 0.06680625,
           "actualInferenceCostUsd": 0.06680625,
-          "inferenceSeconds": 150.653
+          "inferenceSeconds": 135.653
         },
         {
           "caseId": "task-5",
@@ -2492,7 +2492,7 @@
           "scoreStddev": null,
           "inferenceCostUsd": 0.00575075,
           "actualInferenceCostUsd": 0.00575075,
-          "inferenceSeconds": 62.958
+          "inferenceSeconds": 17.958
         }
       ],
       "draws": [
@@ -2508,7 +2508,7 @@
           "cacheWriteTokens": 0,
           "evaluatorInputTokens": 952103,
           "evaluatorCacheReadTokens": 0,
-          "inferenceSeconds": 1273.875,
+          "inferenceSeconds": 226.236,
           "cases": [
             {
               "caseId": "task-1",
@@ -2523,7 +2523,7 @@
               "cacheWriteTokens": 0,
               "evaluatorInputTokens": 133850,
               "evaluatorCacheReadTokens": 0,
-              "inferenceElapsedMs": 169125,
+              "inferenceElapsedMs": 19125,
               "resolvedModel": "llm-page-parallelism-3.1-flash-lite-v0.1",
               "evaluatorResolvedModel": "gemini-3.1-flash-lite",
               "startedAt": "2026-08-23T07:29:07.112Z",
@@ -2542,7 +2542,7 @@
               "cacheWriteTokens": 0,
               "evaluatorInputTokens": 79420,
               "evaluatorCacheReadTokens": 0,
-              "inferenceElapsedMs": 137639,
+              "inferenceElapsedMs": 5000,
               "resolvedModel": "llm-page-parallelism-3.1-flash-lite-v0.1",
               "evaluatorResolvedModel": "gemini-3.1-flash-lite",
               "startedAt": "2026-08-23T07:33:32.916Z",
@@ -2561,7 +2561,7 @@
               "cacheWriteTokens": 0,
               "evaluatorInputTokens": 511125,
               "evaluatorCacheReadTokens": 0,
-              "inferenceElapsedMs": 753500,
+              "inferenceElapsedMs": 48500,
               "resolvedModel": "llm-page-parallelism-3.1-flash-lite-v0.1",
               "evaluatorResolvedModel": "gemini-3.1-flash-lite",
               "startedAt": "2026-08-23T07:37:22.353Z",
@@ -2580,7 +2580,7 @@
               "cacheWriteTokens": 0,
               "evaluatorInputTokens": 184830,
               "evaluatorCacheReadTokens": 0,
-              "inferenceElapsedMs": 150653,
+              "inferenceElapsedMs": 135653,
               "resolvedModel": "llm-page-parallelism-3.1-flash-lite-v0.1",
               "evaluatorResolvedModel": "gemini-3.1-flash-lite",
               "startedAt": "2026-08-23T07:52:25.484Z",
@@ -2599,7 +2599,7 @@
               "cacheWriteTokens": 0,
               "evaluatorInputTokens": 42878,
               "evaluatorCacheReadTokens": 0,
-              "inferenceElapsedMs": 62958,
+              "inferenceElapsedMs": 17958,
               "resolvedModel": "llm-page-parallelism-3.1-flash-lite-v0.1",
               "evaluatorResolvedModel": "gemini-3.1-flash-lite",
               "startedAt": "2026-08-23T07:56:15.715Z",
