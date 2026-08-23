@@ -5,7 +5,7 @@ export type ParserKind =
   | "pdf-inspector"
   | "markitdown-base"
   | "markitdown-ocr-luna"
-  | "zennoia-fast"
+  | "llm-page-parallelism-5.6-luna"
   | "pymupdf4llm"
   | "docling"
   | "marker"
@@ -89,14 +89,14 @@ export const parsers: Record<string, ParserSpec> = {
     cacheWritePerMillion: luna.cacheWritePerMillion,
     outputPerMillion: luna.outputPerMillion,
   },
-  "zennoia-fast": {
-    id: "zennoia-fast",
+  "llm-page-parallelism-5.6-luna": {
+    id: "llm-page-parallelism-5.6-luna",
     kind: "parser",
-    parser: "zennoia-fast",
-    modelName: "Zennoia-fast",
+    parser: "llm-page-parallelism-5.6-luna",
+    modelName: "llm-page-parallelism-5.6-luna",
     provider: "hybrid",
     version: "0.1",
-    ingestionMode: "whole PDF processed by Zennoia's proprietary document reconstruction pipeline",
+    ingestionMode: "whole PDF split into pages and reconstructed in parallel with GPT-5.6 Luna",
     pricingVersion: luna.pricingVersion,
     inputPerMillion: luna.inputPerMillion,
     cachedInputPerMillion: luna.cachedInputPerMillion,

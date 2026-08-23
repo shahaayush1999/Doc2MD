@@ -26,7 +26,7 @@ const adapterProtocols: Record<ParserSpec["parser"], number> = {
   "pdf-inspector": 1,
   "markitdown-base": 1,
   "markitdown-ocr-luna": 1,
-  "zennoia-fast": 1,
+  "llm-page-parallelism-5.6-luna": 1,
   pymupdf4llm: 1,
   docling: 1,
   marker: 1,
@@ -77,7 +77,7 @@ async function command(
     return await execFile(executablePath, args, { ...commandOptions, ...options });
   } catch (error: any) {
     const detail = String(error?.stderr || error?.stdout || error?.message || error).trim();
-    const setup = spec.parser === "pdftotext" || spec.parser === "zennoia-fast"
+    const setup = spec.parser === "pdftotext" || spec.parser === "llm-page-parallelism-5.6-luna"
       ? "Install Poppler so pdftotext is available on PATH."
       : "Run `npm run parsers:setup` and follow any reported system-dependency instructions.";
     throw new Error(`${spec.id} failed. ${setup}${detail ? `\n${detail}` : ""}`);
@@ -107,8 +107,8 @@ export async function parserCacheIdentity(spec: ParserSpec) {
     identity.prompt = sha256(await readFile("benchmark/parser-prompts/markitdown-vision.md"));
     identity.script = sha256(await readFile("scripts/parser_adapters/run_markitdown_ocr.py"));
   }
-  if (spec.parser === "zennoia-fast") {
-    identity.prompt = sha256(await readFile("benchmark/parser-prompts/zennoia-fast.md"));
+  if (spec.parser === "llm-page-parallelism-5.6-luna") {
+    identity.prompt = sha256(await readFile("benchmark/parser-prompts/llm-page-parallelism-5.6-luna.md"));
     const version = await command(spec, "pdfseparate", ["-v"]);
     identity.runtimeVersion = `${version.stdout}${version.stderr}`.trim().split("\n")[0] ?? "unknown";
   }
@@ -172,8 +172,8 @@ export async function runParser(
     } finally {
       await rm(metadataPath, { force: true });
     }
-  } else if (spec.parser === "zennoia-fast") {
-    const splitDirectory = await temporaryDirectory("zennoia-fast");
+  } else if (spec.parser === "llm-page-parallelism-5.6-luna") {
+    const splitDirectory = await temporaryDirectory("llm-page-parallelism-5.6-luna");
     try {
       await command(spec, "pdfseparate", [pdf, path.join(splitDirectory, "page-%d.pdf")]);
       const pageFiles = (await readdir(splitDirectory))
@@ -181,7 +181,7 @@ export async function runParser(
         .sort((a, b) => Number(a.match(/\d+/)?.[0]) - Number(b.match(/\d+/)?.[0]));
       if (pageFiles.length === 0) throw new Error(`${spec.id} produced no single-page PDFs.`);
 
-      const prompt = (await readFile("benchmark/parser-prompts/zennoia-fast.md", "utf8")).trim();
+      const prompt = (await readFile("benchmark/parser-prompts/llm-page-parallelism-5.6-luna.md", "utf8")).trim();
       const luna = models["openai-gpt-5.6-luna"]!;
       const pageResults = await Promise.all(pageFiles.map(async (pageFile, index) => {
         const messages: ModelMessage[] = [{
@@ -222,10 +222,10 @@ export async function runParser(
           ),
         },
       };
-      metadata = { pipeline: "zennoia-fast", version: spec.version };
+      metadata = { pipeline: "llm-page-parallelism-5.6-luna", version: spec.version };
       return {
         text,
-        resolvedModel: `zennoia-fast-v${spec.version}`,
+        resolvedModel: `llm-page-parallelism-5.6-luna-v${spec.version}`,
         usage,
         metadata,
       };
