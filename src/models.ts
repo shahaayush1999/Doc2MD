@@ -198,6 +198,16 @@ export const models: Record<string, ModelSpec> = {
     cachedInputPerMillion: 0.075,
     outputPerMillion: 3.75,
   },
+  "google-gemini-3.8-flash": {
+    id: "google-gemini-3.8-flash",
+    modelName: "gemini-3.8-flash",
+    provider: "google",
+    reasoning: "low",
+    pricingVersion: "2026-09-02-introductory",
+    inputPerMillion: 0.75,
+    cachedInputPerMillion: 0.075,
+    outputPerMillion: 3.75,
+  },
   "openai-gpt-5.6-luna": {
     id: "openai-gpt-5.6-luna",
     modelName: "gpt-5.6-luna",
