@@ -1163,8 +1163,8 @@ def build(output_root):
         ],
     )
 
-    # Page 9 - native QC evidence. Recovery must be computed by joining the
-    # 10.00 ng/L targets on page 6 with these measured values.
+    # Page 9 - native QC evidence and reviewer calculation instructions.
+    # The reconstruction reference preserves the source without adding calculations.
     c = case.new_page(
         "Blank, recovery, and continuing-calibration review",
         subtitle="Measured values shown here; fortification targets are controlled by the page 6 bench record",
@@ -1199,8 +1199,7 @@ def build(output_root):
         "Page 9 - Blank, recovery, and continuing-calibration review",
         _table_gold(qc_headers, qc_rows)
         + "\n\n"
-        + _table_gold(source_headers, source_rows)
-        + "\n\nThe 10.00 ng/L SPK-01/SPK-02 targets come from page 6. The LCS recoveries are 96.2% PFOA and 91.4% PFOS; MS/MSD PFOA recoveries are 96.0% and 98.0% with 2.1% RPD; 6:2 FTS MSD recovery is 84.0%.",
+        + _table_gold(source_headers, source_rows),
     )
     case.add_region(
         "p09.qc",

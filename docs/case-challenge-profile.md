@@ -1,10 +1,10 @@
 # Doc2MD case challenge profile
 
-This internal profile defines why each case belongs in the canonical five-case, 86-page suite. It is not included in model input.
+This internal profile defines why each case belongs in the canonical five-case, 84-page synthetic stress suite. It is not included in model input.
 
 | Case | Pages | Primary challenge | Boundary with the rest of the suite |
 | --- | ---: | --- | --- |
-| Task 1: PFAS method validation | 12 | Scientific equations, continued tables, full-page bench and sequence scans, a dense six-analyte calibration/residual plate, an eight-panel chromatogram review, exact calculations, and a cross-modal correction-to-release chain. | Owns scientific precision and analytical evidence. Its source-precedence chain is laboratory-specific rather than the broad longitudinal state tracked by Task 3. |
+| Task 1: PFAS method validation | 12 | Scientific equations, continued tables, full-page bench and sequence scans, a dense six-analyte calibration/residual plate, an eight-panel chromatogram review, calculation records, and a cross-modal correction-to-release chain. | Owns scientific fidelity and analytical evidence. Its source-precedence chain is laboratory-specific rather than the broad longitudinal state tracked by Task 3. |
 | Task 2: technical spatial coordination | 10 | Floorplans, directed topology, cross-sheet callouts, field markups, revision state, and exact equipment/network bindings across native, scanned, and mixed sheets. | Owns spatial and directed technical relationships. Other cases contain charts or maps, but do not require a coordinated drawing-set reconstruction. |
 | Task 3: clinical site monitoring | 48 | A genuinely long regulated packet with five controlled-record lifecycles joined across distant pages, continued logs, scanned forms, corrected and superseded states, cumulative chronology, and tail obligations. | Owns long-context completeness and longitudinal state. Explicit record IDs make every join human-auditable without embedding page-route hints or answer summaries. |
 | Task 4: semiconductor lot disposition | 9 | Wafer coordinates, metrology/SPC state, full-page scanned reviews, SEM-style morphology, inspection-form state, mixed-source joins, and final MRB authority. | Owns technical-image-to-record binding and manufacturing disposition. Its committed SEM-style fixtures are synthetic and are not real microscopy measurements. |
@@ -37,19 +37,23 @@ This internal profile defines why each case belongs in the canonical five-case, 
 
 ## Implemented corpus accounting
 
-- 86 pages: 48 native-only, 19 full-page raster, and 19 mixed.
-- 11,551 words recoverable from native text, concentrated deliberately rather than present on every page.
-- 170 scored regions, 1,260 atomic leaves, and 326 raw evidence-budget units.
-- Under the official equal-case score, effective modality shares are 33.78% native text, 39.64% raster, 8.45% vector geometry, 8.36% mixed, and 9.78% native-layer recovery.
-- Declared text-only-recoverable evidence is 38.65% by raw pooled budget and 33.78% under equal-case weighting.
-- The canonical references support 1,260 scored leaves. Seventy-nine qualitative-policy leaves receive semantic rather than deterministic evaluation.
+- 84 pages combining native text, full-page scans, and mixed pages with embedded visual evidence.
+- 170 scored regions, 1,260 scored leaves, and 326 raw evidence-budget units.
+- Each case contributes equally to the overall score. Region budgets prevent cell count alone from determining importance.
+- Obligations sample document information; a score of 100 does not certify exhaustive reconstruction of every source detail.
+- Modality and capability labels describe intended challenges, not measured attribution of a model's performance.
+- Seventy-nine leaves use qualitative evidence policies; other unresolved obligations can also require semantic evaluation.
 
 ## Maintenance rules
 
 - Keep a case only when it owns at least one realistic primary difficulty that no other scored case owns.
-- Do not tune content or weights to force anchor scores. Anchor bands are diagnostic release guardrails.
+- Do not tune content or weights to force anchor scores. Preserve a useful case when models improve; historical anchor bands are not current release requirements.
 - Treat `source.pdf` as ground truth and keep `gold.md`, `facts.json`, and `spec.md` synchronized with every source revision.
-- Score a semantic claim once through a canonical claim identity even when several pages corroborate it.
+- Avoid unnecessary duplicate scoring. Page-local evidence and lifecycle checks can overlap; correct consequential overcounting when found without a global deduplication or regrade project.
 - Keep important visual facts out of adjacent native captions and summaries.
 - Keep synthetic visual fixtures documented and out of claims about real-world evidence.
 - Preserve Task 5's catastrophic but recoverable cross-office defects. Every scored fact must remain attainable from the PDF's visible or native evidence; do not reward hidden content or cosmetic source repair.
+
+## Reference correction
+
+The September 2026 review removed unprinted recovery calculations from Task 1's page 9 gold reference and its generator. The source asks reviewers to calculate those values; a faithful reconstruction should preserve that instruction without adding answers. The PDF, scored facts, and existing scores are unchanged.

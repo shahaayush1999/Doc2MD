@@ -11,7 +11,10 @@
     "render": "uv run python scripts/validate_benchmark.py --benchmark benchmark --render tmp/pdfs/benchmark --json",
     "bench": "node --env-file=.env.local --import tsx src/bench.ts",
     "parsers:setup": "node --import tsx src/setup-parsers.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "report": "node --import tsx src/bench.ts --report-only",
+    "test": "node --import tsx --test src/*.test.ts scripts/test-page-checkpoints.ts",
+    "corrections": "node --import tsx src/corrections.ts"
   },
   "repository": {
     "type": "git",

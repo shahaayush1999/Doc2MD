@@ -9,6 +9,7 @@ import { generateText, type ModelMessage } from "ai";
 import type { ManifestCase } from "./evaluator.js";
 import type { ParserSpec } from "./candidates.js";
 import { createModel, models } from "./models.js";
+import { convertPagesWithCheckpoints, loadSplitPages, type PageConversion } from "./page-checkpoints.js";
 
 const execFile = promisify(execFileCallback);
 const parserEnvRoot = path.resolve(process.env.DOC2MD_PARSER_ENV_ROOT ?? ".parser-envs");
@@ -45,6 +46,7 @@ export type ParserRunResult = {
   text: string;
   resolvedModel: string;
   costUsd?: number;
+  incrementalUsage?: PageConversion["usage"];
   usage: {
     inputTokens: number;
     outputTokens: number;
@@ -174,28 +176,32 @@ export async function runParser(
       await rm(metadataPath, { force: true });
     }
   } else if (spec.parser.startsWith("llm-page-parallelism-")) {
-    const splitDirectory = await temporaryDirectory(spec.parser);
-    try {
-      await command(spec, "pdfseparate", [pdf, path.join(splitDirectory, "page-%d.pdf")]);
-      const pageFiles = (await readdir(splitDirectory))
-        .filter((file) => /^page-\d+\.pdf$/.test(file))
-        .sort((a, b) => Number(a.match(/\d+/)?.[0]) - Number(b.match(/\d+/)?.[0]));
-      if (pageFiles.length === 0) throw new Error(`${spec.id} produced no single-page PDFs.`);
+    const splitPages = await loadSplitPages(
+      path.join(workingDirectory, "page-sources"), await readFile(pdf),
+      (directory) => command(spec, "pdfseparate", [pdf, path.join(directory, "page-%d.pdf")]),
+    );
 
-      const prompt = (await readFile("benchmark/parser-prompts/llm-page-parallelism-5.6-luna.md", "utf8")).trim();
-      const pageModel = spec.parser === "llm-page-parallelism-5.6-luna"
-        ? models["openai-gpt-5.6-luna"]!
-        : models["google-gemini-3.1-flash-lite"]!;
-      const pageResults = await Promise.all(pageFiles.map(async (pageFile, index) => {
+    const prompt = (await readFile("benchmark/parser-prompts/llm-page-parallelism-5.6-luna.md", "utf8")).trim();
+    const pageModel = spec.parser === "llm-page-parallelism-5.6-luna"
+      ? models["openai-gpt-5.6-luna"]!
+      : models["google-gemini-3.1-flash-lite"]!;
+    const pages = splitPages.map((page, index) => ({
+      ...page,
+      prompt: `${prompt}\n\nThis is physical page ${index + 1} of ${splitPages.length}.`,
+    }));
+    const pageResults = await convertPagesWithCheckpoints(
+      path.join(workingDirectory, "page-checkpoints"), pages,
+      { provider: pageModel.provider, modelName: pageModel.modelName, reasoning: "none", maxOutputTokens: 20_000 },
+      async (page) => {
         const messages: ModelMessage[] = [{
           role: "user",
           content: [
-            { type: "text", text: `${prompt}\n\nThis is physical page ${index + 1} of ${pageFiles.length}.` },
+            { type: "text", text: page.prompt },
             {
               type: "file",
-              data: await readFile(path.join(splitDirectory, pageFile)),
+              data: page.pdf,
               mediaType: "application/pdf",
-              filename: pageFile,
+              filename: page.filename,
             },
           ],
         }];
@@ -206,35 +212,49 @@ export async function runParser(
           maxRetries: 2,
           reasoning: "none",
         });
-        if (!response.text.trim()) throw new Error(`${spec.id} returned empty Markdown for page ${index + 1}.`);
-        return response;
-      }));
+        return {
+          text: response.text,
+          resolvedModel: response.response.modelId,
+          usage: {
+            inputTokens: response.usage.inputTokens ?? 0,
+            outputTokens: response.usage.outputTokens ?? 0,
+            inputTokenDetails: { cacheReadTokens: response.usage.inputTokenDetails?.cacheReadTokens ?? 0 },
+          },
+        };
+      },
+    );
 
-      const resolvedModels = [...new Set(pageResults.map((result) => result.response.modelId))];
-      if (resolvedModels.length !== 1) throw new Error(`${spec.id} resolved to multiple models: ${resolvedModels.join(", ")}`);
-      text = pageResults
-        .map((result, index) => `<!-- Page ${index + 1} -->\n\n${result.text.trim()}`)
-        .join("\n\n");
-      usage = {
-        inputTokens: pageResults.reduce((sum, result) => sum + (result.usage.inputTokens ?? 0), 0),
-        outputTokens: pageResults.reduce((sum, result) => sum + (result.usage.outputTokens ?? 0), 0),
-        inputTokenDetails: {
-          cacheReadTokens: pageResults.reduce(
-            (sum, result) => sum + (result.usage.inputTokenDetails?.cacheReadTokens ?? 0),
-            0,
-          ),
-        },
-      };
-      metadata = { pipeline: spec.id, version: spec.version };
-      return {
-        text,
-        resolvedModel: `${spec.id}-v${spec.version}`,
-        usage,
-        metadata,
-      };
-    } finally {
-      await rm(splitDirectory, { recursive: true, force: true });
-    }
+    const resolvedModels = [...new Set(pageResults.map((result) => result.resolvedModel))];
+    if (resolvedModels.length !== 1) throw new Error(`${spec.id} resolved to multiple models: ${resolvedModels.join(", ")}`);
+    text = pageResults
+      .map((result, index) => `<!-- Page ${index + 1} -->\n\n${result.text.trim()}`)
+      .join("\n\n");
+    usage = {
+      inputTokens: pageResults.reduce((sum, result) => sum + (result.usage.inputTokens ?? 0), 0),
+      outputTokens: pageResults.reduce((sum, result) => sum + (result.usage.outputTokens ?? 0), 0),
+      inputTokenDetails: {
+        cacheReadTokens: pageResults.reduce(
+          (sum, result) => sum + (result.usage.inputTokenDetails?.cacheReadTokens ?? 0),
+          0,
+        ),
+      },
+    };
+    metadata = {
+      pipeline: spec.id, version: spec.version,
+      reusedPageCount: pageResults.filter((result) => result.reused).length,
+      pages: pageResults.map(({ cacheKey, elapsedMs, reused }) => ({ cacheKey, elapsedMs, reused })),
+    };
+    return {
+      text,
+      resolvedModel: `${spec.id}-v${spec.version}`,
+      usage,
+      incrementalUsage: pageResults.filter((result) => !result.reused).reduce((sum, result) => ({
+        inputTokens: sum.inputTokens + result.usage.inputTokens,
+        outputTokens: sum.outputTokens + result.usage.outputTokens,
+        inputTokenDetails: { cacheReadTokens: sum.inputTokenDetails.cacheReadTokens + result.usage.inputTokenDetails.cacheReadTokens },
+      }), { inputTokens: 0, outputTokens: 0, inputTokenDetails: { cacheReadTokens: 0 } }),
+      metadata,
+    };
   } else if (spec.parser === "pymupdf4llm") {
     ({ stdout: text } = await command(
       spec,

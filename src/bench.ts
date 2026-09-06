@@ -16,10 +16,11 @@ import {
 } from "./evaluator.js";
 import { loadBenchmarkManifest } from "./manifest.js";
 import { calculateCost, calculateUncachedCost } from "./pricing.js";
-import { createModel, defaultModelIds, type ModelSpec } from "./models.js";
+import { createModel, type ModelSpec } from "./models.js";
 import { candidates, isParserSpec, type CandidateSpec } from "./candidates.js";
 import { parserCacheIdentity, runParser } from "./parsers.js";
 import { renderReport } from "./report.js";
+import { correctedEvaluation } from "./corrections.js";
 
 const cacheRoot = "runs/cache";
 const promptPath = "benchmark/prompt.md";
@@ -246,13 +247,14 @@ async function loadCachedCase(
     scoreKey(testCase, prediction, hash)
   ));
   const validEvaluation = evaluation?.valid === true && Number.isFinite(evaluation.score);
+  const compatibleEvaluation = validEvaluation && [expectedScoreKey, ...compatibleScoreKeys].includes(evaluation.cacheKey)
+    ? await correctedEvaluation(directory, testCase, prediction, evaluation)
+    : null;
   return {
     directory,
     prediction,
     inference,
-    evaluation: validEvaluation && [expectedScoreKey, ...compatibleScoreKeys].includes(evaluation.cacheKey)
-      ? evaluation
-      : null,
+    evaluation: compatibleEvaluation,
     inferenceKey: expectedInferenceKey,
     scoreKey: expectedScoreKey,
   };
@@ -348,6 +350,7 @@ async function runCase(
     let providerCache: Record<string, unknown>;
     let parserMetadata: Record<string, unknown> | null = null;
     let parserCostUsd: number | null = null;
+    let incrementalParserUsage: any;
 
     if (isParserSpec(spec)) {
       const parsed = await runParser(spec, testCase, directory);
@@ -357,6 +360,7 @@ async function runCase(
       finishReason = "complete";
       parserMetadata = parsed.metadata;
       parserCostUsd = parsed.costUsd ?? null;
+      incrementalParserUsage = parsed.incrementalUsage;
       providerCache = {
         mode: "none",
         key: null,
@@ -437,7 +441,8 @@ async function runCase(
     }
 
     inferenceRan = true;
-    inferenceSpent = parserCostUsd ?? calculateCost(spec, usage);
+    const fullInferenceCost = parserCostUsd ?? calculateCost(spec, usage);
+    inferenceSpent = incrementalParserUsage ? calculateCost(spec, incrementalParserUsage) : fullInferenceCost;
     const finishedAt = new Date();
     inference = {
       modelId,
@@ -455,7 +460,7 @@ async function runCase(
       usage,
       providerCache,
       parser: parserMetadata,
-      costUsd: inferenceSpent,
+      costUsd: fullInferenceCost,
       uncachedCostUsd: parserCostUsd ?? calculateUncachedCost(spec, usage),
       cacheKey: requestInferenceKey,
     };
@@ -469,7 +474,7 @@ async function runCase(
   let evaluation = cached?.evaluation ?? null;
   if (!evaluation) {
     const evaluated = await evaluatePrediction(testCase, prediction, path.join(directory, "evaluation-parts"));
-    evaluation = evaluated.evaluation;
+    evaluation = await correctedEvaluation(directory, testCase, prediction, evaluated.evaluation);
     evaluatorSpent = evaluated.incrementalCostUsd;
     evaluation.cacheKey = await scoreKey(testCase, prediction, evaluatorSemanticHash);
     await writeJson(path.join(directory, "score.json"), evaluation);
@@ -520,15 +525,25 @@ async function cachedCandidateIds() {
   return entries.filter((entry) => entry.isDirectory() && candidates[entry.name]).map((entry) => entry.name);
 }
 
-function parseOptions(argv: string[]) {
+export function parseOptions(argv: string[]) {
   const selected: string[] = [];
+  const caseIds: string[] = [];
   let runs = 1;
+  let reportOnly = false;
+  let dryRun = false;
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
     const value = argv[index + 1];
+    if (argument === "--report-only") { reportOnly = true; continue; }
+    if (argument === "--dry-run") { dryRun = true; continue; }
     if ((argument === "--model" || argument === "--candidate") && value) {
       if (!candidates[value]) throw new Error(`Unknown candidate ${value}. Candidates: ${Object.keys(candidates).join(", ")}`);
       if (!selected.includes(value)) selected.push(value);
+      index += 1;
+      continue;
+    }
+    if (argument === "--case" && value && !value.startsWith("--")) {
+      if (!caseIds.includes(value)) caseIds.push(value);
       index += 1;
       continue;
     }
@@ -538,9 +553,21 @@ function parseOptions(argv: string[]) {
       index += 1;
       continue;
     }
-    throw new Error("Usage: npm run bench -- [--candidate CANDIDATE_ID ...] [--model MODEL_ID ...] [--runs N]");
+    throw new Error("Usage: npm run report OR npm run bench -- --candidate ID [--case ID ...] [--runs N] [--dry-run]");
   }
-  return { modelIds: selected, runs };
+  if (reportOnly && (selected.length || caseIds.length || argv.includes("--runs") || dryRun)) {
+    throw new Error("--report-only rebuilds the full cached report; it cannot be combined with run selections.");
+  }
+  if (!reportOnly && selected.length === 0) {
+    throw new Error("Select a --candidate or --model explicitly for paid work. Use npm run report to rebuild cached results without API calls.");
+  }
+  return { modelIds: selected, caseIds, runs, reportOnly, dryRun };
+}
+
+export function selectCases<T extends { id: string }>(cases: T[], requestedIds: string[]) {
+  const unknown = requestedIds.filter((id) => !cases.some((testCase) => testCase.id === id));
+  if (unknown.length) throw new Error(`Unknown case(s): ${unknown.join(", ")}. Available: ${cases.map((item) => item.id).join(", ")}`);
+  return requestedIds.length ? cases.filter((testCase) => requestedIds.includes(testCase.id)) : cases;
 }
 
 async function collectMergedResults(
@@ -677,25 +704,42 @@ async function collectMergedResults(
   return { models: merged.sort((a, b) => b.score - a.score), exclusions };
 }
 
-export async function runBenchmark(requestedModelIds: string[], requestedRuns = 1) {
-  await validateCorpusArtifacts();
+export async function runBenchmark(requestedModelIds: string[], requestedRuns = 1, requestedCaseIds: string[] = [], dryRun = false) {
+  if (!requestedModelIds.length) throw new Error("Select candidates explicitly; use rebuildReport() for offline reporting.");
+  for (const id of requestedModelIds) if (!candidates[id]) throw new Error(`Unknown candidate ${id}`);
+  if (!Number.isSafeInteger(requestedRuns) || requestedRuns < 1 || requestedRuns > 20) throw new Error("--runs must be an integer from 1 to 20.");
   const { manifest } = await loadBenchmarkManifest();
+  const selectedCases = selectCases(manifest.cases, requestedCaseIds);
+  if (!dryRun) await validateCorpusArtifacts();
   await auditBenchmark();
   const promptFile = await readFile(promptPath, "utf8");
   const prompt = promptFile.trimEnd();
   const evaluatorSemanticHash = sha256(JSON.stringify(evaluatorScoringIdentity()));
   const compatibleEvaluatorSemanticHashes = compatibleEvaluatorScoringIdentities()
     .map((identity) => sha256(JSON.stringify(identity)));
-  const availableCachedModelIds = (await cachedCandidateIds()).filter((modelId) => candidates[modelId]);
-  const modelIds = requestedModelIds.length > 0
-    ? requestedModelIds
-    : [...new Set([...defaultModelIds, ...availableCachedModelIds])];
+  const modelIds = [...new Set(requestedModelIds)];
+  if (dryRun) {
+    const plan = [];
+    for (const modelId of modelIds) {
+      for (const testCase of selectedCases) {
+        for (let draw = 1; draw <= requestedRuns; draw += 1) {
+          const cached = await loadCachedCase(modelId, testCase, prompt, evaluatorSemanticHash, draw, compatibleEvaluatorSemanticHashes);
+          plan.push({ candidate: modelId, case: testCase.id, draw,
+            action: cached?.evaluation ? "reuse saved score" : cached ? "evaluate saved Markdown" : "convert and evaluate",
+          });
+        }
+      }
+    }
+    console.table(plan);
+    console.log("Offline plan only: no conversions, evaluator calls, or report changes. A missing/incompatible conversion cache requires conversion; a missing/incompatible score requires evaluation.");
+    return plan;
+  }
   let incrementalInferenceSpendUsd = 0;
   let incrementalEvaluatorSpendUsd = 0;
   const runFailures: string[] = [];
 
   for (const modelId of modelIds) {
-    console.log(`\n${modelId}: ensuring ${requestedRuns} draw slot${requestedRuns === 1 ? "" : "s"} × ${manifest.cases.length} cases`);
+    console.log(`\n${modelId}: ensuring ${requestedRuns} draw slot${requestedRuns === 1 ? "" : "s"} × ${selectedCases.length} cases`);
     const runTestCase = async (testCase: ManifestCase) => {
       const drawNumbers = Array.from({ length: requestedRuns }, (_, index) => index + 1);
       const cachedSlots = await Promise.all(drawNumbers.map((draw) =>
@@ -752,7 +796,7 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
       }
       return draws;
     };
-    const tasks = manifest.cases.map((testCase) => () => runTestCase(testCase as ManifestCase));
+    const tasks = selectedCases.map((testCase) => () => runTestCase(testCase as ManifestCase));
     // CPU document pipelines contend heavily when several copies of their
     // layout/OCR models run together. Hosted model candidates retain the
     // existing case concurrency; local and hybrid parser pipelines run cases
@@ -765,14 +809,28 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
       const spend = failedSpend(result.reason);
       incrementalInferenceSpendUsd += spend.inference;
       incrementalEvaluatorSpendUsd += spend.evaluator;
-      runFailures.push(`${modelId}/${manifest.cases[index]!.id}: ${errorMessage(result.reason)}`);
-      console.error(`${modelId}/${manifest.cases[index]!.id}: failed after sibling pipelines were preserved`);
+      runFailures.push(`${modelId}/${selectedCases[index]!.id}: ${errorMessage(result.reason)}`);
+      console.error(`${modelId}/${selectedCases[index]!.id}: failed after sibling pipelines were preserved`);
       return [];
     });
     incrementalInferenceSpendUsd += cases.reduce((sum, testCase) => sum + testCase.incrementalInferenceCostUsd, 0);
     incrementalEvaluatorSpendUsd += cases.reduce((sum, testCase) => sum + testCase.incrementalEvaluatorCostUsd, 0);
   }
 
+  const summary = await rebuildReport(incrementalInferenceSpendUsd, incrementalEvaluatorSpendUsd);
+  if (runFailures.length > 0) {
+    throw new AggregateError(runFailures, `${runFailures.length} case pipeline${runFailures.length === 1 ? "" : "s"} failed; all completed work was preserved and the report was regenerated.`);
+  }
+  return summary;
+}
+
+/** Rebuild from saved artifacts only. Never enters a conversion or evaluator pipeline. */
+export async function rebuildReport(incrementalInferenceSpendUsd = 0, incrementalEvaluatorSpendUsd = 0) {
+  const { manifest } = await loadBenchmarkManifest();
+  const prompt = (await readFile(promptPath, "utf8")).trimEnd();
+  const evaluatorSemanticHash = sha256(JSON.stringify(evaluatorScoringIdentity()));
+  const compatibleEvaluatorSemanticHashes = compatibleEvaluatorScoringIdentities()
+    .map((identity) => sha256(JSON.stringify(identity)));
   const collected = await collectMergedResults(
     manifest as { cases: ManifestCase[] },
     prompt,
@@ -825,19 +883,21 @@ export async function runBenchmark(requestedModelIds: string[], requestedRuns = 
   console.table(mergedModels.map((model) => ({
     candidate: model.modelId,
     draws: model.drawCount,
-    score: model.score,
-    meanUncachedInferenceCostUsd: model.inferenceCostUsd,
-    meanActualInferenceSpendUsd: model.actualInferenceCostUsd,
+    score: model.score.toFixed(1),
+    meanUncachedInferenceCostUsd: model.inferenceCostUsd.toFixed(4),
+    meanActualInferenceSpendUsd: model.actualInferenceCostUsd.toFixed(4),
   })));
   console.log(`Incremental candidate conversion spend: $${incrementalInferenceSpendUsd.toFixed(6)}`);
   console.log("Report: reports/index.html");
-  if (runFailures.length > 0) {
-    throw new AggregateError(runFailures, `${runFailures.length} case pipeline${runFailures.length === 1 ? "" : "s"} failed; all completed work was preserved and the report was regenerated.`);
-  }
   return summary;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const options = parseOptions(process.argv.slice(2));
-  await runBenchmark(options.modelIds, options.runs);
+  if (options.reportOnly) {
+    await rebuildReport();
+    console.log("Offline report rebuilt. No API calls were made.");
+  } else {
+    await runBenchmark(options.modelIds, options.runs, options.caseIds, options.dryRun);
+  }
 }

@@ -203,8 +203,6 @@ The native index supplies injection and channel identity only; the visual plate 
 | MS/MSD PFOA RPD | two calculated spike recoveries | Calculate; compare to <=30% |
 | MSD 6:2 FTS recovery | p6 SPK-02 + p9 measured; native U | Treat native as zero; calculate |
 
-The 10.00 ng/L SPK-01/SPK-02 targets come from page 6. The LCS recoveries are 96.2% PFOA and 91.4% PFOS; MS/MSD PFOA recoveries are 96.0% and 98.0% with 2.1% RPD; 6:2 FTS MSD recovery is 84.0%.
-
 ## Page 10 - Scanned maintenance and reinjection authorization
 
 | Time | Observation / action | Measured check | Initials |

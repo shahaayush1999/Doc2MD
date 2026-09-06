@@ -1,7 +1,7 @@
 {
   "name": "Doc2MD",
   "description": "A mixed-modality benchmark for faithful PDF-to-Markdown reconstruction across long regulated packets, full-page scans, native text, visual evidence, source precedence, spatial relations, and genuine malformed office exports.",
-  "generatedAt": "2026-08-23T09:10:48.578Z",
+  "generatedAt": "2026-09-04T22:25:43.825Z",
   "caseCount": 5,
   "pageCount": 84,
   "cases": [
@@ -105,7 +105,12 @@
     "comparisonField": "models[].inferenceCostUsd",
     "actualSpendField": "models[].actualInferenceCostUsd"
   },
-  "exclusions": [],
+  "exclusions": [
+    {
+      "modelId": "google-gemini-3.8-flash",
+      "reason": "No complete draw has a valid score for the current scorer and corpus."
+    }
+  ],
   "incrementalSpendUsd": 0,
   "incrementalInferenceSpendUsd": 0,
   "incrementalEvaluatorSpendUsd": 0,
@@ -2207,9 +2212,9 @@
       "evaluatorResolvedModel": "gemini-3.1-flash-lite",
       "pricingVersion": "2026-07-22",
       "drawCount": 1,
-      "score": 86.63163011631161,
-      "scoreMin": 86.63163011631161,
-      "scoreMax": 86.63163011631161,
+      "score": 86.89829678297826,
+      "scoreMin": 86.89829678297826,
+      "scoreMax": 86.89829678297826,
       "scoreStddev": null,
       "inferenceCostUsd": 0.8302999999999999,
       "normalizedInferenceCostUsd": 0.8302999999999999,
@@ -2276,9 +2281,9 @@
         {
           "caseId": "task-5",
           "title": "Northstar Cold Chain Supplier Cutover Authorization",
-          "score": 81.81347899282682,
-          "scoreMin": 81.81347899282682,
-          "scoreMax": 81.81347899282682,
+          "score": 83.14681232616013,
+          "scoreMin": 83.14681232616013,
+          "scoreMax": 83.14681232616013,
           "scoreStddev": null,
           "inferenceCostUsd": 0.0579,
           "actualInferenceCostUsd": 0.0579,
@@ -2288,7 +2293,7 @@
       "draws": [
         {
           "draw": 1,
-          "score": 86.63163011631161,
+          "score": 86.89829678297826,
           "inferenceCostUsd": 0.8302999999999999,
           "actualInferenceCostUsd": 0.8302999999999999,
           "evaluatorCostUsd": 0.14659525,
@@ -2379,7 +2384,7 @@
             {
               "caseId": "task-5",
               "title": "Northstar Cold Chain Supplier Cutover Authorization",
-              "score": 81.81347899282682,
+              "score": 83.14681232616013,
               "inferenceCostUsd": 0.0579,
               "actualInferenceCostUsd": 0.0579,
               "evaluatorCostUsd": 0.01264625,
@@ -5135,9 +5140,9 @@
       "evaluatorResolvedModel": "gemini-3.1-flash-lite",
       "pricingVersion": "2026-08-04-usd-0.03-per-page",
       "drawCount": 1,
-      "score": 62.177362688619006,
-      "scoreMin": 62.177362688619006,
-      "scoreMax": 62.177362688619006,
+      "score": 62.27641030766663,
+      "scoreMin": 62.27641030766663,
+      "scoreMax": 62.27641030766663,
       "scoreStddev": null,
       "inferenceCostUsd": 2.5199999999999996,
       "normalizedInferenceCostUsd": 2.5199999999999996,
@@ -5182,9 +5187,9 @@
         {
           "caseId": "task-3",
           "title": "HTX-204 Site 014 Monitoring Source Packet",
-          "score": 92.01347985347984,
-          "scoreMin": 92.01347985347984,
-          "scoreMax": 92.01347985347984,
+          "score": 92.50871794871793,
+          "scoreMin": 92.50871794871793,
+          "scoreMax": 92.50871794871793,
           "scoreStddev": null,
           "inferenceCostUsd": 1.44,
           "actualInferenceCostUsd": 1.44,
@@ -5216,7 +5221,7 @@
       "draws": [
         {
           "draw": 1,
-          "score": 62.177362688619006,
+          "score": 62.27641030766663,
           "inferenceCostUsd": 2.5199999999999996,
           "actualInferenceCostUsd": 2.5199999999999996,
           "evaluatorCostUsd": 0.15213925,
@@ -5269,7 +5274,7 @@
             {
               "caseId": "task-3",
               "title": "HTX-204 Site 014 Monitoring Source Packet",
-              "score": 92.01347985347984,
+              "score": 92.50871794871793,
               "inferenceCostUsd": 1.44,
               "actualInferenceCostUsd": 1.44,
               "evaluatorCostUsd": 0.06488775000000001,
@@ -5555,9 +5560,9 @@
       "evaluatorResolvedModel": "gemini-3.1-flash-lite",
       "pricingVersion": "local-zero-api-cost",
       "drawCount": 1,
-      "score": 59.21080929291048,
-      "scoreMin": 59.21080929291048,
-      "scoreMax": 59.21080929291048,
+      "score": 59.41509674951992,
+      "scoreMin": 59.41509674951992,
+      "scoreMax": 59.41509674951992,
       "scoreStddev": null,
       "inferenceCostUsd": 0,
       "normalizedInferenceCostUsd": 0,
@@ -5591,9 +5596,9 @@
         {
           "caseId": "task-2",
           "title": "Suite 214 Laboratory Coordination Set",
-          "score": 19.191176470588236,
-          "scoreMin": 19.191176470588236,
-          "scoreMax": 19.191176470588236,
+          "score": 19.993315508021393,
+          "scoreMin": 19.993315508021393,
+          "scoreMax": 19.993315508021393,
           "scoreStddev": null,
           "inferenceCostUsd": 0,
           "actualInferenceCostUsd": 0,
@@ -5613,9 +5618,9 @@
         {
           "caseId": "task-4",
           "title": "Lot Q8R7-22 Material Review File",
-          "score": 73.38411819021238,
-          "scoreMin": 73.38411819021238,
-          "scoreMax": 73.38411819021238,
+          "score": 73.6034164358264,
+          "scoreMin": 73.6034164358264,
+          "scoreMax": 73.6034164358264,
           "scoreStddev": null,
           "inferenceCostUsd": 0,
           "actualInferenceCostUsd": 0,
@@ -5636,7 +5641,7 @@
       "draws": [
         {
           "draw": 1,
-          "score": 59.21080929291048,
+          "score": 59.41509674951992,
           "inferenceCostUsd": 0,
           "actualInferenceCostUsd": 0,
           "evaluatorCostUsd": 0.2723525,
@@ -5670,7 +5675,7 @@
             {
               "caseId": "task-2",
               "title": "Suite 214 Laboratory Coordination Set",
-              "score": 19.191176470588236,
+              "score": 19.993315508021393,
               "inferenceCostUsd": 0,
               "actualInferenceCostUsd": 0,
               "evaluatorCostUsd": 0.0284355,
@@ -5708,7 +5713,7 @@
             {
               "caseId": "task-4",
               "title": "Lot Q8R7-22 Material Review File",
-              "score": 73.38411819021238,
+              "score": 73.6034164358264,
               "inferenceCostUsd": 0,
               "actualInferenceCostUsd": 0,
               "evaluatorCostUsd": 0.021941999999999996,
@@ -7227,9 +7232,9 @@
       "evaluatorResolvedModel": "gemini-3.1-flash-lite",
       "pricingVersion": "2026-07-30",
       "drawCount": 1,
-      "score": 24.457683178534573,
-      "scoreMin": 24.457683178534573,
-      "scoreMax": 24.457683178534573,
+      "score": 24.6181109860212,
+      "scoreMin": 24.6181109860212,
+      "scoreMax": 24.6181109860212,
       "scoreStddev": null,
       "inferenceCostUsd": 0.017082299999999998,
       "normalizedInferenceCostUsd": 0.017082299999999998,
@@ -7263,9 +7268,9 @@
         {
           "caseId": "task-2",
           "title": "Suite 214 Laboratory Coordination Set",
-          "score": 22.239145658263304,
-          "scoreMin": 22.239145658263304,
-          "scoreMax": 22.239145658263304,
+          "score": 23.041284695696458,
+          "scoreMin": 23.041284695696458,
+          "scoreMax": 23.041284695696458,
           "scoreStddev": null,
           "inferenceCostUsd": 0.0024519,
           "actualInferenceCostUsd": 0.0024519,
@@ -7308,7 +7313,7 @@
       "draws": [
         {
           "draw": 1,
-          "score": 24.457683178534573,
+          "score": 24.6181109860212,
           "inferenceCostUsd": 0.017082299999999998,
           "actualInferenceCostUsd": 0.017082299999999998,
           "evaluatorCostUsd": 0.216065525,
@@ -7342,7 +7347,7 @@
             {
               "caseId": "task-2",
               "title": "Suite 214 Laboratory Coordination Set",
-              "score": 22.239145658263304,
+              "score": 23.041284695696458,
               "inferenceCostUsd": 0.0024519,
               "actualInferenceCostUsd": 0.0024519,
               "evaluatorCostUsd": 0.0322585,
